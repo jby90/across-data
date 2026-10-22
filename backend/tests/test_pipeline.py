@@ -437,3 +437,87 @@ def test_archive_put_is_idempotent_and_confined(tmp_path):
     with pytest.raises(ArchiveIntegrityError):
         a.read("../../etc/passwd")
     _ = datetime.now(UTC)
+
+
+async def test_egazette_strategy_discovers_via_public_search_config_and_ingests(
+    session_factory, tmp_path
+):
+    """新加坡电子宪报 EGAZETTE 策略:先读目录页提取公开检索配置,再按关键词检索并下载增刊 PDF,同时过滤掉法案草案(Bills)。"""
+    import json
+    from datetime import date
+
+    browse_html = (
+        '<html><script>self.__next_f.push([1,"{\\"config\\":{\\"type\\":\\"egazette-algolia\\",'
+        '\\"appId\\":\\"1V7DZGZJKK\\",\\"indexName\\":\\"prod_ogp_egazettes_index\\",'
+        '\\"searchApiKey\\":\\"pub-key-123\\"}}"])</script></html>'
+    )
+    algolia_hits = {
+        "hits": [
+            {
+                "title": "Road Traffic Act 1961 - Road Traffic (Autonomous Motor Vehicles) (Amendment) Rules 2024",
+                "subCategory": "Subsidiary Legislation Supplement",
+                "notificationNum": "089",
+                "publishDate": "14/02/2024",
+                "fileUrl": "https://assets.egazette.gov.sg/2024/089.pdf",
+            },
+            {
+                "title": "Personal Data Protection Bill",
+                "subCategory": "Bills Supplement",  # 法案草案,不应被当成生效法律收录
+                "fileUrl": "https://assets.egazette.gov.sg/2024/bill.pdf",
+            },
+            {
+                "title": "Evil external file",
+                "subCategory": "Acts Supplement",
+                "fileUrl": "https://evil.example.org/2024/bad.pdf",  # 非官方宪报资源域名,拒绝
+            },
+        ],
+        "nbHits": 3,
+    }
+    pdf_bytes = act_pdf(" Autonomous vehicles rules.")
+    seen_headers: dict[str, str] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/robots.txt":
+            return httpx.Response(404)
+        if str(request.url) == "https://www.egazette.gov.sg/egazette-browse/":
+            return httpx.Response(200, text=browse_html, headers={"content-type": "text/html"})
+        if request.url.host == "1v7dzgzjkk-dsn.algolia.net":
+            seen_headers["app"] = request.headers.get("x-algolia-application-id", "")
+            seen_headers["key"] = request.headers.get("x-algolia-api-key", "")
+            return httpx.Response(
+                200,
+                content=json.dumps(algolia_hits).encode("utf-8"),
+                headers={"content-type": "application/json"},
+            )
+        if str(request.url) == "https://assets.egazette.gov.sg/2024/089.pdf":
+            return httpx.Response(
+                200, content=pdf_bytes, headers={"content-type": "application/pdf"}
+            )
+        return httpx.Response(404)
+
+    site_id = await add_site(
+        session_factory,
+        strategy="EGAZETTE",
+        entry="https://www.egazette.gov.sg/egazette-browse/",
+        config={"keywords": ['"Road Traffic (Autonomous Motor Vehicles)"']},
+    )
+    archive = ArchiveStore(tmp_path / "archive")
+    run_id = await ingest_site(
+        session_factory, make_fetcher(handler), archive, site_id, trigger="manual"
+    )
+    assert seen_headers == {"app": "1V7DZGZJKK", "key": "pub-key-123"}
+
+    async with session_factory() as s:
+        r = await s.get(CrawlRun, run_id)
+        assert r.status == "success" and r.pages_read == 2 and r.links_found == 1
+        assert r.documents_new == 1 and r.versions_new == 1
+        doc = (await s.execute(select(Document))).scalar_one()
+        assert doc.source_url == "https://assets.egazette.gov.sg/2024/089.pdf"
+        assert doc.document_type == "REGULATION"
+        assert doc.instrument_family == "sg-av-rules"
+        assert doc.instrument_kind == "AMENDMENT"
+        ver = (await s.execute(select(DocumentVersion))).scalar_one()
+        assert ver.published_date == date(2024, 2, 14)
+        assert ver.official_number == "089"
+        assert ver.metadata_source == "official_index"
+        assert ver.state == "parsed"

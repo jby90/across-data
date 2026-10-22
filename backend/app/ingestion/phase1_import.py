@@ -17,11 +17,13 @@ from collections import Counter
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.ingestion.archive import ArchiveStore
+from app.ingestion.discovery import DEFAULT_EGAZETTE_QUERIES
 from app.ingestion.models import Document, DocumentVersion, LegalStatus, PipelineEvent
 from app.ingestion.ocr import OcrEngine
 from app.ingestion.pipeline import parse_version
@@ -39,6 +41,7 @@ _TYPE_MAP = {
     "ADMISSION_GUIDANCE": "GUIDANCE",
 }
 _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+EGAZETTE_INDEX_URL = "https://www.egazette.gov.sg/egazette-browse/"
 
 
 @dataclass
@@ -55,6 +58,65 @@ class ImportReport:
 
 def _load(path: Path) -> list[dict]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+async def consolidate_egazette_sites(session: AsyncSession) -> int:
+    """将旧版本按单份 PDF 拆成多行的电子宪报站点合并到统一的检索目录站点。"""
+    legacy = list(
+        (
+            await session.execute(
+                select(SourceSite).where(
+                    SourceSite.country_code == "SG",
+                    SourceSite.entry_url.like("https://assets.egazette.gov.sg/%"),
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    if legacy:
+        canonical = (
+            await session.execute(
+                select(SourceSite).where(
+                    SourceSite.country_code == "SG",
+                    SourceSite.entry_url == EGAZETTE_INDEX_URL,
+                )
+            )
+        ).scalar_one_or_none()
+        if canonical is None:
+            canonical = SourceSite(
+                country_code="SG",
+                publisher="Singapore Government Gazette",
+                language="en",
+                document_type="LAW",
+                entry_url=EGAZETTE_INDEX_URL,
+                strategy=Strategy.EGAZETTE.value,
+                config={"keywords": list(DEFAULT_EGAZETTE_QUERIES), "extensions": [".pdf"]},
+                terms_note="新加坡电子宪报官方检索目录(按关键词自动发现立法增刊 PDF)",
+            )
+            session.add(canonical)
+            await session.flush()
+        for old_site in legacy:
+            docs = (
+                (await session.execute(select(Document).where(Document.site_id == old_site.id)))
+                .scalars()
+                .all()
+            )
+            for d in docs:
+                dup = (
+                    await session.execute(
+                        select(Document).where(
+                            Document.site_id == canonical.id,
+                            Document.source_url == d.source_url,
+                        )
+                    )
+                ).scalar_one_or_none()
+                if dup is None:
+                    d.site_id = canonical.id
+            await session.flush()
+            await session.delete(old_site)
+        await session.commit()
+    return len(legacy)
 
 
 def _d(value: str | None) -> date | None:
@@ -81,6 +143,34 @@ def _title(source: dict, meta: dict | None) -> str:
     return str(source.get("title") or source["source_url"])[:500]
 
 
+def _site_spec(country: str, source: dict, meta: dict | None) -> tuple[str, str, dict, str]:
+    """决定某份来源文件归属哪个站点:返回 (entry_url, strategy, config, terms_note)。
+
+    凡是通过官方目录发现的来源,全部归入同一个目录站点,不再按每份 PDF 建一行站点。"""
+    index_url = (meta or {}).get("official_index_url")
+    host = urlsplit(source["source_url"]).hostname or ""
+    if index_url == EGAZETTE_INDEX_URL or host == "assets.egazette.gov.sg":
+        return (
+            EGAZETTE_INDEX_URL,
+            Strategy.EGAZETTE.value,
+            {"keywords": list(DEFAULT_EGAZETTE_QUERIES), "extensions": [".pdf"]},
+            "新加坡电子宪报官方检索目录(按关键词自动发现立法增刊 PDF)",
+        )
+    if index_url:
+        return (
+            str(index_url),
+            Strategy.INDEX_PAGE.value,
+            {"extensions": [".pdf"]},
+            "一期迁移(目录站点)",
+        )
+    return (
+        source["source_url"],
+        Strategy.DIRECT.value,
+        {},
+        f"一期迁移:{_title(source, meta)[:120]}",
+    )
+
+
 async def import_phase1(
     data_dir: Path,
     country: str,
@@ -97,18 +187,22 @@ async def import_phase1(
     metas = {m["source_id"]: m for m in _load(current / "source-metadata.json")}
 
     report = ImportReport()
+    async with sf() as s:
+        await consolidate_egazette_sites(s)
     for source in sources:
         vers = versions.get(source["id"], [])
         if not vers:
             report.no_version.append(source["source_url"])
             continue
         meta = metas.get(source["id"])
+        entry_url, strategy, cfg, note = _site_spec(country, source, meta)
+        doc_type = _TYPE_MAP.get(source["document_type"], "OTHER")
         async with sf() as s:
             site = (
                 await s.execute(
                     select(SourceSite).where(
                         SourceSite.country_code == country,
-                        SourceSite.entry_url == source["source_url"],
+                        SourceSite.entry_url == entry_url,
                     )
                 )
             ).scalar_one_or_none()
@@ -117,11 +211,11 @@ async def import_phase1(
                     country_code=country,
                     publisher=source["publisher"],
                     language=source["language"],
-                    document_type=_TYPE_MAP.get(source["document_type"], "OTHER"),
-                    entry_url=source["source_url"],
-                    strategy=Strategy.DIRECT.value,
-                    config={},
-                    terms_note="一期迁移",
+                    document_type="LAW" if strategy == Strategy.EGAZETTE.value else doc_type,
+                    entry_url=entry_url,
+                    strategy=strategy,
+                    config=cfg,
+                    terms_note=note,
                 )
                 s.add(site)
                 await s.flush()
@@ -141,7 +235,7 @@ async def import_phase1(
                     source_url=source["source_url"],
                     title=_title(source, meta),
                     language=source["language"],
-                    document_type=site.document_type,
+                    document_type=doc_type,
                     instrument_family=(meta or {}).get("instrument_family"),
                     instrument_kind=(meta or {}).get("instrument_kind") or source["document_type"],
                 )

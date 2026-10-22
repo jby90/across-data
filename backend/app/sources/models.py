@@ -30,6 +30,7 @@ class TermsStatus(enum.StrEnum):
 class Strategy(enum.StrEnum):
     DIRECT = "DIRECT"  # entry_url 本身就是一份原文
     INDEX_PAGE = "INDEX_PAGE"  # entry_url 是目录页,从中发现原文链接
+    EGAZETTE = "EGAZETTE"  # 新加坡电子宪报公开检索目录(从目录页读取公开搜索配置后按关键词发现)
 
 
 class RunStatus(enum.StrEnum):
@@ -53,7 +54,7 @@ class SourceSite(Base):
         CheckConstraint(
             "terms_status IN ('pending','approved','rejected')", name="ck_sites_terms_status"
         ),
-        CheckConstraint("strategy IN ('DIRECT','INDEX_PAGE')", name="ck_sites_strategy"),
+        CheckConstraint("strategy IN ('DIRECT','INDEX_PAGE','EGAZETTE')", name="ck_sites_strategy"),
         CheckConstraint("interval_hours >= 1", name="ck_sites_interval"),
     )
 

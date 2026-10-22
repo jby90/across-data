@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from app.iam.deps import Principal, require_platform_admin
+from app.ingestion.models import Document
 from app.sources.models import CrawlRun, SourceSite, TermsStatus
 from app.sources.schemas import RunOut, SiteCreate, SiteOut, SitePatch, TermsDecision
 
@@ -21,16 +22,46 @@ async def _get_site(session: AsyncSession, site_id: uuid.UUID) -> SourceSite:
     return site
 
 
+async def _attach_doc_summaries(session: AsyncSession, sites: list[SourceSite]) -> list[SiteOut]:
+    if not sites:
+        return []
+    ids = [s.id for s in sites]
+    rows = (
+        await session.execute(
+            select(Document.site_id, Document.title)
+            .where(Document.site_id.in_(ids))
+            .order_by(Document.discovered_at.desc(), Document.id)
+        )
+    ).all()
+    counts: dict[uuid.UUID, int] = {}
+    titles: dict[uuid.UUID, list[str]] = {}
+    for sid, title in rows:
+        counts[sid] = counts.get(sid, 0) + 1
+        bucket = titles.setdefault(sid, [])
+        if len(bucket) < 3:
+            bucket.append(title)
+    out: list[SiteOut] = []
+    for s in sites:
+        item = SiteOut.model_validate(s)
+        item.document_count = counts.get(s.id, 0)
+        item.sample_titles = titles.get(s.id, [])
+        out.append(item)
+    return out
+
+
 @router.get("", response_model=list[SiteOut], summary="站点列表")
 async def list_sites(
     country_code: str | None = None,
     _: Principal = Depends(require_platform_admin),
     session: AsyncSession = Depends(get_session),
 ):
-    stmt = select(SourceSite).order_by(SourceSite.country_code, SourceSite.publisher)
+    stmt = select(SourceSite).order_by(
+        SourceSite.country_code, SourceSite.publisher, SourceSite.entry_url
+    )
     if country_code:
         stmt = stmt.where(SourceSite.country_code == country_code.upper())
-    return (await session.execute(stmt)).scalars().all()
+    sites = list((await session.execute(stmt)).scalars().all())
+    return await _attach_doc_summaries(session, sites)
 
 
 @router.post("", response_model=SiteOut, status_code=201, summary="新增站点(默认停用、条款待确认)")
@@ -56,7 +87,7 @@ async def create_site(
     except IntegrityError:
         await session.rollback()
         raise HTTPException(status.HTTP_409_CONFLICT, "该国家下已存在相同入口地址的站点") from None
-    return site
+    return (await _attach_doc_summaries(session, [site]))[0]
 
 
 @router.get("/{site_id}", response_model=SiteOut, summary="站点详情")
@@ -65,7 +96,8 @@ async def get_site(
     _: Principal = Depends(require_platform_admin),
     session: AsyncSession = Depends(get_session),
 ):
-    return await _get_site(session, site_id)
+    site = await _get_site(session, site_id)
+    return (await _attach_doc_summaries(session, [site]))[0]
 
 
 @router.patch("/{site_id}", response_model=SiteOut, summary="修改站点(入口地址不可改,需新建)")
@@ -89,7 +121,7 @@ async def patch_site(
         if site.enabled and site.next_run_at is None:
             site.next_run_at = datetime.now(UTC)
     await session.commit()
-    return site
+    return (await _attach_doc_summaries(session, [site]))[0]
 
 
 @router.post("/{site_id}/terms", response_model=SiteOut, summary="确认/否决来源使用条款")
@@ -107,7 +139,7 @@ async def decide_terms(
     if body.status != TermsStatus.APPROVED.value:
         site.enabled = False  # 条款被否决:立即停用
     await session.commit()
-    return site
+    return (await _attach_doc_summaries(session, [site]))[0]
 
 
 @router.post("/{site_id}/run", status_code=202, summary="请求立即抓取(由 worker 执行)")

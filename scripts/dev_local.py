@@ -60,10 +60,12 @@ async def seed(creds: dict) -> None:
     from app.core.db import get_sessionmaker
     from app.iam import service
     from app.iam.models import Organization, Role, User
+    from app.ingestion.phase1_import import consolidate_egazette_sites
     from app.sources.models import SourceSite
 
     sf = get_sessionmaker()
     async with sf() as s:
+        await consolidate_egazette_sites(s)
         org = (
             await s.execute(select(Organization).where(Organization.name == DEMO_ORG))
         ).scalar_one_or_none()

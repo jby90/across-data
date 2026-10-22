@@ -236,3 +236,34 @@ class PoliteFetcher:
             except httpx.HTTPError as e:
                 raise FetchError(f"网络错误: {current}: {e}") from e
         raise FetchError(f"重定向次数过多: {url}")
+
+    async def post_json(
+        self,
+        url: str,
+        payload: dict,
+        *,
+        extra_headers: dict[str, str] | None = None,
+    ) -> FetchResult:
+        """礼貌 POST JSON(用于官方目录公开检索接口,如新加坡电子宪报)。
+
+        遵守与 get 相同的内网拦截与同源限速规则。"""
+        host = await self._check_target(url)
+        await self._throttle(host)
+        headers = {
+            "User-Agent": self._ua,
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            **(extra_headers or {}),
+        }
+        try:
+            resp = await self._client.post(
+                url, json=payload, headers=headers, follow_redirects=False
+            )
+            if resp.status_code >= 400:
+                raise FetchError(f"HTTP {resp.status_code}: {url}")
+            if len(resp.content) > self._max_bytes:
+                raise FetchError(f"响应超过大小上限: {url}")
+            mime = resp.headers.get("content-type", "").split(";")[0].strip().lower()
+            return FetchResult(url, resp.status_code, resp.content, mime, None, None)
+        except httpx.HTTPError as e:
+            raise FetchError(f"网络错误: {url}: {e}") from e

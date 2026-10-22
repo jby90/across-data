@@ -25,6 +25,7 @@ def test_seed_file_is_valid_unique_and_covers_five_countries():
             document_type=raw["document_type"],
             entry_url=raw["entry_url"],
             strategy=raw.get("strategy", "DIRECT"),
+            config=raw.get("config", {}),
         )
         keys.add((body.country_code, body.entry_url))
         assert raw.get("note"), f"每条种子要写明来源依据: {raw['entry_url']}"

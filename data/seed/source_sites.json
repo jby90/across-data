@@ -1,6 +1,25 @@
 [
   {
     "country_code": "SG",
+    "publisher": "Singapore Government Gazette",
+    "language": "en",
+    "document_type": "LAW",
+    "entry_url": "https://www.egazette.gov.sg/egazette-browse/",
+    "strategy": "EGAZETTE",
+    "config": {
+      "keywords": [
+        "\"Personal Data Protection\"",
+        "\"Road Traffic (Autonomous Motor Vehicles)\"",
+        "\"Courts (Civil and Criminal Justice) Reform Act 2021\"",
+        "\"Statutes (Miscellaneous Amendments) Act 2025\"",
+        "\"Public Sector (Governance) (Amendment) Act 2026\""
+      ],
+      "extensions": [".pdf"]
+    },
+    "note": "新加坡电子宪报官方检索目录(自动发现个人数据保护法、自动驾驶车辆规则及配套修订增刊 PDF)。"
+  },
+  {
+    "country_code": "SG",
     "publisher": "新加坡个人数据保护委员会 PDPC",
     "language": "en",
     "document_type": "GUIDANCE",

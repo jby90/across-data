@@ -18,7 +18,14 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.ingestion.archive import ArchiveStore
 from app.ingestion.clauses import split_clauses
-from app.ingestion.discovery import Candidate, extract_links, next_page_url
+from app.ingestion.discovery import (
+    DEFAULT_EGAZETTE_QUERIES,
+    Candidate,
+    extract_links,
+    next_page_url,
+    parse_egazette_hits,
+    parse_egazette_search_config,
+)
 from app.ingestion.fetcher import BlockedError, FetchError, PoliteFetcher
 from app.ingestion.models import (
     Clause,
@@ -83,9 +90,40 @@ async def discover(fetcher: PoliteFetcher, site: SiteSnapshot, stats: Stats) -> 
         return [Candidate(url=site.entry_url, title=site.publisher)]
 
     cfg = site.config
-    max_pages = max(1, min(int(cfg.get("max_pages", 1)), HARD_MAX_INDEX_PAGES))
     cap = max(1, min(int(cfg.get("max_candidates", 200)), HARD_MAX_CANDIDATES))
-    found: dict[str, Candidate] = {}
+
+    if site.strategy == Strategy.EGAZETTE.value:
+        res = await fetcher.get(site.entry_url)
+        stats.pages_read += 1
+        assert res.content is not None
+        app_id, index_name, api_key = parse_egazette_search_config(res.content)
+        query_url = f"https://{app_id.lower()}-dsn.algolia.net/1/indexes/{index_name}/query"
+        queries = [str(q).strip() for q in (cfg.get("keywords") or []) if q and str(q).strip()]
+        if not queries:
+            queries = list(DEFAULT_EGAZETTE_QUERIES)
+        found: dict[str, Candidate] = {}
+        for q in queries:
+            q_res = await fetcher.post_json(
+                query_url,
+                {
+                    "query": q,
+                    "advancedSyntax": True,
+                    "restrictSearchableAttributes": ["title"],
+                    "hitsPerPage": 100,
+                },
+                extra_headers={
+                    "X-Algolia-Application-Id": app_id,
+                    "X-Algolia-API-Key": api_key,
+                },
+            )
+            stats.pages_read += 1
+            if q_res.content:
+                for cand in parse_egazette_hits(q_res.content):
+                    found.setdefault(cand.url, cand)
+        return list(found.values())[:cap]
+
+    max_pages = max(1, min(int(cfg.get("max_pages", 1)), HARD_MAX_INDEX_PAGES))
+    found = {}
     url: str | None = site.entry_url
     seen_pages: set[str] = set()
     for _ in range(max_pages):
@@ -244,11 +282,18 @@ async def _process_candidate(
                 source_url=cand.url,
                 title=_title_from(cand),
                 language=site.language,
-                document_type=site.document_type,
+                document_type=cand.document_type or site.document_type,
+                instrument_family=cand.instrument_family,
+                instrument_kind=cand.instrument_kind,
             )
             s.add(doc)
             await s.flush()
             stats.documents_new += 1
+        else:
+            if cand.instrument_family and not doc.instrument_family:
+                doc.instrument_family = cand.instrument_family
+            if cand.instrument_kind and not doc.instrument_kind:
+                doc.instrument_kind = cand.instrument_kind
         latest = (
             await s.execute(
                 select(DocumentVersion)
@@ -301,6 +346,11 @@ async def _process_candidate(
             final_url=res.url[:2048],
             http_etag=res.etag,
             http_last_modified=res.last_modified,
+            published_date=cand.published_date,
+            official_number=cand.official_number,
+            metadata_source="official_index"
+            if (cand.published_date or cand.official_number)
+            else None,
         )
         s.add(version)
         await s.flush()

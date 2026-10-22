@@ -9,9 +9,12 @@ import {
 } from '@cyshuhe/shared'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { api } from '../api'
 
+const router = useRouter()
 const sites = ref<SiteOut[]>([])
+const country = ref('')
 const loading = ref(false)
 
 const fmt = (s: string | null) => (s ? new Date(s).toLocaleString('zh-CN') : '—')
@@ -19,10 +22,18 @@ const fmt = (s: string | null) => (s ? new Date(s).toLocaleString('zh-CN') : '�
 async function load() {
   loading.value = true
   try {
-    sites.value = await api.get<SiteOut[]>('/admin/sites')
+    const q = country.value.trim() ? `?country_code=${encodeURIComponent(country.value.trim())}` : ''
+    sites.value = await api.get<SiteOut[]>(`/admin/sites${q}`)
   } finally {
     loading.value = false
   }
+}
+
+function goDocuments(site: SiteOut) {
+  router.push({
+    name: 'documents',
+    query: { site_id: site.id, publisher: site.publisher, country_code: site.country_code },
+  })
 }
 
 // ---- 新增站点 ----
@@ -42,7 +53,7 @@ const form = reactive({
 
 const split = (s: string) =>
   s
-    .split(/[,,\s]+/)
+    .split(/[,，\n]+/)
     .map((x) => x.trim())
     .filter(Boolean)
 
@@ -117,54 +128,90 @@ onMounted(load)
 </script>
 
 <template>
-  <div style="display: flex; justify-content: space-between; margin-bottom: 12px">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px">
     <h3 style="margin: 0">采集站点</h3>
-    <el-button type="primary" @click="createDialog = true">新增站点</el-button>
+    <div style="display: flex; gap: 8px">
+      <el-input v-model="country" placeholder="国家代码,如 SG" style="width: 150px" clearable @keyup.enter="load" />
+      <el-button @click="load">筛选</el-button>
+      <el-button type="primary" @click="createDialog = true">新增站点</el-button>
+    </div>
   </div>
   <el-alert
     type="info"
     :closable="false"
     style="margin-bottom: 12px"
-    title="新增站点默认停用。必须先确认该来源的使用条款(是否允许自动抓取),才能启用定期抓取。"
+    title="新增站点默认停用。每个站点代表一个官方发布渠道或目录入口,必须先确认使用条款才能启用定期抓取。"
   />
 
   <el-table :data="sites" v-loading="loading" border>
-    <el-table-column prop="country_code" label="国家" width="70" />
-    <el-table-column prop="publisher" label="发布机构" min-width="160" />
-    <el-table-column label="类型" width="100">
+    <el-table-column prop="country_code" label="国家" width="65" />
+    <el-table-column label="发布机构与说明" min-width="200">
+      <template #default="{ row }">
+        <div style="font-weight: 600">{{ row.publisher }}</div>
+        <div v-if="row.terms_note" style="font-size: 12px; color: #909399; margin-top: 2px">
+          {{ row.terms_note }}
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column label="入口地址与收录摘要" min-width="280">
+      <template #default="{ row }">
+        <div style="word-break: break-all; font-size: 12px">
+          <a :href="row.entry_url" target="_blank" rel="noopener noreferrer" style="color: #409eff; text-decoration: none">
+            {{ row.entry_url }}
+          </a>
+        </div>
+        <div v-if="row.sample_titles?.length" style="font-size: 12px; color: #606266; margin-top: 4px">
+          <div v-for="(t, i) in row.sample_titles" :key="i" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+            · {{ t }}
+          </div>
+          <span v-if="row.document_count > row.sample_titles.length" style="color: #909399">
+            等共 {{ row.document_count }} 份法规原文
+          </span>
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column label="收录文档" width="95" align="center">
+      <template #default="{ row }">
+        <el-button v-if="row.document_count > 0" link type="primary" @click="goDocuments(row)">
+          {{ row.document_count }} 份
+        </el-button>
+        <span v-else style="color: #909399">0</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="类型" width="90">
       <template #default="{ row }">{{ DOC_TYPE_LABEL[row.document_type] }}</template>
     </el-table-column>
-    <el-table-column label="发现方式" width="110">
-      <template #default="{ row }">{{ STRATEGY_LABEL[row.strategy] }}</template>
+    <el-table-column label="发现方式" width="125">
+      <template #default="{ row }">{{ STRATEGY_LABEL[row.strategy] ?? row.strategy }}</template>
     </el-table-column>
-    <el-table-column label="使用条款" width="130">
+    <el-table-column label="使用条款" width="120">
       <template #default="{ row }">
         <el-tag :type="row.terms_status === 'approved' ? 'success' : row.terms_status === 'rejected' ? 'danger' : 'warning'">
           {{ TERMS_LABEL[row.terms_status] }}
         </el-tag>
       </template>
     </el-table-column>
-    <el-table-column label="定期抓取" width="100">
+    <el-table-column label="定期抓取" width="90" align="center">
       <template #default="{ row }">
         <el-switch
           :model-value="row.enabled"
           :disabled="row.terms_status !== 'approved'"
-          @change="(v: boolean) => toggle(row, v)"
+          @change="(v: string | number | boolean) => toggle(row, Boolean(v))"
         />
       </template>
     </el-table-column>
-    <el-table-column label="上次结果" width="130">
+    <el-table-column label="上次结果" width="120">
       <template #default="{ row }">
         {{ row.last_status ? RUN_STATUS_LABEL[row.last_status] : '—' }}
         <span v-if="row.consecutive_failures" style="color: #f56c6c">
-          (连续失败 {{ row.consecutive_failures }} 次)
+          (失败 {{ row.consecutive_failures }})
         </span>
       </template>
     </el-table-column>
-    <el-table-column label="下次运行" width="170">
+    <el-table-column label="下次运行" width="155">
       <template #default="{ row }">{{ fmt(row.next_run_at) }}</template>
     </el-table-column>
-    <el-table-column label="操作" width="300" fixed="right">
+    <el-table-column label="操作" width="280" fixed="right">
       <template #default="{ row }">
         <el-button link type="primary" @click="decideTerms(row, 'approved')">确认条款</el-button>
         <el-button link type="danger" @click="decideTerms(row, 'rejected')">否决</el-button>
@@ -174,7 +221,7 @@ onMounted(load)
     </el-table-column>
   </el-table>
 
-  <el-dialog v-model="createDialog" title="新增采集站点" width="560px">
+  <el-dialog v-model="createDialog" title="新增采集站点" width="580px">
     <el-form label-width="110px">
       <el-form-item label="国家代码"><el-input v-model="form.country_code" maxlength="2" /></el-form-item>
       <el-form-item label="发布机构"><el-input v-model="form.publisher" /></el-form-item>

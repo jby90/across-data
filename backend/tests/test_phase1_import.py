@@ -7,8 +7,8 @@ from sqlalchemy import select
 
 from app.ingestion.archive import ArchiveStore
 from app.ingestion.models import Clause, Document, DocumentVersion
-from app.ingestion.phase1_import import import_phase1
-from app.sources.models import SourceSite
+from app.ingestion.phase1_import import EGAZETTE_INDEX_URL, import_phase1
+from app.sources.models import SourceSite, Strategy
 
 from .helpers import make_pdf
 
@@ -183,3 +183,73 @@ async def test_import_rejects_tampered_file_without_touching_archive(session_fac
         assert len(versions) == 1  # 哈希不一致的那份没有进库
     stored = [p for p in (tmp_path / "archive").rglob("*") if p.is_file()]
     assert len(stored) == 1
+
+
+async def test_import_consolidates_multiple_egazette_pdfs_into_single_site(
+    session_factory, tmp_path
+):
+    """新加坡电子宪报的多份 PDF 原文应归入同一个检索目录站点,不能生成多行同名站点。"""
+    data = tmp_path / "phase1_gaz"
+    (data / "current").mkdir(parents=True)
+    (data / "SG").mkdir()
+    pdf1 = make_pdf([["1. First regulation text."]])
+    pdf2 = make_pdf([["1. Second regulation text."]])
+    h1, h2 = hashlib.sha256(pdf1).hexdigest(), hashlib.sha256(pdf2).hexdigest()
+    (data / "SG" / f"{h1}.pdf").write_bytes(pdf1)
+    (data / "SG" / f"{h2}.pdf").write_bytes(pdf2)
+
+    sources = [
+        {
+            "id": "sg-gaz-1",
+            "country_code": "SG",
+            "title": "Personal Data Protection Regulations 2021",
+            "publisher": "Singapore Government Gazette",
+            "language": "en",
+            "source_url": "https://assets.egazette.gov.sg/2021/063.pdf",
+            "document_type": "REGULATION",
+        },
+        {
+            "id": "sg-gaz-2",
+            "country_code": "SG",
+            "title": "Road Traffic (Autonomous Motor Vehicles) Rules 2017",
+            "publisher": "Singapore Government Gazette",
+            "language": "en",
+            "source_url": "https://assets.egazette.gov.sg/2017/464.pdf",
+            "document_type": "REGULATION",
+        },
+    ]
+    versions = [
+        {"id": "1", "source_id": "sg-gaz-1", "content_hash": h1},
+        {"id": "2", "source_id": "sg-gaz-2", "content_hash": h2},
+    ]
+    metas = [
+        {"source_id": "sg-gaz-1", "official_index_url": EGAZETTE_INDEX_URL},
+        {"source_id": "sg-gaz-2", "official_index_url": EGAZETTE_INDEX_URL},
+    ]
+    for name, obj in [("sources", sources), ("versions", versions), ("source-metadata", metas)]:
+        (data / "current" / f"{name}.json").write_text(json.dumps(obj), encoding="utf-8")
+
+    # 先模拟库里已经存在旧版按单份 PDF 拆开的遗留站点
+    async with session_factory() as s:
+        old = SourceSite(
+            country_code="SG",
+            publisher="Singapore Government Gazette",
+            language="en",
+            document_type="REGULATION",
+            entry_url="https://assets.egazette.gov.sg/2021/063.pdf",
+            strategy=Strategy.DIRECT.value,
+            config={},
+        )
+        s.add(old)
+        await s.commit()
+
+    report = await import_phase1(data, "SG", session_factory, ArchiveStore(tmp_path / "archive"))
+    assert report.documents_new == 2 and report.versions_new == 2
+
+    async with session_factory() as s:
+        sites = (await s.execute(select(SourceSite))).scalars().all()
+        assert len(sites) == 1
+        assert sites[0].entry_url == EGAZETTE_INDEX_URL
+        assert sites[0].strategy == Strategy.EGAZETTE.value
+        docs = (await s.execute(select(Document))).scalars().all()
+        assert len(docs) == 2 and all(d.site_id == sites[0].id for d in docs)

@@ -117,6 +117,8 @@ export interface SiteOut {
   terms_url: string | null
   terms_note: string | null
   terms_decided_at: string | null
+  document_count: number
+  sample_titles: string[]
 }
 
 export interface RunOut {
@@ -225,6 +227,7 @@ export const DOC_TYPE_LABEL: Record<string, string> = {
 export const STRATEGY_LABEL: Record<string, string> = {
   INDEX_PAGE: '目录页发现',
   DIRECT: '直接链接',
+  EGAZETTE: '电子宪报检索发现',
 }
 export const PARSE_STRATEGY_LABEL: Record<string, string> = {
   numbered: '按条款编号',

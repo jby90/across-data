@@ -114,6 +114,8 @@ class SiteOut(BaseModel):
     terms_note: str | None
     terms_decided_by: uuid.UUID | None
     terms_decided_at: datetime | None
+    document_count: int = 0
+    sample_titles: list[str] = Field(default_factory=list)
 
 
 class RunOut(BaseModel):

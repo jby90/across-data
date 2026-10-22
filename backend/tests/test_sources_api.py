@@ -181,6 +181,12 @@ async def test_documents_api_after_real_ingest(client, seed, session_factory, tm
     runs = (await client.get(f"/api/admin/sites/{sid}/runs", headers=h)).json()
     assert len(runs) == 1 and runs[0]["versions_new"] == 2
 
+    # 站点列表返回该站点下已发现的文档数量与示例标题,方便管理端一眼区分同名发布机构
+    sites_list = (await client.get("/api/admin/sites?country_code=sg", headers=h)).json()
+    assert len(sites_list) == 1
+    assert sites_list[0]["document_count"] == 2
+    assert set(sites_list[0]["sample_titles"]) == {"Data Act", "Guide page"}
+
     reviewer_h = bearer(await login(client, "admin", "reviewer@example.com"))  # 复核员可读文档
     docs = (await client.get("/api/admin/documents?country_code=sg", headers=reviewer_h)).json()
     assert len(docs) == 2 and all(d["latest_version"]["state"] == "parsed" for d in docs)
