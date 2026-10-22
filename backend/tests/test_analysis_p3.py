@@ -391,3 +391,12 @@ async def test_chat_llm_extraction_must_quote_user_words(client, seed, monkeypat
     assert _last_assistant(d)["slot"] == "exterior_video_and_gnss"
     # 模型编造的、不在用户原话里的片段被丢弃
     assert "retention_and_blackbox" not in d["facts"]
+
+
+def test_model_json_with_bad_backslash_escape_is_repaired():
+    from app.analysis.llm import parse_model_json
+
+    raw = '{"summary": "路径 C:\\data 与 \\u4e2d 文", "findings": []}'
+    data = parse_model_json(raw)
+    assert data["summary"].startswith("路径 C:\\data")
+    assert parse_model_json('```json\n{"a": 1}\n```') == {"a": 1}

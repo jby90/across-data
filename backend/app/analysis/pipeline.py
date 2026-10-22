@@ -517,7 +517,7 @@ async def _compile(
             )
         gap: str | None = None
         if r.get("error"):
-            gap = f"模型调用失败,未生成该维度分析:{r['error']}"
+            gap = "模型调用失败,未生成该维度分析,结论待核查,请稍后重新分析(技术细节见协同过程)"
         elif not dim_cands.get(code):
             gap = "已归档法源中未检索到与该维度相关的可用条款(待核查)"
         elif not good:
