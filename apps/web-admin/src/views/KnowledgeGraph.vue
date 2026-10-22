@@ -51,6 +51,8 @@ const NODE_TYPE_META: Record<string, { label: string; color: string; col: number
   PENALTY: { label: '违规罚则', color: '#be123c', col: 5 },
 }
 
+const ALL_NODE_TYPES = Object.keys(NODE_TYPE_META)
+
 const RELATION_LABEL: Record<string, string> = {
   PUBLISHES: '发布',
   AMENDS: '修订',
@@ -69,6 +71,7 @@ const RELATION_LABEL: Record<string, string> = {
 const countryCode = ref('SG')
 const onlyApproved = ref(false)
 const relationFilter = ref('')
+const visibleNodeTypes = ref<string[]>([...ALL_NODE_TYPES])
 const loading = ref(false)
 const graph = ref<GraphPayload>({
   country_code: 'SG',
@@ -78,14 +81,63 @@ const graph = ref<GraphPayload>({
   edges: [],
 })
 
-const filteredEdges = computed(() =>
-  relationFilter.value
-    ? graph.value.edges.filter((e) => e.relation_type === relationFilter.value)
-    : graph.value.edges,
-)
-
 const maxEdges = ref(300)
 const selectedId = ref('')
+
+function isTypeVisible(ntype: string): boolean {
+  return visibleNodeTypes.value.includes(ntype)
+}
+
+function toggleNodeType(ntype: string) {
+  const idx = visibleNodeTypes.value.indexOf(ntype)
+  if (idx >= 0) {
+    if (visibleNodeTypes.value.length <= 1) {
+      ElMessage.warning('请至少保留 1 类节点显示')
+      return
+    }
+    visibleNodeTypes.value = visibleNodeTypes.value.filter((t) => t !== ntype)
+    const sel = graph.value.nodes.find((n) => n.id === selectedId.value)
+    if (sel && sel.node_type === ntype) {
+      selectedId.value = ''
+    }
+  } else {
+    visibleNodeTypes.value = [...visibleNodeTypes.value, ntype]
+  }
+}
+
+function showAllNodeTypes() {
+  visibleNodeTypes.value = [...ALL_NODE_TYPES]
+}
+
+function hideHubNodeTypes() {
+  visibleNodeTypes.value = ['INSTRUMENT', 'OBLIGATION', 'DATA_CATEGORY', 'PENALTY']
+  const sel = graph.value.nodes.find((n) => n.id === selectedId.value)
+  if (sel && !visibleNodeTypes.value.includes(sel.node_type)) {
+    selectedId.value = ''
+  }
+}
+
+// 先按可见节点类型过滤边（要求源节点与目标节点类型均处于显示状态）
+const typeFilteredEdges = computed(() => {
+  const vis = new Set(visibleNodeTypes.value)
+  return graph.value.edges.filter(
+    (e) => vis.has(e.source_node_type) && vis.has(e.target_node_type),
+  )
+})
+
+const visibleEdgeCountsByRelation = computed(() => {
+  const counts: Record<string, number> = {}
+  for (const e of typeFilteredEdges.value) {
+    counts[e.relation_type] = (counts[e.relation_type] || 0) + 1
+  }
+  return counts
+})
+
+const filteredEdges = computed(() =>
+  relationFilter.value
+    ? typeFilteredEdges.value.filter((e) => e.relation_type === relationFilter.value)
+    : typeFilteredEdges.value,
+)
 
 // 力导向图：同一对节点、同一关系由多条条款支撑时合并为一条边（标签显示条款数）；
 // 合并后仍过多时按连接度优先保留 Top-N；下方明细表仍展示全部证据边
@@ -147,13 +199,14 @@ const fgEdges = computed(() =>
 )
 
 const fgNodes = computed(() => {
+  const vis = new Set(visibleNodeTypes.value)
   const degree: Record<string, number> = {}
   for (const e of graphEdgesRaw.value) {
     degree[e.source] = (degree[e.source] || 0) + 1
     degree[e.target] = (degree[e.target] || 0) + 1
   }
   return graph.value.nodes
-    .filter((n) => degree[n.id])
+    .filter((n) => vis.has(n.node_type) && degree[n.id])
     .map((n) => ({ id: n.id, name: n.name_zh, type: n.node_type, degree: degree[n.id] }))
 })
 
@@ -171,6 +224,7 @@ const selectedName = computed(
 function onNodeClick(id: string) {
   selectedId.value = selectedId.value === id ? '' : id
 }
+
 async function loadGraph() {
   loading.value = true
   try {
@@ -220,7 +274,7 @@ onMounted(loadGraph)
       <div>
         <h2 style="margin: 0">六要素 · 十二类语义关系法规知识图谱</h2>
         <div class="sub">
-          每条语义关系边均強制挂载证据条款原文摘录；结构包含关系（文件包含条款）独立存储，不混入语义边统计。
+          每条语义关系边均强制挂载证据条款原文摘录；结构包含关系（文件包含条款）独立存储，不混入语义边统计。
         </div>
       </div>
       <div style="display: flex; gap: 10px; align-items: center">
@@ -238,23 +292,86 @@ onMounted(loadGraph)
       </div>
     </div>
 
-    <!-- 六要素统计卡片 -->
+    <!-- 六要素统计卡片（点击可直接切换该类节点的显示/隐藏） -->
     <div class="stat-grid">
-      <div v-for="(meta, ntype) in NODE_TYPE_META" :key="ntype" class="stat-card">
-        <div class="stat-label" :style="{ color: meta.color }">{{ meta.label }} ({{ ntype }})</div>
+      <div
+        v-for="(meta, ntype) in NODE_TYPE_META"
+        :key="ntype"
+        class="stat-card"
+        :class="{ 'stat-card-hidden': !isTypeVisible(ntype) }"
+        :style="{ borderColor: isTypeVisible(ntype) ? meta.color : '#dcdfe6' }"
+        :data-testid="`kg-stat-card-${ntype}`"
+        @click="toggleNodeType(ntype)"
+      >
+        <div class="stat-head">
+          <span class="stat-label" :style="{ color: meta.color }">
+            {{ meta.label }} ({{ ntype }})
+          </span>
+          <el-tag
+            size="small"
+            :type="isTypeVisible(ntype) ? 'success' : 'info'"
+            effect="plain"
+          >
+            {{ isTypeVisible(ntype) ? '显示中' : '已隐藏' }}
+          </el-tag>
+        </div>
         <div class="stat-num">{{ graph.node_counts_by_type[ntype] || 0 }}</div>
       </div>
     </div>
 
+    <!-- 按节点类型显示/隐藏控制栏 -->
+    <div
+      class="filter-row"
+      data-testid="kg-node-type-filter-bar"
+    >
+      <span class="sub" style="font-weight: 600">按节点类型显示/隐藏：</span>
+      <el-tag
+        v-for="(meta, ntype) in NODE_TYPE_META"
+        :key="ntype"
+        :effect="isTypeVisible(ntype) ? 'dark' : 'plain'"
+        :style="{
+          cursor: 'pointer',
+          backgroundColor: isTypeVisible(ntype) ? meta.color : '#f4f4f5',
+          borderColor: isTypeVisible(ntype) ? meta.color : '#d4d7de',
+          color: isTypeVisible(ntype) ? '#ffffff' : '#909399',
+          textDecoration: isTypeVisible(ntype) ? 'none' : 'line-through',
+        }"
+        :data-testid="`kg-node-type-tag-${ntype}`"
+        @click="toggleNodeType(ntype)"
+      >
+        {{ isTypeVisible(ntype) ? '✓ ' : '✕ ' }}{{ meta.label }} ({{
+          graph.node_counts_by_type[ntype] || 0
+        }})
+      </el-tag>
+      <el-button
+        size="small"
+        plain
+        data-testid="kg-hide-hub-btn"
+        @click="hideHubNodeTypes"
+      >
+        隐藏枢纽节点（国家/监管机构）
+      </el-button>
+      <el-button
+        v-if="visibleNodeTypes.length < ALL_NODE_TYPES.length"
+        size="small"
+        type="primary"
+        plain
+        data-testid="kg-show-all-types-btn"
+        @click="showAllNodeTypes"
+      >
+        显示全部 6 类要素 ({{ visibleNodeTypes.length }}/6)
+      </el-button>
+    </div>
+
     <!-- 十二类关系筛选标签 -->
-    <div style="margin: 12px 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
-      <span class="sub">十二类语义关系筛选：</span>
+    <div class="filter-row">
+      <span class="sub" style="font-weight: 600">十二类语义关系筛选：</span>
       <el-tag
         :type="relationFilter === '' ? 'primary' : 'info'"
         style="cursor: pointer"
         @click="relationFilter = ''"
       >
-        全部 ({{ graph.edges.length }})
+        全部 ({{ typeFilteredEdges.length }})
       </el-tag>
       <el-tag
         v-for="(label, rtype) in RELATION_LABEL"
@@ -263,7 +380,7 @@ onMounted(loadGraph)
         style="cursor: pointer"
         @click="relationFilter = rtype"
       >
-        {{ label }} ({{ graph.edge_counts_by_relation[rtype] || 0 }})
+        {{ label }} ({{ visibleEdgeCountsByRelation[rtype] || 0 }})
       </el-tag>
     </div>
 
@@ -271,7 +388,9 @@ onMounted(loadGraph)
     <div class="graph-canvas">
       <div class="graph-tools">
         <span class="sub">
-          图中展示 {{ fgNodes.length }} 个节点 / {{ fgEdges.length }} 条关系（合并自 {{ filteredEdges.length }} 条证据边）；滚轮缩放、拖拽节点、点击节点筛选下方明细。绿线=已复核，灰线=待复核
+          图中展示 {{ fgNodes.length }} 个节点 / {{ fgEdges.length }} 条关系（合并自
+          {{ filteredEdges.length }} 条可见证据边，已启用
+          {{ visibleNodeTypes.length }}/6 类节点）；滚轮缩放、拖拽节点、点击节点或底部图例可筛选。绿线=已复核，灰线=待复核
         </span>
         <span class="sub">最多显示边数：</span>
         <el-select v-model="maxEdges" size="small" style="width: 90px" data-testid="kg-max-edges">
@@ -288,13 +407,22 @@ onMounted(loadGraph)
         :nodes="fgNodes"
         :edges="fgEdges"
         :categories="fgCategories"
+        :visible-types="visibleNodeTypes"
         :selected-id="selectedId"
         height="560px"
         @node-click="onNodeClick"
+        @toggle-type="toggleNodeType"
       />
     </div>
     <!-- 语义关系边与证据条款明细表 -->
-    <el-table data-testid="kg-edge-table" :data="tableEdges" v-loading="loading" border stripe style="margin-top: 14px">
+    <el-table
+      data-testid="kg-edge-table"
+      :data="tableEdges"
+      v-loading="loading"
+      border
+      stripe
+      style="margin-top: 14px"
+    >
       <el-table-column label="源要素节点" min-width="180">
         <template #default="{ row }">
           <el-tag size="small" effect="plain">
@@ -371,10 +499,27 @@ onMounted(loadGraph)
   gap: 10px;
 }
 .stat-card {
-  border: 1px solid #e4e7ed;
+  border: 1.5px solid #e4e7ed;
   border-radius: 6px;
   padding: 10px 12px;
   background: #fafafa;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.stat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+.stat-card-hidden {
+  opacity: 0.48;
+  background: #f4f4f5;
+}
+.stat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
 }
 .stat-label {
   font-size: 12px;
@@ -384,6 +529,13 @@ onMounted(loadGraph)
   font-size: 22px;
   font-weight: 700;
   margin-top: 4px;
+}
+.filter-row {
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
 }
 .graph-tools {
   display: flex;

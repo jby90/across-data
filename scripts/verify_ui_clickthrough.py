@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """真实浏览器端到端手点模拟自检脚本(Playwright + 本机 Chrome)。
 
 每次功能开发完成后运行本脚本:
@@ -117,13 +117,31 @@ async def verify_admin_portal(browser, creds: dict, bad_responses: list[str], pa
     # 切换最多显示边数 -> 画布仍应正常
     await page.locator("[data-testid=kg-max-edges]").click()
     await page.locator(".el-select-dropdown__item", has_text="300").last.click()
-    await page.wait_for_timeout(1500)
+    await page.wait_for_timeout(1200)
+
+    # 测试「按节点类型显示/隐藏」：点击隐藏枢纽节点（国家/监管机构）并截图
+    await page.locator("[data-testid=kg-hide-hub-btn]").click()
+    await page.wait_for_timeout(1800)
+    tools_text = await page.locator(".graph-tools").inner_text()
+    assert "4/6 类节点" in tools_text, f"隐藏枢纽节点后未更新为 4/6 类节点: {tools_text}"
+    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "kg_force_no_hubs.png"))
+
+    # 点击六要素统计卡片切换「数据类型」显隐，再点击「显示全部 6 类要素」恢复
+    await page.locator("[data-testid=kg-stat-card-DATA_CATEGORY]").click()
+    await page.wait_for_timeout(400)
+    tools_text_after_card = await page.locator(".graph-tools").inner_text()
+    assert "3/6 类节点" in tools_text_after_card, f"点击卡片后未更新为 3/6 类节点: {tools_text_after_card}"
+    await page.locator("[data-testid=kg-show-all-types-btn]").click()
+    await page.wait_for_timeout(800)
+    tools_text_restored = await page.locator(".graph-tools").inner_text()
+    assert "6/6 类节点" in tools_text_restored, f"恢复全部要素后未更新为 6/6 类节点: {tools_text_restored}"
+
     # 点击关系筛选标签
     await page.locator(".el-tag", has_text="数据出境限制").first.click()
     await page.wait_for_timeout(300)
     await page.locator(".el-tag", has_text="全部").first.click()
     await page.wait_for_timeout(300)
-    await _assert_no_error_toast(page, "图谱关系筛选")
+    await _assert_no_error_toast(page, "图谱节点类型与关系筛选")
 
     await context.close()
 

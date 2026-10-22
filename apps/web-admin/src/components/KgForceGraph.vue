@@ -24,10 +24,14 @@ const props = defineProps<{
   nodes: FgNode[]
   edges: FgEdge[]
   categories: FgCategory[]
+  visibleTypes?: string[]
   selectedId?: string
   height?: string
 }>()
-const emit = defineEmits<{ (e: 'node-click', id: string): void }>()
+const emit = defineEmits<{
+  (e: 'node-click', id: string): void
+  (e: 'toggle-type', nodeType: string): void
+}>()
 
 const host = ref<HTMLDivElement | null>(null)
 const canvas = ref<HTMLDivElement | null>(null)
@@ -36,6 +40,10 @@ let observer: ResizeObserver | null = null
 
 function buildOption(): echarts.EChartsOption {
   const showEdgeLabel = props.edges.length <= 40
+  const selectedLegend: Record<string, boolean> = {}
+  for (const c of props.categories) {
+    selectedLegend[c.name] = !props.visibleTypes || props.visibleTypes.includes(c.type)
+  }
   const data = props.nodes.map((n) => {
     const selected = n.id === props.selectedId
     return {
@@ -44,7 +52,7 @@ function buildOption(): echarts.EChartsOption {
       category: props.categories.findIndex((c) => c.type === n.type),
       symbolSize: selected ? 34 : Math.min(40, 12 + Math.sqrt(n.degree) * 4),
       itemStyle: selected ? { borderColor: '#0f172a', borderWidth: 3 } : undefined,
-      label: { show: n.type === 'COUNTRY' || n.degree >= 8 || selected },
+      label: { show: n.type === 'COUNTRY' || n.degree >= 6 || selected },
     }
   })
   const links = props.edges.map((e) => ({
@@ -65,9 +73,10 @@ function buildOption(): echarts.EChartsOption {
     legend: [
       {
         data: props.categories.map((c) => c.name),
+        selected: selectedLegend,
         bottom: 0,
-        itemWidth: 10,
-        itemHeight: 10,
+        itemWidth: 12,
+        itemHeight: 12,
         textStyle: { color: '#475569' },
       },
     ],
@@ -102,12 +111,20 @@ async function render() {
     chart.on('click', (p: any) => {
       if (p.dataType === 'node') emit('node-click', String(p.data.id))
     })
+    chart.on('legendselectchanged', (p: any) => {
+      const cat = props.categories.find((c) => c.name === p?.name)
+      if (cat) emit('toggle-type', cat.type)
+    })
   }
   chart.setOption(buildOption(), true)
   chart.resize()
 }
 
-watch(() => [props.nodes, props.edges, props.selectedId], render)
+watch(
+  () => [props.nodes, props.edges, props.selectedId, props.visibleTypes],
+  () => render(),
+  { deep: true },
+)
 
 onMounted(() => {
   if (typeof ResizeObserver !== 'undefined' && host.value) {
@@ -126,7 +143,7 @@ onUnmounted(() => {
 <template>
   <div ref="host" class="kg-force" :style="{ height: height || '520px' }" data-testid="kg-force-graph">
     <div ref="canvas" class="canvas"></div>
-    <div v-if="!nodes.length" class="empty">暂无图谱数据，请先点击「重新抽取本国图谱」</div>
+    <div v-if="!nodes.length" class="empty">当前筛选条件下暂无关联节点，可开启更多节点类型或切换关系筛选</div>
   </div>
 </template>
 
