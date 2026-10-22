@@ -161,3 +161,26 @@ class ReportVersion(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class AnalysisMessage(Base):
+    """分析对话消息:用户与助手的逐轮问答(信息采集全部在对话里完成)。"""
+
+    __tablename__ = "analysis_messages"
+    __table_args__ = (UniqueConstraint("task_id", "seq_no", name="uq_analysis_msg_seq"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    task_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("analysis_tasks.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    seq_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    role: Mapped[str] = mapped_column(String(16), nullable=False)  # user / assistant
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    options_json: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    slot: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )

@@ -9,8 +9,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.analysis.benchmarks import run_retrieval_benchmarks
+from app.analysis.chat import PLACEHOLDER_COUNTRY, post_user_message, start_chat
 from app.analysis.models import (
     AgentWorkflowConfig,
+    AnalysisMessage,
     AnalysisStepTrace,
     AnalysisTask,
     ReportVersion,
@@ -25,6 +27,8 @@ from app.analysis.schemas import (
     AnalysisTaskDetailOut,
     AnalysisTaskSummaryOut,
     BenchmarkSummaryOut,
+    ChatMessageIn,
+    ChatMessageOut,
     DimensionDiffItemOut,
     FollowUpQuestionOut,
     ReportDiffOut,
@@ -214,7 +218,30 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
 
     _, evaluated_missing = evaluate_fact_sufficiency(t.country_code, t.facts_json or {})
 
+    msgs = list(
+        (
+            await session.execute(
+                select(AnalysisMessage)
+                .where(AnalysisMessage.task_id == t.id)
+                .order_by(AnalysisMessage.seq_no.asc())
+            )
+        )
+        .scalars()
+        .all()
+    )
     return AnalysisTaskDetailOut(
+        messages=[
+            ChatMessageOut(
+                id=m.id,
+                seq_no=m.seq_no,
+                role=m.role,
+                content=m.content,
+                options=list(m.options_json or []),
+                slot=m.slot,
+                created_at=m.created_at,
+            )
+            for m in msgs
+        ],
         id=t.id,
         title=t.title,
         country_code=t.country_code,
@@ -862,6 +889,45 @@ async def get_clause_citation_card(
         "review_status": tr.review_status if tr else "pending_review",
         "mini_graph": mini_graph.model_dump(mode="json"),
     }
+
+
+@user_router.post("/chats", response_model=AnalysisTaskDetailOut, status_code=201)
+async def create_chat(user: UserDep, session: SessionDep) -> AnalysisTaskDetailOut:
+    """新建一次对话式评估:助手先问候,并开始逐项提问。"""
+    task = AnalysisTask(
+        org_id=user.org_id,
+        created_by=user.user_id,
+        title="新对话",
+        country_code=PLACEHOLDER_COUNTRY,
+        vehicle_model="",
+        scenario_type="",
+        status="collecting_facts",
+        facts_json={},
+        missing_facts_json=[],
+        sufficiency_score=0,
+    )
+    session.add(task)
+    await session.commit()
+    await session.refresh(task)
+    await start_chat(session, task)
+    await session.refresh(task)
+    return await _to_task_detail(session, task)
+
+
+@user_router.post("/tasks/{task_id}/messages", response_model=AnalysisTaskDetailOut)
+async def post_chat_message(
+    task_id: uuid.UUID,
+    body: ChatMessageIn,
+    user: UserDep,
+    session: SessionDep,
+) -> AnalysisTaskDetailOut:
+    """用户在聊天框发送一条消息:助手记录信息、继续追问,齐备后自动启动分析。"""
+    task = await session.get(AnalysisTask, task_id)
+    if task is None or task.org_id != user.org_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="对话不存在")
+    await post_user_message(session, task, body.content, _start)
+    await session.refresh(task)
+    return await _to_task_detail(session, task)
 
 
 @user_router.get("/benchmarks", response_model=BenchmarkSummaryOut)

@@ -282,3 +282,112 @@ def test_verify_finding_checks_substring_and_numbers():
         {"quote": "不存在的引用片段不存在的引用片段", "obligation": ""}, PENALTY_TEXT
     )
     assert bad2 is False and any("连续子串" in i for i in issues2)
+
+
+async def _send(client, hdr, task_id, text):
+    r = await client.post(
+        f"/api/analysis/tasks/{task_id}/messages", headers=hdr, json={"content": text}
+    )
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def _last_assistant(detail):
+    return [m for m in detail["messages"] if m["role"] == "assistant"][-1]
+
+
+async def test_chat_collects_everything_then_runs_and_reports(
+    client, seed, session_factory, monkeypatch
+):
+    from app.analysis import pipeline
+
+    await _seed_sg_corpus(session_factory)
+    monkeypatch.setattr(pipeline, "call_llm_json", _fake_llm_factory(bad_first=False))
+    hdr = bearer(await login(client, "user", "a-member@example.com"))
+    other = bearer(await login(client, "user", "b-admin@example.com"))
+
+    created = await client.post("/api/analysis/chats", headers=hdr)
+    assert created.status_code == 201
+    d = created.json()
+    tid = d["id"]
+    assert d["status"] == "collecting_facts"
+    assert [m["role"] for m in d["messages"]] == ["assistant", "assistant"]
+    q = _last_assistant(d)
+    assert q["slot"] == "country_code" and len(q["options"]) == 5
+
+    # 答非所问:不推进,重新追问同一个问题
+    d = await _send(client, hdr, tid, "随便聊聊天气")
+    q = _last_assistant(d)
+    assert q["slot"] == "country_code" and "没有识别出国家" in q["content"]
+
+    d = await _send(client, hdr, tid, "新加坡 (SG)")
+    assert d["country_code"] == "SG" and _last_assistant(d)["slot"] == "vehicle_model"
+    d = await _send(client, hdr, tid, "CYS-Pilot L4 自动驾驶 SUV")
+    assert _last_assistant(d)["slot"] == "scenario_type"
+    d = await _send(client, hdr, tid, "L3/L4 自动驾驶公共道路测试与远程监控回传")
+    assert d["scenario_type"] == "autonomous_trial"
+    assert "CYS-Pilot" in d["title"]
+    assert _last_assistant(d)["slot"] == "exterior_video_and_gnss"
+
+    # 太简短的回答被要求补充,不会被当作事实
+    d = await _send(client, hdr, tid, "有")
+    assert "简略" in _last_assistant(d)["content"]
+    assert d["facts"] == {}
+
+    for text in FACTS.values():
+        d = await _send(client, hdr, tid, text)
+    assert d["status"] == "running"
+    assert "信息已经齐备" in _last_assistant(d)["content"]
+    # 运行中再发消息:只提示进度,不重复启动
+    d = await _send(client, hdr, tid, "好了吗")
+    assert "进行中" in _last_assistant(d)["content"]
+
+    done = await _wait_done(client, hdr, tid)
+    assert done["status"] in ("completed", "partial_sample")
+    assert done["report_versions"] and done["findings"]
+    d = await _send(client, hdr, tid, "谢谢")
+    assert "报告已经生成" in _last_assistant(d)["content"]
+
+    # 其他企业无法读取或写入这个对话
+    deny = await client.post(
+        f"/api/analysis/tasks/{tid}/messages", headers=other, json={"content": "x"}
+    )
+    assert deny.status_code == 404
+
+
+async def test_chat_llm_extraction_must_quote_user_words(client, seed, monkeypatch):
+    import types
+
+    from app.analysis import chat
+
+    text = "我们打算把 CYS-Pilot L4 自动驾驶 SUV 拿到新加坡做公共道路自动驾驶路测,请帮忙评估合规"
+
+    async def fake(messages, **_kw):
+        from app.analysis.llm import LlmResult
+
+        return LlmResult(
+            data={
+                "slots": {
+                    "country_code": "新加坡",
+                    "vehicle_model": "CYS-Pilot L4 自动驾驶 SUV",
+                    "scenario_type": "公共道路自动驾驶路测",
+                    "retention_and_blackbox": "这句话用户根本没说过",
+                }
+            },
+            prompt_tokens=1,
+            completion_tokens=1,
+            duration_ms=1,
+            model="fake",
+        )
+
+    monkeypatch.setattr(chat, "call_llm_json", fake)
+    monkeypatch.setattr(chat, "get_settings", lambda: types.SimpleNamespace(llm_api_key="x"))
+    hdr = bearer(await login(client, "user", "a-member@example.com"))
+    created = (await client.post("/api/analysis/chats", headers=hdr)).json()
+    d = await _send(client, hdr, created["id"], text)
+    # 一句话里回答了 3 个问题,助手直接跳到第一个事实问题
+    assert d["country_code"] == "SG" and d["scenario_type"] == "autonomous_trial"
+    assert d["vehicle_model"] == "CYS-Pilot L4 自动驾驶 SUV"
+    assert _last_assistant(d)["slot"] == "exterior_video_and_gnss"
+    # 模型编造的、不在用户原话里的片段被丢弃
+    assert "retention_and_blackbox" not in d["facts"]

@@ -19,7 +19,7 @@ const router = createRouter({
         {
           path: 'analysis',
           name: 'analysis',
-          component: () => import('./views/ComplianceAnalysis.vue'),
+          component: () => import('./views/ChatAnalysis.vue'),
         },
         {
           path: 'members',

@@ -265,55 +265,85 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     await page.wait_for_timeout(1200)
     await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_compliance_map.png"))
 
-    print("[9/10] 用户端「合规分析与八维报告」:新建评估 → 真实模型分析 → 页面4/5/6 ...")
-    await page.locator(".el-menu-item", has_text="合规分析与八维报告").click()
+    print("[9/10] 用户端「合规评估助手」:全程在聊天框里回答问题 → 真实模型分析 ...")
+    await page.locator(".el-menu-item", has_text="合规评估助手").click()
     await page.wait_for_load_state("networkidle")
-    await page.wait_for_timeout(800)
-    await _assert_no_error_toast(page, "用户端合规分析工作台")
+    await page.wait_for_timeout(1000)
+    await _assert_no_error_toast(page, "进入合规评估助手")
 
-    async def wait_finished(label: str, timeout_s: int = 240) -> None:
-        for _ in range(timeout_s // 2):
-            await page.wait_for_timeout(2000)
-            if await page.locator("[data-testid=task-running-tag]").count() == 0:
-                return
-        raise RuntimeError(f"{label}: 分析超时未结束")
+    assistant = page.locator("[data-testid=chat-msg-assistant]")
+    send_btn = page.locator("[data-testid=chat-send]")
+    box = page.locator("textarea[data-testid=chat-input], [data-testid=chat-input] textarea").first
 
-    await page.locator("[data-testid=btn-new-analysis-task]").click()
-    await page.wait_for_timeout(400)
-    await page.locator("[data-testid=btn-confirm-create-task]").click()
-    await page.wait_for_timeout(1500)
-    await _assert_no_error_toast(page, "创建评估任务")
-    # 分析是后台运行的:界面应出现「进行中」标签,而不是一直转圈或直接给结论
-    assert await page.locator("[data-testid=task-running-tag]").count() == 1, "未显示运行中状态"
-    await wait_finished("预填事实任务")
-    await _assert_no_error_toast(page, "分析完成")
+    async def say(text: str) -> None:
+        before = await assistant.count()
+        await box.fill(text)
+        await send_btn.click()
+        for _ in range(60):
+            await page.wait_for_timeout(500)
+            if await assistant.count() > before:
+                break
+        await _assert_no_error_toast(page, f"发送「{text[:12]}」")
 
-    findings_rows = await page.locator(
-        "[data-testid=compliance-findings-table] .el-table__row"
-    ).count()
-    assert findings_rows >= 3, f"五列合规矩阵行数不足: {findings_rows}"
-    await page.locator("[data-testid=finding-clause-link]").first.click()
+    async def last_text() -> str:
+        return await assistant.last.inner_text()
+
+    # 新建一次对话,助手先问候并提出第一个问题(目标国家)
+    await page.locator("[data-testid=btn-new-chat]").click()
     await page.wait_for_timeout(1200)
-    await _assert_no_error_toast(page, "点击适用条款查看原文与图谱")
+    assert await assistant.count() >= 2, "新对话没有出现助手问候与首个问题"
+    assert await page.locator("[data-testid=chat-option-chip]").count() == 5, "国家选项应为 5 个"
+    # 无关的回答不会被当成国家
+    await say("随便聊聊天气")
+    assert "没有识别出国家" in await last_text()
+    # 点选国家 → 直接发送
+    await page.locator("[data-testid=chat-option-chip]", has_text="新加坡").click()
+    for _ in range(20):
+        await page.wait_for_timeout(500)
+        if "车型" in await last_text():
+            break
+    assert "车型" in await last_text(), await last_text()
+    await say("CYS-Pilot L4 自动驾驶 SUV")
+    assert "场景" in await last_text()
+    await page.locator("[data-testid=chat-option-chip]", has_text="自动驾驶公共道路测试").click()
+    await page.wait_for_timeout(2500)
+    # 事实类问题:太简短会被要求补充
+    await say("有")
+    assert "简略" in await last_text()
+    # 示例回答只填入输入框,由用户改写后再发送
+    for i in range(5):
+        chip = page.locator("[data-testid=chat-option-chip]").first
+        await chip.click()
+        filled = await box.input_value()
+        assert len(filled) > 6, "点击示例后输入框没有被填入"
+        before = await assistant.count()
+        await send_btn.click()
+        for _ in range(60):
+            await page.wait_for_timeout(500)
+            if await assistant.count() > before:
+                break
+        await _assert_no_error_toast(page, f"回答第 {i + 1} 个事实问题")
+    assert await page.locator("[data-testid=task-running-tag]").count() == 1, "未进入分析中状态"
+
+    # 等待后台分析结束,聊天里出现报告卡片
+    for _ in range(150):
+        await page.wait_for_timeout(2000)
+        if await page.locator("[data-testid=report-card]").count() == 1:
+            break
+    assert await page.locator("[data-testid=report-card]").count() == 1, "分析超时,没有出现报告卡片"
+    await _assert_no_error_toast(page, "报告生成")
+
+    print("[10/10] 在聊天里查看报告、溯源引用并导出 Word/PDF ...")
+    chapters = await page.locator("[data-testid^=report-chapter-]").count()
+    assert chapters == 8, f"报告应有 8 个维度: {chapters}"
+    await page.locator("[data-testid=report-chapter-D3]").locator(".el-collapse-item__header").click()
+    await page.wait_for_timeout(400)
+    await page.locator("[data-testid=report-citation-badge]:visible").first.click()
+    await page.wait_for_timeout(1200)
+    await _assert_no_error_toast(page, "点击引用角标")
     drawer_text = await page.locator("[data-testid=citation-detail-drawer]").inner_text()
     assert "官方原文" in drawer_text and "术语受控中文对照" in drawer_text
     await page.keyboard.press("Escape")
-    await page.wait_for_timeout(400)
-
-    print("[10/10] 页面5(整份/拆分/导出)与页面6(真实过程)+ 追问补充闭环 ...")
-    tabs = page.locator("[data-testid=analysis-subpage-tabs]")
-    await tabs.get_by_text("页面5 · 八维度国别报告").click()
-    await page.wait_for_timeout(800)
-    assert await page.locator(".dimension-chapter-card").count() == 8
-    await page.locator("[data-testid=report-view-mode-switch]").get_by_text(
-        "按维度独立拆分查看"
-    ).click()
-    await page.wait_for_timeout(400)
-    assert await page.locator(".dimension-chapter-card").count() == 1
-    await page.locator("[data-dimension-code=D3]").click()
-    await page.locator("[data-testid=report-view-mode-switch]").get_by_text(
-        "整份八维度完整报告"
-    ).click()
     await page.wait_for_timeout(400)
     async with page.expect_download() as dl:
         await page.locator("[data-testid=btn-export-docx]").click()
@@ -321,32 +351,10 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     async with page.expect_download() as dl2:
         await page.locator("[data-testid=btn-export-pdf]").click()
     assert (await dl2.value).suggested_filename.endswith(".pdf")
-    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_8dim_report.png"))
-
-    await tabs.get_by_text("页面6 · 多智能体协同过程").click()
-    await page.wait_for_timeout(600)
-    steps = await page.locator("[data-testid=agent-process-timeline] .timeline-step-card").count()
-    assert steps >= 6, f"协同过程步骤过少: {steps}"
-    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_agent_trace.png"))
-
-    # 追问闭环:新建仅 1 项事实的任务 → 逐项点选补充 → 提交 → 后台分析
-    await page.locator("[data-testid=btn-new-analysis-task]").click()
-    await page.wait_for_timeout(400)
-    await page.get_by_text("仅填 1 项事实").click()
-    await page.locator("[data-testid=btn-confirm-create-task]").click()
-    await page.wait_for_timeout(1500)
-    await tabs.get_by_text("页面4 · 合规分析工作台").click()
-    await page.wait_for_timeout(500)
-    assert await page.locator("[data-testid=compliance-findings-table]").count() == 0
-    cards = page.locator("[data-testid=followup-questions-panel] .question-item:not(.fulfilled)")
-    for i in range(await cards.count()):
-        await cards.nth(i).locator(".opt-chip").first.click()
-    await page.locator("[data-testid=btn-submit-followup-facts]").click()
-    await page.wait_for_timeout(1500)
-    await _assert_no_error_toast(page, "提交追问补充事实")
-    assert await page.locator("[data-testid=task-running-tag]").count() == 1
-    await wait_finished("追问补充任务")
-    await _assert_no_error_toast(page, "追问任务分析完成")
+    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_chat_report.png"))
+    # 报告生成后继续发消息,助手只提示报告已可导出
+    await say("谢谢")
+    assert "报告已经生成" in await last_text()
 
     await context.close()
 

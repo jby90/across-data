@@ -22,7 +22,7 @@ function logout() {
       <el-menu :default-active="route.path" router>
         <el-menu-item index="/">概览</el-menu-item>
         <el-menu-item index="/knowledge">法规知识库</el-menu-item>
-        <el-menu-item index="/analysis">合规分析与八维报告</el-menu-item>
+        <el-menu-item index="/analysis">合规评估助手</el-menu-item>
         <el-menu-item v-if="isOrgAdmin" index="/members">成员管理</el-menu-item>
       </el-menu>
     </el-aside>

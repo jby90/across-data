@@ -205,6 +205,20 @@ class AnalysisTaskSummaryOut(BaseModel):
     updated_at: datetime
 
 
+class ChatMessageOut(BaseModel):
+    id: uuid.UUID
+    seq_no: int
+    role: str
+    content: str
+    options: list[str] = Field(default_factory=list)
+    slot: str | None = None
+    created_at: datetime
+
+
+class ChatMessageIn(BaseModel):
+    content: str = Field(min_length=1, max_length=2000)
+
+
 class AnalysisTaskDetailOut(BaseModel):
     id: uuid.UUID
     title: str
@@ -225,6 +239,7 @@ class AnalysisTaskDetailOut(BaseModel):
     mcp_calls_count: int
     backtrack_count: int
     workflow_version_no: int
+    messages: list[ChatMessageOut] = Field(default_factory=list)
     created_at: datetime
     updated_at: datetime
 
