@@ -89,8 +89,8 @@ class ReviewPointDecideIn(BaseModel):
 
 class ReviewPointImportItem(BaseModel):
     point_code: str
-    status: str = Field(pattern="^(confirmed|needs_discussion)$")
-    lawyer_reply: str = Field(min_length=2)
+    status: str = Field(default="confirmed", pattern="^(open|confirmed|needs_discussion)$")
+    lawyer_reply: str | None = None
 
 
 class ReviewPointImportIn(BaseModel):

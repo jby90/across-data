@@ -83,15 +83,23 @@ const filteredEdges = computed(() =>
     : graph.value.edges,
 )
 
-// 将六要素节点按列排布在交互式 SVG 画布中，直观呈现「国家 -> 监管机构 -> 法规 -> 义务 -> 数据类型 -> 罚则」拓扑
+// 将六要素节点按列排布在交互式 SVG 画布中，优先展示当前筛选关系下连接度最高的节点
 const layoutNodes = computed(() => {
+  const degree: Record<string, number> = {}
+  for (const e of filteredEdges.value) {
+    degree[e.source_node_id] = (degree[e.source_node_id] || 0) + 1
+    degree[e.target_node_id] = (degree[e.target_node_id] || 0) + 1
+  }
   const byType: Record<string, KgNode[]> = {}
   for (const n of graph.value.nodes) {
     ;(byType[n.node_type] ||= []).push(n)
   }
   const positioned: Array<KgNode & { x: number; y: number; color: string }> = []
   for (const [ntype, meta] of Object.entries(NODE_TYPE_META)) {
-    const list = (byType[ntype] || []).slice(0, 10)
+    const list = (byType[ntype] || [])
+      .slice()
+      .sort((a, b) => (degree[b.id] || 0) - (degree[a.id] || 0))
+      .slice(0, 10)
     const x = 95 + meta.col * 175
     list.forEach((n, idx) => {
       const y = 65 + idx * (320 / Math.max(1, list.length))
@@ -111,11 +119,12 @@ const posById = computed(() => {
 
 const layoutEdges = computed(() => {
   const out: Array<KgEdge & { x1: number; y1: number; x2: number; y2: number }> = []
-  for (const e of filteredEdges.value.slice(0, 60)) {
+  for (const e of filteredEdges.value) {
     const p1 = posById.value[e.source_node_id]
     const p2 = posById.value[e.target_node_id]
     if (p1 && p2) {
       out.push({ ...e, x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y })
+      if (out.length >= 80) break
     }
   }
   return out

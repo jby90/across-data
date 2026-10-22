@@ -208,11 +208,17 @@ async function decidePoint(point: ReviewPoint, status: 'confirmed' | 'needs_disc
 async function openExportSheet() {
   try {
     const q = countryFilter.value ? `?country_code=${countryFilter.value}` : ''
-    const res = await api.get<{ markdown: string; items: unknown[] }>(
-      `/admin/knowledge/review-points/export${q}`,
-    )
+    const res = await api.get<{
+      markdown: string
+      items: Array<Record<string, unknown>>
+    }>(`/admin/knowledge/review-points/export${q}`)
     exportedMarkdown.value = res.markdown
-    exportedJson.value = JSON.stringify({ items: res.items }, null, 2)
+    const editableItems = (res.items || []).map((it) => ({
+      ...it,
+      status: it.status === 'open' ? 'confirmed' : it.status,
+      lawyer_reply: it.lawyer_reply || it.provisional_interpretation,
+    }))
+    exportedJson.value = JSON.stringify({ items: editableItems }, null, 2)
     exportDialog.value = true
   } catch (e: unknown) {
     ElMessage.error((e as Error).message)

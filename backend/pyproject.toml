@@ -28,8 +28,9 @@ dev = [
     "httpx>=0.27",
     "ruff>=0.5",
     "pip-licenses>=5.0",
-    # 仅开发/测试使用的嵌入式 PostgreSQL,不进入生产镜像
+    # 仅开发/测试使用的嵌入式 PostgreSQL 与浏览器端到端自检,不进入生产镜像
     "pgserver>=0.1.4",
+    "playwright>=1.48",
 ]
 
 [build-system]

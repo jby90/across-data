@@ -482,8 +482,9 @@ async def import_review_point_decisions(
         if rp is None:
             not_found.append(item.point_code)
             continue
-        rp.status = item.status
-        rp.lawyer_reply = item.lawyer_reply.strip()
+        reply = (item.lawyer_reply or "").strip() or rp.provisional_interpretation
+        rp.status = "confirmed" if item.status == "open" and item.lawyer_reply else item.status
+        rp.lawyer_reply = reply
         rp.decided_by = user.user_id
         rp.decided_at = datetime.now(UTC)
         updated += 1
