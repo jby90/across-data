@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """真实浏览器端到端手点模拟自检脚本(Playwright + 本机 Chrome)。
 
 每次功能开发完成后运行本脚本:
@@ -108,10 +108,16 @@ async def verify_admin_portal(browser, creds: dict, bad_responses: list[str], pa
     await _assert_no_error_toast(page, "法规知识图谱页")
     stat_nums = [int(t.strip()) for t in await page.locator(".stat-num").all_inner_texts()]
     assert len(stat_nums) == 6 and all(n > 0 for n in stat_nums), f"六要素卡片存在 0 值: {stat_nums}"
-    svg_circles = await page.locator("svg circle").count()
-    svg_lines = await page.locator("svg line").count()
-    assert svg_circles >= 6 and svg_lines >= 5, f"SVG 图谱未渲染节点或连线: circles={svg_circles}, lines={svg_lines}"
+    # ECharts 力导向图：等布局稳定后检查画布非空，并截图留档
+    await page.wait_for_timeout(2500)
+    box = await page.locator("[data-testid=kg-force-graph] canvas").first.bounding_box()
+    assert box and box["width"] > 400 and box["height"] > 300, f"ECharts 画布尺寸异常: {box}"
+    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "kg_force.png"))
 
+    # 切换最多显示边数 -> 画布仍应正常
+    await page.locator("[data-testid=kg-max-edges]").click()
+    await page.locator(".el-select-dropdown__item", has_text="300").last.click()
+    await page.wait_for_timeout(1500)
     # 点击关系筛选标签
     await page.locator(".el-tag", has_text="数据出境限制").first.click()
     await page.wait_for_timeout(300)

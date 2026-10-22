@@ -2,6 +2,7 @@
 import { ElMessage } from 'element-plus'
 import { computed, onMounted, ref } from 'vue'
 import { api } from '../api'
+import KgForceGraph from '../components/KgForceGraph.vue'
 
 interface KgNode {
   id: string
@@ -83,53 +84,93 @@ const filteredEdges = computed(() =>
     : graph.value.edges,
 )
 
-// 将六要素节点按列排布在交互式 SVG 画布中，优先展示当前筛选关系下连接度最高的节点
-const layoutNodes = computed(() => {
-  const degree: Record<string, number> = {}
-  for (const e of filteredEdges.value) {
-    degree[e.source_node_id] = (degree[e.source_node_id] || 0) + 1
-    degree[e.target_node_id] = (degree[e.target_node_id] || 0) + 1
-  }
-  const byType: Record<string, KgNode[]> = {}
-  for (const n of graph.value.nodes) {
-    ;(byType[n.node_type] ||= []).push(n)
-  }
-  const positioned: Array<KgNode & { x: number; y: number; color: string }> = []
-  for (const [ntype, meta] of Object.entries(NODE_TYPE_META)) {
-    const list = (byType[ntype] || [])
-      .slice()
-      .sort((a, b) => (degree[b.id] || 0) - (degree[a.id] || 0))
-      .slice(0, 10)
-    const x = 95 + meta.col * 175
-    list.forEach((n, idx) => {
-      const y = 65 + idx * (320 / Math.max(1, list.length))
-      positioned.push({ ...n, x, y, color: meta.color })
-    })
-  }
-  return positioned
-})
+const maxEdges = ref(300)
+const selectedId = ref('')
 
-const posById = computed(() => {
-  const map: Record<string, { x: number; y: number }> = {}
-  for (const n of layoutNodes.value) {
-    map[n.id] = { x: n.x, y: n.y }
-  }
-  return map
-})
-
-const layoutEdges = computed(() => {
-  const out: Array<KgEdge & { x1: number; y1: number; x2: number; y2: number }> = []
+// 力导向图：同一对节点、同一关系由多条条款支撑时合并为一条边（标签显示条款数）；
+// 合并后仍过多时按连接度优先保留 Top-N；下方明细表仍展示全部证据边
+interface MergedEdge {
+  source: string
+  target: string
+  relation: string
+  count: number
+  approved: boolean
+}
+const mergedEdges = computed<MergedEdge[]>(() => {
+  const map = new Map<string, MergedEdge>()
   for (const e of filteredEdges.value) {
-    const p1 = posById.value[e.source_node_id]
-    const p2 = posById.value[e.target_node_id]
-    if (p1 && p2) {
-      out.push({ ...e, x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y })
-      if (out.length >= 80) break
+    const key = `${e.source_node_id}|${e.target_node_id}|${e.relation_type}`
+    const cur = map.get(key)
+    if (cur) {
+      cur.count += 1
+      cur.approved = cur.approved && e.usable_as_legal_basis
+    } else {
+      map.set(key, {
+        source: e.source_node_id,
+        target: e.target_node_id,
+        relation: e.relation_type,
+        count: 1,
+        approved: e.usable_as_legal_basis,
+      })
     }
   }
-  return out
+  return [...map.values()]
 })
 
+const graphEdgesRaw = computed(() => {
+  const edges = mergedEdges.value
+  if (edges.length <= maxEdges.value) return edges
+  const degree: Record<string, number> = {}
+  for (const e of edges) {
+    degree[e.source] = (degree[e.source] || 0) + 1
+    degree[e.target] = (degree[e.target] || 0) + 1
+  }
+  return edges
+    .slice()
+    .sort((a, b) => degree[b.source] + degree[b.target] - (degree[a.source] + degree[a.target]))
+    .slice(0, maxEdges.value)
+})
+
+const fgCategories = Object.entries(NODE_TYPE_META).map(([type, m]) => ({
+  type,
+  name: m.label,
+  color: m.color,
+}))
+
+const fgEdges = computed(() =>
+  graphEdgesRaw.value.map((e) => ({
+    source: e.source,
+    target: e.target,
+    label: (RELATION_LABEL[e.relation] || e.relation) + (e.count > 1 ? ` ×${e.count}` : ''),
+    approved: e.approved,
+  })),
+)
+
+const fgNodes = computed(() => {
+  const degree: Record<string, number> = {}
+  for (const e of graphEdgesRaw.value) {
+    degree[e.source] = (degree[e.source] || 0) + 1
+    degree[e.target] = (degree[e.target] || 0) + 1
+  }
+  return graph.value.nodes
+    .filter((n) => degree[n.id])
+    .map((n) => ({ id: n.id, name: n.name_zh, type: n.node_type, degree: degree[n.id] }))
+})
+
+const tableEdges = computed(() =>
+  selectedId.value
+    ? filteredEdges.value.filter(
+        (e) => e.source_node_id === selectedId.value || e.target_node_id === selectedId.value,
+      )
+    : filteredEdges.value,
+)
+const selectedName = computed(
+  () => graph.value.nodes.find((n) => n.id === selectedId.value)?.name_zh || '',
+)
+
+function onNodeClick(id: string) {
+  selectedId.value = selectedId.value === id ? '' : id
+}
 async function loadGraph() {
   loading.value = true
   try {
@@ -226,44 +267,34 @@ onMounted(loadGraph)
       </el-tag>
     </div>
 
-    <!-- 交互式六要素分层拓扑图 -->
+    <!-- ECharts 力导向知识图谱 -->
     <div class="graph-canvas">
-      <svg viewBox="0 0 1080 390" style="width: 100%; height: 370px">
-        <g v-for="(meta, ntype) in NODE_TYPE_META" :key="ntype">
-          <text
-            :x="95 + meta.col * 175"
-            y="24"
-            text-anchor="middle"
-            font-size="12"
-            font-weight="600"
-            :fill="meta.color"
-          >
-            {{ meta.label }}
-          </text>
-        </g>
-        <g v-for="e in layoutEdges" :key="e.id">
-          <line
-            :x1="e.x1"
-            :y1="e.y1"
-            :x2="e.x2"
-            :y2="e.y2"
-            :stroke="e.usable_as_legal_basis ? '#16a34a' : '#94a3b8'"
-            :stroke-dasharray="e.usable_as_legal_basis ? 'none' : '4 3'"
-            stroke-width="1.5"
-            opacity="0.7"
-          />
-        </g>
-        <g v-for="n in layoutNodes" :key="n.id">
-          <circle :cx="n.x" :cy="n.y" r="10" :fill="n.color" />
-          <text :x="n.x" :y="n.y + 22" text-anchor="middle" font-size="11" fill="#1e293b">
-            {{ n.name_zh.length > 14 ? n.name_zh.slice(0, 14) + '…' : n.name_zh }}
-          </text>
-        </g>
-      </svg>
+      <div class="graph-tools">
+        <span class="sub">
+          图中展示 {{ fgNodes.length }} 个节点 / {{ fgEdges.length }} 条关系（合并自 {{ filteredEdges.length }} 条证据边）；滚轮缩放、拖拽节点、点击节点筛选下方明细。绿线=已复核，灰线=待复核
+        </span>
+        <span class="sub">最多显示边数：</span>
+        <el-select v-model="maxEdges" size="small" style="width: 90px" data-testid="kg-max-edges">
+          <el-option :value="60" label="60" />
+          <el-option :value="150" label="150" />
+          <el-option :value="300" label="300" />
+          <el-option :value="600" label="600" />
+        </el-select>
+        <el-tag v-if="selectedId" closable type="warning" @close="selectedId = ''">
+          已选：{{ selectedName }}
+        </el-tag>
+      </div>
+      <KgForceGraph
+        :nodes="fgNodes"
+        :edges="fgEdges"
+        :categories="fgCategories"
+        :selected-id="selectedId"
+        height="560px"
+        @node-click="onNodeClick"
+      />
     </div>
-
     <!-- 语义关系边与证据条款明细表 -->
-    <el-table :data="filteredEdges" v-loading="loading" border stripe style="margin-top: 14px">
+    <el-table data-testid="kg-edge-table" :data="tableEdges" v-loading="loading" border stripe style="margin-top: 14px">
       <el-table-column label="源要素节点" min-width="180">
         <template #default="{ row }">
           <el-tag size="small" effect="plain">
@@ -353,6 +384,13 @@ onMounted(loadGraph)
   font-size: 22px;
   font-weight: 700;
   margin-top: 4px;
+}
+.graph-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 4px 6px 8px;
 }
 .graph-canvas {
   border: 1px solid #e4e7ed;
