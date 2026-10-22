@@ -1,0 +1,12 @@
+/* 字体:不依赖也不分发系统字体。先使用已自托管的开源字体(见 docs/compliance/FONTS.md,待入库),
+   未加载时由访问者设备上已安装的字体回退显示(仅显示,不嵌入、不分发)。 */
+:root {
+  --cy-font: 'Noto Sans SC', 'Source Han Sans CN', 'Inter', system-ui, sans-serif;
+}
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  font-family: var(--cy-font);
+}

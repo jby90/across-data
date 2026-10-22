@@ -1,0 +1,12 @@
+{
+  "name": "cyshuhe",
+  "private": true,
+  "packageManager": "pnpm@10.33.2",
+  "scripts": {
+    "dev:user": "pnpm --filter @cyshuhe/web-user dev",
+    "dev:admin": "pnpm --filter @cyshuhe/web-admin dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck"
+  }
+}
+

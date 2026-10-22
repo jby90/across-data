@@ -1,0 +1,58 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --python 3.12
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest -q
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm build
+
+  licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: 依赖许可证门禁(Python + JS;命中禁止级或未知则失败)
+        working-directory: backend
+        run: |
+          uv sync --python 3.12
+          uv run python ../scripts/check_licenses.py --js ../apps/web-user ../apps/web-admin
+      - name: 生成 SBOM(CycloneDX)
+        working-directory: backend
+        run: |
+          uv export --no-dev --no-hashes -o /tmp/requirements.txt
+          uvx --from cyclonedx-bom cyclonedx-py requirements /tmp/requirements.txt -o /tmp/sbom-backend.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: /tmp/sbom-backend.json

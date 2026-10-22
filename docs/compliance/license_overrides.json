@@ -1,0 +1,7 @@
+{
+  "py:pgserver": {
+    "license": "Apache-2.0",
+    "approved_by": "待法务/负责人确认",
+    "note": "PyPI 元数据未标注许可证;已读取包内 LICENSE 文件确认为 Apache-2.0(2026-10-22)。仅测试使用,不进入生产镜像。"
+  }
+}
