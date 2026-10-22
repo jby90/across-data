@@ -17,11 +17,13 @@ function logout() {
 
 <template>
   <el-container style="height: 100%">
-    <el-aside width="200px" style="border-right: 1px solid #e4e7ed">
+    <el-aside width="210px" style="border-right: 1px solid #e4e7ed">
       <div class="brand">车研数合 · 管理端</div>
       <el-menu :default-active="route.path" router>
         <el-menu-item index="/">概览</el-menu-item>
         <el-menu-item index="/documents">法规文档库</el-menu-item>
+        <el-menu-item index="/review-queue">术语与律所复核</el-menu-item>
+        <el-menu-item index="/knowledge-graph">法规知识图谱</el-menu-item>
         <template v-if="isPlatformAdmin">
           <el-menu-item index="/sites">采集站点</el-menu-item>
           <el-menu-item index="/orgs">企业管理</el-menu-item>

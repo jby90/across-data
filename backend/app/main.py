@@ -5,6 +5,12 @@ from app import models_registry  # noqa: F401
 from app.core.config import get_settings
 from app.iam.router import admin_router, auth_router, user_router
 from app.ingestion.router import router as documents_router
+from app.knowledge.router import (
+    admin_router as knowledge_admin_router,
+)
+from app.knowledge.router import (
+    user_router as knowledge_user_router,
+)
 from app.sources.router import router as sites_router
 
 
@@ -35,6 +41,8 @@ def create_app() -> FastAPI:
     app.include_router(user_router)
     app.include_router(sites_router)
     app.include_router(documents_router)
+    app.include_router(knowledge_admin_router)
+    app.include_router(knowledge_user_router)
     return app
 
 

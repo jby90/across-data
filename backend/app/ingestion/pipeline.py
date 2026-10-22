@@ -249,6 +249,24 @@ async def parse_version(
                 message=f"{len(drafts)} 条,策略 {strategy}",
             )
         )
+        if version.version_no > 1:
+            await session.flush()
+            from app.knowledge.extractor import handle_new_version_linkage
+
+            link_res = await handle_new_version_linkage(session, version)
+            if any(link_res.values()):
+                session.add(
+                    PipelineEvent(
+                        version_id=version.id,
+                        step="linkage",
+                        status="ok",
+                        message=(
+                            f"版本更新联动: 复用未变译文 {link_res['reused_translations']} 条, "
+                            f"失效旧译文 {link_res['stale_translations']} 条, "
+                            f"失效图谱边 {link_res['stale_edges']} 条"
+                        ),
+                    )
+                )
     except Exception as e:  # noqa: BLE001 - 单个版本失败不能拖垮整次运行
         version.state = VersionState.FAILED.value
         version.error = f"{type(e).__name__}: {e}"[:2000]

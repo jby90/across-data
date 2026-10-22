@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     # 代理软件的 fake-IP 模式会把所有域名解析到 198.18.0.0/15,此时可设为 ["198.18.0.0/15"]
     crawl_allow_resolved_cidrs: list[str] = []
 
+    # 可插拔大模型适配层(OpenAI 兼容接口);未配置密钥时使用本地规则与术语引擎
+    llm_api_key: str | None = None
+    llm_base_url: str = "https://api.deepseek.com/v1"
+    llm_model: str = "deepseek-chat"
+    llm_timeout_seconds: float = 30.0
+
     @field_validator("database_url")
     @classmethod
     def _require_async_driver(cls, v: str) -> str:

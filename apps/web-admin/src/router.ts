@@ -24,6 +24,18 @@ const router = createRouter({
           meta: { roles: ['platform_admin', 'reviewer'] },
         },
         {
+          path: 'review-queue',
+          name: 'review-queue',
+          component: () => import('./views/ReviewQueue.vue'),
+          meta: { roles: ['platform_admin', 'reviewer'] },
+        },
+        {
+          path: 'knowledge-graph',
+          name: 'knowledge-graph',
+          component: () => import('./views/KnowledgeGraph.vue'),
+          meta: { roles: ['platform_admin', 'reviewer'] },
+        },
+        {
           path: 'orgs',
           name: 'orgs',
           component: () => import('./views/Orgs.vue'),
