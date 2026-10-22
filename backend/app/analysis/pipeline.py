@@ -290,7 +290,27 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         f"(完备度 {score}%)",
         calls=list(tb.calls),
         duration_ms=tb.calls[-1].duration_ms,
-        out={"sufficiency_score": score, "missing": pending},
+        inp={
+            "country_code": cc,
+            "vehicle_model": task.vehicle_model,
+            "scenario_type": task.scenario_type,
+            "required_slots_count": len(missing),
+        },
+        out={
+            "sufficiency_score": score,
+            "missing": pending,
+            "collected_facts": dict(task.facts_json or {}),
+            "fact_check_items": [
+                {
+                    "fact_key": m["fact_key"],
+                    "dimension_code": m["dimension_code"],
+                    "question_zh": m["question_zh"],
+                    "value": m.get("current_value") or "",
+                    "is_fulfilled": bool(m.get("is_fulfilled")),
+                }
+                for m in missing
+            ],
+        },
     )
     if pending:
         task.status = "collecting_facts"
@@ -322,8 +342,28 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         ),
         calls=step_calls,
         duration_ms=sum(c.duration_ms for c in step_calls),
-        inp={"country_code": cc},
-        out={"candidates_per_dimension": {k: len(v) for k, v in dim_cands.items()}},
+        inp={
+            "country_code": cc,
+            "dimensions": [code for code, _ in EIGHT_DIMENSIONS_SPEC],
+        },
+        out={
+            "source_availability": availability,
+            "candidates_per_dimension": {k: len(v) for k, v in dim_cands.items()},
+            "retrieved_clauses_by_dimension": {
+                code: [
+                    {
+                        "clause_id": c.clause_id,
+                        "document_title": c.document_title,
+                        "clause_number": c.label,
+                        "version_no": c.version_no,
+                        "review_status": c.review_status,
+                        "snippet": c.text[:260],
+                    }
+                    for c in cands
+                ]
+                for code, cands in dim_cands.items()
+            },
+        },
     )
 
     # ---- 3. 分析(8 个维度并行调用模型) ----
@@ -356,7 +396,41 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         calls=llm_calls,
         tokens=tokens,
         duration_ms=wall,
-        out={"dimensions_analysed": active},
+        inp={
+            "country_code": cc,
+            "vehicle_model": task.vehicle_model,
+            "scenario_type": task.scenario_type,
+            "dimensions_requested": active,
+        },
+        out={
+            "dimensions_analysed": active,
+            "total_findings_drafted": sum(len(r.get("findings", [])) for r in results.values()),
+            "dimension_outputs": {
+                code: {
+                    "dimension_title": dim_titles.get(code, code),
+                    "model": r.get("model", ""),
+                    "tokens": r.get("tokens", 0),
+                    "summary": r.get("summary", ""),
+                    "findings_count": len(r.get("findings", [])),
+                    "findings": [
+                        {
+                            "business_fact": str(f.get("business_fact") or ""),
+                            "clause_id": str(f.get("clause_id") or ""),
+                            "obligation": str(f.get("obligation") or ""),
+                            "risk_level": str(f.get("risk_level") or "MEDIUM"),
+                            "quote": str(f.get("quote") or ""),
+                            "quote_zh": str(f.get("quote_zh") or ""),
+                        }
+                        for f in r.get("findings", [])
+                        if isinstance(f, dict)
+                    ],
+                    "recommendations": list(r.get("recommendations") or []),
+                    "gaps": str(r.get("gaps") or ""),
+                    "error": r.get("error"),
+                }
+                for code, r in results.items()
+            },
+        },
     )
 
     # ---- 4. 核验(程序化子串/数字校验) ----
@@ -364,12 +438,30 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         v0 = asyncio.get_event_loop().time()
         calls: list[ToolCall] = []
         problems: list[str] = []
+        verification_items: list[dict[str, Any]] = []
         for code in codes:
             r = results.get(code)
             if not r or r.get("error"):
                 continue
             c0 = asyncio.get_event_loop().time()
             probs = _verify_dimension(code, r, dim_cands[code])
+            by_id = {c.clause_id: c for c in dim_cands[code]}
+            for f in r.get("findings", []):
+                if not isinstance(f, dict):
+                    continue
+                cand = by_id.get(str(f.get("clause_id")))
+                verification_items.append(
+                    {
+                        "dimension_code": code,
+                        "clause_id": str(f.get("clause_id") or ""),
+                        "document_title": cand.document_title if cand else "未匹配法源",
+                        "clause_number": cand.label if cand else "-",
+                        "obligation": str(f.get("obligation") or ""),
+                        "quote": str(f.get("quote") or ""),
+                        "passed": bool(f.get("_ok")),
+                        "issues": list(f.get("_issues") or []),
+                    }
+                )
             n = len(r.get("findings", []))
             calls.append(
                 ToolCall(
@@ -402,7 +494,13 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             duration_ms=ms,
             is_backtrack=bool(problems),
             reason="\n".join(problems) if problems else None,
-            out={"problems": problems},
+            inp={"dimensions_checked": codes, "phase": phase},
+            out={
+                "verified_passed_count": sum(1 for x in verification_items if x["passed"]),
+                "verified_failed_count": len(problems),
+                "problems": problems,
+                "verification_items": verification_items,
+            },
         )
         return problems
 
@@ -441,6 +539,39 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             duration_ms=int((asyncio.get_event_loop().time() - b0) * 1000),
             is_backtrack=True,
             reason="\n".join(problems),
+            inp={
+                "re_analysed_dimensions": bad_codes,
+                "verifier_feedback": problems,
+            },
+            out={
+                "dimensions_re_analysed": bad_codes,
+                "dimension_outputs": {
+                    code: {
+                        "dimension_title": dim_titles.get(code, code),
+                        "model": results[code].get("model", ""),
+                        "tokens": results[code].get("tokens", 0),
+                        "summary": results[code].get("summary", ""),
+                        "findings_count": len(results[code].get("findings", [])),
+                        "findings": [
+                            {
+                                "business_fact": str(f.get("business_fact") or ""),
+                                "clause_id": str(f.get("clause_id") or ""),
+                                "obligation": str(f.get("obligation") or ""),
+                                "risk_level": str(f.get("risk_level") or "MEDIUM"),
+                                "quote": str(f.get("quote") or ""),
+                                "quote_zh": str(f.get("quote_zh") or ""),
+                            }
+                            for f in results[code].get("findings", [])
+                            if isinstance(f, dict)
+                        ],
+                        "recommendations": list(results[code].get("recommendations") or []),
+                        "gaps": str(results[code].get("gaps") or ""),
+                        "error": results[code].get("error"),
+                    }
+                    for code in bad_codes
+                    if code in results
+                },
+            },
         )
         problems2 = await _verify_round(bad_codes, "re_verification")
         redo.backtrack_resolution = (
@@ -596,7 +727,32 @@ async def _compile(
         ),
         calls=[comp],
         duration_ms=comp.duration_ms,
-        out={"report_version": rv.version_no},
+        inp={
+            "country_code": task.country_code,
+            "vehicle_model": task.vehicle_model,
+            "verified_findings_count": len(findings),
+        },
+        out={
+            "report_version": rv.version_no,
+            "report_status": rv.status,
+            "is_partial_sample": rv.is_partial_sample,
+            "executive_summary": summary,
+            "verified_findings_count": len(findings),
+            "covered_dimensions_count": covered,
+            "dimensions_deliverables": [
+                {
+                    "dimension_code": d["dimension_code"],
+                    "dimension_title": d["dimension_title"],
+                    "status": d["status"],
+                    "risk_level": d["risk_level"],
+                    "citations_count": len(d["citations"]),
+                    "content_markdown": d["content_markdown"],
+                    "key_recommendations": d["key_recommendations"],
+                    "missing_gap_note": d["missing_gap_note"],
+                }
+                for d in dimensions
+            ],
+        },
     )
 
     # ---- 6. 修订联动 ----
@@ -636,6 +792,12 @@ async def _compile(
         summary=link.result_summary,
         calls=[link],
         duration_ms=link.duration_ms,
+        inp={"cited_versions_count": len(cited_versions)},
+        out={
+            "cited_versions_checked": len(cited_versions),
+            "stale_impacts_count": len(impacts),
+            "stale_impacts": impacts,
+        },
     )
     task.status = "completed" if full else "partial_sample"
     task.updated_at = datetime.now(UTC)

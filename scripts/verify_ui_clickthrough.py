@@ -198,11 +198,22 @@ async def verify_admin_portal(browser, creds: dict, bad_responses: list[str], pa
     await page.locator("[data-testid=btn-open-benchmarks]").click()
     await page.wait_for_timeout(800)
     await _assert_no_error_toast(page, "检索命中评测")
+    await page.keyboard.press("Escape")
+    await page.wait_for_timeout(300)
+
+    # 验证实时监控栏与对话工作流历史管理抽屉
+    live_bar = await page.locator("[data-testid=live-monitor-bar]").inner_text()
+    assert "实时" in live_bar and "当前对话 ID" in live_bar, f"实时监控栏未显示: {live_bar}"
+    await page.locator("[data-testid=btn-open-conversation-history]").click()
+    await page.wait_for_timeout(600)
+    await _assert_no_error_toast(page, "打开对话工作流历史管理")
+    await page.keyboard.press("Escape")
+    await page.wait_for_timeout(300)
 
     await context.close()
 
 
-async def verify_user_portal(browser, creds: dict, bad_responses: list[str], page_errors: list[str]) -> None:
+async def verify_user_portal(browser, creds: dict, bad_responses: list[str], page_errors: list[str]) -> str:
     context = await browser.new_context(viewport={"width": 1440, "height": 900})
     page = await context.new_page()
     page.on(
@@ -293,6 +304,19 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     await page.wait_for_timeout(1200)
     assert await assistant.count() >= 2, "新对话没有出现助手问候与首个问题"
     assert await page.locator("[data-testid=chat-option-chip]").count() == 5, "国家选项应为 5 个"
+
+    # 验证对话 ID (CONV-YYYYMMDD-XXXXXXXX) 在顶栏、侧边栏和首条问候消息中一致显示
+    conv_id_raw = (await page.locator("[data-testid=chat-conversation-id]").inner_text()).strip()
+    conv_id_badge = conv_id_raw.replace("对话 ID:", "").strip()
+    assert conv_id_badge.startswith("CONV-"), f"顶栏对话 ID 格式错误: {conv_id_raw}"
+    sidebar_conv_code = (await page.locator("[data-testid=session-conversation-code]").first.inner_text()).strip()
+    assert sidebar_conv_code == conv_id_badge, f"侧边栏对话 ID ({sidebar_conv_code}) 与顶栏 ({conv_id_badge}) 不一致"
+    first_greeting = await assistant.first.inner_text()
+    assert conv_id_badge in first_greeting, f"首条问候消息未包含对话 ID {conv_id_badge}: {first_greeting}"
+    await page.locator("[data-testid=btn-copy-conversation-id]").click()
+    await page.wait_for_timeout(300)
+    await _assert_no_error_toast(page, "复制对话 ID")
+
     # 无关的回答不会被当成国家
     await say("随便聊聊天气")
     assert "没有识别出国家" in await last_text()
@@ -333,7 +357,7 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     assert await page.locator("[data-testid=report-card]").count() == 1, "分析超时,没有出现报告卡片"
     await _assert_no_error_toast(page, "报告生成")
 
-    print("[10/10] 在聊天里查看报告、溯源引用并导出 Word/PDF ...")
+    print("[10/11] 在聊天里查看报告、溯源引用并导出 Word/PDF ...")
     chapters = await page.locator("[data-testid^=report-chapter-]").count()
     assert chapters == 8, f"报告应有 8 个维度: {chapters}"
     await page.locator("[data-testid=report-chapter-D3]").locator(".el-collapse-item__header").click()
@@ -357,6 +381,70 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     assert "报告已经生成" in await last_text()
 
     await context.close()
+    return conv_id_badge
+
+
+async def verify_admin_conversation_history_and_stages(
+    browser, creds: dict, conv_code: str, bad_responses: list[str], page_errors: list[str]
+) -> None:
+    print(f"[11/11] 管理端检索对话 {conv_code} 的工作流历史并展开查看每个环节产出 ...")
+    context = await browser.new_context(viewport={"width": 1440, "height": 900})
+    page = await context.new_page()
+    page.on(
+        "response",
+        lambda r: bad_responses.append(f"ADMIN_STAGE {r.status} {r.url}")
+        if r.status >= 400 and "/api/" in r.url
+        else None,
+    )
+    page.on("pageerror", lambda e: page_errors.append(f"ADMIN_STAGE JS ERROR: {e}"))
+
+    await page.goto("http://localhost:5174/login", wait_until="networkidle")
+    inputs = page.locator("input")
+    await inputs.nth(0).fill("admin@example.com")
+    await inputs.nth(1).fill(creds["users"]["admin@example.com"])
+    await page.get_by_role("button", name="登录").click()
+    await page.wait_for_url("http://localhost:5174/", timeout=10000)
+
+    await page.locator(".el-menu-item", has_text="多Agent编排工作台").click()
+    await page.wait_for_load_state("networkidle")
+    await page.wait_for_timeout(1000)
+
+    # 打开对话工作流历史管理抽屉，按刚生成的 conv_code 搜索
+    await page.locator("[data-testid=btn-open-conversation-history]").click()
+    await page.wait_for_timeout(600)
+    kw_input = page.locator("input[data-testid=conv-history-search], [data-testid=conv-history-search] input").first
+    await kw_input.fill(conv_code)
+    await page.wait_for_timeout(600)
+    await _assert_no_error_toast(page, f"按对话 ID {conv_code} 检索工作流历史")
+
+    table_text = await page.locator("[data-testid=conv-history-table]").inner_text()
+    assert conv_code in table_text, f"管理端工作流历史列表未找到 {conv_code}: {table_text}"
+
+    # 点击「展开各环节产出」抽屉，检查阶段 0 至阶段 6 全流程产出
+    await page.locator("[data-testid=btn-inspect-stages]").first.click()
+    await page.wait_for_timeout(800)
+    await _assert_no_error_toast(page, "展开各环节产出抽屉")
+
+    stage_drawer_text = await page.locator("[data-testid=stage-deliverables-drawer]").inner_text()
+    assert conv_code in stage_drawer_text, f"各环节产出抽屉未显示对话 ID {conv_code}"
+    assert "环节 0 · 对话交互与槽位采集" in stage_drawer_text
+    assert "信息采集与追问 Agent" in stage_drawer_text
+    assert "MCP 法规混合检索 Agent" in stage_drawer_text
+    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "admin_stage_deliverables.png"))
+
+    await page.keyboard.press("Escape")
+    await page.wait_for_timeout(400)
+
+    # 点击「画布跟踪」切换到该对话并在右侧检查器「运行轨迹」Tab 查看本节点产出快照
+    await page.locator("[data-testid=btn-track-on-canvas]").first.click()
+    await page.wait_for_timeout(500)
+    await page.get_by_role("tab", name="运行轨迹").click()
+    await page.wait_for_timeout(400)
+    insp_trace_text = await page.locator("[data-testid=inspector-trace-step-card]").first.inner_text()
+    assert "展开查看本环节详细产出快照" in insp_trace_text
+    await _assert_no_error_toast(page, "检查器运行轨迹与产出快照")
+
+    await context.close()
 
 
 async def main() -> int:
@@ -368,7 +456,10 @@ async def main() -> int:
         browser = await p.chromium.launch(channel="chrome", headless=True)
         try:
             await verify_admin_portal(browser, creds, bad_responses, page_errors)
-            await verify_user_portal(browser, creds, bad_responses, page_errors)
+            conv_code = await verify_user_portal(browser, creds, bad_responses, page_errors)
+            await verify_admin_conversation_history_and_stages(
+                browser, creds, conv_code, bad_responses, page_errors
+            )
         finally:
             await browser.close()
 

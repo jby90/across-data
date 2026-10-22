@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
-import { computed, onMounted, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { api } from '../api'
 
 interface McpToolSchema {
@@ -74,17 +74,33 @@ interface WorkflowVersionSummary {
 
 interface TaskSummary {
   id: string
+  conversation_code: string
+  org_id: string | null
+  org_name: string
+  creator_email: string
+  creator_name: string
   title: string
   country_code: string
   country_name_zh: string
   vehicle_model: string
+  scenario_type: string
   scenario_label: string
   status: string
   sufficiency_score: number
+  missing_facts_count: number
+  messages_count: number
+  steps_count: number
+  current_active_node_id: string | null
+  current_active_node_title: string | null
+  findings_count: number
+  latest_report_version: number
+  is_partial_sample: boolean
   total_tokens: number
   total_duration_ms: number
   mcp_calls_count: number
   backtrack_count: number
+  created_at: string
+  updated_at: string
 }
 
 interface StepTrace {
@@ -111,19 +127,97 @@ interface StepTrace {
   output_snapshot: Record<string, unknown>
   tokens_used: number
   duration_ms: number
+  created_at: string
+}
+
+interface ChatMessageItem {
+  id: string
+  seq_no: number
+  role: string
+  content: string
+  options: string[]
+  slot: string | null
+  created_at: string
+}
+
+interface FollowUpQuestionItem {
+  fact_key: string
+  dimension_code: string
+  question_zh: string
+  why_needed: string
+  current_value: string | null
+  is_fulfilled: boolean
+}
+
+interface FindingItem {
+  finding_id: string
+  dimension_code: string
+  business_fact: string
+  clause_id: string | null
+  document_title: string
+  clause_number: string
+  version_no: number
+  compliance_obligation: string
+  risk_level: string
+  basis_quote: string
+  basis_zh: string
+  verification_status: string
+}
+
+interface ReportVersionItem {
+  id: string
+  version_no: number
+  status: string
+  is_partial_sample: boolean
+  change_note: string
+  executive_summary: string
+  dimensions: Array<{
+    dimension_code: string
+    dimension_title: string
+    status: string
+    risk_level: string
+    content_markdown: string
+    key_recommendations: string[]
+    citations: Array<{
+      citation_tag: string
+      document_title: string
+      clause_number: string
+      quote_original: string
+      quote_zh: string
+    }>
+    missing_gap_note: string | null
+  }>
 }
 
 interface TaskDetail {
   id: string
+  conversation_code: string
+  org_id: string | null
+  org_name: string
+  creator_email: string
+  creator_name: string
+  current_active_node_id: string | null
+  current_active_node_title: string | null
   title: string
   country_code: string
   country_name_zh: string
+  vehicle_model: string
+  scenario_type: string
+  scenario_label: string
   status: string
+  sufficiency_score: number
+  facts: Record<string, string>
+  missing_facts: FollowUpQuestionItem[]
+  findings: FindingItem[]
   step_traces: StepTrace[]
+  report_versions: ReportVersionItem[]
+  messages: ChatMessageItem[]
   total_tokens: number
   total_duration_ms: number
   mcp_calls_count: number
   backtrack_count: number
+  created_at: string
+  updated_at: string
 }
 
 interface BenchmarkSummary {
@@ -145,6 +239,36 @@ interface BenchmarkSummary {
   }>
 }
 
+const STATUS_LABEL_MAP: Record<string, string> = {
+  running: '⚡ 实时运行中',
+  collecting_facts: '💬 对话采集中',
+  ready_to_run: '⏳ 待启动分析',
+  completed: '✅ 已出报告',
+  partial_sample: '⚠️ 部分样稿',
+  failed: '❌ 执行失败',
+}
+
+const STATUS_TAG_TYPE: Record<string, 'primary' | 'success' | 'warning' | 'danger' | 'info'> = {
+  running: 'primary',
+  collecting_facts: 'info',
+  ready_to_run: 'info',
+  completed: 'success',
+  partial_sample: 'warning',
+  failed: 'danger',
+}
+
+const PHASE_LABEL_MAP: Record<string, string> = {
+  fact_check: '环节 1 · 八维度事实完备度核验',
+  retrieval: '环节 2 · MCP 法规混合检索与现行状态核验',
+  analysis: '环节 3 · 八维度合规矩阵模型分析初稿',
+  verification: '环节 4 · 依据原文子串与数字程序化核验',
+  re_analysis: '环节 4b · 质检退回补证重新分析',
+  re_verification: '环节 4c · 补证结论二次程序化核验',
+  compilation: '环节 5 · 八维度国别报告与合规矩阵编制',
+  update_linkage: '环节 6 · 法规修订 72h 影响联动追踪',
+  error: '异常终止',
+}
+
 const loading = ref(false)
 const workflow = ref<WorkflowConfig | null>(null)
 const versions = ref<WorkflowVersionSummary[]>([])
@@ -158,6 +282,19 @@ const selectedNodeId = ref<string>('node_dimension_analyst')
 const inspectorTab = ref<'config' | 'tools' | 'trace'>('config')
 const canvasScale = ref<number>(0.72)
 
+// 实时轮询与对话工作流历史管理状态
+const autoPollEnabled = ref(true)
+const autoFollowRunning = ref(true)
+const conversationHistoryVisible = ref(false)
+const historyFilterStatus = ref<string>('')
+const historyFilterCountry = ref<string>('')
+const historySearchKeyword = ref<string>('')
+
+// 展开查看每个环节产出抽屉
+const stageDeliverablesVisible = ref(false)
+const expandedStageNames = ref<string[]>([])
+const expandedInspectorTraceIds = ref<string[]>([])
+
 // 导入/导出弹窗状态
 const exportDialogVisible = ref(false)
 const exportedDslText = ref('')
@@ -170,6 +307,28 @@ const importing = ref(false)
 const benchmarkDrawerVisible = ref(false)
 const benchmarkData = ref<BenchmarkSummary | null>(null)
 const loadingBenchmarks = ref(false)
+
+const runningTasks = computed(() => tasks.value.filter((t) => t.status === 'running'))
+const collectingTasks = computed(() => tasks.value.filter((t) => t.status === 'collecting_facts'))
+const filteredHistoryTasks = computed(() => {
+  return tasks.value.filter((t) => {
+    if (historyFilterStatus.value && t.status !== historyFilterStatus.value) return false
+    if (historyFilterCountry.value && t.country_code !== historyFilterCountry.value) return false
+    if (historySearchKeyword.value.trim()) {
+      const kw = historySearchKeyword.value.trim().toLowerCase()
+      const hit =
+        (t.conversation_code || '').toLowerCase().includes(kw) ||
+        t.id.toLowerCase().includes(kw) ||
+        (t.title || '').toLowerCase().includes(kw) ||
+        (t.vehicle_model || '').toLowerCase().includes(kw) ||
+        (t.org_name || '').toLowerCase().includes(kw) ||
+        (t.creator_email || '').toLowerCase().includes(kw) ||
+        (t.creator_name || '').toLowerCase().includes(kw)
+      if (!hit) return false
+    }
+    return true
+  })
+})
 
 const NODE_WIDTH = 240
 const NODE_HEIGHT = 148
@@ -300,8 +459,16 @@ async function loadStudioData(versionNo?: number) {
       selectedNodeId.value = wf.nodes[0].node_id
     }
     if (!selectedTaskId.value && taskList.length > 0) {
+      const runningFirst = taskList.find((t) => t.status === 'running')
       const sgCompleted =
-        taskList.find((t) => t.country_code === 'SG' && t.status === 'completed') ||
+        runningFirst ||
+        taskList.find(
+          (t) =>
+            t.country_code === 'SG' &&
+            (t.status === 'completed' || t.status === 'partial_sample') &&
+            t.steps_count > 0,
+        ) ||
+        taskList.find((t) => t.steps_count > 0) ||
         taskList[0]
       selectedTaskId.value = sgCompleted.id
       await loadTaskTrace(sgCompleted.id)
@@ -316,12 +483,147 @@ async function loadStudioData(versionNo?: number) {
 async function loadTaskTrace(taskId: string) {
   if (!taskId) return
   try {
-    selectedTaskDetail.value = await api.get<TaskDetail>(
+    const detail = await api.get<TaskDetail>(
       `/api/admin/agent-studio/tasks/${taskId}`,
     )
+    selectedTaskDetail.value = detail
+    // 如果当前任务正在实时运行中，且开启了自动跟随，自动选中当前活跃节点
+    if (detail.status === 'running' && detail.current_active_node_id && autoFollowRunning.value) {
+      selectedNodeId.value = detail.current_active_node_id
+    }
+    if (expandedStageNames.value.length === 0 && detail.step_traces.length > 0) {
+      expandedStageNames.value = [
+        'stage-chat',
+        ...detail.step_traces.map((tr) => `stage-step-${tr.seq_no}`),
+      ]
+    }
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '加载任务执行轨迹失败')
   }
+}
+
+let pollTimer: number | undefined
+async function pollLiveWorkflows() {
+  if (!autoPollEnabled.value) return
+  try {
+    const list = await api.get<TaskSummary[]>('/api/admin/agent-studio/tasks')
+    tasks.value = list
+    const liveTask = list.find((t) => t.status === 'running')
+    if (liveTask && autoFollowRunning.value && selectedTaskId.value !== liveTask.id) {
+      selectedTaskId.value = liveTask.id
+      await loadTaskTrace(liveTask.id)
+      return
+    }
+    if (selectedTaskId.value) {
+      const curr = list.find((t) => t.id === selectedTaskId.value)
+      if (
+        curr &&
+        (curr.status === 'running' ||
+          curr.status === 'collecting_facts' ||
+          curr.steps_count !== (selectedTaskDetail.value?.step_traces.length || 0) ||
+          curr.status !== selectedTaskDetail.value?.status)
+      ) {
+        await loadTaskTrace(selectedTaskId.value)
+      }
+    }
+  } catch {
+    /* 静默跳过单次轮询网络抖动 */
+  }
+}
+
+async function trackConversationOnCanvas(task: TaskSummary) {
+  selectedTaskId.value = task.id
+  await loadTaskTrace(task.id)
+  if (task.current_active_node_id) {
+    selectedNodeId.value = task.current_active_node_id
+  }
+  conversationHistoryVisible.value = false
+  ElMessage.success(`已切换画布跟踪对话: ${task.conversation_code}`)
+}
+
+async function openStageDeliverables(task?: TaskSummary) {
+  if (task && task.id !== selectedTaskId.value) {
+    selectedTaskId.value = task.id
+    await loadTaskTrace(task.id)
+  }
+  if (selectedTaskDetail.value) {
+    expandedStageNames.value = [
+      'stage-chat',
+      ...selectedTaskDetail.value.step_traces.map((tr) => `stage-step-${tr.seq_no}`),
+    ]
+  }
+  stageDeliverablesVisible.value = true
+}
+
+function expandAllStages() {
+  if (!selectedTaskDetail.value) return
+  expandedStageNames.value = [
+    'stage-chat',
+    ...selectedTaskDetail.value.step_traces.map((tr) => `stage-step-${tr.seq_no}`),
+  ]
+}
+
+function collapseAllStages() {
+  expandedStageNames.value = []
+}
+
+async function copyCode(code: string) {
+  try {
+    await navigator.clipboard.writeText(code)
+    ElMessage.success(`已复制对话 ID: ${code}`)
+  } catch {
+    ElMessage.info(`对话 ID: ${code}`)
+  }
+}
+
+async function rerunTaskWorkflow(task: TaskSummary) {
+  try {
+    const detail = await api.post<TaskDetail>(
+      `/api/admin/agent-studio/tasks/${task.id}/rerun`,
+      {},
+    )
+    selectedTaskId.value = detail.id
+    selectedTaskDetail.value = detail
+    await pollLiveWorkflows()
+    ElMessage.success(`已触发对话 ${task.conversation_code} 的多智能体工作流实时重跑`)
+  } catch (e: unknown) {
+    ElMessage.error((e as Error).message || '触发重跑失败')
+  }
+}
+
+async function deleteTaskRecord(task: TaskSummary) {
+  try {
+    await ElMessageBox.confirm(
+      `确定删除对话工作流记录「${task.conversation_code} (${task.title})」吗？`,
+      '删除对话工作流记录',
+      { type: 'warning', confirmButtonText: '确认删除', cancelButtonText: '取消' },
+    )
+  } catch {
+    return
+  }
+  try {
+    await api.delete(`/api/admin/agent-studio/tasks/${task.id}`)
+    ElMessage.success(`已删除对话记录 ${task.conversation_code}`)
+    const list = await api.get<TaskSummary[]>('/api/admin/agent-studio/tasks')
+    tasks.value = list
+    if (selectedTaskId.value === task.id) {
+      selectedTaskId.value = list[0]?.id || ''
+      if (selectedTaskId.value) {
+        await loadTaskTrace(selectedTaskId.value)
+      } else {
+        selectedTaskDetail.value = null
+      }
+    }
+  } catch (e: unknown) {
+    ElMessage.error((e as Error).message || '删除失败')
+  }
+}
+
+function formatTime(iso?: string): string {
+  if (!iso) return '-'
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return iso
+  return d.toLocaleString('zh-CN', { hour12: false })
 }
 
 async function handleVersionChange(verNo: number) {
@@ -452,6 +754,11 @@ function selectNode(nodeId: string) {
 
 onMounted(() => {
   loadStudioData()
+  pollTimer = window.setInterval(pollLiveWorkflows, 2000)
+})
+
+onUnmounted(() => {
+  if (pollTimer !== undefined) window.clearInterval(pollTimer)
 })
 </script>
 
@@ -504,23 +811,40 @@ onMounted(() => {
         </div>
 
         <div class="task-selector">
-          <span class="ctrl-label">叠加运行轨迹:</span>
+          <span class="ctrl-label">当前跟踪对话:</span>
           <el-select
             v-model="selectedTaskId"
             size="small"
-            style="width: 260px"
+            style="width: 310px"
             data-testid="agent-trace-task-select"
             @change="loadTaskTrace"
           >
             <el-option
               v-for="t in tasks"
               :key="t.id"
-              :label="`[${t.country_code}] ${t.title}`"
+              :label="`${t.conversation_code} · [${t.country_code}] ${t.title} (${STATUS_LABEL_MAP[t.status] || t.status})`"
               :value="t.id"
             />
           </el-select>
         </div>
 
+        <el-button
+          size="small"
+          type="primary"
+          data-testid="btn-open-conversation-history"
+          @click="conversationHistoryVisible = true"
+        >
+          对话工作流历史管理 ({{ tasks.length }})
+        </el-button>
+        <el-button
+          size="small"
+          type="success"
+          data-testid="btn-expand-stage-outputs"
+          :disabled="!selectedTaskDetail"
+          @click="openStageDeliverables()"
+        >
+          展开查看各环节产出 ({{ selectedTaskDetail?.step_traces.length || 0 }} 步)
+        </el-button>
         <el-button
           size="small"
           type="primary"
@@ -550,6 +874,81 @@ onMounted(() => {
       </div>
     </div>
 
+    <!-- 实时运行监控与当前对话工作流状态栏 -->
+    <div class="live-monitor-bar" data-testid="live-monitor-bar">
+      <div class="live-monitor-left">
+        <span class="live-dot" :class="{ active: runningTasks.length > 0 }" />
+        <el-tag
+          size="small"
+          :type="runningTasks.length > 0 ? 'primary' : 'success'"
+          effect="dark"
+          data-testid="live-running-count-badge"
+        >
+          {{
+            runningTasks.length > 0
+              ? `⚡ 实时运行中工作流: ${runningTasks.length} 个`
+              : '🟢 实时监控就绪 (0 个运行中)'
+          }}
+        </el-tag>
+        <el-tag size="small" type="info">
+          对话采集中: {{ collectingTasks.length }} 个
+        </el-tag>
+        <el-tag size="small" type="info">
+          累计对话工作流: {{ tasks.length }} 条
+        </el-tag>
+
+        <template v-if="runningTasks.length > 0">
+          <div class="live-running-pills">
+            <el-button
+              v-for="rt in runningTasks"
+              :key="rt.id"
+              size="small"
+              type="primary"
+              plain
+              data-testid="live-running-task-pill"
+              @click="trackConversationOnCanvas(rt)"
+            >
+              ⚡ {{ rt.conversation_code }} · {{ rt.current_active_node_title || '执行中' }}
+            </el-button>
+          </div>
+        </template>
+      </div>
+
+      <div class="live-monitor-right">
+        <template v-if="selectedTaskDetail">
+          <el-tag
+            size="small"
+            effect="plain"
+            type="primary"
+            data-testid="admin-current-conversation-code"
+          >
+            当前对话 ID: {{ selectedTaskDetail.conversation_code }}
+          </el-tag>
+          <el-tag
+            size="small"
+            :type="STATUS_TAG_TYPE[selectedTaskDetail.status] || 'info'"
+          >
+            {{ STATUS_LABEL_MAP[selectedTaskDetail.status] || selectedTaskDetail.status }}
+          </el-tag>
+          <el-tag
+            v-if="selectedTaskDetail.current_active_node_title"
+            size="small"
+            type="warning"
+            effect="dark"
+            data-testid="canvas-active-node-banner"
+          >
+            当前所在环节: {{ selectedTaskDetail.current_active_node_title }}
+          </el-tag>
+        </template>
+        <el-switch
+          v-model="autoPollEnabled"
+          size="small"
+          active-text="2s实时同步"
+        />
+        <el-button size="small" @click="pollLiveWorkflows">刷新</el-button>
+      </div>
+    </div>
+
     <!-- 主体：左侧 Dify 风格节点连线画布 + 右侧只读详情与轨迹调试栏 -->
     <div class="studio-workspace">
       <!-- 左侧画布 -->
@@ -562,6 +961,9 @@ onMounted(() => {
             连接边: {{ workflow?.edges.length || 0 }} 条（含 1 条退回补证回流边）
           </el-tag>
           <template v-if="selectedTaskDetail">
+            <el-tag size="small" type="primary">
+              对话问答: {{ selectedTaskDetail.messages.length }} 条
+            </el-tag>
             <el-tag size="small" type="primary">
               累计 MCP 工具调用: {{ selectedTaskDetail.mcp_calls_count }} 次
             </el-tag>
@@ -708,6 +1110,12 @@ onMounted(() => {
                 active: selectedNode?.node_id === node.node_id,
                 'has-backtrack':
                   nodeTraceStatsMap.get(node.node_id)?.hasBacktrack,
+                'is-live-running':
+                  selectedTaskDetail?.status === 'running' &&
+                  selectedTaskDetail?.current_active_node_id === node.node_id,
+                'is-collecting':
+                  selectedTaskDetail?.status === 'collecting_facts' &&
+                  selectedTaskDetail?.current_active_node_id === node.node_id,
               }"
               :style="{
                 left: `${node.position_x}px`,
@@ -758,6 +1166,27 @@ onMounted(() => {
                   <span class="meta-key">MCP工具:</span>
                   <span class="meta-val">{{ node.mcp_tools.length }} 个绑定工具</span>
                 </div>
+              </div>
+
+              <!-- 实时运行中指示条 -->
+              <div
+                v-if="
+                  selectedTaskDetail?.status === 'running' &&
+                  selectedTaskDetail?.current_active_node_id === node.node_id
+                "
+                class="node-live-running-banner"
+                data-testid="node-live-running-badge"
+              >
+                ⚡ 实时运行中...
+              </div>
+              <div
+                v-else-if="
+                  selectedTaskDetail?.status === 'collecting_facts' &&
+                  selectedTaskDetail?.current_active_node_id === node.node_id
+                "
+                class="node-collecting-banner"
+              >
+                💬 对话采集中 ({{ selectedTaskDetail.sufficiency_score }}%)
               </div>
 
               <!-- 叠加任务运行耗时与退回状态条 -->
@@ -1003,29 +1432,61 @@ onMounted(() => {
             </div>
           </el-tab-pane>
 
-          <!-- Tab 3: 最近任务运行轨迹观测 -->
+          <!-- Tab 3: 最近任务运行轨迹观测与本环节产出展开 -->
           <el-tab-pane
             :label="`运行轨迹 (${selectedNodeTraces.length})`"
             name="trace"
           >
+            <div v-if="selectedTaskDetail" class="inspector-trace-top">
+              <div>
+                <div style="font-size: 12px; font-weight: 700; color: #0f172a">
+                  对话 ID: {{ selectedTaskDetail.conversation_code }}
+                </div>
+                <div style="font-size: 11.5px; color: #64748b">
+                  {{ selectedTaskDetail.title }} ·
+                  {{ STATUS_LABEL_MAP[selectedTaskDetail.status] || selectedTaskDetail.status }}
+                </div>
+              </div>
+              <el-button
+                size="small"
+                type="success"
+                plain
+                data-testid="btn-inspector-expand-all-stages"
+                @click="openStageDeliverables()"
+              >
+                展开全流程产出
+              </el-button>
+            </div>
+
             <div
               v-if="selectedNodeTraces.length === 0"
               class="empty-state-box"
             >
-              当前选中任务在该节点无执行记录（或任务处于待补充事实阶段）。
+              <template
+                v-if="
+                  selectedTaskDetail?.status === 'running' &&
+                  selectedTaskDetail?.current_active_node_id === selectedNode.node_id
+                "
+              >
+                ⚡ 当前节点正在实时执行中，完成后将立即写入本环节产出与工具调用明细...
+              </template>
+              <template v-else>
+                当前选中任务在该节点无执行记录（或任务处于待补充事实阶段）。
+              </template>
             </div>
             <div
               v-for="tr in selectedNodeTraces"
               :key="tr.id"
               class="trace-step-card"
               :class="{ 'trace-backtrack': tr.is_backtrack }"
+              data-testid="inspector-trace-step-card"
             >
               <div class="trace-step-head">
                 <el-tag
                   size="small"
                   :type="tr.is_backtrack ? 'danger' : 'success'"
                 >
-                  步骤 #{{ tr.seq_no }} · {{ tr.phase }}
+                  步骤 #{{ tr.seq_no }} · {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
                 </el-tag>
                 <span class="trace-metrics">
                   耗时 {{ tr.duration_ms }} ms · {{ tr.tokens_used }} tokens
@@ -1062,21 +1523,491 @@ onMounted(() => {
                 </div>
               </div>
 
-              <div class="snapshot-block">
-                <div>
-                  <strong>输入快照:</strong>
-                  <pre>{{ JSON.stringify(tr.input_snapshot, null, 2) }}</pre>
-                </div>
-                <div>
-                  <strong>输出快照:</strong>
-                  <pre>{{ JSON.stringify(tr.output_snapshot, null, 2) }}</pre>
-                </div>
-              </div>
+              <el-collapse v-model="expandedInspectorTraceIds" style="margin-top: 8px">
+                <el-collapse-item
+                  :name="tr.id"
+                  title="展开查看本环节详细产出快照 (Input & Output)"
+                  data-testid="inspector-step-snapshot-collapse"
+                >
+                  <div class="snapshot-block">
+                    <div>
+                      <strong>输入快照:</strong>
+                      <pre>{{ JSON.stringify(tr.input_snapshot, null, 2) }}</pre>
+                    </div>
+                    <div>
+                      <strong>输出快照:</strong>
+                      <pre>{{ JSON.stringify(tr.output_snapshot, null, 2) }}</pre>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
             </div>
           </el-tab-pane>
         </el-tabs>
       </div>
     </div>
+
+    <!-- 对话产生工作流历史与实时运行监控管理抽屉 -->
+    <el-drawer
+      v-model="conversationHistoryVisible"
+      title="对话工作流历史管理与实时运行监控"
+      size="78%"
+    >
+      <div data-testid="conversation-history-drawer">
+        <div class="history-filter-bar">
+          <el-input
+            v-model="historySearchKeyword"
+            size="small"
+            clearable
+            placeholder="搜索对话 ID (如 CONV-...) / 标题 / 车型 / 企业 / 发起人邮箱"
+            style="width: 320px"
+            data-testid="conv-history-search"
+          />
+          <el-select
+            v-model="historyFilterStatus"
+            size="small"
+            clearable
+            placeholder="按工作流状态筛选"
+            style="width: 170px"
+            data-testid="conv-history-status-select"
+          >
+            <el-option label="全部状态" value="" />
+            <el-option label="⚡ 实时运行中" value="running" />
+            <el-option label="💬 对话采集中" value="collecting_facts" />
+            <el-option label="✅ 已出报告" value="completed" />
+            <el-option label="⚠️ 部分样稿" value="partial_sample" />
+            <el-option label="❌ 执行失败" value="failed" />
+          </el-select>
+          <el-select
+            v-model="historyFilterCountry"
+            size="small"
+            clearable
+            placeholder="按国家筛选"
+            style="width: 140px"
+          >
+            <el-option label="全部国家" value="" />
+            <el-option label="新加坡 (SG)" value="SG" />
+            <el-option label="埃及 (EG)" value="EG" />
+            <el-option label="突尼斯 (TN)" value="TN" />
+            <el-option label="摩洛哥 (MA)" value="MA" />
+            <el-option label="黎巴嫩 (LB)" value="LB" />
+          </el-select>
+          <el-checkbox v-model="autoFollowRunning" size="small">
+            新任务启动时自动跟随画布
+          </el-checkbox>
+          <el-button size="small" type="primary" plain @click="pollLiveWorkflows">
+            立即同步
+          </el-button>
+        </div>
+
+        <el-table
+          :data="filteredHistoryTasks"
+          border
+          stripe
+          size="small"
+          data-testid="conv-history-table"
+        >
+          <el-table-column label="对话 ID" width="210">
+            <template #default="{ row }">
+              <div class="conv-code-cell">
+                <code data-testid="history-row-conv-code">{{ row.conversation_code }}</code>
+                <el-button link type="primary" size="small" @click="copyCode(row.conversation_code)">
+                  复制
+                </el-button>
+              </div>
+              <div class="cell-muted">UUID: {{ row.id.slice(0, 8) }}…</div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="所属企业 / 发起用户" width="180">
+            <template #default="{ row }">
+              <div style="font-weight: 600">{{ row.org_name || '示范企业' }}</div>
+              <div class="cell-muted">
+                {{ row.creator_name || '企业成员' }}
+                <span v-if="row.creator_email">({{ row.creator_email }})</span>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="对话评估标题与场景" min-width="210">
+            <template #default="{ row }">
+              <div style="font-weight: 600">{{ row.title }}</div>
+              <div class="cell-muted">
+                [{{ row.country_code }} {{ row.country_name_zh }}]
+                {{ row.vehicle_model || '待填写车型' }} ·
+                {{ row.scenario_label || '待选择场景' }}
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="工作流状态与当前环节" min-width="220">
+            <template #default="{ row }">
+              <div>
+                <el-tag
+                  size="small"
+                  :type="STATUS_TAG_TYPE[row.status] || 'info'"
+                >
+                  {{ STATUS_LABEL_MAP[row.status] || row.status }}
+                </el-tag>
+                <el-tag size="small" type="info" style="margin-left: 4px">
+                  完备度 {{ row.sufficiency_score }}%
+                </el-tag>
+              </div>
+              <div
+                v-if="row.current_active_node_title"
+                class="cell-active-node"
+              >
+                {{ row.current_active_node_title }}
+              </div>
+              <div v-else class="cell-muted">
+                已完成 {{ row.steps_count }} 个环节 · 结论 {{ row.findings_count }} 条 ·
+                报告 v{{ row.latest_report_version }}
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="对话问答 / 耗时 / Token" width="175">
+            <template #default="{ row }">
+              <div>问答消息: {{ row.messages_count }} 条</div>
+              <div class="cell-muted">
+                {{ row.total_duration_ms }} ms · {{ row.total_tokens }} tok ·
+                退回 {{ row.backtrack_count }} 次
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="最后更新时间" width="155">
+            <template #default="{ row }">
+              {{ formatTime(row.updated_at) }}
+            </template>
+          </el-table-column>
+
+          <el-table-column label="管理操作" width="250" fixed="right">
+            <template #default="{ row }">
+              <el-button
+                size="small"
+                type="primary"
+                plain
+                data-testid="btn-track-on-canvas"
+                @click="trackConversationOnCanvas(row)"
+              >
+                画布跟踪
+              </el-button>
+              <el-button
+                size="small"
+                type="success"
+                plain
+                data-testid="btn-inspect-stages"
+                @click="openStageDeliverables(row)"
+              >
+                展开各环节产出
+              </el-button>
+              <el-button
+                v-if="row.sufficiency_score >= 100 && row.status !== 'running'"
+                size="small"
+                type="warning"
+                plain
+                data-testid="btn-rerun-workflow"
+                @click="rerunTaskWorkflow(row)"
+              >
+                重跑
+              </el-button>
+              <el-button
+                size="small"
+                type="danger"
+                plain
+                data-testid="btn-delete-workflow"
+                @click="deleteTaskRecord(row)"
+              >
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-drawer>
+
+    <!-- 展开查看当前对话工作流每个环节的产出抽屉 -->
+    <el-drawer
+      v-model="stageDeliverablesVisible"
+      :title="`对话工作流全环节产出详情 · ${selectedTaskDetail?.conversation_code || ''}`"
+      size="76%"
+    >
+      <div v-if="selectedTaskDetail" data-testid="stage-deliverables-drawer">
+        <div class="stage-drawer-top">
+          <div class="stage-meta-info">
+            <el-tag type="primary" effect="dark" size="small">
+              对话 ID: {{ selectedTaskDetail.conversation_code }}
+            </el-tag>
+            <el-tag :type="STATUS_TAG_TYPE[selectedTaskDetail.status] || 'info'" size="small">
+              {{ STATUS_LABEL_MAP[selectedTaskDetail.status] || selectedTaskDetail.status }}
+            </el-tag>
+            <span class="stage-meta-text">
+              企业: {{ selectedTaskDetail.org_name }} | 发起人:
+              {{ selectedTaskDetail.creator_name || selectedTaskDetail.creator_email || '企业用户' }} |
+              国家: {{ selectedTaskDetail.country_name_zh }} ({{ selectedTaskDetail.country_code }}) |
+              车型: {{ selectedTaskDetail.vehicle_model || '待填写' }}
+            </span>
+          </div>
+          <div class="stage-drawer-actions">
+            <el-button
+              size="small"
+              type="primary"
+              plain
+              data-testid="btn-expand-all-stages"
+              @click="expandAllStages"
+            >
+              全部展开
+            </el-button>
+            <el-button size="small" @click="collapseAllStages">全部收起</el-button>
+          </div>
+        </div>
+
+        <el-alert
+          v-if="selectedTaskDetail.status === 'running'"
+          type="info"
+          :closable="false"
+          show-icon
+          style="margin-bottom: 12px"
+        >
+          <template #title>
+            ⚡ 该对话工作流正在实时运行中（当前环节：{{
+              selectedTaskDetail.current_active_node_title || '执行中'
+            }}），每完成一个环节将自动在此展开最新产出。
+          </template>
+        </el-alert>
+
+        <el-collapse v-model="expandedStageNames">
+          <!-- 环节 0：用户对话问答与八维度业务事实采集产出 -->
+          <el-collapse-item
+            name="stage-chat"
+            data-testid="stage-collapse-chat"
+          >
+            <template #title>
+              <div class="stage-collapse-header">
+                <el-tag size="small" type="primary">环节 0 · 对话交互与槽位采集</el-tag>
+                <b>用户对话问答记录 ({{ selectedTaskDetail.messages.length }} 条) & 已采集业务事实 (完备度 {{ selectedTaskDetail.sufficiency_score }}%)</b>
+              </div>
+            </template>
+
+            <div class="stage-deliverable-box">
+              <div class="sub-label">一、对话交互问答记录：</div>
+              <div v-if="selectedTaskDetail.messages.length === 0" class="cell-muted">
+                该任务通过 API 直接传入初始事实创建，无多轮聊天消息记录。
+              </div>
+              <div v-else class="chat-transcript-list">
+                <div
+                  v-for="m in selectedTaskDetail.messages"
+                  :key="m.id"
+                  class="transcript-item"
+                  :class="m.role"
+                >
+                  <el-tag size="small" :type="m.role === 'user' ? 'success' : 'info'">
+                    {{ m.role === 'user' ? '用户回答' : '合规助手' }}
+                  </el-tag>
+                  <span class="transcript-content">{{ m.content }}</span>
+                </div>
+              </div>
+
+              <div class="sub-label" style="margin-top: 12px">
+                二、八维度必填业务事实采集产出表：
+              </div>
+              <el-table :data="selectedTaskDetail.missing_facts" border size="small">
+                <el-table-column prop="dimension_code" label="对应维度" width="90" />
+                <el-table-column prop="fact_key" label="槽位标识" width="190" />
+                <el-table-column prop="question_zh" label="采集问题" min-width="220" />
+                <el-table-column label="用户确认的业务事实产出" min-width="240">
+                  <template #default="{ row }">
+                    <span v-if="row.current_value">{{ row.current_value }}</span>
+                    <span v-else class="cell-muted">（尚未补充）</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="状态" width="95">
+                  <template #default="{ row }">
+                    <el-tag size="small" :type="row.is_fulfilled ? 'success' : 'warning'">
+                      {{ row.is_fulfilled ? '已采集' : '待补充' }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-collapse-item>
+
+          <!-- 环节 1..N：每个 Agent 节点执行环节的详细产出 -->
+          <el-collapse-item
+            v-for="tr in selectedTaskDetail.step_traces"
+            :key="tr.id"
+            :name="`stage-step-${tr.seq_no}`"
+            :data-testid="`stage-collapse-step-${tr.seq_no}`"
+          >
+            <template #title>
+              <div class="stage-collapse-header">
+                <el-tag
+                  size="small"
+                  :type="tr.is_backtrack ? 'danger' : tr.status === 'passed' ? 'success' : 'warning'"
+                >
+                  步骤 #{{ tr.seq_no }} · {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
+                </el-tag>
+                <b>{{ tr.agent_name }}</b>
+                <span class="cell-muted">
+                  （耗时 {{ tr.duration_ms }} ms · {{ tr.tokens_used }} tokens · 工具调用 {{ tr.tool_calls.length }} 次）
+                </span>
+              </div>
+            </template>
+
+            <div class="stage-deliverable-box">
+              <div class="stage-summary-line">
+                <strong>本环节执行结论：</strong>{{ tr.business_summary }}
+              </div>
+
+              <div v-if="tr.is_backtrack" class="backtrack-detail-box" style="margin-bottom: 10px">
+                <div><strong>质检退回原因：</strong>{{ tr.backtrack_reason }}</div>
+                <div v-if="tr.backtrack_resolution" style="margin-top: 4px">
+                  <strong>补证闭环结果：</strong>{{ tr.backtrack_resolution }}
+                </div>
+              </div>
+
+              <!-- 针对 retrieval 环节：展示每个维度检索出的候选条款明细 -->
+              <template v-if="tr.phase === 'retrieval' && tr.output_snapshot.retrieved_clauses_by_dimension">
+                <div class="sub-label">本环节检索命中的各维度候选法规条款产出：</div>
+                <div
+                  v-for="(clauses, dimCode) in (tr.output_snapshot.retrieved_clauses_by_dimension as Record<string, Array<Record<string, unknown>>>)"
+                  :key="dimCode"
+                  class="dim-output-card"
+                >
+                  <div class="dim-output-title">
+                    <b>{{ dimCode }}</b> · 检索命中候选条款 {{ clauses.length }} 条
+                  </div>
+                  <el-table v-if="clauses.length > 0" :data="clauses" border size="small">
+                    <el-table-column prop="document_title" label="法规文件" min-width="180" />
+                    <el-table-column prop="clause_number" label="条款号" width="110" />
+                    <el-table-column prop="version_no" label="版本" width="70" />
+                    <el-table-column prop="snippet" label="原文片段摘录" min-width="260" />
+                  </el-table>
+                </div>
+              </template>
+
+              <!-- 针对 analysis / re_analysis 环节：展示每个维度的模型分析初稿产出 -->
+              <template
+                v-if="(tr.phase === 'analysis' || tr.phase === 're_analysis') && tr.output_snapshot.dimension_outputs"
+              >
+                <div class="sub-label">本环节各维度模型分析产出明细：</div>
+                <div
+                  v-for="(dimOut, dimCode) in (tr.output_snapshot.dimension_outputs as Record<string, Record<string, unknown>>)"
+                  :key="dimCode"
+                  class="dim-output-card"
+                >
+                  <div class="dim-output-title">
+                    <b>{{ dimCode }} {{ dimOut.dimension_title }}</b>
+                    <el-tag size="small" type="info" style="margin-left: 8px">
+                      模型: {{ dimOut.model || 'deepseek-flash' }} · {{ dimOut.tokens || 0 }} tokens
+                    </el-tag>
+                    <el-tag
+                      size="small"
+                      :type="Number(dimOut.findings_count || 0) > 0 ? 'success' : 'warning'"
+                      style="margin-left: 6px"
+                    >
+                      产出结论 {{ dimOut.findings_count || 0 }} 条
+                    </el-tag>
+                  </div>
+                  <div v-if="dimOut.summary" style="margin: 6px 0; font-size: 12.5px">
+                    <strong>维度小结：</strong>{{ dimOut.summary }}
+                  </div>
+                  <div v-if="dimOut.gaps" class="cell-muted" style="margin-bottom: 6px">
+                    <strong>缺口说明：</strong>{{ dimOut.gaps }}
+                  </div>
+                  <el-table
+                    v-if="Array.isArray(dimOut.findings) && dimOut.findings.length > 0"
+                    :data="dimOut.findings as Array<Record<string, unknown>>"
+                    border
+                    size="small"
+                  >
+                    <el-table-column prop="business_fact" label="对应业务事实" min-width="140" />
+                    <el-table-column prop="obligation" label="提取合规义务" min-width="180" />
+                    <el-table-column prop="risk_level" label="风险" width="80" />
+                    <el-table-column prop="quote" label="引用原文片段 (待核验)" min-width="220" />
+                  </el-table>
+                </div>
+              </template>
+
+              <!-- 针对 verification / re_verification 环节：展示每条结论的子串与数字核验产出 -->
+              <template
+                v-if="(tr.phase === 'verification' || tr.phase === 're_verification') && tr.output_snapshot.verification_items"
+              >
+                <div class="sub-label">
+                  本环节程序化原文子串与数字核验明细（通过 {{ tr.output_snapshot.verified_passed_count }} 条 / 拦截 {{ tr.output_snapshot.verified_failed_count }} 条）：
+                </div>
+                <el-table
+                  :data="tr.output_snapshot.verification_items as Array<Record<string, unknown>>"
+                  border
+                  size="small"
+                >
+                  <el-table-column prop="dimension_code" label="维度" width="70" />
+                  <el-table-column prop="document_title" label="法规文件" min-width="160" />
+                  <el-table-column prop="clause_number" label="条款号" width="95" />
+                  <el-table-column prop="obligation" label="合规义务(含数字校验)" min-width="180" />
+                  <el-table-column prop="quote" label="被核验原文片段" min-width="200" />
+                  <el-table-column label="核验结果" width="95">
+                    <template #default="{ row }">
+                      <el-tag size="small" :type="row.passed ? 'success' : 'danger'">
+                        {{ row.passed ? '核验通过' : '拦截退回' }}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </template>
+
+              <!-- 针对 compilation 环节：展示八维度报告章节产出 -->
+              <template v-if="tr.phase === 'compilation' && tr.output_snapshot.dimensions_deliverables">
+                <div class="sub-label">
+                  本环节编制的八维度报告章节产出（版本 v{{ tr.output_snapshot.report_version }}）：
+                </div>
+                <el-table
+                  :data="tr.output_snapshot.dimensions_deliverables as Array<Record<string, unknown>>"
+                  border
+                  size="small"
+                >
+                  <el-table-column prop="dimension_code" label="维度" width="70" />
+                  <el-table-column prop="dimension_title" label="章节标题" width="180" />
+                  <el-table-column label="状态" width="100">
+                    <template #default="{ row }">
+                      <el-tag size="small" :type="row.status === 'COMPLETE' ? 'success' : 'warning'">
+                        {{ row.status === 'COMPLETE' ? '依据已核验' : '部分缺口' }}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="risk_level" label="风险等级" width="110" />
+                  <el-table-column prop="citations_count" label="核验引用数" width="95" />
+                  <el-table-column prop="content_markdown" label="章节正文产出" min-width="260" />
+                </el-table>
+              </template>
+
+              <!-- 工具调用与原始输入输出 JSON 快照 -->
+              <div v-if="tr.tool_calls.length > 0" style="margin-top: 10px">
+                <div class="sub-label">本环节调用的 MCP 工具 / 模型记录 ({{ tr.tool_calls.length }})：</div>
+                <el-table :data="tr.tool_calls" border size="small">
+                  <el-table-column prop="tool_label" label="工具/模型名称" min-width="160" />
+                  <el-table-column prop="tool_name" label="方法标识" width="180" />
+                  <el-table-column prop="result_summary" label="返回摘要" min-width="220" />
+                  <el-table-column prop="duration_ms" label="耗时(ms)" width="90" />
+                </el-table>
+              </div>
+
+              <div class="snapshot-block" style="margin-top: 10px">
+                <div>
+                  <strong>环节输入快照 (input_snapshot):</strong>
+                  <pre>{{ JSON.stringify(tr.input_snapshot, null, 2) }}</pre>
+                </div>
+                <div>
+                  <strong>环节输出快照 (output_snapshot):</strong>
+                  <pre>{{ JSON.stringify(tr.output_snapshot, null, 2) }}</pre>
+                </div>
+              </div>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+    </el-drawer>
 
     <!-- 导出多智能体配置 JSON DSL 弹窗 -->
     <el-dialog
@@ -1739,5 +2670,229 @@ onMounted(() => {
   font-size: 12px;
   color: #475569;
   margin-top: 4px;
+}
+
+.live-monitor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 18px;
+  background: #f0f9ff;
+  border-bottom: 1px solid #bae6fd;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.live-monitor-left,
+.live-monitor-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.live-running-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.live-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #10b981;
+  display: inline-block;
+}
+
+.live-dot.active {
+  background: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+  animation: pulse-dot 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.75;
+  }
+}
+
+.dify-node-card.is-live-running {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.28), 0 8px 24px rgba(37, 99, 235, 0.22);
+  animation: pulse-card 1.5s infinite ease-in-out;
+}
+
+.dify-node-card.is-collecting {
+  border-color: #0891b2;
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2);
+}
+
+@keyframes pulse-card {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22), 0 6px 18px rgba(37, 99, 235, 0.16);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.35), 0 10px 26px rgba(37, 99, 235, 0.28);
+  }
+}
+
+.node-live-running-banner {
+  margin-top: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.node-collecting-banner {
+  margin-top: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #ecfeff;
+  border: 1px solid #a5f3fc;
+  color: #0e7490;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.inspector-trace-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.history-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.conv-code-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.cell-muted {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.cell-active-node {
+  margin-top: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.stage-drawer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stage-meta-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.stage-meta-text {
+  font-size: 12.5px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.stage-drawer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stage-collapse-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.stage-deliverable-box {
+  padding: 8px 4px;
+}
+
+.stage-summary-line {
+  font-size: 13px;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.chat-transcript-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.transcript-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.transcript-content {
+  white-space: pre-line;
+  color: #1e293b;
+}
+
+.dim-output-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.dim-output-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #0f172a;
 }
 </style>

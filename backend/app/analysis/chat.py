@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.analysis.llm import LlmUnavailableError, call_llm_json
 from app.analysis.models import AnalysisMessage, AnalysisTask
+from app.analysis.schemas import format_conversation_code
 from app.analysis.workflow_engine import (
     COUNTRY_NAMES_ZH,
     REQUIRED_FACTS_SPEC,
@@ -156,7 +157,8 @@ async def _ask(session: AsyncSession, task: AnalysisTask, slot: str, prefix: str
 
 
 async def start_chat(session: AsyncSession, task: AnalysisTask) -> None:
-    await add_message(session, task.id, "assistant", GREETING)
+    code = format_conversation_code(task.id, task.created_at)
+    await add_message(session, task.id, "assistant", f"{GREETING}\n（本次对话 ID：{code}）")
     slot = next_slot(task) or "country_code"
     await _ask(session, task, slot)
     await session.commit()

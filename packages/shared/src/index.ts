@@ -91,6 +91,7 @@ export function createClient(side: Side, onUnauthorized: () => void) {
     get: <T>(path: string) => request<T>('GET', path),
     post: <T>(path: string, body?: unknown) => request<T>('POST', path, body),
     patch: <T>(path: string, body?: unknown) => request<T>('PATCH', path, body),
+    delete: <T>(path: string) => request<T>('DELETE', path),
     login: (email: string, password: string) =>
       request<TokenResponse>('POST', `/auth/${side}/login`, { email, password }),
     me: () => request<UserOut>('GET', `/${side}/me`),

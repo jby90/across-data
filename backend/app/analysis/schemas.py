@@ -1,10 +1,65 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
+
+
+def format_conversation_code(task_id: uuid.UUID, created_at: datetime | None = None) -> str:
+    """为每次用户对话生成唯一且易读的对话编号,例如 CONV-20261022-8F3A1B2C。"""
+    dt = created_at or datetime.now(UTC)
+    return f"CONV-{dt.strftime('%Y%m%d')}-{task_id.hex[:8].upper()}"
+
+
+def compute_active_node(
+    task_status: str, traces: list[Any]
+) -> tuple[str | None, str | None]:
+    """根据当前对话工作流状态和已完成步骤轨迹,计算当前正在运行或等待中的 Agent 节点。"""
+    if task_status == "collecting_facts":
+        return "node_fact_collector", "信息采集与追问 Agent（对话采集中）"
+    if task_status == "ready_to_run":
+        return "node_fact_collector", "信息采集与追问 Agent（事实已齐备，待启动）"
+    if task_status != "running":
+        return None, None
+    if not traces:
+        return "node_fact_collector", "信息采集与追问 Agent（正在校验八维度事实完备度）"
+    last = traces[-1]
+    phase = getattr(last, "phase", None) or (last.get("phase") if isinstance(last, dict) else "")
+    st = getattr(last, "status", None) or (last.get("status") if isinstance(last, dict) else "")
+    is_bt = getattr(last, "is_backtrack", False) or (
+        last.get("is_backtrack", False) if isinstance(last, dict) else False
+    )
+    if phase == "fact_check":
+        return "node_mcp_retriever", "MCP 法规混合检索 Agent（正在检索目标国现行条款）"
+    if phase == "retrieval":
+        return (
+            "node_dimension_analyst",
+            "八维度合规矩阵分析 Agent（正在并发调用模型分析 8 个维度）",
+        )
+    if phase == "analysis":
+        return (
+            "node_citation_verifier",
+            "依据子串核验与退回质检 Agent（正在程序化核验原文子串与数字）",
+        )
+    if phase == "verification":
+        if st == "backtracked" or is_bt:
+            return (
+                "node_dimension_analyst",
+                "八维度合规矩阵分析 Agent（按质检退回意见补证重分析中）",
+            )
+        return "node_report_compiler", "八维度国别报告编制 Agent（正在汇总生成八维度报告）"
+    if phase == "re_analysis":
+        return "node_citation_verifier", "依据子串核验与退回质检 Agent（正在二次核验补证结论）"
+    if phase == "re_verification":
+        return "node_report_compiler", "八维度国别报告编制 Agent（正在汇总生成八维度报告）"
+    if phase == "compilation":
+        return (
+            "node_update_linkage",
+            "法规修订 72h 影响联动 Agent（正在扫描法规版本修订影响）",
+        )
+    return "node_report_compiler", "八维度国别报告编制 Agent（收尾处理中）"
 
 
 class WorkflowMcpToolSchema(BaseModel):
@@ -185,6 +240,11 @@ class ReportVersionOut(BaseModel):
 
 class AnalysisTaskSummaryOut(BaseModel):
     id: uuid.UUID
+    conversation_code: str = ""
+    org_id: uuid.UUID | None = None
+    org_name: str = ""
+    creator_email: str = ""
+    creator_name: str = ""
     title: str
     country_code: str
     country_name_zh: str
@@ -194,6 +254,10 @@ class AnalysisTaskSummaryOut(BaseModel):
     status: str
     sufficiency_score: int
     missing_facts_count: int
+    messages_count: int = 0
+    steps_count: int = 0
+    current_active_node_id: str | None = None
+    current_active_node_title: str | None = None
     findings_count: int
     latest_report_version: int
     is_partial_sample: bool
@@ -221,6 +285,13 @@ class ChatMessageIn(BaseModel):
 
 class AnalysisTaskDetailOut(BaseModel):
     id: uuid.UUID
+    conversation_code: str = ""
+    org_id: uuid.UUID | None = None
+    org_name: str = ""
+    creator_email: str = ""
+    creator_name: str = ""
+    current_active_node_id: str | None = None
+    current_active_node_title: str | None = None
     title: str
     country_code: str
     country_name_zh: str

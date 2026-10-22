@@ -400,3 +400,104 @@ def test_model_json_with_bad_backslash_escape_is_repaired():
     data = parse_model_json(raw)
     assert data["summary"].startswith("路径 C:\\data")
     assert parse_model_json('```json\n{"a": 1}\n```') == {"a": 1}
+
+
+async def test_conversation_id_admin_history_live_monitor_and_stage_outputs(
+    client, seed, session_factory, monkeypatch
+):
+    from app.analysis import pipeline
+    from app.analysis.schemas import compute_active_node
+
+    await _seed_sg_corpus(session_factory)
+    monkeypatch.setattr(pipeline, "call_llm_json", _fake_llm_factory(bad_first=True))
+
+    user_hdr = bearer(await login(client, "user", "a-member@example.com"))
+    admin_hdr = bearer(await login(client, "admin", "admin@example.com"))
+    reviewer_hdr = bearer(await login(client, "admin", "reviewer@example.com"))
+
+    # 1. 新建对话即返回唯一可读的 conversation_code,且问候消息中包含该对话 ID
+    chat_res = (await client.post("/api/analysis/chats", headers=user_hdr)).json()
+    conv_code = chat_res["conversation_code"]
+    assert conv_code.startswith("CONV-") and len(conv_code) >= 18
+    assert conv_code in chat_res["messages"][0]["content"]
+    assert chat_res["current_active_node_id"] == "node_fact_collector"
+
+    # 2. 发起完整评估工作流并等待完成
+    run_res = (
+        await client.post(
+            "/api/analysis/tasks",
+            headers=user_hdr,
+            json={"title": "管理端工作流监控测试", "country_code": "SG", "facts": FACTS},
+        )
+    ).json()
+    run_id = run_res["id"]
+    run_code = run_res["conversation_code"]
+    assert run_code.startswith("CONV-")
+    done = await _wait_done(client, user_hdr, run_id)
+    assert done["status"] in ("completed", "partial_sample")
+
+    # 3. 管理员端可检索与筛选对话工作流历史(按 conversation_code / 状态 / 国家)
+    all_admin_tasks = (
+        await client.get("/api/admin/agent-studio/tasks", headers=admin_hdr)
+    ).json()
+    codes = {t["conversation_code"] for t in all_admin_tasks}
+    assert conv_code in codes and run_code in codes
+
+    filtered = (
+        await client.get(
+            f"/api/admin/agent-studio/tasks?keyword={run_code}", headers=admin_hdr
+        )
+    ).json()
+    assert len(filtered) == 1 and filtered[0]["id"] == run_id
+    assert filtered[0]["org_name"] != ""
+    assert filtered[0]["creator_email"] == "a-member@example.com"
+    assert filtered[0]["steps_count"] >= 6
+
+    # 4. 展开查看每个环节的产出:验证各阶段 output_snapshot 包含完整结构化交付物
+    detail = (
+        await client.get(f"/api/admin/agent-studio/tasks/{run_id}", headers=admin_hdr)
+    ).json()
+    by_phase = {tr["phase"]: tr for tr in detail["step_traces"]}
+    assert "fact_check_items" in by_phase["fact_check"]["output_snapshot"]
+    assert (
+        "retrieved_clauses_by_dimension"
+        in by_phase["retrieval"]["output_snapshot"]
+    )
+    assert "dimension_outputs" in by_phase["analysis"]["output_snapshot"]
+    assert "verification_items" in by_phase["verification"]["output_snapshot"]
+    assert "dimension_outputs" in by_phase["re_analysis"]["output_snapshot"]
+    assert "dimensions_deliverables" in by_phase["compilation"]["output_snapshot"]
+    assert "stale_impacts" in by_phase["update_linkage"]["output_snapshot"]
+
+    # 5. 验证实时运行阶段活跃节点推导逻辑
+    assert compute_active_node("running", [])[0] == "node_fact_collector"
+    assert (
+        compute_active_node("running", [{"phase": "fact_check", "status": "passed"}])[0]
+        == "node_mcp_retriever"
+    )
+    assert (
+        compute_active_node("running", [{"phase": "retrieval", "status": "passed"}])[0]
+        == "node_dimension_analyst"
+    )
+    assert (
+        compute_active_node("running", [{"phase": "analysis", "status": "passed"}])[0]
+        == "node_citation_verifier"
+    )
+    assert (
+        compute_active_node(
+            "running",
+            [{"phase": "verification", "status": "backtracked", "is_backtrack": True}],
+        )[0]
+        == "node_dimension_analyst"
+    )
+
+    # 6. 管理员可删除测试对话记录(复核员无删除权限)
+    deny_del = await client.delete(
+        f"/api/admin/agent-studio/tasks/{chat_res['id']}", headers=reviewer_hdr
+    )
+    assert deny_del.status_code == 403
+    ok_del = await client.delete(
+        f"/api/admin/agent-studio/tasks/{chat_res['id']}", headers=admin_hdr
+    )
+    assert ok_del.status_code == 200 and ok_del.json()["deleted"] is True
+

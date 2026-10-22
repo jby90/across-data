@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.analysis.benchmarks import run_retrieval_benchmarks
@@ -42,6 +42,8 @@ from app.analysis.schemas import (
     WorkflowEdgeOut,
     WorkflowNodeOut,
     WorkflowVersionSummaryOut,
+    compute_active_node,
+    format_conversation_code,
 )
 from app.analysis.workflow_engine import (
     COUNTRY_NAMES_ZH,
@@ -59,6 +61,7 @@ from app.iam.deps import (
     require_platform_admin,
     require_user_side,
 )
+from app.iam.models import Organization, User
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
 from app.knowledge.router import _compute_eight_attributes
@@ -113,7 +116,81 @@ def _to_workflow_out(cfg: AgentWorkflowConfig) -> AgentWorkflowConfigOut:
     )
 
 
+async def _load_org_and_creator(
+    session: AsyncSession, t: AnalysisTask
+) -> tuple[str, str, str]:
+    org_name = "系统示例"
+    if t.org_id is not None:
+        org = await session.get(Organization, t.org_id)
+        if org is not None:
+            org_name = org.name
+    creator_email = ""
+    creator_name = ""
+    if t.created_by is not None:
+        u = await session.get(User, t.created_by)
+        if u is not None:
+            creator_email = u.email
+            creator_name = u.display_name
+    return org_name, creator_email, creator_name
+
+
+def _enrich_trace_snapshots(
+    t: AnalysisTask,
+    tr: AnalysisStepTrace,
+    rvs: list[ReportVersion],
+    evaluated_missing: list[dict],
+) -> tuple[dict, dict]:
+    """确保历史任务与新任务的每个阶段都有可展开查看的完整输入/输出产出快照。"""
+    inp = dict(tr.input_snapshot_json or {})
+    out = dict(tr.output_snapshot_json or {})
+    if tr.phase == "fact_check":
+        inp.setdefault("country_code", t.country_code)
+        inp.setdefault("vehicle_model", t.vehicle_model)
+        inp.setdefault("scenario_type", t.scenario_type)
+        out.setdefault("collected_facts", dict(t.facts_json or {}))
+        if "fact_check_items" not in out:
+            out["fact_check_items"] = [
+                {
+                    "fact_key": m["fact_key"],
+                    "dimension_code": m["dimension_code"],
+                    "question_zh": m["question_zh"],
+                    "value": m.get("current_value") or "",
+                    "is_fulfilled": bool(m.get("is_fulfilled")),
+                }
+                for m in evaluated_missing
+            ]
+    elif tr.phase == "compilation" and rvs:
+        rv = rvs[0]
+        inp.setdefault("country_code", t.country_code)
+        inp.setdefault("vehicle_model", t.vehicle_model)
+        inp.setdefault("verified_findings_count", len(t.findings_json or []))
+        out.setdefault("report_status", rv.status)
+        out.setdefault("is_partial_sample", rv.is_partial_sample)
+        out.setdefault("executive_summary", rv.executive_summary)
+        out.setdefault("verified_findings_count", len(t.findings_json or []))
+        if "dimensions_deliverables" not in out:
+            out["dimensions_deliverables"] = [
+                {
+                    "dimension_code": d.get("dimension_code", ""),
+                    "dimension_title": d.get("dimension_title", ""),
+                    "status": d.get("status", ""),
+                    "risk_level": d.get("risk_level", ""),
+                    "citations_count": len(d.get("citations") or []),
+                    "content_markdown": d.get("content_markdown", ""),
+                    "key_recommendations": list(d.get("key_recommendations") or []),
+                    "missing_gap_note": d.get("missing_gap_note"),
+                }
+                for d in (rv.dimensions_json or [])
+            ]
+    elif tr.phase == "update_linkage" and rvs:
+        rv = rvs[0]
+        out.setdefault("stale_impacts_count", len(rv.stale_impacts_json or []))
+        out.setdefault("stale_impacts", list(rv.stale_impacts_json or []))
+    return inp, out
+
+
 async def _to_task_summary(session: AsyncSession, t: AnalysisTask) -> AnalysisTaskSummaryOut:
+    await _expire_stale(session, t)
     rvs = list(
         (
             await session.execute(
@@ -125,6 +202,27 @@ async def _to_task_summary(session: AsyncSession, t: AnalysisTask) -> AnalysisTa
         .scalars()
         .all()
     )
+    traces = list(
+        (
+            await session.execute(
+                select(AnalysisStepTrace)
+                .where(AnalysisStepTrace.task_id == t.id)
+                .order_by(AnalysisStepTrace.seq_no.asc())
+            )
+        )
+        .scalars()
+        .all()
+    )
+    msg_count = int(
+        (
+            await session.execute(
+                select(func.count(AnalysisMessage.id)).where(AnalysisMessage.task_id == t.id)
+            )
+        ).scalar_one()
+        or 0
+    )
+    org_name, creator_email, creator_name = await _load_org_and_creator(session, t)
+    active_node_id, active_node_title = compute_active_node(t.status, traces)
     latest_ver = rvs[0].version_no if rvs else 0
     is_partial = rvs[0].is_partial_sample if rvs else (t.status == "partial_sample")
     missing_unfulfilled = sum(
@@ -132,6 +230,11 @@ async def _to_task_summary(session: AsyncSession, t: AnalysisTask) -> AnalysisTa
     )
     return AnalysisTaskSummaryOut(
         id=t.id,
+        conversation_code=format_conversation_code(t.id, t.created_at),
+        org_id=t.org_id,
+        org_name=org_name,
+        creator_email=creator_email,
+        creator_name=creator_name,
         title=t.title,
         country_code=t.country_code,
         country_name_zh=COUNTRY_NAMES_ZH.get(t.country_code, t.country_code),
@@ -141,6 +244,10 @@ async def _to_task_summary(session: AsyncSession, t: AnalysisTask) -> AnalysisTa
         status=t.status,
         sufficiency_score=t.sufficiency_score,
         missing_facts_count=missing_unfulfilled,
+        messages_count=msg_count,
+        steps_count=len(traces),
+        current_active_node_id=active_node_id,
+        current_active_node_title=active_node_title,
         findings_count=len(t.findings_json or []),
         latest_report_version=latest_ver,
         is_partial_sample=is_partial,
@@ -178,27 +285,31 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
         .all()
     )
 
-    trace_outs = [
-        AnalysisStepTraceOut(
-            id=tr.id,
-            seq_no=tr.seq_no,
-            agent_node_id=tr.agent_node_id,
-            agent_name=tr.agent_name,
-            phase=tr.phase,
-            status=tr.status,
-            business_summary=tr.business_summary,
-            is_backtrack=tr.is_backtrack,
-            backtrack_reason=tr.backtrack_reason,
-            backtrack_resolution=tr.backtrack_resolution,
-            tool_calls=[ToolCallTraceOut(**tc) for tc in (tr.tool_calls_json or [])],
-            input_snapshot=tr.input_snapshot_json or {},
-            output_snapshot=tr.output_snapshot_json or {},
-            tokens_used=tr.tokens_used,
-            duration_ms=tr.duration_ms,
-            created_at=tr.created_at,
+    _, evaluated_missing = evaluate_fact_sufficiency(t.country_code, t.facts_json or {})
+
+    trace_outs = []
+    for tr in traces:
+        inp_snap, out_snap = _enrich_trace_snapshots(t, tr, rvs, evaluated_missing)
+        trace_outs.append(
+            AnalysisStepTraceOut(
+                id=tr.id,
+                seq_no=tr.seq_no,
+                agent_node_id=tr.agent_node_id,
+                agent_name=tr.agent_name,
+                phase=tr.phase,
+                status=tr.status,
+                business_summary=tr.business_summary,
+                is_backtrack=tr.is_backtrack,
+                backtrack_reason=tr.backtrack_reason,
+                backtrack_resolution=tr.backtrack_resolution,
+                tool_calls=[ToolCallTraceOut(**tc) for tc in (tr.tool_calls_json or [])],
+                input_snapshot=inp_snap,
+                output_snapshot=out_snap,
+                tokens_used=tr.tokens_used,
+                duration_ms=tr.duration_ms,
+                created_at=tr.created_at,
+            )
         )
-        for tr in traces
-    ]
 
     rv_outs = [
         ReportVersionOut(
@@ -216,8 +327,6 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
         for rv in rvs
     ]
 
-    _, evaluated_missing = evaluate_fact_sufficiency(t.country_code, t.facts_json or {})
-
     msgs = list(
         (
             await session.execute(
@@ -229,6 +338,8 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
         .scalars()
         .all()
     )
+    org_name, creator_email, creator_name = await _load_org_and_creator(session, t)
+    active_node_id, active_node_title = compute_active_node(t.status, traces)
     return AnalysisTaskDetailOut(
         messages=[
             ChatMessageOut(
@@ -243,6 +354,13 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
             for m in msgs
         ],
         id=t.id,
+        conversation_code=format_conversation_code(t.id, t.created_at),
+        org_id=t.org_id,
+        org_name=org_name,
+        creator_email=creator_email,
+        creator_name=creator_name,
+        current_active_node_id=active_node_id,
+        current_active_node_title=active_node_title,
         title=t.title,
         country_code=t.country_code,
         country_name_zh=COUNTRY_NAMES_ZH.get(t.country_code, t.country_code),
@@ -411,20 +529,33 @@ async def import_admin_workflow_dsl(
 async def list_admin_analysis_tasks(
     _: AdminOrReviewerDep,
     session: SessionDep,
+    status_filter: str | None = Query(default=None, alias="status"),
+    country_code: str | None = Query(default=None),
+    keyword: str | None = Query(default=None),
 ) -> list[AnalysisTaskSummaryOut]:
     await ensure_workflow_config(session)
-    tasks = list(
-        (
-            await session.execute(
-                select(AnalysisTask)
-                .where(AnalysisTask.org_id.is_not(None))
-                .order_by(AnalysisTask.created_at.asc())
-            )
-        )
-        .scalars()
-        .all()
-    )
-    return [await _to_task_summary(session, t) for t in tasks]
+    stmt = select(AnalysisTask).where(AnalysisTask.org_id.is_not(None))
+    if status_filter:
+        stmt = stmt.where(AnalysisTask.status == status_filter)
+    if country_code:
+        stmt = stmt.where(AnalysisTask.country_code == country_code.upper())
+    stmt = stmt.order_by(AnalysisTask.updated_at.desc(), AnalysisTask.created_at.desc())
+    tasks = list((await session.execute(stmt)).scalars().all())
+    out = [await _to_task_summary(session, t) for t in tasks]
+    if keyword and keyword.strip():
+        kw = keyword.strip().lower()
+        out = [
+            item
+            for item in out
+            if kw in item.conversation_code.lower()
+            or kw in str(item.id).lower()
+            or kw in item.title.lower()
+            or kw in item.vehicle_model.lower()
+            or kw in item.org_name.lower()
+            or kw in item.creator_email.lower()
+            or kw in item.creator_name.lower()
+        ]
+    return out
 
 
 @admin_router.get("/tasks/{task_id}", response_model=AnalysisTaskDetailOut)
@@ -436,6 +567,46 @@ async def get_admin_analysis_task_detail(
     task = await session.get(AnalysisTask, task_id)
     if task is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
+    return await _to_task_detail(session, task)
+
+
+@admin_router.delete("/tasks/{task_id}")
+async def delete_admin_analysis_task(
+    task_id: uuid.UUID,
+    _: PlatformAdminDep,
+    session: SessionDep,
+) -> dict:
+    """平台管理员删除某条历史对话产生的工作流记录。"""
+    task = await session.get(AnalysisTask, task_id)
+    if task is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="对话工作流记录不存在")
+    code = format_conversation_code(task.id, task.created_at)
+    await session.delete(task)
+    await session.commit()
+    return {"deleted": True, "id": str(task_id), "conversation_code": code}
+
+
+@admin_router.post("/tasks/{task_id}/rerun", response_model=AnalysisTaskDetailOut)
+async def rerun_admin_analysis_task(
+    task_id: uuid.UUID,
+    _: PlatformAdminDep,
+    session: SessionDep,
+) -> AnalysisTaskDetailOut:
+    """平台管理员重新触发某条已齐备事实的对话工作流。"""
+    task = await session.get(AnalysisTask, task_id)
+    if task is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="对话工作流记录不存在")
+    if task.status == "running":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="该对话工作流正在实时运行中",
+        )
+    if task.sufficiency_score < 100:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="该对话尚未完成八维度必填事实采集,无法启动分析流水线",
+        )
+    await _start(session, task)
     return await _to_task_detail(session, task)
 
 

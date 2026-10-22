@@ -85,6 +85,7 @@ interface ReportVersion {
 
 interface TaskSummary {
   id: string
+  conversation_code: string
   title: string
   status: string
   country_code: string
@@ -93,6 +94,9 @@ interface TaskSummary {
 
 interface TaskDetail {
   id: string
+  conversation_code: string
+  current_active_node_id: string | null
+  current_active_node_title: string | null
   title: string
   country_code: string
   country_name_zh: string
@@ -440,6 +444,17 @@ async function download(ext: 'docx' | 'pdf') {
   }
 }
 
+async function copyConversationId() {
+  if (!detail.value) return
+  const code = detail.value.conversation_code || detail.value.id
+  try {
+    await navigator.clipboard.writeText(code)
+    ElMessage.success(`已复制对话 ID: ${code}`)
+  } catch {
+    ElMessage.info(`对话 ID: ${code}`)
+  }
+}
+
 onMounted(async () => {
   try {
     await refreshTasks()
@@ -477,6 +492,9 @@ onUnmounted(() => {
           @click="openTask(t.id)"
         >
           <div class="s-title">{{ t.title }}</div>
+          <div class="s-code" data-testid="session-conversation-code">
+            {{ t.conversation_code || t.id.slice(0, 8) }}
+          </div>
           <el-tag
             size="small"
             :type="
@@ -501,6 +519,26 @@ onUnmounted(() => {
         <el-tag v-if="detail" size="small" :type="status === 'running' ? 'primary' : 'info'">
           {{ STATUS_LABEL[status] || status }}
         </el-tag>
+        <div v-if="detail" class="conv-id-bar">
+          <el-tag
+            size="small"
+            effect="plain"
+            type="info"
+            data-testid="chat-conversation-id"
+            :title="`完整对话 UUID: ${detail.id}`"
+          >
+            对话 ID: {{ detail.conversation_code || detail.id }}
+          </el-tag>
+          <el-button
+            size="small"
+            link
+            type="primary"
+            data-testid="btn-copy-conversation-id"
+            @click="copyConversationId"
+          >
+            复制对话ID
+          </el-button>
+        </div>
       </header>
 
       <div ref="streamEl" class="stream" data-testid="chat-stream">
@@ -844,8 +882,20 @@ onUnmounted(() => {
 .s-title {
   font-size: 13px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   word-break: break-all;
+}
+.s-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+.conv-id-bar {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .chat-main {
   flex: 1;
