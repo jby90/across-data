@@ -18,9 +18,11 @@
 | argon2-cffi | MIT | A | 密码哈希 | 依赖 | 否 | — |
 | httpx | BSD-3-Clause | A | 采集 HTTP 客户端(P1 起为生产依赖) | 依赖 | 否 | — |
 | beautifulsoup4、soupsieve | MIT | A | HTML 链接发现与网页文本提取 | 依赖 | 否 | — |
-| pdfminer.six | MIT | A | PDF 文字层提取(不含 OCR) | 依赖 | 否 | — |
-| cryptography(pdfminer.six 的传递依赖) | Apache-2.0 OR BSD-3-Clause | A | PDF 加密支持 | 依赖 | 否 | — |
-| charset-normalizer(pdfminer.six 的传递依赖) | MIT | A | 字符编码识别 | 依赖 | 否 | — |
+| pypdfium2(含 PDFium) | Apache-2.0 OR BSD-3-Clause(PDFium 为 BSD-3-Clause/Apache-2.0) | A | PDF 文字层提取、页面渲染(OCR 用) | 依赖 | 否 | — |
+| pillow | HPND | A | 图像处理(OCR 渲染页面) | 依赖 | 否 | — |
+| pytesseract | Apache-2.0 | A | Tesseract 命令行封装 | 依赖 | 否 | — |
+| Tesseract OCR 5.5(外部程序) | Apache-2.0 | A | 扫描件 OCR,以独立进程调用,不链接进产品 | 独立进程 | 否 | — |
+| Tesseract 语言包 eng/ara/fra(tessdata_fast) | Apache-2.0 | A | OCR 语言模型,来源 github.com/tesseract-ocr/tessdata_fast;SHA-256:eng `7D4322BD…170B2`、ara `E3206D3D…3E729`、fra `CED03756…445CA` | 数据文件 | 否 | — |
 
 开发/测试:pytest、pytest-asyncio、httpx、ruff(均为宽松许可证)、pip-licenses(MIT)、pgserver(嵌入式 PostgreSQL,**仅测试**,不进入生产镜像;其内含 PostgreSQL 二进制,PostgreSQL License)。
 

@@ -130,6 +130,11 @@ def main() -> int:
         CYSH_WORKER_POLL_SECONDS="15",
         PYTHONUTF8="1",
     )
+    # 本机装了 Tesseract(开发用,放在 ~/tools/tess-env)就自动启用 OCR
+    tess = Path.home() / "tools" / "tess-env" / "Library"
+    if (tess / "bin" / "tesseract.exe").exists():
+        env.setdefault("CYSH_TESSERACT_CMD", str(tess / "bin" / "tesseract.exe"))
+        env.setdefault("CYSH_TESSDATA_DIR", str(tess / "share" / "tessdata"))
     if args.allow_fake_ip:
         env["CYSH_CRAWL_ALLOW_RESOLVED_CIDRS"] = '["198.18.0.0/15"]'
     os.environ.update(env)
