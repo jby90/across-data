@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """本地一键演示环境(仅开发用,不用于生产)。
 
-启动:嵌入式 PostgreSQL(数据保存在 ~/.cyshuhe-dev)、数据库迁移、演示账号与演示站点、API、后台 worker。
+启动:嵌入式 PostgreSQL(数据保存在 ~/.cyshuhe-dev)、数据库迁移、演示账号、API、后台 worker。
 前端请另开终端:pnpm dev:user / pnpm dev:admin。
 
 用法(在 backend 目录):
@@ -37,7 +37,6 @@ DEMO_USERS = [
     ("org-admin@example.com", "演示企业管理员", "org_admin", True),
     ("member@example.com", "演示企业成员", "member", True),
 ]
-DEMO_SITE_URL = "https://example.com/"
 
 
 def load_secrets() -> dict:
@@ -64,7 +63,6 @@ async def seed(creds: dict) -> None:
     from app.iam.models import Organization, Role, User
     from app.ingestion.archive import ArchiveStore
     from app.ingestion.phase1_import import consolidate_egazette_sites, import_phase1
-    from app.sources.models import SourceSite
 
     sf = get_sessionmaker()
     seed_file = ROOT / "data" / "seed" / "source_sites.json"
@@ -77,11 +75,10 @@ async def seed(creds: dict) -> None:
         ).scalar_one_or_none()
         if org is None:
             org = await service.create_org(s, DEMO_ORG)
-        admin_id = None
         for email, name, role, in_org in DEMO_USERS:
             user = (await s.execute(select(User).where(User.email == email))).scalar_one_or_none()
             if user is None:
-                user = await service.create_user(
+                await service.create_user(
                     s,
                     email=email,
                     display_name=name,
@@ -89,34 +86,7 @@ async def seed(creds: dict) -> None:
                     role=Role(role),
                     org_id=org.id if in_org else None,
                 )
-            if role == "platform_admin":
-                admin_id = user.id
-
-        site = (
-            await s.execute(select(SourceSite).where(SourceSite.entry_url == DEMO_SITE_URL))
-        ).scalar_one_or_none()
-        if site is None:
-            from datetime import UTC, datetime
-
-            s.add(
-                SourceSite(
-                    country_code="ZZ",
-                    publisher="【演示数据】IANA 示例域名页面",
-                    language="en",
-                    document_type="OTHER",
-                    entry_url=DEMO_SITE_URL,
-                    strategy="DIRECT",
-                    config={},
-                    interval_hours=24,
-                    terms_status="approved",
-                    terms_note="本地演示:example.com 是 IANA 保留给文档示例的域名,不是真实法规来源。",
-                    terms_decided_by=admin_id,
-                    terms_decided_at=datetime.now(UTC),
-                    enabled=True,
-                    next_run_at=datetime.now(UTC),
-                )
-            )
-            await s.commit()
+        await s.commit()
 
     phase1_dir = ROOT.parent / "AutoDataCross" / "docs" / "phase2" / "data"
     if phase1_dir.exists():
@@ -165,7 +135,7 @@ def main() -> int:
                 stderr=subprocess.DEVNULL,
             )
             time.sleep(1)
-            # Windows 下 pgserver 把日志写在 PGDATA/log,非正常退出恢复扫描会因该文件被占用报 sharing violation
+            # Windows 下 pgserver 把日志写在 PGDATA/log,非正常退出会因该文件被占用报错
             if (pg_dir / "postmaster.pid").exists():
                 (pg_dir / "log").unlink(missing_ok=True)
                 rec_log = DEV / "pg-recovery.log"
@@ -232,7 +202,7 @@ def main() -> int:
                 time.sleep(0.5)
         print("\n=== 本地演示环境已就绪 ===", flush=True)
         print(f"API: http://127.0.0.1:{args.port}/api/docs", flush=True)
-        for email, name, role, _ in DEMO_USERS:
+        for email, _name, role, _ in DEMO_USERS:
             side = "管理端" if role in ("platform_admin", "reviewer") else "用户端"
             print(f"  [{side}] {email}  密码: {creds['users'][email]}", flush=True)
         print(f"(账号密码也保存在 {DEV / 'credentials.json'})", flush=True)

@@ -173,3 +173,15 @@ async def list_runs(
         .limit(50)
     )
     return (await session.execute(stmt)).scalars().all()
+
+
+@router.delete("/{site_id}", status_code=status.HTTP_200_OK, summary="删除站点及关联抓取记录")
+async def delete_site(
+    site_id: uuid.UUID,
+    _: Principal = Depends(require_platform_admin),
+    session: AsyncSession = Depends(get_session),
+) -> dict[str, str]:
+    site = await _get_site(session, site_id)
+    await session.delete(site)
+    await session.commit()
+    return {"deleted_site_id": str(site_id), "country_code": site.country_code}

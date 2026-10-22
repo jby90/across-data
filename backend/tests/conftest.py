@@ -1,9 +1,14 @@
+import atexit
 import os
+import shutil
 import tempfile
 
-# 必须在导入 app 之前设置测试配置
+# 必须在导入 app 之前设置测试配置(归档目录强制指向临时目录,防止写入 backend/data)
+_TEST_ARCHIVE_DIR = tempfile.mkdtemp(prefix="cyshuhe-archive-")
+atexit.register(shutil.rmtree, _TEST_ARCHIVE_DIR, True)
 os.environ.setdefault("CYSH_JWT_SECRET", "test-secret-only-for-pytest-" + "x" * 16)
 os.environ.setdefault("CYSH_ENV", "dev")
+os.environ.setdefault("CYSH_ARCHIVE_DIR", _TEST_ARCHIVE_DIR)
 
 import pgserver  # noqa: E402
 import pytest  # noqa: E402
