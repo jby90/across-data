@@ -12,6 +12,18 @@ const router = createRouter({
       children: [
         { path: '', name: 'home', component: () => import('./views/Home.vue') },
         {
+          path: 'sites',
+          name: 'sites',
+          component: () => import('./views/Sites.vue'),
+          meta: { roles: ['platform_admin'] },
+        },
+        {
+          path: 'documents',
+          name: 'documents',
+          component: () => import('./views/Documents.vue'),
+          meta: { roles: ['platform_admin', 'reviewer'] },
+        },
+        {
           path: 'orgs',
           name: 'orgs',
           component: () => import('./views/Orgs.vue'),

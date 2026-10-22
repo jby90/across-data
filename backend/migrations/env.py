@@ -6,11 +6,9 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from app import models_registry  # noqa: F401  导入所有模型,使其注册到 Base.metadata
 from app.core.config import get_settings
 from app.core.db import Base
-
-# 导入所有模型,使其注册到 Base.metadata
-from app.iam import models as _iam_models  # noqa: F401
 
 config = context.config
 if config.config_file_name is not None:

@@ -13,8 +13,6 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from app.core.db import Base
 from app.iam import models as _models  # noqa: F401
 
-pytestmark = pytest.mark.asyncio(loop_scope="session")
-
 BACKEND = Path(__file__).resolve().parents[1]
 
 

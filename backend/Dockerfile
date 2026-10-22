@@ -16,7 +16,9 @@ COPY app ./app
 COPY migrations ./migrations
 COPY alembic.ini ./
 
-RUN useradd --system --uid 10001 appuser
+RUN useradd --system --uid 10001 appuser \
+    && mkdir -p /data/archive && chown -R appuser /data
+ENV CYSH_ARCHIVE_DIR=/data/archive
 USER appuser
 
 EXPOSE 8000

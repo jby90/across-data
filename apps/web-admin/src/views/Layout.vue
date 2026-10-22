@@ -21,7 +21,9 @@ function logout() {
       <div class="brand">车研数合 · 管理端</div>
       <el-menu :default-active="route.path" router>
         <el-menu-item index="/">概览</el-menu-item>
+        <el-menu-item index="/documents">法规文档库</el-menu-item>
         <template v-if="isPlatformAdmin">
+          <el-menu-item index="/sites">采集站点</el-menu-item>
           <el-menu-item index="/orgs">企业管理</el-menu-item>
           <el-menu-item index="/users">账号管理</el-menu-item>
         </template>

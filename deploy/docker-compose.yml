@@ -31,5 +31,23 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
 
+  # 后台 worker:定时轮询到期站点并采集(与 api 同一镜像)
+  worker:
+    build:
+      context: ../backend
+    restart: unless-stopped
+    command: ["uv", "run", "--no-dev", "python", "-m", "app.worker"]
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      CYSH_ENV: ${CYSH_ENV:-prod}
+      CYSH_DATABASE_URL: postgresql+asyncpg://cyshuhe:${POSTGRES_PASSWORD}@db:5432/cyshuhe
+      CYSH_JWT_SECRET: ${CYSH_JWT_SECRET:?请在 .env 设置 CYSH_JWT_SECRET}
+      CYSH_CRAWL_ALLOW_RESOLVED_CIDRS: ${CYSH_CRAWL_ALLOW_RESOLVED_CIDRS:-[]}
+    volumes:
+      - archive:/data/archive
+
 volumes:
   pgdata:
+  archive:

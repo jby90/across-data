@@ -34,7 +34,22 @@ copy ..\.env.example ..\.env   # 然后填写 CYSH_JWT_SECRET
 # 3. 数据库迁移与创建首个平台管理员
 uv run alembic upgrade head
 uv run python -m app.cli create-platform-admin --email you@example.com
+
+# 4. 启动 API(8000)与后台 worker(负责定时采集)
+uv run uvicorn app.main:app --port 8000
+uv run python -m app.worker            # 常驻;加 --once 只跑一轮
+
+# 5. 前端
+cd .. ; pnpm install ; pnpm dev:user ; pnpm dev:admin
 ```
+
+## 采集流程(P1)
+
+管理端「采集站点」新增站点(默认停用)→ **确认来源使用条款并写明依据**(才能启用)→ 启用后由 worker 按间隔定时抓取
+→ 发现原文 → 遵守 robots.txt 礼貌下载(限速、体积上限、防内网地址)→ 原文按内容哈希归档 → 解析 → 切分条款。
+内容变化时生成新版本,旧版本与条款保留。没有文字层的 PDF 标记为"需要 OCR",不会冒充已解析。
+开发机若开着代理软件的 fake-IP 模式,域名会被解析到 198.18.0.0/15 而被拦截,可在 `.env` 里设置
+`CYSH_CRAWL_ALLOW_RESOLVED_CIDRS=["198.18.0.0/15"]`(生产保持为空)。
 
 ## 商用合规
 

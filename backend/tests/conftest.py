@@ -16,7 +16,9 @@ from app.core.db import Base, get_session  # noqa: E402
 from app.iam import models as _models  # noqa: E402, F401
 from app.iam import service  # noqa: E402
 from app.iam.models import Role  # noqa: E402
+from app.ingestion import models as _ingestion_models  # noqa: E402, F401
 from app.main import create_app  # noqa: E402
+from app.sources import models as _sources_models  # noqa: E402, F401
 
 PASSWORD = "correct-horse-battery"
 
@@ -48,7 +50,8 @@ async def engine(pg_url):
 @pytest_asyncio.fixture
 async def session_factory(engine):
     async with engine.begin() as conn:
-        await conn.execute(text("TRUNCATE users, organizations RESTART IDENTITY CASCADE"))
+        tables = ", ".join(t.name for t in Base.metadata.sorted_tables)
+        await conn.execute(text(f"TRUNCATE {tables} RESTART IDENTITY CASCADE"))
     return async_sessionmaker(engine, expire_on_commit=False)
 
 

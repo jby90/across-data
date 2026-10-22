@@ -14,6 +14,9 @@ dependencies = [
     "email-validator>=2.1",
     "pyjwt>=2.8",
     "argon2-cffi>=23.1",
+    "httpx>=0.28.1",
+    "beautifulsoup4>=4.15.0",
+    "pdfminer-six>=20260107",
 ]
 
 [dependency-groups]
@@ -49,3 +52,6 @@ extend-exclude = ["migrations/versions"]
 select = ["E", "F", "I", "UP", "B"]
 # FastAPI 依赖注入惯用写法 Depends(...) 作为参数默认值
 ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]  # 测试夹具里有长字符串

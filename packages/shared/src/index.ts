@@ -89,8 +89,133 @@ export function createClient(side: Side, onUnauthorized: () => void) {
     setToken,
     get: <T>(path: string) => request<T>('GET', path),
     post: <T>(path: string, body?: unknown) => request<T>('POST', path, body),
+    patch: <T>(path: string, body?: unknown) => request<T>('PATCH', path, body),
     login: (email: string, password: string) =>
       request<TokenResponse>('POST', `/auth/${side}/login`, { email, password }),
     me: () => request<UserOut>('GET', `/${side}/me`),
   }
+}
+
+// ---------- 采集与文档库(管理端) ----------
+
+export interface SiteOut {
+  id: string
+  country_code: string
+  publisher: string
+  language: string
+  document_type: string
+  entry_url: string
+  strategy: string
+  config: Record<string, unknown>
+  enabled: boolean
+  interval_hours: number
+  next_run_at: string | null
+  last_run_at: string | null
+  last_status: string | null
+  consecutive_failures: number
+  terms_status: 'pending' | 'approved' | 'rejected'
+  terms_url: string | null
+  terms_note: string | null
+  terms_decided_at: string | null
+}
+
+export interface RunOut {
+  id: string
+  trigger: string
+  started_at: string
+  finished_at: string | null
+  status: string
+  pages_read: number
+  links_found: number
+  documents_new: number
+  versions_new: number
+  errors: number
+  message: string | null
+}
+
+export interface VersionOut {
+  id: string
+  version_no: number
+  content_hash: string
+  size_bytes: number
+  mime_type: string
+  fetched_at: string
+  state: string
+  page_count: number | null
+  char_count: number | null
+  parse_strategy: string | null
+  error: string | null
+}
+
+export interface DocumentOut {
+  id: string
+  site_id: string
+  country_code: string
+  source_url: string
+  title: string
+  language: string
+  document_type: string
+  discovered_at: string
+  last_checked_at: string | null
+  last_error: string | null
+  latest_version: VersionOut | null
+}
+
+export interface DocumentDetail extends DocumentOut {
+  versions: VersionOut[]
+}
+
+export interface ClauseOut {
+  id: string
+  ordinal: number
+  clause_number: string | null
+  heading: string | null
+  original_text: string
+  page_start: number | null
+  page_end: number | null
+  language: string
+}
+
+export interface EventOut {
+  step: string
+  status: string
+  message: string | null
+  created_at: string
+}
+
+// 界面一律用中文业务用语,不暴露枚举值
+export const TERMS_LABEL: Record<string, string> = {
+  pending: '待确认',
+  approved: '已确认可抓取',
+  rejected: '已否决',
+}
+export const RUN_STATUS_LABEL: Record<string, string> = {
+  running: '运行中',
+  success: '成功',
+  partial: '部分成功',
+  failed: '失败',
+  skipped: '已跳过',
+}
+export const VERSION_STATE_LABEL: Record<string, string> = {
+  downloaded: '已下载',
+  parsed: '已解析',
+  needs_ocr: '需要 OCR(扫描件)',
+  failed: '解析失败',
+}
+export const DOC_TYPE_LABEL: Record<string, string> = {
+  LAW: '法律',
+  REGULATION: '法规',
+  GUIDANCE: '监管指南',
+  STANDARD: '标准',
+  FORM: '申报表',
+  OTHER: '其他',
+}
+export const STRATEGY_LABEL: Record<string, string> = {
+  INDEX_PAGE: '目录页发现',
+  DIRECT: '直接链接',
+}
+export const PARSE_STRATEGY_LABEL: Record<string, string> = {
+  numbered: '按条款编号',
+  paragraph: '按段落(未识别到编号)',
+  line: '按行(网页)',
 }

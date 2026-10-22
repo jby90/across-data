@@ -11,6 +11,7 @@ import getpass
 import os
 import sys
 
+from app import models_registry  # noqa: F401  确保所有模型已注册
 from app.core.db import get_sessionmaker
 from app.iam import service
 from app.iam.models import Role

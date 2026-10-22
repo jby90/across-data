@@ -16,6 +16,11 @@
 | email-validator | Unlicense | A | 邮箱校验 | 依赖 | 否 | — |
 | pyjwt | MIT | A | JWT | 依赖 | 否 | — |
 | argon2-cffi | MIT | A | 密码哈希 | 依赖 | 否 | — |
+| httpx | BSD-3-Clause | A | 采集 HTTP 客户端(P1 起为生产依赖) | 依赖 | 否 | — |
+| beautifulsoup4、soupsieve | MIT | A | HTML 链接发现与网页文本提取 | 依赖 | 否 | — |
+| pdfminer.six | MIT | A | PDF 文字层提取(不含 OCR) | 依赖 | 否 | — |
+| cryptography(pdfminer.six 的传递依赖) | Apache-2.0 OR BSD-3-Clause | A | PDF 加密支持 | 依赖 | 否 | — |
+| charset-normalizer(pdfminer.six 的传递依赖) | MIT | A | 字符编码识别 | 依赖 | 否 | — |
 
 开发/测试:pytest、pytest-asyncio、httpx、ruff(均为宽松许可证)、pip-licenses(MIT)、pgserver(嵌入式 PostgreSQL,**仅测试**,不进入生产镜像;其内含 PostgreSQL 二进制,PostgreSQL License)。
 

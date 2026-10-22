@@ -1,5 +1,4 @@
 import jwt
-import pytest
 from sqlalchemy import select
 
 from app.core.config import get_settings
@@ -7,8 +6,6 @@ from app.core.security import AUD_USER, create_access_token
 from app.iam.models import User
 
 from .conftest import PASSWORD, bearer, login
-
-pytestmark = pytest.mark.asyncio(loop_scope="session")
 
 
 async def test_health(client):
