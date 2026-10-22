@@ -83,10 +83,10 @@ async function loadData() {
     if (keyword.value.trim()) q.set('keyword', keyword.value.trim())
 
     const [ov, cl, gr] = await Promise.all([
-      api.get<CountryOverview[]>('/api/knowledge/overview'),
-      api.get<ClauseTranslation[]>(`/api/knowledge/clauses?${q.toString()}`),
+      api.get<CountryOverview[]>('/knowledge/overview'),
+      api.get<ClauseTranslation[]>(`/knowledge/clauses?${q.toString()}`),
       api.get<GraphPayload>(
-        `/api/knowledge/graph?country_code=${selectedCountry.value}&only_approved=${onlyApproved.value}`,
+        `/knowledge/graph?country_code=${selectedCountry.value}&only_approved=${onlyApproved.value}`,
       ),
     ])
     overviews.value = ov

@@ -125,7 +125,7 @@ async function loadGraph() {
   loading.value = true
   try {
     graph.value = await api.get<GraphPayload>(
-      `/api/admin/knowledge/graph?country_code=${countryCode.value}&only_approved=${onlyApproved.value}`,
+      `/admin/knowledge/graph?country_code=${countryCode.value}&only_approved=${onlyApproved.value}`,
     )
   } catch (e: unknown) {
     ElMessage.error((e as Error).message)
@@ -138,7 +138,7 @@ async function runExtract() {
   loading.value = true
   try {
     const res = await api.post<{ nodes_total: number; edges_total: number }>(
-      `/api/admin/knowledge/extract?country_code=${countryCode.value}&translate_sample_per_doc=6`,
+      `/admin/knowledge/extract?country_code=${countryCode.value}&translate_sample_per_doc=6`,
     )
     ElMessage.success(
       `已重跑 ${countryCode.value} 知识图谱抽取：共 ${res.nodes_total} 个节点、${res.edges_total} 条语义边`,
@@ -153,7 +153,7 @@ async function runExtract() {
 
 async function reviewEdge(edge: KgEdge, decision: 'approved' | 'rejected') {
   try {
-    await api.post(`/api/admin/knowledge/edges/${edge.id}/review`, { decision })
+    await api.post(`/admin/knowledge/edges/${edge.id}/review`, { decision })
     ElMessage.success(decision === 'approved' ? '已复核通过该语义边' : '已驳回该语义边')
     await loadGraph()
   } catch (e: unknown) {

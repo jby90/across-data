@@ -63,7 +63,8 @@ export function createClient(side: Side, onUnauthorized: () => void) {
     const t = token()
     if (t) headers.Authorization = `Bearer ${t}`
     if (body !== undefined) headers['Content-Type'] = 'application/json'
-    const res = await fetch(`/api${path}`, {
+    const url = path.startsWith('/api/') ? path : `/api${path}`
+    const res = await fetch(url, {
       method,
       headers,
       body: body === undefined ? undefined : JSON.stringify(body),

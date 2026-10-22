@@ -119,9 +119,9 @@ async function loadAll() {
     qTr.set('limit', '120')
 
     const [trList, rpList, glList] = await Promise.all([
-      api.get<ClauseTranslation[]>(`/api/admin/knowledge/translations?${qTr.toString()}`),
-      api.get<ReviewPoint[]>(`/api/admin/knowledge/review-points${qCountry}`),
-      api.get<GlossaryTerm[]>(`/api/admin/knowledge/glossary${qCountry}`),
+      api.get<ClauseTranslation[]>(`/admin/knowledge/translations?${qTr.toString()}`),
+      api.get<ReviewPoint[]>(`/admin/knowledge/review-points${qCountry}`),
+      api.get<GlossaryTerm[]>(`/admin/knowledge/glossary${qCountry}`),
     ])
     translations.value = trList
     reviewPoints.value = rpList
@@ -141,7 +141,7 @@ async function runCountryExtract() {
       nodes_total: number
       edges_total: number
       clauses_translated: number
-    }>(`/api/admin/knowledge/extract?country_code=${cc}&translate_sample_per_doc=6`)
+    }>(`/admin/knowledge/extract?country_code=${cc}&translate_sample_per_doc=6`)
     ElMessage.success(
       `${cc} 抽取与受控翻译完成：新增译文 ${res.clauses_translated} 条，图谱节点 ${res.nodes_total} 个、语义边 ${res.edges_total} 条`,
     )
@@ -163,7 +163,7 @@ function openTranslationReview(row: ClauseTranslation) {
 async function submitTranslationReview(decision: 'approved' | 'rejected') {
   if (!currentTranslation.value) return
   try {
-    await api.post(`/api/admin/knowledge/translations/${currentTranslation.value.id}/review`, {
+    await api.post(`/admin/knowledge/translations/${currentTranslation.value.id}/review`, {
       decision,
       translated_text: editTranslatedText.value,
       reviewer_note: editReviewerNote.value || null,
@@ -180,7 +180,7 @@ async function submitTranslationReview(decision: 'approved' | 'rejected') {
 
 async function quickApproveTranslation(row: ClauseTranslation) {
   try {
-    await api.post(`/api/admin/knowledge/translations/${row.id}/review`, {
+    await api.post(`/admin/knowledge/translations/${row.id}/review`, {
       decision: 'approved',
       reviewer_note: '律所复核通过',
     })
@@ -194,7 +194,7 @@ async function quickApproveTranslation(row: ClauseTranslation) {
 async function decidePoint(point: ReviewPoint, status: 'confirmed' | 'needs_discussion') {
   const reply = point.lawyer_reply?.trim() || point.provisional_interpretation
   try {
-    await api.post(`/api/admin/knowledge/review-points/${point.id}/decide`, {
+    await api.post(`/admin/knowledge/review-points/${point.id}/decide`, {
       status,
       lawyer_reply: reply,
     })
@@ -209,7 +209,7 @@ async function openExportSheet() {
   try {
     const q = countryFilter.value ? `?country_code=${countryFilter.value}` : ''
     const res = await api.get<{ markdown: string; items: unknown[] }>(
-      `/api/admin/knowledge/review-points/export${q}`,
+      `/admin/knowledge/review-points/export${q}`,
     )
     exportedMarkdown.value = res.markdown
     exportedJson.value = JSON.stringify({ items: res.items }, null, 2)
@@ -222,7 +222,7 @@ async function openExportSheet() {
 async function importJsonSheet() {
   try {
     const parsed = JSON.parse(exportedJson.value)
-    const res = await api.post<{ updated: number }>('/api/admin/knowledge/review-points/import', {
+    const res = await api.post<{ updated: number }>('/admin/knowledge/review-points/import', {
       items: parsed.items || [],
     })
     ElMessage.success(`已批量导入 ${res.updated} 条律所确认单回执`)
@@ -235,7 +235,7 @@ async function importJsonSheet() {
 
 async function createTerm() {
   try {
-    await api.post('/api/admin/knowledge/glossary', {
+    await api.post('/admin/knowledge/glossary', {
       ...newTermForm.value,
       country_code: newTermForm.value.country_code || null,
     })
