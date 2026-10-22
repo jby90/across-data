@@ -155,5 +155,48 @@ class GraphPayloadOut(BaseModel):
     country_code: str
     node_counts_by_type: dict[str, int]
     edge_counts_by_relation: dict[str, int]
+    quality_summary: dict = Field(default_factory=dict)
     nodes: list[KgNodeOut]
     edges: list[KgEdgeOut]
+
+
+class RegulationSummaryOut(BaseModel):
+    id: uuid.UUID
+    country_code: str
+    title: str
+    document_type: str
+    document_type_zh: str
+    language: str
+    source_url: str
+    publisher: str
+    version_no: int
+    legal_status: str
+    fetched_at: datetime | None
+    sha256_hex: str | None
+    clauses_count: int
+    translated_clauses_count: int
+    edges_count: int
+    eight_attributes: dict[str, str]
+    version_count: int
+
+
+class RegulationClauseItemOut(BaseModel):
+    clause_id: uuid.UUID
+    ordinal: int
+    clause_number: str | None
+    heading: str | None
+    section_path: str | None
+    original_text: str
+    translated_text: str | None
+    status_badge: str
+    usable_as_legal_basis: bool
+    glossary_hits: list[dict]
+    unmatched_terms: list[dict]
+    linked_edges: list[dict]
+
+
+class RegulationDetailOut(BaseModel):
+    regulation: RegulationSummaryOut
+    versions: list[dict]
+    clauses: list[RegulationClauseItemOut]
+    mini_graph: GraphPayloadOut

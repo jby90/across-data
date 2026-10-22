@@ -136,7 +136,14 @@ async def verify_admin_portal(browser, creds: dict, bad_responses: list[str], pa
     tools_text_restored = await page.locator(".graph-tools").inner_text()
     assert "6/6 类节点" in tools_text_restored, f"恢复全部要素后未更新为 6/6 类节点: {tools_text_restored}"
 
-    # 点击关系筛选标签
+    # 点击关系筛选标签与图谱质量体检视图
+    await page.locator("[data-testid=kg-quality-pending]").click()
+    await page.wait_for_timeout(300)
+    await page.locator("[data-testid=kg-quality-all]").click()
+    await page.wait_for_timeout(300)
+    attr_text = await page.locator("[data-testid=kg-eight-attributes-panel]").inner_text()
+    assert "1. 适用行业" in attr_text and "8. 准入材料清单" in attr_text, f"八项属性未完整显示: {attr_text}"
+
     await page.locator(".el-tag", has_text="数据出境限制").first.click()
     await page.wait_for_timeout(300)
     await page.locator(".el-tag", has_text="全部").first.click()
@@ -166,13 +173,28 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     await page.wait_for_url("http://localhost:5173/", timeout=10000)
     await _assert_no_error_toast(page, "用户端登录")
 
-    print("[7/8] 点击用户端「法规知识库」并验证五国卡片、关键词检索与图谱页签 ...")
+    print("[7/8] 点击用户端「法规知识库」并验证三级目录树、八项属性、左右双栏与义务原文高亮 ...")
     await page.locator(".el-menu-item", has_text="法规知识库").click()
     await page.wait_for_load_state("networkidle")
-    await page.wait_for_timeout(800)
+    await page.wait_for_timeout(1200)
     await _assert_no_error_toast(page, "用户端法规知识库")
     cards = await page.locator(".country-card").count()
     assert cards == 5, f"五国概览卡片数不对: {cards}"
+
+    # 验证左侧法规三级分类树与右侧八项属性画像
+    reg_items = await page.locator("[data-testid=user-reg-tree] .reg-item").count()
+    assert reg_items >= 5, f"左侧法规目录树条目数不足: {reg_items}"
+    user_attr_text = await page.locator("[data-testid=user-eight-attributes]").inner_text()
+    assert "1. 适用行业" in user_attr_text and "8. 准入材料清单" in user_attr_text
+
+    # 点击某条条款的关联义务芯片，验证左侧原文出现黄色高亮 <mark class="quote-highlight">
+    chip_count = await page.locator("[data-testid=clause-obligation-chip]").count()
+    if chip_count > 0:
+        await page.locator("[data-testid=clause-obligation-chip]").first.click()
+        await page.wait_for_timeout(300)
+        marks = await page.locator("mark.quote-highlight").count()
+        assert marks >= 1, "点击条款关联义务芯片后，左侧原文未高亮依据片段"
+    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_reg_detail.png"))
 
     # 点击摩洛哥卡片再切回新加坡
     await page.locator(".country-card", has_text="摩洛哥").click()
@@ -181,13 +203,18 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     await _assert_no_error_toast(page, "切换摩洛哥知识库")
     await page.locator(".country-card", has_text="新加坡").click()
     await page.wait_for_load_state("networkidle")
-    await page.wait_for_timeout(400)
+    await page.wait_for_timeout(800)
     await _assert_no_error_toast(page, "切回新加坡知识库")
 
-    print("[8/8] 切换用户端「六要素 · 十二关系合规图谱」页签 ...")
+    print("[8/8] 切换用户端「六要素 · 十二关系合规图谱」页签并验证 ECharts 合规地图 ...")
     await page.get_by_role("tab", name="六要素 · 十二关系合规图谱").click()
-    await page.wait_for_timeout(400)
+    await page.wait_for_timeout(2000)
     await _assert_no_error_toast(page, "用户端合规图谱页签")
+    ubox = await page.locator("[data-testid=user-kg-force-graph] canvas").first.bounding_box()
+    assert ubox and ubox["width"] > 400 and ubox["height"] > 300, f"用户端合规地图画布异常: {ubox}"
+    await page.locator("[data-testid=user-kg-hide-hub-btn]").click()
+    await page.wait_for_timeout(1200)
+    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_compliance_map.png"))
 
     await context.close()
 

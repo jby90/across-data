@@ -47,6 +47,9 @@ importers:
       '@cyshuhe/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      echarts:
+        specifier: ^6.1.0
+        version: 6.1.0
       element-plus:
         specifier: ^2.14.7
         version: 2.14.7(vue@3.5.44(typescript@5.9.3))

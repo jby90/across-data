@@ -12,6 +12,8 @@ interface KgNode {
   name_zh: string
   name_orig: string | null
   summary: string | null
+  attributes: Record<string, string>
+  document_id: string | null
   review_status: string
 }
 
@@ -34,10 +36,24 @@ interface KgEdge {
   usable_as_legal_basis: boolean
 }
 
+interface QualitySummary {
+  isolated_nodes_count?: number
+  isolated_node_ids?: string[]
+  total_clauses_count?: number
+  linked_clauses_count?: number
+  unlinked_clauses_count?: number
+  pending_review_edges_count?: number
+  approved_edges_count?: number
+  stale_or_rejected_edges_count?: number
+  quote_mismatch_edges_count?: number
+  ocr_or_rtl_clauses_count?: number
+}
+
 interface GraphPayload {
   country_code: string
   node_counts_by_type: Record<string, number>
   edge_counts_by_relation: Record<string, number>
+  quality_summary: QualitySummary
   nodes: KgNode[]
   edges: KgEdge[]
 }
@@ -68,21 +84,35 @@ const RELATION_LABEL: Record<string, string> = {
   REQUIRES_ADMISSION: '准入要求',
 }
 
+const EIGHT_ATTR_LABELS: Array<{ key: string; label: string }> = [
+  { key: 'applicable_industry', label: '1. 适用行业' },
+  { key: 'data_scope', label: '2. 数据范围' },
+  { key: 'cross_border_condition', label: '3. 出境条件' },
+  { key: 'retention_period', label: '4. 留存期限' },
+  { key: 'authorization_requirement', label: '5. 授权要求' },
+  { key: 'penalty_amount', label: '6. 处罚金额' },
+  { key: 'violation_level', label: '7. 违规等级' },
+  { key: 'admission_checklist', label: '8. 准入材料清单' },
+]
+
 const countryCode = ref('SG')
 const onlyApproved = ref(false)
 const relationFilter = ref('')
+const qualityFilter = ref<'all' | 'pending_review' | 'approved'>('all')
 const visibleNodeTypes = ref<string[]>([...ALL_NODE_TYPES])
 const loading = ref(false)
 const graph = ref<GraphPayload>({
   country_code: 'SG',
   node_counts_by_type: {},
   edge_counts_by_relation: {},
+  quality_summary: {},
   nodes: [],
   edges: [],
 })
 
 const maxEdges = ref(300)
 const selectedId = ref('')
+const showAttrCard = ref(true)
 
 function isTypeVisible(ntype: string): boolean {
   return visibleNodeTypes.value.includes(ntype)
@@ -117,12 +147,16 @@ function hideHubNodeTypes() {
   }
 }
 
-// 先按可见节点类型过滤边（要求源节点与目标节点类型均处于显示状态）
+// 先按可见节点类型与质量体检状态过滤边
 const typeFilteredEdges = computed(() => {
   const vis = new Set(visibleNodeTypes.value)
-  return graph.value.edges.filter(
-    (e) => vis.has(e.source_node_type) && vis.has(e.target_node_type),
-  )
+  return graph.value.edges.filter((e) => {
+    if (!vis.has(e.source_node_type) || !vis.has(e.target_node_type)) return false
+    if (qualityFilter.value === 'pending_review' && e.review_status !== 'pending_review')
+      return false
+    if (qualityFilter.value === 'approved' && e.review_status !== 'approved') return false
+    return true
+  })
 })
 
 const visibleEdgeCountsByRelation = computed(() => {
@@ -139,8 +173,6 @@ const filteredEdges = computed(() =>
     : typeFilteredEdges.value,
 )
 
-// 力导向图：同一对节点、同一关系由多条条款支撑时合并为一条边（标签显示条款数）；
-// 合并后仍过多时按连接度优先保留 Top-N；下方明细表仍展示全部证据边
 interface MergedEdge {
   source: string
   target: string
@@ -217,12 +249,25 @@ const tableEdges = computed(() =>
       )
     : filteredEdges.value,
 )
+
+const activeNode = computed<KgNode | null>(() => {
+  if (selectedId.value) {
+    return graph.value.nodes.find((n) => n.id === selectedId.value) || null
+  }
+  return (
+    graph.value.nodes.find((n) => n.node_type === 'INSTRUMENT') ||
+    graph.value.nodes[0] ||
+    null
+  )
+})
+
 const selectedName = computed(
   () => graph.value.nodes.find((n) => n.id === selectedId.value)?.name_zh || '',
 )
 
 function onNodeClick(id: string) {
   selectedId.value = selectedId.value === id ? '' : id
+  showAttrCard.value = true
 }
 
 async function loadGraph() {
@@ -231,6 +276,7 @@ async function loadGraph() {
     graph.value = await api.get<GraphPayload>(
       `/admin/knowledge/graph?country_code=${countryCode.value}&only_approved=${onlyApproved.value}`,
     )
+    selectedId.value = ''
   } catch (e: unknown) {
     ElMessage.error((e as Error).message)
   } finally {
@@ -319,11 +365,54 @@ onMounted(loadGraph)
       </div>
     </div>
 
+    <!-- 图谱与数据质量体检视图（06 补充要求 页面 3 质量视图） -->
+    <div class="quality-bar" data-testid="kg-quality-bar">
+      <span class="sub" style="font-weight: 700; color: #1e293b">图谱质量体检视图：</span>
+      <el-tag
+        :type="qualityFilter === 'all' ? 'primary' : 'info'"
+        style="cursor: pointer"
+        data-testid="kg-quality-all"
+        @click="qualityFilter = 'all'"
+      >
+        全部语义边 ({{ graph.edges.length }})
+      </el-tag>
+      <el-tag
+        :type="qualityFilter === 'pending_review' ? 'warning' : 'info'"
+        style="cursor: pointer"
+        data-testid="kg-quality-pending"
+        @click="qualityFilter = qualityFilter === 'pending_review' ? 'all' : 'pending_review'"
+      >
+        待核对关系 ({{ graph.quality_summary?.pending_review_edges_count ?? 0 }})
+      </el-tag>
+      <el-tag
+        :type="qualityFilter === 'approved' ? 'success' : 'info'"
+        style="cursor: pointer"
+        data-testid="kg-quality-approved"
+        @click="qualityFilter = qualityFilter === 'approved' ? 'all' : 'approved'"
+      >
+        已核对关系 ({{ graph.quality_summary?.approved_edges_count ?? 0 }})
+      </el-tag>
+      <el-tag type="success" effect="plain">
+        依据片段子串校验失配: {{ graph.quality_summary?.quote_mismatch_edges_count ?? 0 }} 条 (100% 原文可回溯)
+      </el-tag>
+      <el-tag type="info" effect="plain">
+        孤立节点: {{ graph.quality_summary?.isolated_nodes_count ?? 0 }} 个
+      </el-tag>
+      <el-tag type="info" effect="plain">
+        未挂接义务的一般条款: {{ graph.quality_summary?.unlinked_clauses_count ?? 0 }} /
+        {{ graph.quality_summary?.total_clauses_count ?? 0 }} 条
+      </el-tag>
+      <el-tag
+        v-if="(graph.quality_summary?.ocr_or_rtl_clauses_count ?? 0) > 0"
+        type="warning"
+        effect="plain"
+      >
+        扫描件OCR/阿语需人工核对条款: {{ graph.quality_summary?.ocr_or_rtl_clauses_count }} 条
+      </el-tag>
+    </div>
+
     <!-- 按节点类型显示/隐藏控制栏 -->
-    <div
-      class="filter-row"
-      data-testid="kg-node-type-filter-bar"
-    >
+    <div class="filter-row" data-testid="kg-node-type-filter-bar">
       <span class="sub" style="font-weight: 600">按节点类型显示/隐藏：</span>
       <el-tag
         v-for="(meta, ntype) in NODE_TYPE_META"
@@ -343,12 +432,7 @@ onMounted(loadGraph)
           graph.node_counts_by_type[ntype] || 0
         }})
       </el-tag>
-      <el-button
-        size="small"
-        plain
-        data-testid="kg-hide-hub-btn"
-        @click="hideHubNodeTypes"
-      >
+      <el-button size="small" plain data-testid="kg-hide-hub-btn" @click="hideHubNodeTypes">
         隐藏枢纽节点（国家/监管机构）
       </el-button>
       <el-button
@@ -399,6 +483,9 @@ onMounted(loadGraph)
           <el-option :value="300" label="300" />
           <el-option :value="600" label="600" />
         </el-select>
+        <el-button size="small" link type="primary" @click="showAttrCard = !showAttrCard">
+          {{ showAttrCard ? '收起八项核心属性' : '展开八项核心属性' }}
+        </el-button>
         <el-tag v-if="selectedId" closable type="warning" @close="selectedId = ''">
           已选：{{ selectedName }}
         </el-tag>
@@ -409,11 +496,37 @@ onMounted(loadGraph)
         :categories="fgCategories"
         :visible-types="visibleNodeTypes"
         :selected-id="selectedId"
-        height="560px"
+        height="540px"
         @node-click="onNodeClick"
         @toggle-type="toggleNodeType"
       />
     </div>
+
+    <!-- 八项核心法规/要素结构化属性画像（需求文档 1.3.3） -->
+    <div
+      v-if="showAttrCard && activeNode"
+      class="attr-panel"
+      data-testid="kg-eight-attributes-panel"
+    >
+      <div class="attr-head">
+        <div>
+          <el-tag size="small" effect="dark" :style="{ backgroundColor: NODE_TYPE_META[activeNode.node_type]?.color || '#409eff', borderColor: 'transparent' }">
+            {{ NODE_TYPE_META[activeNode.node_type]?.label || activeNode.node_type }}
+          </el-tag>
+          <strong style="margin-left: 8px; font-size: 14px">{{ activeNode.name_zh }}</strong>
+          <span class="sub" style="margin-left: 8px">
+            （{{ selectedId ? '当前点击选中节点' : '本国代表性法规要素节点，点击图中任意节点可切换' }} · 八项必备结构化属性）
+          </span>
+        </div>
+      </div>
+      <div class="attr-grid">
+        <div v-for="item in EIGHT_ATTR_LABELS" :key="item.key" class="attr-item">
+          <div class="attr-key">{{ item.label }}</div>
+          <div class="attr-val">{{ activeNode.attributes?.[item.key] || '-' }}</div>
+        </div>
+      </div>
+    </div>
+
     <!-- 语义关系边与证据条款明细表 -->
     <el-table
       data-testid="kg-edge-table"
@@ -530,8 +643,19 @@ onMounted(loadGraph)
   font-weight: 700;
   margin-top: 4px;
 }
+.quality-bar {
+  margin: 10px 0 6px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
 .filter-row {
-  margin: 10px 0;
+  margin: 8px 0;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -549,6 +673,41 @@ onMounted(loadGraph)
   border-radius: 8px;
   background: #f8fafc;
   padding: 6px;
+}
+.attr-panel {
+  margin-top: 12px;
+  border: 1px solid #dbeafe;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.attr-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.attr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.attr-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.attr-key {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 3px;
+}
+.attr-val {
+  font-size: 12px;
+  color: #334155;
+  line-height: 1.45;
 }
 .quote-box {
   font-size: 12px;
