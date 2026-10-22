@@ -26,7 +26,7 @@ from app.ingestion.archive import ArchiveStore
 from app.ingestion.discovery import DEFAULT_EGAZETTE_QUERIES
 from app.ingestion.models import Document, DocumentVersion, LegalStatus, PipelineEvent
 from app.ingestion.ocr import OcrEngine
-from app.ingestion.pipeline import parse_version
+from app.ingestion.pipeline import assess_document_relevance, parse_version
 from app.sources.models import SourceSite, Strategy
 
 log = logging.getLogger(__name__)
@@ -359,19 +359,29 @@ async def import_phase1(
                 )
             ).scalar_one_or_none()
             if doc is None:
+                title_val = _title(source, meta)
+                rel_val, rel_note = assess_document_relevance(
+                    title_val, source["source_url"], doc_type
+                )
                 doc = Document(
                     site_id=site.id,
                     country_code=country,
                     source_url=source["source_url"],
-                    title=_title(source, meta),
+                    title=title_val,
                     language=source["language"],
                     document_type=doc_type,
                     instrument_family=(meta or {}).get("instrument_family"),
                     instrument_kind=(meta or {}).get("instrument_kind") or source["document_type"],
+                    relevance=rel_val,
+                    relevance_note=rel_note,
                 )
                 s.add(doc)
                 await s.flush()
                 report.documents_new += 1
+            elif not doc.relevance_note:
+                doc.relevance, doc.relevance_note = assess_document_relevance(
+                    doc.title, doc.source_url, doc.document_type
+                )
 
             for v in vers:
                 digest = v["content_hash"]

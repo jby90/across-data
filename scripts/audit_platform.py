@@ -146,14 +146,23 @@ def run_audit(base_url: str, admin_email: str, admin_password: str) -> dict[str,
             c_docs = docs_by_country.get(cc, [])
             ver_count = 0
             clause_count = 0
+            ocr_ver_count = 0
+            missing_ver_count = 0
+            rel_counter: Counter[str] = Counter()
             for d in c_docs:
+                rel_counter[d.get("relevance") or "relevant"] += 1
                 det_r = client.get(f"/api/admin/documents/{d['id']}", headers=headers)
                 det_r.raise_for_status()
                 det = det_r.json()
                 versions = det.get("versions") or []
                 ver_count += len(versions)
+                ocr_ver_count += sum(
+                    1 for v in versions if v.get("text_source") == "ocr" or v.get("ocr_required")
+                )
                 latest = det.get("latest_version")
-                if latest:
+                if not latest:
+                    missing_ver_count += 1
+                else:
                     c_offset = 0
                     while True:
                         cr = client.get(
@@ -173,6 +182,9 @@ def run_audit(base_url: str, admin_email: str, admin_password: str) -> dict[str,
                 "documents_count": len(c_docs),
                 "versions_count": ver_count,
                 "clauses_count": clause_count,
+                "ocr_versions_count": ocr_ver_count,
+                "missing_latest_version_count": missing_ver_count,
+                "relevance": dict(sorted(rel_counter.items())),
             }
 
         # 3. 译文统计
@@ -349,9 +361,12 @@ def print_human_report(report: dict[str, Any]) -> None:
         f"总版本 {docs_meta['total_versions']} 个, 总条款 {docs_meta['total_clauses']} 条):"
     )
     for cc, info in docs_meta["by_country"].items():
+        ocr_cnt = info.get("ocr_versions_count", 0)
+        miss_cnt = info.get("missing_latest_version_count", 0)
         print(
-            f"  - {cc}: 文档 {info['documents_count']} 份 | 版本 {info['versions_count']} 个 | "
-            f"条款 {info['clauses_count']} 条"
+            f"  - {cc}: 文档 {info['documents_count']} 份 | 版本 {info['versions_count']} 个 "
+            f"(OCR {ocr_cnt} 个, 缺版本 {miss_cnt} 份) | "
+            f"条款 {info['clauses_count']} 条 | 相关性 {info.get('relevance', {})}"
         )
 
     tr = report["translations"]

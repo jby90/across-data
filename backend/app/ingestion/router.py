@@ -14,7 +14,7 @@ from app.ingestion.archive import ArchiveStore
 from app.ingestion.fetcher import validate_public_http_url
 from app.ingestion.models import Clause, Document, DocumentVersion, LegalStatus, PipelineEvent
 from app.ingestion.ocr import OcrEngine
-from app.ingestion.pipeline import parse_version
+from app.ingestion.pipeline import assess_document_relevance, parse_version
 from app.sources.models import SourceSite
 
 router = APIRouter(prefix="/api/admin", tags=["documents"])
@@ -37,6 +37,8 @@ class VersionOut(BaseModel):
     error: str | None
     text_source: str
     ocr_confidence: float | None
+    ocr_required: bool = False
+    review_status: str = "pending_review"
     official_number: str | None
     version_label: str | None
     published_date: date | None
@@ -61,6 +63,8 @@ class DocumentOut(BaseModel):
     last_error: str | None
     instrument_family: str | None = None
     instrument_kind: str | None = None
+    relevance: str = "relevant"
+    relevance_note: str | None = None
     latest_version: VersionOut | None = None
 
 
@@ -80,6 +84,8 @@ class ClauseOut(BaseModel):
     page_start: int | None
     page_end: int | None
     language: str
+    ocr_required: bool = False
+    needs_review: bool = True
 
 
 class EventOut(BaseModel):
@@ -196,19 +202,29 @@ async def upload_document_version(
             )
         ).scalar_one_or_none()
         if doc is None:
+            title_val = (body.title or clean_url).strip()[:500]
+            rel_val, rel_note = assess_document_relevance(
+                title_val, clean_url, site.document_type
+            )
             doc = Document(
                 site_id=site.id,
                 country_code=site.country_code,
                 source_url=clean_url,
-                title=(body.title or clean_url).strip()[:500],
+                title=title_val,
                 language=site.language,
                 document_type=site.document_type,
+                relevance=rel_val,
+                relevance_note=rel_note,
             )
             session.add(doc)
             await session.flush()
 
     if body.title and body.title.strip():
         doc.title = body.title.strip()[:500]
+    if not doc.relevance_note:
+        doc.relevance, doc.relevance_note = assess_document_relevance(
+            doc.title, doc.source_url, doc.document_type
+        )
     doc.last_checked_at = datetime.now(UTC)
     doc.last_error = None
 

@@ -86,8 +86,10 @@ class PoliteFetcher:
         allow_resolved_cidrs: list[str] | None = None,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
         clock: Callable[[], float] = time.monotonic,
+        fallback_client: httpx.AsyncClient | None = None,
     ) -> None:
         self._client = client
+        self._fallback_client = fallback_client
         self._ua = user_agent
         self._ua_token = user_agent.split("/")[0].strip() or "*"
         self._delay = delay_seconds
@@ -139,16 +141,56 @@ class PoliteFetcher:
         if origin in self._robots:
             return self._robots[origin]
         robots_url = f"{origin}/robots.txt"
-        parser: RobotFileParser | None
+        parser: RobotFileParser | None = None
         try:
-            await self._throttle(parts.hostname or "")
-            resp = await self._client.get(
-                robots_url, headers={"User-Agent": self._ua}, follow_redirects=False, timeout=15
-            )
-            if resp.status_code == 200:
+            current_robots_url = robots_url
+            resp: httpx.Response | None = None
+            for _ in range(min(self._max_redirects, 5) + 1):
+                r_host = await self._check_target(current_robots_url)
+                await self._throttle(r_host)
+                try:
+                    resp = await self._client.get(
+                        current_robots_url,
+                        headers={"User-Agent": self._ua},
+                        follow_redirects=False,
+                        timeout=15,
+                    )
+                except httpx.HTTPError:
+                    if self._fallback_client is None:
+                        raise
+                    resp = await self._fallback_client.get(
+                        current_robots_url,
+                        headers={"User-Agent": self._ua},
+                        follow_redirects=False,
+                        timeout=15,
+                    )
+                if resp.status_code in (301, 302, 303, 307, 308):
+                    loc = resp.headers.get("location")
+                    if not loc:
+                        break
+                    current_robots_url = urljoin(current_robots_url, loc)
+                    continue
+                break
+            assert resp is not None
+            ctype = resp.headers.get("content-type", "").lower()
+            final_path = urlsplit(current_robots_url).path.lower()
+            if (
+                resp.status_code == 200
+                and "text/html" not in ctype
+                and not final_path.endswith("/error")
+            ):
                 parser = RobotFileParser()
                 parser.parse(resp.text.splitlines())
                 self._robots_note[origin] = "HTTP 200,已读取规则"
+            elif resp.status_code == 200 and (
+                "text/html" in ctype or final_path.endswith("/error")
+            ):
+                # 部分政府站点(如 lp.gov.lb)在无 robots.txt 时 302 到 HTML /error 页并返回 200
+                parser = RobotFileParser()
+                parser.parse([])
+                self._robots_note[origin] = (
+                    "无有效 text/plain robots.txt(返回 HTML 页),按 RFC 9309 视为允许"
+                )
             elif 400 <= resp.status_code < 500:
                 parser = RobotFileParser()  # 没有 robots.txt:视为允许
                 parser.parse([])
@@ -156,7 +198,7 @@ class PoliteFetcher:
             else:
                 parser = None  # 5xx:保守起见一律不抓
                 self._robots_note[origin] = f"HTTP {resp.status_code},无法确认规则,保守起见不抓取"
-        except httpx.HTTPError as e:
+        except (httpx.HTTPError, BlockedError, FetchError) as e:
             parser = None
             self._robots_note[origin] = f"网络错误({type(e).__name__}),无法确认规则,不抓取"
         self._robots[origin] = parser
@@ -198,43 +240,56 @@ class PoliteFetcher:
                 headers["If-None-Match"] = etag
             if last_modified:
                 headers["If-Modified-Since"] = last_modified
-            try:
-                async with self._client.stream(
-                    "GET", current, headers=headers, follow_redirects=False
-                ) as resp:
-                    if resp.status_code in (301, 302, 303, 307, 308):
-                        location = resp.headers.get("location")
-                        if not location:
-                            raise FetchError(f"重定向缺少 Location: {current}")
-                        current = urljoin(current, location)
-                        continue
-                    if resp.status_code == 304:
+            last_err: httpx.HTTPError | None = None
+            clients = [self._client]
+            if self._fallback_client is not None:
+                clients.append(self._fallback_client)
+            redirect_to: str | None = None
+            for cli in clients:
+                try:
+                    async with cli.stream(
+                        "GET", current, headers=headers, follow_redirects=False
+                    ) as resp:
+                        if resp.status_code in (301, 302, 303, 307, 308):
+                            location = resp.headers.get("location")
+                            if not location:
+                                raise FetchError(f"重定向缺少 Location: {current}")
+                            redirect_to = urljoin(current, location)
+                            last_err = None
+                            break
+                        if resp.status_code == 304:
+                            return FetchResult(
+                                current, 304, None, "", etag, last_modified, not_modified=True
+                            )
+                        if resp.status_code >= 400:
+                            raise FetchError(f"HTTP {resp.status_code}: {current}")
+                        declared = resp.headers.get("content-length")
+                        if declared and declared.isdigit() and int(declared) > self._max_bytes:
+                            raise FetchError(f"文件过大({declared} 字节): {current}")
+                        chunks: list[bytes] = []
+                        total = 0
+                        async for chunk in resp.aiter_bytes():
+                            total += len(chunk)
+                            if total > self._max_bytes:
+                                raise FetchError(f"文件超过大小上限: {current}")
+                            chunks.append(chunk)
+                        mime = resp.headers.get("content-type", "").split(";")[0].strip().lower()
                         return FetchResult(
-                            current, 304, None, "", etag, last_modified, not_modified=True
+                            current,
+                            resp.status_code,
+                            b"".join(chunks),
+                            mime,
+                            resp.headers.get("etag"),
+                            resp.headers.get("last-modified"),
                         )
-                    if resp.status_code >= 400:
-                        raise FetchError(f"HTTP {resp.status_code}: {current}")
-                    declared = resp.headers.get("content-length")
-                    if declared and declared.isdigit() and int(declared) > self._max_bytes:
-                        raise FetchError(f"文件过大({declared} 字节): {current}")
-                    chunks: list[bytes] = []
-                    total = 0
-                    async for chunk in resp.aiter_bytes():
-                        total += len(chunk)
-                        if total > self._max_bytes:
-                            raise FetchError(f"文件超过大小上限: {current}")
-                        chunks.append(chunk)
-                    mime = resp.headers.get("content-type", "").split(";")[0].strip().lower()
-                    return FetchResult(
-                        current,
-                        resp.status_code,
-                        b"".join(chunks),
-                        mime,
-                        resp.headers.get("etag"),
-                        resp.headers.get("last-modified"),
-                    )
-            except httpx.HTTPError as e:
-                raise FetchError(f"网络错误: {current}: {e}") from e
+                except httpx.HTTPError as e:
+                    last_err = e
+                    continue
+            if last_err is not None:
+                raise FetchError(f"网络错误: {current}: {last_err}") from last_err
+            if redirect_to is not None:
+                current = redirect_to
+                continue
         raise FetchError(f"重定向次数过多: {url}")
 
     async def post_json(

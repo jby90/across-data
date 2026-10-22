@@ -4,6 +4,7 @@ from datetime import date, datetime
 
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     CheckConstraint,
     Date,
     DateTime,
@@ -15,6 +16,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
@@ -33,7 +35,13 @@ class Document(Base):
     """一份官方文件(以来源 URL 为身份)。内容变化时产生新的版本,旧版本保留。"""
 
     __tablename__ = "documents"
-    __table_args__ = (UniqueConstraint("site_id", "source_url", name="uq_documents_site_url"),)
+    __table_args__ = (
+        UniqueConstraint("site_id", "source_url", name="uq_documents_site_url"),
+        CheckConstraint(
+            "relevance IN ('relevant','irrelevant','needs_review')",
+            name="ck_documents_relevance",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     site_id: Mapped[uuid.UUID] = mapped_column(
@@ -52,6 +60,11 @@ class Document(Base):
     # 文件所属的法规体系(如 sg-av-rules)与文件性质(ACT/REGULATION/AMENDMENT/GUIDANCE...)
     instrument_family: Mapped[str | None] = mapped_column(String(128), nullable=True)
     instrument_kind: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # S3 采集阶段记录文件级相关性(relevant / irrelevant / needs_review),供 S2 过滤
+    relevance: Mapped[str] = mapped_column(
+        String(16), default="relevant", server_default="relevant"
+    )
+    relevance_note: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 
 class LegalStatus(enum.StrEnum):
@@ -74,6 +87,10 @@ class DocumentVersion(Base):
             name="ck_versions_legal_status",
         ),
         CheckConstraint("text_source IN ('text_layer','ocr')", name="ck_versions_text_source"),
+        CheckConstraint(
+            "review_status IN ('pending_review','approved','rejected')",
+            name="ck_versions_review_status",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -101,6 +118,12 @@ class DocumentVersion(Base):
         String(16), default="text_layer", server_default="text_layer"
     )
     ocr_confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
+    ocr_required: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
+    review_status: Mapped[str] = mapped_column(
+        String(24), default="pending_review", server_default="pending_review"
+    )
 
     # 版本元数据:来自官方文本或一期核对,metadata_source 说明出处;未知就留空,不猜
     official_number: Mapped[str | None] = mapped_column(String(128), nullable=True)
@@ -153,3 +176,9 @@ class Clause(Base):
     page_end: Mapped[int | None] = mapped_column(Integer, nullable=True)
     text_hash: Mapped[str] = mapped_column(String(64))
     language: Mapped[str] = mapped_column(String(8))
+    ocr_required: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
+    needs_review: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default=text("true")
+    )

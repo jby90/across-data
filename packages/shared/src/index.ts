@@ -151,6 +151,8 @@ export interface VersionOut {
   error: string | null
   text_source: 'text_layer' | 'ocr'
   ocr_confidence: number | null
+  ocr_required: boolean
+  review_status: 'pending_review' | 'approved' | 'rejected'
   official_number: string | null
   version_label: string | null
   published_date: string | null
@@ -173,6 +175,8 @@ export interface DocumentOut {
   last_error: string | null
   instrument_family: string | null
   instrument_kind: string | null
+  relevance: 'relevant' | 'irrelevant' | 'needs_review'
+  relevance_note: string | null
   latest_version: VersionOut | null
 }
 
@@ -190,6 +194,8 @@ export interface ClauseOut {
   page_start: number | null
   page_end: number | null
   language: string
+  ocr_required: boolean
+  needs_review: boolean
 }
 
 export interface EventOut {

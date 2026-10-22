@@ -84,6 +84,35 @@ def _title_from(candidate: Candidate) -> str:
     return (name or candidate.url)[:500]
 
 
+_IRRELEVANT_HINTS = (
+    "formulaire",
+    "form-template",
+    "template-francais",
+    "application-form",
+    "demande d'accès",
+    "demande d'acces",
+    "办事表格",
+    "申请表",
+)
+
+
+def assess_document_relevance(
+    title: str, source_url: str, document_type: str
+) -> tuple[str, str]:
+    """文件级相关性初判(S3 采集阶段记录,不删除文档,供 S2 过滤)。"""
+    doc_type = (document_type or "").upper()
+    haystack = f"{title or ''} {source_url or ''}".lower()
+    if doc_type == "FORM" or any(h in haystack for h in _IRRELEVANT_HINTS):
+        return (
+            "irrelevant",
+            "办事申请表格/模板文件，非普遍约束力法规，采集阶段保留归档，供 S2 阶段过滤",
+        )
+    return (
+        "relevant",
+        "属于目标法域数据保护/车联网/电信/自动驾驶相关立法或监管文件",
+    )
+
+
 async def discover(fetcher: PoliteFetcher, site: SiteSnapshot, stats: Stats) -> list[Candidate]:
     """发现候选原文。目录页本身读取失败会抛出异常,由调用方判定整次运行失败。"""
     if site.strategy == Strategy.DIRECT.value:
@@ -161,6 +190,8 @@ async def parse_version(
         version.char_count = parsed.char_count
         version.text_source = "text_layer"
         version.ocr_confidence = None
+        version.ocr_required = False
+        version.review_status = "pending_review"
         source_pages = parsed.pages
         ocr_reason: str | None = None
         if parsed.looks_scanned:
@@ -168,6 +199,7 @@ async def parse_version(
         elif parsed.kind == "pdf":
             ocr_reason = text_layer_garbled(parsed.pages, language)
         if ocr_reason:
+            version.ocr_required = True
             if ocr is None or not ocr.available:
                 version.state = VersionState.NEEDS_OCR.value
                 version.parse_strategy = None
@@ -182,6 +214,7 @@ async def parse_version(
             source_pages = result.pages
             version.text_source = "ocr"
             version.ocr_confidence = result.mean_confidence
+            version.ocr_required = True
             version.char_count = sum(len(p.strip()) for p in source_pages)
             note = "置信度偏低,务必人工核对" if result.mean_confidence < LOW_CONFIDENCE else ""
             session.add(
@@ -236,6 +269,8 @@ async def parse_version(
                     page_end=d.page_end,
                     text_hash=ArchiveStore.sha256(d.text.encode("utf-8")),
                     language=language,
+                    ocr_required=bool(version.ocr_required),
+                    needs_review=True,
                 )
             )
         version.state = VersionState.PARSED.value
@@ -294,15 +329,20 @@ async def _process_candidate(
             )
         ).scalar_one_or_none()
         if doc is None:
+            title = _title_from(cand)
+            doc_type = cand.document_type or site.document_type
+            rel_val, rel_note = assess_document_relevance(title, cand.url, doc_type)
             doc = Document(
                 site_id=site.id,
                 country_code=site.country_code,
                 source_url=cand.url,
-                title=_title_from(cand),
+                title=title,
                 language=site.language,
-                document_type=cand.document_type or site.document_type,
+                document_type=doc_type,
                 instrument_family=cand.instrument_family,
                 instrument_kind=cand.instrument_kind,
+                relevance=rel_val,
+                relevance_note=rel_note,
             )
             s.add(doc)
             await s.flush()
@@ -312,6 +352,10 @@ async def _process_candidate(
                 doc.instrument_family = cand.instrument_family
             if cand.instrument_kind and not doc.instrument_kind:
                 doc.instrument_kind = cand.instrument_kind
+            if not doc.relevance_note:
+                doc.relevance, doc.relevance_note = assess_document_relevance(
+                    doc.title, doc.source_url, doc.document_type
+                )
         latest = (
             await s.execute(
                 select(DocumentVersion)
@@ -328,6 +372,9 @@ async def _process_candidate(
                 last_modified=latest.http_last_modified if latest else None,
             )
         except (BlockedError, FetchError) as e:
+            if site.strategy == Strategy.DIRECT.value and latest is None:
+                await s.rollback()
+                raise
             doc.last_error = str(e)[:2000]
             doc.last_checked_at = _now()
             stats.errors += 1

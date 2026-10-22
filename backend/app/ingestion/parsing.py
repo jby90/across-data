@@ -239,7 +239,7 @@ def text_layer_garbled(pages: list[str], language: str) -> str | None:
     text = "\n".join(pages)
     if len(text.strip()) < 200:
         return None
-    controls = sum(1 for c in text if unicodedata.category(c) == "Cc" and c not in "\n\r\t")
+    controls = sum(1 for c in text if unicodedata.category(c) == "Cc" and c not in "\n\r\t\f")
     if controls / len(text) > 0.01:
         return f"文字层含大量控制字符({controls} 个),疑似字体编码缺失导致的乱码"
     letters = [c for c in text if c.isalpha()]

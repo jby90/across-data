@@ -83,6 +83,14 @@
     "note": "物联网监管框架(阿语,2023-08)。与车联网相关。"
   },
   {
+    "country_code": "EG",
+    "publisher": "埃及内阁信息与决策支持中心 IDSC",
+    "language": "ar",
+    "document_type": "LAW",
+    "entry_url": "https://idsc.gov.eg/upload/DocumentLibrary/AttachmentA/10387/7.pdf",
+    "note": "埃及内阁 IDSC 官方发布的数字与金融科技立法文件(一期 primaryResearchLinks 登记的官方 PDF)。"
+  },
+  {
     "country_code": "TN",
     "publisher": "突尼斯司法部",
     "language": "ar",
@@ -104,7 +112,15 @@
     "language": "fr",
     "document_type": "REGULATION",
     "entry_url": "https://www.inpdp.tn/ressources/decret_3003.pdf",
-    "note": "第 2007-3003 号法令(数据处理申报程序)。"
+    "note": "第 2007-3003 号法令(INPDP 原站点,一期记录域名解析异常)。"
+  },
+  {
+    "country_code": "TN",
+    "publisher": "突尼斯官方公报 JORT / 立法门户",
+    "language": "fr",
+    "document_type": "REGULATION",
+    "entry_url": "https://legislation-securite.tn/wp-content/uploads/sites/5/2023/11/Decret-n%C2%B02007-3003-du-27-novembre-2007fr.pdf",
+    "note": "第 2007-3003 号法令官方公报法语 PDF(规定国家个人数据保护局 INPDP 运作程序)。"
   },
   {
     "country_code": "MA",
@@ -112,7 +128,7 @@
     "language": "fr",
     "document_type": "LAW",
     "entry_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
-    "note": "第 09-08 号个人数据保护法(法语)。一期记录:部分页面为扫描件,需要 OCR。"
+    "note": "第 09-08 号个人数据保护法(法语)。"
   },
   {
     "country_code": "MA",
@@ -120,7 +136,7 @@
     "language": "fr",
     "document_type": "REGULATION",
     "entry_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
-    "note": "第 2-09-165 号实施法令(法语)。"
+    "note": "第 2-09-165 号实施法令(法语扫描件,经 OCR 识别)。"
   },
   {
     "country_code": "MA",
@@ -136,7 +152,7 @@
     "language": "fr",
     "document_type": "FORM",
     "entry_url": "https://www.cndp.ma/wp-content/uploads/2023/11/CDAI-FORMULAIRE-DAI-Template-FRANCAIS.pdf",
-    "note": "官方申报表模板(法语)。申请表模块(M3)的模板来源候选。"
+    "note": "官方申报表模板(法语)。采集阶段标记 relevance=irrelevant,供 S2 过滤。"
   },
   {
     "country_code": "LB",
@@ -144,6 +160,14 @@
     "language": "ar",
     "document_type": "LAW",
     "entry_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
-    "note": "2018 年第 81 号法(电子交易与个人数据,阿语)。一期使用文字层解析 137 个候选条款。"
+    "note": "2018 年第 81 号法(电子交易与个人数据,阿语)。"
+  },
+  {
+    "country_code": "LB",
+    "publisher": "黎巴嫩议会 LP(官方托管)",
+    "language": "ar",
+    "document_type": "OTHER",
+    "entry_url": "https://lp.gov.lb/backoffice/uploads/files/Laws%20whose%20implementation%20decrees%20have%20not%20been%20issued%20-%20update%20September%202%2C%202021.pdf",
+    "note": "黎巴嫩议会官方发布的法律实施法令颁布状态统计清单(含第 81/2018 号法,一期 primaryResearchLinks 登记)。"
   }
 ]

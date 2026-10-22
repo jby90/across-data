@@ -104,10 +104,13 @@ async def seed(creds: dict) -> None:
 
     from app.analysis.workflow_engine import ensure_workflow_config
     from app.knowledge.extractor import extract_knowledge_for_country
+    from app.knowledge.models import KgNode
 
     async with sf() as s:
-        for cc in ("SG", "EG", "TN", "MA", "LB"):
-            await extract_knowledge_for_country(s, cc, translate_sample_per_doc=4)
+        has_any_node = (await s.execute(select(KgNode.id).limit(1))).first() is not None
+        if not has_any_node:
+            for cc in ("SG", "EG", "TN", "MA", "LB"):
+                await extract_knowledge_for_country(s, cc, translate_sample_per_doc=4)
         await ensure_workflow_config(s)
         # 清理旧版本写死的演示分析任务(无租户、无创建人,不是任何用户真实发起的)
         from sqlalchemy import text

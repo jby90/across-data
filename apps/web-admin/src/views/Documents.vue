@@ -176,17 +176,32 @@ onMounted(load)
     <el-table-column label="类型" width="100">
       <template #default="{ row }">{{ DOC_TYPE_LABEL[row.document_type] }}</template>
     </el-table-column>
+    <el-table-column label="相关性" width="110">
+      <template #default="{ row }">
+        <el-tag :type="row.relevance === 'irrelevant' ? 'info' : 'success'" size="small">
+          {{ row.relevance === 'irrelevant' ? '非法规/待过滤' : '相关法规' }}
+        </el-tag>
+      </template>
+    </el-table-column>
     <el-table-column label="最新版本" width="90">
       <template #default="{ row }">{{ row.latest_version ? `第 ${row.latest_version.version_no} 版` : '—' }}</template>
     </el-table-column>
-    <el-table-column label="状态" width="150">
+    <el-table-column label="状态" width="180">
       <template #default="{ row }">
-        <el-tag
-          v-if="row.latest_version"
-          :type="row.latest_version.state === 'parsed' ? 'success' : row.latest_version.state === 'failed' ? 'danger' : 'warning'"
-        >
-          {{ VERSION_STATE_LABEL[row.latest_version.state] }}
-        </el-tag>
+        <template v-if="row.latest_version">
+          <el-tag
+            :type="row.latest_version.state === 'parsed' ? 'success' : row.latest_version.state === 'failed' ? 'danger' : 'warning'"
+            size="small"
+          >
+            {{ VERSION_STATE_LABEL[row.latest_version.state] }}
+          </el-tag>
+          <el-tag v-if="row.latest_version.ocr_required" type="warning" size="small" style="margin-left: 4px">
+            OCR
+          </el-tag>
+          <el-tag type="info" size="small" style="margin-left: 4px">
+            {{ row.latest_version.review_status === 'approved' ? '已复核' : '待复核' }}
+          </el-tag>
+        </template>
         <el-tag v-else type="info">未取得原文</el-tag>
       </template>
     </el-table-column>

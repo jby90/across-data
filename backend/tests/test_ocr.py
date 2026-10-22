@@ -103,6 +103,7 @@ async def test_pipeline_ocr_turns_scan_into_clauses_but_flags_machine_text(
     async with session_factory() as s:
         v = (await s.execute(select(DocumentVersion))).scalar_one()
         assert v.state == "parsed" and v.text_source == "ocr"
+        assert v.ocr_required is True and v.review_status == "pending_review"
         assert v.ocr_confidence is not None and v.ocr_confidence > 70
         clauses = (
             (
@@ -114,6 +115,7 @@ async def test_pipeline_ocr_turns_scan_into_clauses_but_flags_machine_text(
             .all()
         )
         assert [c.clause_number for c in clauses if c.clause_number] == ["1", "2", "3"]
+        assert all(c.ocr_required is True and c.needs_review is True for c in clauses)
         ev = (
             await s.execute(select(PipelineEvent).where(PipelineEvent.step == "ocr"))
         ).scalar_one()

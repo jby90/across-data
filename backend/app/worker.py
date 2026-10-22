@@ -8,6 +8,8 @@
 import argparse
 import asyncio
 import logging
+import os
+import urllib.request
 
 import httpx
 
@@ -28,16 +30,33 @@ async def main(once: bool) -> None:
     ocr = OcrEngine(settings.tesseract_cmd, settings.tessdata_dir, settings.ocr_dpi)
     log.info("OCR %s", "可用" if ocr.available else "不可用(扫描件只标记,不识别)")
     sf = get_sessionmaker()
-    async with httpx.AsyncClient(timeout=settings.crawl_timeout_seconds) as client:
+    sys_proxies = urllib.request.getproxies()
+    proxy_url = (
+        os.environ.get("HTTPS_PROXY")
+        or os.environ.get("HTTP_PROXY")
+        or sys_proxies.get("https")
+        or sys_proxies.get("http")
+    )
+    async with (
+        httpx.AsyncClient(
+            timeout=settings.crawl_timeout_seconds,
+            proxy=proxy_url,
+        ) as client,
+        httpx.AsyncClient(
+            timeout=max(settings.crawl_timeout_seconds, 60.0),
+            trust_env=False,
+        ) as direct_client,
+    ):
 
         def make_fetcher() -> PoliteFetcher:
-            # 每次运行新建,robots.txt 缓存不会跨运行过期
+            # 每次运行新建,robots.txt 缓存不会跨运行过期;当系统代理连接中断时自动回退直连重试
             return PoliteFetcher(
                 client,
                 user_agent=settings.crawl_user_agent,
                 delay_seconds=settings.crawl_delay_seconds,
                 max_bytes=settings.crawl_max_bytes,
                 allow_resolved_cidrs=settings.crawl_allow_resolved_cidrs,
+                fallback_client=direct_client if proxy_url else None,
             )
 
         while True:
