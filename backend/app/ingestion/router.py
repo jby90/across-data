@@ -1,14 +1,21 @@
+import base64
 import uuid
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.core.db import get_session
-from app.iam.deps import Principal, require_admin_side
-from app.ingestion.models import Clause, Document, DocumentVersion, PipelineEvent
+from app.iam.deps import Principal, require_admin_side, require_platform_admin
+from app.ingestion.archive import ArchiveStore
+from app.ingestion.fetcher import validate_public_http_url
+from app.ingestion.models import Clause, Document, DocumentVersion, LegalStatus, PipelineEvent
+from app.ingestion.ocr import OcrEngine
+from app.ingestion.pipeline import parse_version
+from app.sources.models import SourceSite
 
 router = APIRouter(prefix="/api/admin", tags=["documents"])
 
@@ -83,6 +90,21 @@ class EventOut(BaseModel):
     created_at: datetime
 
 
+class ManualUploadIn(BaseModel):
+    """管理员手工上传官方原文(如源站开启了 WAF 验证码挑战时的合规兜底入口)。"""
+
+    site_id: uuid.UUID | None = None
+    document_id: uuid.UUID | None = None
+    source_url: str | None = Field(default=None, max_length=2048)
+    title: str | None = Field(default=None, max_length=500)
+    mime_type: str = Field(default="application/pdf", max_length=128)
+    content_base64: str = Field(min_length=8)
+    official_number: str | None = Field(default=None, max_length=128)
+    version_label: str | None = Field(default=None, max_length=255)
+    published_date: date | None = None
+    effective_date: date | None = None
+
+
 async def _versions_by_doc(
     session: AsyncSession, doc_ids: list[uuid.UUID]
 ) -> dict[uuid.UUID, list[DocumentVersion]]:
@@ -124,6 +146,131 @@ async def list_documents(
         item.latest_version = VersionOut.model_validate(vs[0]) if vs else None
         out.append(item)
     return out
+
+
+@router.post(
+    "/documents/upload",
+    response_model=DocumentDetail,
+    status_code=status.HTTP_201_CREATED,
+    summary="手动上传官方原文(WAF 拦截时的兜底入口)",
+)
+async def upload_document_version(
+    body: ManualUploadIn,
+    _: Principal = Depends(require_platform_admin),
+    session: AsyncSession = Depends(get_session),
+):
+    try:
+        raw_bytes = base64.b64decode(body.content_base64, validate=True)
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_ENTITY, f"文件 base64 解码失败: {e}"
+        ) from None
+    settings = get_settings()
+    if not raw_bytes or len(raw_bytes) > settings.crawl_max_bytes:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "文件为空或超过体积上限")
+
+    doc: Document | None = None
+    if body.document_id is not None:
+        doc = await session.get(Document, body.document_id)
+        if doc is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "文档不存在")
+    else:
+        if body.site_id is None or not body.source_url:
+            raise HTTPException(
+                status.HTTP_422_UNPROCESSABLE_ENTITY,
+                "新建文档上传必须指定所属站点(site_id)与官方原文链接(source_url)",
+            )
+        site = await session.get(SourceSite, body.site_id)
+        if site is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "站点不存在")
+        try:
+            clean_url = validate_public_http_url(body.source_url)
+        except ValueError as e:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(e)) from None
+        doc = (
+            await session.execute(
+                select(Document).where(
+                    Document.site_id == site.id, Document.source_url == clean_url
+                )
+            )
+        ).scalar_one_or_none()
+        if doc is None:
+            doc = Document(
+                site_id=site.id,
+                country_code=site.country_code,
+                source_url=clean_url,
+                title=(body.title or clean_url).strip()[:500],
+                language=site.language,
+                document_type=site.document_type,
+            )
+            session.add(doc)
+            await session.flush()
+
+    if body.title and body.title.strip():
+        doc.title = body.title.strip()[:500]
+    doc.last_checked_at = datetime.now(UTC)
+    doc.last_error = None
+
+    archive = ArchiveStore(settings.archive_dir)
+    digest = ArchiveStore.sha256(raw_bytes)
+    existing = (
+        await session.execute(
+            select(DocumentVersion).where(
+                DocumentVersion.document_id == doc.id,
+                DocumentVersion.content_hash == digest,
+            )
+        )
+    ).scalar_one_or_none()
+    if existing is None:
+        stored_digest, rel = archive.put(raw_bytes)
+        last_no = (
+            await session.execute(
+                select(DocumentVersion.version_no)
+                .where(DocumentVersion.document_id == doc.id)
+                .order_by(DocumentVersion.version_no.desc())
+                .limit(1)
+            )
+        ).scalar_one_or_none()
+        version = DocumentVersion(
+            document_id=doc.id,
+            version_no=(last_no or 0) + 1,
+            content_hash=stored_digest,
+            archive_path=rel,
+            size_bytes=len(raw_bytes),
+            mime_type=body.mime_type,
+            final_url=doc.source_url[:2048],
+            fetched_at=datetime.now(UTC),
+            official_number=body.official_number,
+            version_label=body.version_label,
+            published_date=body.published_date,
+            effective_date=body.effective_date,
+            legal_status=LegalStatus.UNKNOWN.value,
+            metadata_source="manual_upload",
+        )
+        session.add(version)
+        await session.flush()
+        session.add(
+            PipelineEvent(
+                version_id=version.id,
+                step="upload",
+                status="ok",
+                message=f"管理员手动上传官方原文,{len(raw_bytes)} 字节,sha256={stored_digest[:12]}",
+            )
+        )
+        ocr = OcrEngine(settings.tesseract_cmd, settings.tessdata_dir, settings.ocr_dpi)
+        await parse_version(session, archive, version, doc.language, ocr)
+        await session.commit()
+    else:
+        await session.commit()
+
+    versions = (await _versions_by_doc(session, [doc.id])).get(doc.id, [])
+    base = DocumentOut.model_validate(doc)
+    version_out = [VersionOut.model_validate(v) for v in versions]
+    return DocumentDetail(
+        **base.model_dump(exclude={"latest_version"}),
+        latest_version=version_out[0] if version_out else None,
+        versions=version_out,
+    )
 
 
 @router.get("/documents/{document_id}", response_model=DocumentDetail, summary="文档详情与全部版本")

@@ -35,13 +35,120 @@ _PHASE1_TZ = timezone(timedelta(hours=8))  # 一期数据库时区 Asia/Shanghai
 _TYPE_MAP = {
     "ACT": "LAW",
     "REVISED_ACT": "LAW",
+    "LAW": "LAW",
     "REGULATION": "REGULATION",
     "REGULATOR_GUIDANCE": "GUIDANCE",
     "HISTORICAL_GUIDANCE": "GUIDANCE",
     "ADMISSION_GUIDANCE": "GUIDANCE",
+    "GUIDANCE": "GUIDANCE",
+    "FORM": "FORM",
 }
 _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 EGAZETTE_INDEX_URL = "https://www.egazette.gov.sg/egazette-browse/"
+
+# 一期已落盘校验过、但未汇总进 current/sources.json 的其余四国官方 PDF
+_EXTRA_PHASE1_SOURCES: list[dict] = [
+    {
+        "id": "extra-eg-iot",
+        "country_code": "EG",
+        "publisher": "埃及国家电信监管局 NTRA",
+        "language": "ar",
+        "document_type": "GUIDANCE",
+        "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+        "title": (
+            "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية"
+            " — Internet of Things (IoT) Framework"
+        ),
+        "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+        "published_date": "2022-04-01",
+    },
+    {
+        "id": "extra-tn-loi63-fr",
+        "country_code": "TN",
+        "publisher": "突尼斯国家统计局 INS",
+        "language": "fr",
+        "document_type": "LAW",
+        "source_url": (
+            "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf"
+        ),
+        "title": (
+            "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection "
+            "des données à caractère personnel (texte français)"
+        ),
+        "content_hash": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+        "published_date": "2004-07-27",
+    },
+    {
+        "id": "extra-tn-loi63-ar",
+        "country_code": "TN",
+        "publisher": "突尼斯司法部",
+        "language": "ar",
+        "document_type": "LAW",
+        "source_url": (
+            "https://www.justice.gov.tn/fileadmin/medias/"
+            "organisation_juridictionelle/Loi2004_63Arabe.pdf"
+        ),
+        "title": (
+            "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        ),
+        "content_hash": "7b12a8ddddba535f4afb61ab95f9f9be411fdecc31cda1e9242145853edf2735",
+        "published_date": "2004-07-27",
+    },
+    {
+        "id": "extra-ma-loi0908",
+        "country_code": "MA",
+        "publisher": "摩洛哥国家个人数据保护委员会 CNDP",
+        "language": "fr",
+        "document_type": "LAW",
+        "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+        "title": (
+            "Loi n° 09-08 relative à la protection des personnes physiques à l’égard "
+            "du traitement des données à caractère personnel"
+        ),
+        "content_hash": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+        "published_date": "2009-02-18",
+    },
+    {
+        "id": "extra-ma-decret209165",
+        "country_code": "MA",
+        "publisher": "摩洛哥国家个人数据保护委员会 CNDP",
+        "language": "fr",
+        "document_type": "REGULATION",
+        "source_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "content_hash": "0a930a84d692c5b7e82a328970c52f10c52ee55ba75bb974918f0694a901365b",
+        "published_date": "2009-05-18",
+    },
+    {
+        "id": "extra-ma-cdai-form",
+        "country_code": "MA",
+        "publisher": "摩洛哥国家个人数据保护委员会 CNDP",
+        "language": "fr",
+        "document_type": "FORM",
+        "source_url": (
+            "https://www.cndp.ma/wp-content/uploads/2023/11/"
+            "CDAI-FORMULAIRE-DAI-Template-FRANCAIS.pdf"
+        ),
+        "title": "Formulaire de demande d'accès à l'information / déclaration CNDP",
+        "content_hash": "37710bb33ae3a3f450dfcb85e80f4998bffaa9909ab9aa8be4e48ee78e8ad58c",
+    },
+    {
+        "id": "extra-lb-law81",
+        "country_code": "LB",
+        "publisher": "黎巴嫩中央银行 BDL(官方托管)",
+        "language": "ar",
+        "document_type": "LAW",
+        "source_url": (
+            "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/"
+            "Laws/Law_81_AR%C2%A72572_1.pdf"
+        ),
+        "title": (
+            "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        ),
+        "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+        "published_date": "2018-10-10",
+    },
+]
 
 
 @dataclass
@@ -180,11 +287,34 @@ async def import_phase1(
 ) -> ImportReport:
     country = country.upper()
     current = data_dir / "current"
-    sources = [s for s in _load(current / "sources.json") if s["country_code"] == country]
+    sources = (
+        [s for s in _load(current / "sources.json") if s["country_code"] == country]
+        if (current / "sources.json").exists()
+        else []
+    )
     versions: dict[str, list[dict]] = {}
-    for v in sorted(_load(current / "versions.json"), key=lambda x: int(x["id"])):
-        versions.setdefault(v["source_id"], []).append(v)
-    metas = {m["source_id"]: m for m in _load(current / "source-metadata.json")}
+    if (current / "versions.json").exists():
+        for v in sorted(_load(current / "versions.json"), key=lambda x: int(x["id"])):
+            versions.setdefault(v["source_id"], []).append(v)
+    metas = (
+        {m["source_id"]: m for m in _load(current / "source-metadata.json")}
+        if (current / "source-metadata.json").exists()
+        else {}
+    )
+    existing_urls = {s["source_url"] for s in sources}
+    for extra in _EXTRA_PHASE1_SOURCES:
+        if extra["country_code"] == country and extra["source_url"] not in existing_urls:
+            pdf_path = data_dir / country / f"{extra['content_hash']}.pdf"
+            if pdf_path.exists():
+                sources.append(extra)
+                versions[extra["id"]] = [
+                    {
+                        "id": extra["id"],
+                        "source_id": extra["id"],
+                        "content_hash": extra["content_hash"],
+                        "published_date": extra.get("published_date"),
+                    }
+                ]
 
     report = ImportReport()
     async with sf() as s:

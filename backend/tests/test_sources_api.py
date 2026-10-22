@@ -221,3 +221,68 @@ async def test_documents_api_after_real_ingest(client, seed, session_factory, tm
         )
     ).status_code == 404
     assert httpx is not None
+
+
+async def test_manual_upload_creates_and_updates_document_version(client, seed):
+    """管理员手动上传官方 PDF 原文(WAF 拦截时的兜底入口),自动完成 SHA-256 归档与条款解析。"""
+    import base64
+
+    from .helpers import make_pdf
+
+    h = await admin_headers(client)
+    sid = (await client.post("/api/admin/sites", headers=h, json=SITE)).json()["id"]
+    pdf1 = make_pdf(
+        [
+            ["1. Personal data protection obligation."],
+            ["2. Cross-border transfer restriction."],
+        ]
+    )
+    r = await client.post(
+        "/api/admin/documents/upload",
+        headers=h,
+        json={
+            "site_id": sid,
+            "source_url": "https://example.org/waf-protected/guideline.pdf",
+            "title": "Advisory Guidelines on Cross-Border Data Transfer",
+            "version_label": "2026 Edition",
+            "published_date": "2026-05-01",
+            "content_base64": base64.b64encode(pdf1).decode("ascii"),
+        },
+    )
+    assert r.status_code == 201, r.text
+    detail = r.json()
+    assert detail["title"] == "Advisory Guidelines on Cross-Border Data Transfer"
+    assert detail["latest_version"]["version_no"] == 1
+    assert detail["latest_version"]["state"] == "parsed"
+    assert detail["latest_version"]["metadata_source"] == "manual_upload"
+
+    # 上传完全相同的文件不会产生重复版本
+    r_dup = await client.post(
+        "/api/admin/documents/upload",
+        headers=h,
+        json={
+            "document_id": detail["id"],
+            "content_base64": base64.b64encode(pdf1).decode("ascii"),
+        },
+    )
+    assert r_dup.status_code == 201
+    assert len(r_dup.json()["versions"]) == 1
+
+    # 上传修订后的新文件自动递增版本号
+    pdf2 = make_pdf(
+        [
+            ["1. Personal data protection obligation (Amended)."],
+            ["2. Cross-border transfer restriction."],
+        ]
+    )
+    r_v2 = await client.post(
+        "/api/admin/documents/upload",
+        headers=h,
+        json={
+            "document_id": detail["id"],
+            "version_label": "2026 Rev 2",
+            "content_base64": base64.b64encode(pdf2).decode("ascii"),
+        },
+    )
+    assert r_v2.status_code == 201
+    assert [v["version_no"] for v in r_v2.json()["versions"]] == [2, 1]

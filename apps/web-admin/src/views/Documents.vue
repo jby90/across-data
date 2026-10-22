@@ -8,9 +8,10 @@ import {
   type DocumentDetail,
   type DocumentOut,
   type EventOut,
+  type SiteOut,
 } from '@cyshuhe/shared'
 import { ElMessage } from 'element-plus'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
 
@@ -18,6 +19,7 @@ const route = useRoute()
 const router = useRouter()
 
 const docs = ref<DocumentOut[]>([])
+const sites = ref<SiteOut[]>([])
 const country = ref((route.query.country_code as string) || '')
 const siteId = ref((route.query.site_id as string) || '')
 const sitePublisher = ref((route.query.publisher as string) || '')
@@ -67,6 +69,85 @@ async function pick(id: string) {
   ])
 }
 
+// ---- 手动上传官方原文(WAF 拦截时的兜底入口) ----
+const uploadDialog = ref(false)
+const uploading = ref(false)
+const uploadForm = reactive({
+  document_id: '' as string,
+  site_id: '' as string,
+  source_url: '',
+  title: '',
+  version_label: '',
+  published_date: '',
+  file_name: '',
+  mime_type: 'application/pdf',
+  content_base64: '',
+})
+
+async function openUploadDialog(doc?: DocumentOut) {
+  if (!sites.value.length) {
+    try {
+      sites.value = await api.get<SiteOut[]>('/admin/sites')
+    } catch {
+      /* 复核员无站点列表权限时忽略 */
+    }
+  }
+  uploadForm.document_id = doc?.id ?? ''
+  uploadForm.site_id = doc?.site_id ?? siteId.value ?? (sites.value[0]?.id ?? '')
+  uploadForm.source_url = doc?.source_url ?? ''
+  uploadForm.title = doc?.title ?? ''
+  uploadForm.version_label = ''
+  uploadForm.published_date = ''
+  uploadForm.file_name = ''
+  uploadForm.content_base64 = ''
+  uploadDialog.value = true
+}
+
+function onFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  uploadForm.file_name = file.name
+  uploadForm.mime_type = file.type || (file.name.toLowerCase().endsWith('.html') ? 'text/html' : 'application/pdf')
+  const reader = new FileReader()
+  reader.onload = () => {
+    const res = String(reader.result || '')
+    const idx = res.indexOf('base64,')
+    uploadForm.content_base64 = idx >= 0 ? res.slice(idx + 7) : res
+  }
+  reader.readAsDataURL(file)
+}
+
+async function submitUpload() {
+  if (!uploadForm.content_base64) {
+    ElMessage.warning('请先选择要上传的官方 PDF 或 HTML 文件')
+    return
+  }
+  uploading.value = true
+  try {
+    const res = await api.post<DocumentDetail>('/admin/documents/upload', {
+      document_id: uploadForm.document_id || null,
+      site_id: uploadForm.document_id ? null : uploadForm.site_id || null,
+      source_url: uploadForm.document_id ? null : uploadForm.source_url.trim() || null,
+      title: uploadForm.title.trim() || null,
+      mime_type: uploadForm.mime_type,
+      content_base64: uploadForm.content_base64,
+      version_label: uploadForm.version_label.trim() || null,
+      published_date: uploadForm.published_date.trim() || null,
+    })
+    ElMessage.success('官方原文已归档并完成条款解析')
+    uploadDialog.value = false
+    await load()
+    detail.value = res
+    drawer.value = true
+    if (res.versions.length) await pick(res.versions[0].id)
+  } catch (e) {
+    ElMessage.error((e as Error).message)
+  } finally {
+    uploading.value = false
+  }
+}
+
 onMounted(load)
 </script>
 
@@ -81,6 +162,7 @@ onMounted(load)
     <div style="display: flex; gap: 8px">
       <el-input v-model="country" placeholder="国家代码,如 SG" style="width: 160px" clearable @keyup.enter="load" />
       <el-button @click="load">查询</el-button>
+      <el-button type="primary" plain @click="openUploadDialog()">手动上传官方原文</el-button>
     </div>
   </div>
   <el-table :data="docs" v-loading="loading" border @row-click="open" style="cursor: pointer">
@@ -114,9 +196,57 @@ onMounted(load)
     <el-table-column prop="last_error" label="最近错误" min-width="140" show-overflow-tooltip />
   </el-table>
 
+  <el-dialog v-model="uploadDialog" :title="uploadForm.document_id ? '上传该法规的新版本原文' : '手动上传官方原文(WAF 拦截兜底)'" width="560px">
+    <el-alert
+      type="info"
+      :closable="false"
+      style="margin-bottom: 12px"
+      title="当目标国家官网启用了 AWS WAF / CloudFront 人机验证导致自动抓取受阻时,可在浏览器下载官方 PDF 后在此上传。系统将同样计算 SHA-256 归档并自动执行条款切分或 OCR。"
+    />
+    <el-form label-width="110px">
+      <template v-if="!uploadForm.document_id">
+        <el-form-item label="所属采集站点">
+          <el-select v-model="uploadForm.site_id" style="width: 100%" placeholder="选择归属的官方站点">
+            <el-option
+              v-for="s in sites"
+              :key="s.id"
+              :label="`[${s.country_code}] ${s.publisher} (${s.entry_url.slice(0, 45)}...)`"
+              :value="s.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="官方原文地址">
+          <el-input v-model="uploadForm.source_url" placeholder="https://..." />
+        </el-form-item>
+      </template>
+      <el-form-item label="法规标题">
+        <el-input v-model="uploadForm.title" placeholder="官方法规名称" />
+      </el-form-item>
+      <el-form-item label="发布日期(选填)">
+        <el-input v-model="uploadForm.published_date" placeholder="YYYY-MM-DD" />
+      </el-form-item>
+      <el-form-item label="版本说明(选填)">
+        <el-input v-model="uploadForm.version_label" placeholder="如 Revised Edition 2020" />
+      </el-form-item>
+      <el-form-item label="原文文件">
+        <input type="file" accept=".pdf,.html,.htm" @change="onFileChange" />
+        <div v-if="uploadForm.file_name" style="font-size: 12px; color: #67c23a; margin-top: 4px">
+          已选择：{{ uploadForm.file_name }}
+        </div>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="uploadDialog = false">取消</el-button>
+      <el-button type="primary" :loading="uploading" @click="submitUpload">上传并解析</el-button>
+    </template>
+  </el-dialog>
+
   <el-drawer v-model="drawer" :title="detail?.title" size="880px">
     <template v-if="detail">
-      <p style="word-break: break-all; color: #909399">原文地址:{{ detail.source_url }}</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px">
+        <span style="word-break: break-all; color: #909399">原文地址:{{ detail.source_url }}</span>
+        <el-button size="small" type="primary" plain @click="openUploadDialog(detail)">上传新版本原文</el-button>
+      </div>
       <el-radio-group :model-value="versionId" @change="(v: string | number | boolean | undefined) => pick(String(v))" style="margin-bottom: 12px">
         <el-radio-button v-for="v in detail.versions" :key="v.id" :value="v.id">
           第 {{ v.version_no }} 版 · {{ fmt(v.fetched_at) }}
@@ -190,7 +320,7 @@ onMounted(load)
           :type="e.status === 'ok' ? 'success' : 'danger'"
           :timestamp="fmt(e.created_at)"
         >
-          {{ e.step === 'download' ? '下载归档' : e.step === 'parse' ? '解析条款' : e.step }}:{{ e.message }}
+          {{ e.step === 'download' ? '下载归档' : e.step === 'upload' ? '手动上传' : e.step === 'parse' ? '解析条款' : e.step }}:{{ e.message }}
         </el-timeline-item>
       </el-timeline>
     </template>

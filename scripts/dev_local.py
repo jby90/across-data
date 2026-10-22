@@ -57,13 +57,19 @@ async def seed(creds: dict) -> None:
     from sqlalchemy import select
 
     from app import models_registry  # noqa: F401
+    from app.cli import _ocr_engine, load_sites
+    from app.core.config import get_settings
     from app.core.db import get_sessionmaker
     from app.iam import service
     from app.iam.models import Organization, Role, User
-    from app.ingestion.phase1_import import consolidate_egazette_sites
+    from app.ingestion.archive import ArchiveStore
+    from app.ingestion.phase1_import import consolidate_egazette_sites, import_phase1
     from app.sources.models import SourceSite
 
     sf = get_sessionmaker()
+    seed_file = ROOT / "data" / "seed" / "source_sites.json"
+    if seed_file.exists():
+        await load_sites(seed_file, sf=sf)
     async with sf() as s:
         await consolidate_egazette_sites(s)
         org = (
@@ -112,6 +118,20 @@ async def seed(creds: dict) -> None:
             )
             await s.commit()
 
+    phase1_dir = ROOT.parent / "AutoDataCross" / "docs" / "phase2" / "data"
+    if phase1_dir.exists():
+        settings = get_settings()
+        archive = ArchiveStore(settings.archive_dir)
+        ocr = _ocr_engine()
+        for cc in ("SG", "EG", "TN", "MA", "LB"):
+            rep = await import_phase1(phase1_dir, cc, sf, archive, ocr)
+            if rep.versions_new:
+                print(
+                    f"[phase1-import] {cc}: 新增文档 {rep.documents_new}, "
+                    f"新增版本 {rep.versions_new}, 状态 {dict(rep.states)}",
+                    flush=True,
+                )
+
 
 def main() -> int:
     ap = argparse.ArgumentParser()
@@ -120,7 +140,41 @@ def main() -> int:
     args = ap.parse_args()
 
     creds = load_secrets()
-    pg = pgserver.get_server(DEV / "pg", cleanup_mode="stop")
+    pg_dir = DEV / "pg"
+    if (pg_dir / "postmaster.pid").exists():
+        pg_ctl_bin = Path(pgserver.__file__).parent / "pginstall" / "bin" / "pg_ctl.exe"
+        if pg_ctl_bin.exists():
+            subprocess.run(
+                [str(pg_ctl_bin), "-D", str(pg_dir), "-m", "fast", "stop"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            time.sleep(1)
+            # Windows 下 pgserver 把日志写在 PGDATA/log,非正常退出恢复扫描会因该文件被占用报 sharing violation
+            if (pg_dir / "postmaster.pid").exists():
+                (pg_dir / "log").unlink(missing_ok=True)
+                rec_log = DEV / "pg-recovery.log"
+                subprocess.run(
+                    [
+                        str(pg_ctl_bin),
+                        "-D",
+                        str(pg_dir),
+                        "-w",
+                        "-o",
+                        '-h "127.0.0.1" -p 55431',
+                        "-l",
+                        str(rec_log),
+                        "start",
+                    ],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                subprocess.run(
+                    [str(pg_ctl_bin), "-D", str(pg_dir), "-m", "fast", "stop"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+    pg = pgserver.get_server(pg_dir, cleanup_mode="stop")
     url = pg.get_uri().replace("postgresql://", "postgresql+asyncpg://", 1)
     env = dict(
         os.environ,
