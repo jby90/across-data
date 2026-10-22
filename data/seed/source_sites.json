@@ -1,0 +1,130 @@
+[
+  {
+    "country_code": "SG",
+    "publisher": "新加坡个人数据保护委员会 PDPC",
+    "language": "en",
+    "document_type": "GUIDANCE",
+    "entry_url": "https://www.pdpc.gov.sg/-/media/files/pdpc/pdf-files/advisory-guidelines/ag-on-key-concepts/advisory-guidelines-on-key-concepts-in-the-pdpa-17-may-2022.pdf",
+    "note": "PDPA 关键概念咨询指引(2022-05-17)。一期已使用。"
+  },
+  {
+    "country_code": "SG",
+    "publisher": "新加坡个人数据保护委员会 PDPC",
+    "language": "en",
+    "document_type": "GUIDANCE",
+    "entry_url": "https://www.pdpc.gov.sg/-/media/Files/PDPC/PDF-Files/Advisory-Guidelines/the-transfer-limitation-obligation---ch-19-%28270717%29.pdf",
+    "note": "跨境传输限制义务章节(2017 版,一期标为历史指引,仅作对照)。"
+  },
+  {
+    "country_code": "SG",
+    "publisher": "新加坡陆路交通管理局 LTA",
+    "language": "en",
+    "document_type": "GUIDANCE",
+    "entry_url": "https://www.lta.gov.sg/content/dam/ltagov/industry_innovations/Technologies/PDF/av_application_20250114.pdf",
+    "note": "自动驾驶车辆试验申请材料说明(2025-01-14)。一期已使用。"
+  },
+  {
+    "country_code": "SG",
+    "publisher": "新加坡法规库 Singapore Statutes Online",
+    "language": "en",
+    "document_type": "LAW",
+    "entry_url": "https://sso.agc.gov.sg/Act/PDPA2012/",
+    "note": "PDPA 2012 现行版(HTML)。一期记录:该站点部分请求返回 403,需先核对访问条款。"
+  },
+  {
+    "country_code": "EG",
+    "publisher": "埃及通信与信息技术部 MCIT",
+    "language": "ar",
+    "document_type": "LAW",
+    "entry_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+    "note": "2020 年第 151 号个人数据保护法。一期记录:MCIT 站点 robots.txt 曾返回 500。"
+  },
+  {
+    "country_code": "EG",
+    "publisher": "埃及个人数据保护中心 PDPC",
+    "language": "ar",
+    "document_type": "GUIDANCE",
+    "entry_url": "https://pdpc.gov.eg/assets/pdf-data/Guidelines/DPOC.pdf",
+    "note": "数据保护官相关指南(一期登记的官方来源)。"
+  },
+  {
+    "country_code": "EG",
+    "publisher": "埃及个人数据保护中心 PDPC",
+    "language": "ar",
+    "document_type": "GUIDANCE",
+    "entry_url": "https://pdpc.gov.eg/assets/pdf-data/Guidelines/DSConsent.pdf",
+    "note": "数据主体同意相关指南(一期登记的官方来源)。"
+  },
+  {
+    "country_code": "EG",
+    "publisher": "埃及国家电信监管局 NTRA",
+    "language": "ar",
+    "document_type": "GUIDANCE",
+    "entry_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+    "note": "物联网监管框架(阿语,2023-08)。与车联网相关。"
+  },
+  {
+    "country_code": "TN",
+    "publisher": "突尼斯司法部",
+    "language": "ar",
+    "document_type": "LAW",
+    "entry_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+    "note": "2004 年第 63 号个人数据保护法(阿语,官方)。一期记录为扫描件,需要 OCR。"
+  },
+  {
+    "country_code": "TN",
+    "publisher": "突尼斯国家统计局 INS",
+    "language": "fr",
+    "document_type": "LAW",
+    "entry_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+    "note": "2004 年第 63 号法(法语版,带文字层)。"
+  },
+  {
+    "country_code": "TN",
+    "publisher": "突尼斯国家个人数据保护局 INPDP",
+    "language": "fr",
+    "document_type": "REGULATION",
+    "entry_url": "https://www.inpdp.tn/ressources/decret_3003.pdf",
+    "note": "第 2007-3003 号法令(数据处理申报程序)。"
+  },
+  {
+    "country_code": "MA",
+    "publisher": "摩洛哥国家个人数据保护委员会 CNDP",
+    "language": "fr",
+    "document_type": "LAW",
+    "entry_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+    "note": "第 09-08 号个人数据保护法(法语)。一期记录:部分页面为扫描件,需要 OCR。"
+  },
+  {
+    "country_code": "MA",
+    "publisher": "摩洛哥国家个人数据保护委员会 CNDP",
+    "language": "fr",
+    "document_type": "REGULATION",
+    "entry_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+    "note": "第 2-09-165 号实施法令(法语)。"
+  },
+  {
+    "country_code": "MA",
+    "publisher": "摩洛哥总秘书处官方公报 SGG",
+    "language": "fr",
+    "document_type": "LAW",
+    "entry_url": "https://www.sgg.gov.ma/BO/bo_fr/2009/bo_5714_fr.pdf",
+    "note": "2009 年官方公报第 5714 期(刊载 09-08 号法的官方文本)。"
+  },
+  {
+    "country_code": "MA",
+    "publisher": "摩洛哥国家个人数据保护委员会 CNDP",
+    "language": "fr",
+    "document_type": "FORM",
+    "entry_url": "https://www.cndp.ma/wp-content/uploads/2023/11/CDAI-FORMULAIRE-DAI-Template-FRANCAIS.pdf",
+    "note": "官方申报表模板(法语)。申请表模块(M3)的模板来源候选。"
+  },
+  {
+    "country_code": "LB",
+    "publisher": "黎巴嫩中央银行 BDL(官方托管)",
+    "language": "ar",
+    "document_type": "LAW",
+    "entry_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+    "note": "2018 年第 81 号法(电子交易与个人数据,阿语)。一期使用文字层解析 137 个候选条款。"
+  }
+]

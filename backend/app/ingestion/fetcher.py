@@ -103,6 +103,7 @@ class PoliteFetcher:
         self._clock = clock
         self._last_hit: dict[str, float] = {}
         self._robots: dict[str, RobotFileParser | None] = {}  # None = 一律不允许
+        self._robots_note: dict[str, str] = {}  # 每个源站 robots.txt 的获取情况,供预检报告
 
     async def _check_target(self, url: str) -> str:
         parts = urlsplit(url)
@@ -147,19 +148,40 @@ class PoliteFetcher:
             if resp.status_code == 200:
                 parser = RobotFileParser()
                 parser.parse(resp.text.splitlines())
+                self._robots_note[origin] = "HTTP 200,已读取规则"
             elif 400 <= resp.status_code < 500:
                 parser = RobotFileParser()  # 没有 robots.txt:视为允许
                 parser.parse([])
+                self._robots_note[origin] = f"HTTP {resp.status_code},无 robots.txt,视为允许"
             else:
                 parser = None  # 5xx:保守起见一律不抓
-        except httpx.HTTPError:
+                self._robots_note[origin] = f"HTTP {resp.status_code},无法确认规则,保守起见不抓取"
+        except httpx.HTTPError as e:
             parser = None
+            self._robots_note[origin] = f"网络错误({type(e).__name__}),无法确认规则,不抓取"
         self._robots[origin] = parser
         return parser
 
     async def _robots_allowed(self, url: str) -> bool:
         parser = await self._robots_for(url)
         return parser is not None and parser.can_fetch(self._ua_token, url)
+
+    async def preflight(self, url: str) -> dict[str, str]:
+        """只读预检:不下载文件,只检查地址是否被策略拦截,以及 robots.txt 是否允许抓取。"""
+        result = {"url": url, "target": "ok", "robots": "", "robots_detail": ""}
+        try:
+            await self._check_target(url)
+        except BlockedError as e:
+            result["target"] = f"拦截:{e}"
+            return result
+        except FetchError as e:
+            result["target"] = f"无法访问:{e}"
+            return result
+        allowed = await self._robots_allowed(url)
+        origin = "{0.scheme}://{0.netloc}".format(urlsplit(url))
+        result["robots"] = "允许" if allowed else "不允许/无法确认"
+        result["robots_detail"] = self._robots_note.get(origin, "")
+        return result
 
     async def get(
         self, url: str, *, etag: str | None = None, last_modified: str | None = None

@@ -27,7 +27,7 @@ from app.ingestion.models import (
     PipelineEvent,
     VersionState,
 )
-from app.ingestion.parsing import ParseError, parse_document
+from app.ingestion.parsing import ParseError, parse_document, strip_running_headers
 from app.sources.models import CrawlRun, RunStatus, SourceSite, Strategy, TermsStatus
 
 log = logging.getLogger(__name__)
@@ -118,8 +118,20 @@ async def parse_version(
                 PipelineEvent(version_id=version.id, step="parse", status="ok", message="needs_ocr")
             )
             return
+        pages, removed = (
+            strip_running_headers(parsed.pages) if parsed.kind == "pdf" else (parsed.pages, [])
+        )
+        if removed:
+            session.add(
+                PipelineEvent(
+                    version_id=version.id,
+                    step="clean",
+                    status="ok",
+                    message="移除重复页眉/页脚/页码: " + " | ".join(removed[:5]),
+                )
+            )
         drafts, strategy = split_clauses(
-            parsed.pages, paragraph_mode="line" if parsed.kind == "html" else "blank"
+            pages, paragraph_mode="line" if parsed.kind == "html" else "blank"
         )
         if not drafts:
             raise ParseError("没有解析出任何文字内容")

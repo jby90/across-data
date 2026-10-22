@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import io
+import re
+from collections import Counter
 from dataclasses import dataclass
 
 from bs4 import BeautifulSoup
@@ -74,6 +76,51 @@ def parse_html(content: bytes) -> list[str]:
         tag.decompose()
     lines = [" ".join(line.split()) for line in soup.get_text("\n").splitlines()]
     return ["\n".join(line for line in lines if line)]
+
+
+_DIGITS = re.compile(r"[0-9٠-٩]+")
+_EDGE_LINES = 2  # 只看每页开头/结尾各 2 行
+_MAX_FURNITURE_LEN = 120
+
+
+def _norm_furniture(line: str) -> str:
+    return _DIGITS.sub("#", " ".join(line.split())).strip()
+
+
+def strip_running_headers(pages: list[str]) -> tuple[list[str], list[str]]:
+    """去掉 PDF 里每页重复出现的页眉/页脚/页码(例如"Page 3 of 20"、文件名)。
+
+    保守规则:至少 3 页;只看每页开头/结尾各 2 行;数字归一后,在不少于一半的页面上重复出现才算;
+    长度不超过 120 字符。返回 (处理后的页面, 被移除的行模式),被移除内容会写进处理事件,便于核对。
+    原文件始终保留在归档中,这里只影响条款文本。
+    """
+    if len(pages) < 3:
+        return pages, []
+    split_pages = [p.splitlines() for p in pages]
+    counts: Counter[str] = Counter()
+    for lines in split_pages:
+        nonblank = [i for i, ln in enumerate(lines) if ln.strip()]
+        edge = nonblank[:_EDGE_LINES] + nonblank[-_EDGE_LINES:]
+        seen = {
+            _norm_furniture(lines[i])
+            for i in set(edge)
+            if len(lines[i].strip()) <= _MAX_FURNITURE_LEN
+        }
+        counts.update(s for s in seen if s)
+    threshold = max(3, (len(pages) + 1) // 2)
+    furniture = {s for s, c in counts.items() if c >= threshold}
+    if not furniture:
+        return pages, []
+
+    cleaned: list[str] = []
+    for lines in split_pages:
+        nonblank = [i for i, ln in enumerate(lines) if ln.strip()]
+        edge = set(nonblank[:_EDGE_LINES] + nonblank[-_EDGE_LINES:])
+        keep = [
+            ln for i, ln in enumerate(lines) if not (i in edge and _norm_furniture(ln) in furniture)
+        ]
+        cleaned.append("\n".join(keep))
+    return cleaned, sorted(furniture)
 
 
 def parse_document(content: bytes, mime: str) -> ParsedDocument:
