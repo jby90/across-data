@@ -9,6 +9,11 @@ const auth = useAuth()
 const form = reactive({ email: '', password: '' })
 const loading = ref(false)
 
+// 用户端地址:生产环境用 VITE_USER_URL 配置;开发环境默认同主机的 5173 端口
+const userUrl: string =
+  import.meta.env.VITE_USER_URL ??
+  (import.meta.env.DEV ? `${location.protocol}//${location.hostname}:5173` : '')
+
 async function submit() {
   loading.value = true
   try {
@@ -43,6 +48,9 @@ async function submit() {
           登录
         </el-button>
       </el-form>
+      <p class="hint">
+        企业用户请使用用户端登录<template v-if="userUrl">:<a :href="userUrl">前往用户端</a></template>
+      </p>
     </el-card>
   </div>
 </template>
@@ -60,6 +68,12 @@ async function submit() {
 }
 h2 {
   margin: 0 0 4px;
+}
+.hint {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: #909399;
+  text-align: center;
 }
 .sub {
   margin: 0 0 20px;

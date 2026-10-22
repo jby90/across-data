@@ -9,6 +9,11 @@ const auth = useAuth()
 const form = reactive({ email: '', password: '' })
 const loading = ref(false)
 
+// 管理端地址:生产环境用 VITE_ADMIN_URL 配置;开发环境默认同主机的 5174 端口
+const adminUrl: string =
+  import.meta.env.VITE_ADMIN_URL ??
+  (import.meta.env.DEV ? `${location.protocol}//${location.hostname}:5174` : '')
+
 async function submit() {
   loading.value = true
   try {
@@ -43,6 +48,9 @@ async function submit() {
           登录
         </el-button>
       </el-form>
+      <p class="hint">
+        平台管理员、复核员请使用管理端登录<template v-if="adminUrl">:<a :href="adminUrl">前往管理端</a></template>
+      </p>
     </el-card>
   </div>
 </template>
@@ -60,6 +68,12 @@ async function submit() {
 }
 h2 {
   margin: 0 0 4px;
+}
+.hint {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: #909399;
+  text-align: center;
 }
 .sub {
   margin: 0 0 20px;
