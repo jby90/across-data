@@ -24,6 +24,7 @@ function logout() {
         <el-menu-item index="/documents">法规文档库</el-menu-item>
         <el-menu-item index="/review-queue">术语与律所复核</el-menu-item>
         <el-menu-item index="/knowledge-graph">法规知识图谱</el-menu-item>
+        <el-menu-item index="/agent-studio">多Agent编排工作台</el-menu-item>
         <template v-if="isPlatformAdmin">
           <el-menu-item index="/sites">采集站点</el-menu-item>
           <el-menu-item index="/orgs">企业管理</el-menu-item>

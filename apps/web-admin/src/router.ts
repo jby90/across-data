@@ -36,6 +36,12 @@ const router = createRouter({
           meta: { roles: ['platform_admin', 'reviewer'] },
         },
         {
+          path: 'agent-studio',
+          name: 'agent-studio',
+          component: () => import('./views/AgentStudio.vue'),
+          meta: { roles: ['platform_admin', 'reviewer'] },
+        },
+        {
           path: 'orgs',
           name: 'orgs',
           component: () => import('./views/Orgs.vue'),

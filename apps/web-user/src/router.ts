@@ -17,6 +17,11 @@ const router = createRouter({
           component: () => import('./views/KnowledgeBase.vue'),
         },
         {
+          path: 'analysis',
+          name: 'analysis',
+          component: () => import('./views/ComplianceAnalysis.vue'),
+        },
+        {
           path: 'members',
           name: 'members',
           component: () => import('./views/Members.vue'),

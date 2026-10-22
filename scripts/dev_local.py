@@ -132,11 +132,13 @@ async def seed(creds: dict) -> None:
                     flush=True,
                 )
 
+    from app.analysis.workflow_engine import ensure_p3_seed_data
     from app.knowledge.extractor import extract_knowledge_for_country
 
     async with sf() as s:
         for cc in ("SG", "EG", "TN", "MA", "LB"):
             await extract_knowledge_for_country(s, cc, translate_sample_per_doc=4)
+        await ensure_p3_seed_data(s)
 
 
 def main() -> int:

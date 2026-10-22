@@ -150,6 +150,55 @@ async def verify_admin_portal(browser, creds: dict, bad_responses: list[str], pa
     await page.wait_for_timeout(300)
     await _assert_no_error_toast(page, "图谱节点类型与关系筛选")
 
+    print("[5.5/10] 点击管理端「多Agent编排工作台」(Dify 风格只读画布与导入导出) ...")
+    await page.locator(".el-menu-item", has_text="多Agent编排工作台").click()
+    await page.wait_for_load_state("networkidle")
+    await page.wait_for_timeout(1200)
+    await _assert_no_error_toast(page, "多Agent编排工作台加载")
+
+    node_cards = await page.locator("[data-testid=dify-node-card]").count()
+    assert node_cards == 7, f"Dify 画布节点数量应为 7，实际为: {node_cards}"
+    lock_badge = await page.locator("[data-testid=agent-readonly-lock-badge]").inner_text()
+    assert "只读锁定" in lock_badge
+
+    # 点击「依据子串核验与退回质检 Agent」节点，查看右侧检查器与禁用参数
+    await page.locator("[data-node-id=node_citation_verifier]").click()
+    await page.wait_for_timeout(400)
+    insp_title = await page.locator("[data-testid=inspector-node-title]").inner_text()
+    assert "核验" in insp_title
+    disabled_inputs = await page.locator(".readonly-form-grid input[disabled]").count()
+    assert disabled_inputs >= 2, f"节点参数输入框未处于 disabled 禁用只读态: {disabled_inputs}"
+
+    # 切换右侧检查器「MCP 工具」与「运行轨迹」Tab
+    await page.get_by_role("tab", name="MCP 工具").click()
+    await page.wait_for_timeout(300)
+    await page.get_by_role("tab", name="运行轨迹").click()
+    await page.wait_for_timeout(300)
+    await page.get_by_role("tab", name="配置与连接详情").click()
+    await page.wait_for_timeout(300)
+    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "admin_agent_studio.png"))
+
+    # 测试导出配置 (JSON DSL)
+    await page.locator("[data-testid=btn-export-workflow]").click()
+    await page.wait_for_timeout(500)
+    dsl_val = await page.locator("textarea[data-testid=export-dsl-textarea], [data-testid=export-dsl-textarea] textarea").first.input_value()
+    assert "cyshuhe.agent_workflow" in dsl_val
+    await page.get_by_role("button", name="关闭", exact=True).click()
+    await page.wait_for_timeout(300)
+
+    # 测试导入配置生成新版本
+    await page.locator("[data-testid=btn-import-workflow]").click()
+    await page.wait_for_timeout(500)
+    await page.locator("[data-testid=btn-confirm-import-workflow]").click()
+    await page.wait_for_load_state("networkidle")
+    await page.wait_for_timeout(800)
+    await _assert_no_error_toast(page, "多Agent配置导入")
+
+    # 打开 10 道独立评测集看板
+    await page.locator("[data-testid=btn-open-benchmarks]").click()
+    await page.wait_for_timeout(800)
+    await _assert_no_error_toast(page, "10道独立评测集看板")
+
     await context.close()
 
 
@@ -215,6 +264,58 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     await page.locator("[data-testid=user-kg-hide-hub-btn]").click()
     await page.wait_for_timeout(1200)
     await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_compliance_map.png"))
+
+    print("[9/10] 点击用户端「合规分析与八维报告」验证页面 4（工作台、追问机制、五列矩阵） ...")
+    await page.locator(".el-menu-item", has_text="合规分析与八维报告").click()
+    await page.wait_for_load_state("networkidle")
+    await page.wait_for_timeout(1200)
+    await _assert_no_error_toast(page, "用户端合规分析工作台")
+
+    # 验证五列合规判定矩阵存在并点击第一条适用条款打开原文与 1 跳关联图谱抽屉
+    findings_rows = await page.locator("[data-testid=compliance-findings-table] .el-table__row").count()
+    assert findings_rows >= 5, f"五列合规分析矩阵行数不足: {findings_rows}"
+    await page.locator("[data-testid=finding-clause-link]").first.click()
+    await page.wait_for_timeout(1000)
+    await _assert_no_error_toast(page, "点击适用条款查看原文与图谱")
+    drawer_text = await page.locator("[data-testid=citation-detail-drawer]").inner_text()
+    assert "官方原文" in drawer_text and "术语受控中文对照" in drawer_text
+    await page.keyboard.press("Escape")
+    await page.wait_for_timeout(400)
+
+    print("[10/10] 验证页面 5（八维度国别报告整份/拆分、版本对比）与页面 6（多智能体协同过程与退回补证高亮） ...")
+    await page.locator("[data-testid=analysis-subpage-tabs]").get_by_text("页面5 · 八维度国别报告").click()
+    await page.wait_for_timeout(800)
+    await _assert_no_error_toast(page, "切换页面5八维度国别报告")
+
+    # 验证整份报告包含 8 个维度，切换为「按维度独立拆分查看」并点击 D3
+    full_chapters = await page.locator(".dimension-chapter-card").count()
+    assert full_chapters == 8, f"整份八维度报告章节数应为 8，实际为: {full_chapters}"
+    await page.locator("[data-testid=report-view-mode-switch]").get_by_text("按维度独立拆分查看").click()
+    await page.wait_for_timeout(400)
+    split_chapters = await page.locator(".dimension-chapter-card").count()
+    assert split_chapters == 1, f"按维度拆分查看时应只显示 1 个维度，实际为: {split_chapters}"
+    await page.locator("[data-dimension-code=D3]").click()
+    await page.wait_for_timeout(400)
+    await page.locator("[data-testid=report-view-mode-switch]").get_by_text("整份八维度完整报告").click()
+    await page.wait_for_timeout(400)
+    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_8dim_report.png"))
+
+    # 切换页面 6：多智能体协同过程，验证存在高亮的『编制/质检退回分析补充依据』卡片
+    await page.locator("[data-testid=analysis-subpage-tabs]").get_by_text("页面6 · 多智能体协同过程").click()
+    await page.wait_for_timeout(600)
+    backtrack_cards = await page.locator("[data-testid=backtrack-step-card]").count()
+    assert backtrack_cards >= 1, "多智能体协同过程时间线未展示『编制/质检退回分析补充依据』高亮记录"
+    await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_agent_trace.png"))
+
+    # 切换到待补充事实任务，点击「提交补充事实并启动多智能体分析」验证端到端追问闭环
+    await page.locator("[data-testid=analysis-task-item]", has_text="待补充事实").first.click()
+    await page.wait_for_timeout(600)
+    await page.locator("[data-testid=analysis-subpage-tabs]").get_by_text("页面4 · 合规分析工作台").click()
+    await page.wait_for_timeout(500)
+    await page.locator("[data-testid=btn-submit-followup-facts]").click()
+    await page.wait_for_load_state("networkidle")
+    await page.wait_for_timeout(1200)
+    await _assert_no_error_toast(page, "提交追问补充事实并启动多智能体分析")
 
     await context.close()
 

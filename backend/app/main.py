@@ -2,6 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import models_registry  # noqa: F401
+from app.analysis.router import (
+    admin_router as analysis_admin_router,
+)
+from app.analysis.router import (
+    user_router as analysis_user_router,
+)
 from app.core.config import get_settings
 from app.iam.router import admin_router, auth_router, user_router
 from app.ingestion.router import router as documents_router
@@ -43,6 +49,8 @@ def create_app() -> FastAPI:
     app.include_router(documents_router)
     app.include_router(knowledge_admin_router)
     app.include_router(knowledge_user_router)
+    app.include_router(analysis_admin_router)
+    app.include_router(analysis_user_router)
     return app
 
 
