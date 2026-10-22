@@ -17,6 +17,9 @@ dependencies = [
     "httpx>=0.28.1",
     "beautifulsoup4>=4.15.0",
     "pdfminer-six>=20260107",
+    "pypdfium2>=5.14.0",
+    "pillow>=13.0.0",
+    "pytesseract>=0.3.13",
 ]
 
 [dependency-groups]

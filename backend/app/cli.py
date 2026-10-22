@@ -127,6 +127,66 @@ async def preflight(country: str | None, sf=None) -> list[dict[str, str]]:
     return rows
 
 
+async def run_import_phase1(data_dir: str, country: str) -> None:
+    from app.ingestion.archive import ArchiveStore
+    from app.ingestion.phase1_import import import_phase1
+
+    settings = get_settings()
+    report = await import_phase1(
+        Path(data_dir),
+        country,
+        get_sessionmaker(),
+        ArchiveStore(settings.archive_dir),
+        _ocr_engine(),
+    )
+    print(
+        f"新增站点 {report.sites_new},新增文档 {report.documents_new},"
+        f"新增版本 {report.versions_new},"
+        f"已存在 {report.already_present}。解析结果: {dict(report.states)}"
+    )
+    if report.no_version:
+        print(f"一期登记但没有原文的来源 {len(report.no_version)} 个(未导入)。")
+    if report.missing_files:
+        print(f"原文件缺失 {len(report.missing_files)} 个: {report.missing_files[:5]}")
+    if report.hash_mismatch:
+        print(f"哈希不一致已拒绝 {len(report.hash_mismatch)} 个: {report.hash_mismatch[:5]}")
+
+
+def _ocr_engine():
+    from app.ingestion.ocr import OcrEngine
+
+    s = get_settings()
+    return OcrEngine(s.tesseract_cmd, s.tessdata_dir, s.ocr_dpi)
+
+
+async def reparse(state: str, country: str | None, sf=None) -> dict[str, int]:
+    """对已有版本重新解析(例如装好 OCR 后,处理之前标为"需要 OCR"的扫描件)。"""
+    from sqlalchemy import select
+
+    from app.ingestion.archive import ArchiveStore
+    from app.ingestion.models import Document, DocumentVersion
+    from app.ingestion.pipeline import parse_version
+
+    settings = get_settings()
+    archive = ArchiveStore(settings.archive_dir)
+    ocr = _ocr_engine()
+    sf = sf or get_sessionmaker()
+    counts: dict[str, int] = {}
+    async with sf() as s:
+        stmt = (
+            select(DocumentVersion, Document)
+            .join(Document, Document.id == DocumentVersion.document_id)
+            .where(DocumentVersion.state == state)
+        )
+        if country:
+            stmt = stmt.where(Document.country_code == country.upper())
+        for version, doc in (await s.execute(stmt)).all():
+            await parse_version(s, archive, version, doc.language, ocr)
+            await s.commit()
+            counts[version.state] = counts.get(version.state, 0) + 1
+    return counts
+
+
 def render_report(rows: list[dict[str, str]]) -> str:
     lines = [
         "# 来源预检报告(只读)",
@@ -154,6 +214,12 @@ def main() -> int:
     p.add_argument("--name", default="平台管理员")
     s = sub.add_parser("load-sites", help="导入种子站点(停用、条款待确认)")
     s.add_argument("file")
+    r = sub.add_parser("reparse", help="重新解析已有版本(如补做 OCR)")
+    r.add_argument("--state", default="needs_ocr")
+    r.add_argument("--country")
+    i = sub.add_parser("import-phase1", help="从一期迁移已有原文与元数据")
+    i.add_argument("--data-dir", required=True, help="一期 docs/phase2/data 目录")
+    i.add_argument("--country", required=True)
     f = sub.add_parser("preflight", help="只读预检站点(robots.txt 与地址)")
     f.add_argument("--country")
     f.add_argument("--report", help="把结果写成 Markdown 报告")
@@ -168,6 +234,10 @@ def main() -> int:
     elif args.command == "load-sites":
         created, skipped = asyncio.run(load_sites(Path(args.file)))
         print(f"新增 {created} 个站点,跳过已存在 {skipped} 个。新增站点均为停用、条款待确认。")
+    elif args.command == "reparse":
+        print("重新解析结果:", asyncio.run(reparse(args.state, args.country)))
+    elif args.command == "import-phase1":
+        asyncio.run(run_import_phase1(args.data_dir, args.country))
     elif args.command == "preflight":
         rows = asyncio.run(preflight(args.country))
         report = render_report(rows)

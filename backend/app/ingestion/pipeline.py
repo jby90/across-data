@@ -27,7 +27,14 @@ from app.ingestion.models import (
     PipelineEvent,
     VersionState,
 )
-from app.ingestion.parsing import ParseError, parse_document, strip_running_headers
+from app.ingestion.ocr import LOW_CONFIDENCE, OcrEngine
+from app.ingestion.parsing import (
+    ParseError,
+    parse_document,
+    strip_margin_line_numbers,
+    strip_running_headers,
+    text_layer_garbled,
+)
 from app.sources.models import CrawlRun, RunStatus, SourceSite, Strategy, TermsStatus
 
 log = logging.getLogger(__name__)
@@ -101,7 +108,11 @@ async def discover(fetcher: PoliteFetcher, site: SiteSnapshot, stats: Stats) -> 
 
 
 async def parse_version(
-    session: AsyncSession, archive: ArchiveStore, version: DocumentVersion, language: str
+    session: AsyncSession,
+    archive: ArchiveStore,
+    version: DocumentVersion,
+    language: str,
+    ocr: OcrEngine | None = None,
 ) -> None:
     """解析某个版本并写入条款。可重复调用(会先清掉该版本旧条款)。不负责 commit。"""
     await session.execute(delete(Clause).where(Clause.version_id == version.id))
@@ -110,16 +121,44 @@ async def parse_version(
         parsed = await asyncio.to_thread(parse_document, content, version.mime_type)
         version.page_count = len(parsed.pages)
         version.char_count = parsed.char_count
+        version.text_source = "text_layer"
+        version.ocr_confidence = None
+        source_pages = parsed.pages
+        ocr_reason: str | None = None
         if parsed.looks_scanned:
-            version.state = VersionState.NEEDS_OCR.value
-            version.parse_strategy = None
-            version.error = "没有文字层,疑似扫描件,需要 OCR"
+            ocr_reason = "没有文字层,疑似扫描件"
+        elif parsed.kind == "pdf":
+            ocr_reason = text_layer_garbled(parsed.pages, language)
+        if ocr_reason:
+            if ocr is None or not ocr.available:
+                version.state = VersionState.NEEDS_OCR.value
+                version.parse_strategy = None
+                version.error = f"{ocr_reason},需要 OCR"
+                session.add(
+                    PipelineEvent(
+                        version_id=version.id, step="parse", status="ok", message="needs_ocr"
+                    )
+                )
+                return
+            result = await asyncio.to_thread(ocr.run, content, language)
+            source_pages = result.pages
+            version.text_source = "ocr"
+            version.ocr_confidence = result.mean_confidence
+            version.char_count = sum(len(p.strip()) for p in source_pages)
+            note = "置信度偏低,务必人工核对" if result.mean_confidence < LOW_CONFIDENCE else ""
             session.add(
-                PipelineEvent(version_id=version.id, step="parse", status="ok", message="needs_ocr")
+                PipelineEvent(
+                    version_id=version.id,
+                    step="ocr",
+                    status="ok",
+                    message=(
+                        f"原因:{ocr_reason}。OCR {len(source_pages)} 页,语言 {result.languages},"
+                        f"平均置信度 {result.mean_confidence}。OCR 文本需人工核对。{note}"
+                    ),
+                )
             )
-            return
         pages, removed = (
-            strip_running_headers(parsed.pages) if parsed.kind == "pdf" else (parsed.pages, [])
+            strip_running_headers(source_pages) if parsed.kind == "pdf" else (source_pages, [])
         )
         if removed:
             session.add(
@@ -130,6 +169,17 @@ async def parse_version(
                     message="移除重复页眉/页脚/页码: " + " | ".join(removed[:5]),
                 )
             )
+        if parsed.kind == "pdf":
+            pages, margin_removed = strip_margin_line_numbers(pages)
+            if margin_removed:
+                session.add(
+                    PipelineEvent(
+                        version_id=version.id,
+                        step="clean",
+                        status="ok",
+                        message=f"移除页边行号 {margin_removed} 个",
+                    )
+                )
         drafts, strategy = split_clauses(
             pages, paragraph_mode="line" if parsed.kind == "html" else "blank"
         )
@@ -142,6 +192,7 @@ async def parse_version(
                     ordinal=d.ordinal,
                     clause_number=d.clause_number,
                     heading=d.heading,
+                    section_path=d.section_path,
                     original_text=d.text,
                     page_start=d.page_start,
                     page_end=d.page_end,
@@ -178,6 +229,7 @@ async def _process_candidate(
     site: SiteSnapshot,
     cand: Candidate,
     stats: Stats,
+    ocr: OcrEngine | None = None,
 ) -> None:
     async with sf() as s:
         doc = (
@@ -261,7 +313,7 @@ async def _process_candidate(
             )
         )
         stats.versions_new += 1
-        await parse_version(s, archive, version, site.language)
+        await parse_version(s, archive, version, site.language, ocr)
         await s.commit()
 
 
@@ -272,6 +324,7 @@ async def ingest_site(
     site_id: uuid.UUID,
     *,
     trigger: str,
+    ocr: OcrEngine | None = None,
 ) -> uuid.UUID:
     """执行一次站点采集,返回运行记录 id。"""
     async with sf() as s:
@@ -307,7 +360,7 @@ async def ingest_site(
         candidates = await discover(fetcher, site, stats)
         stats.links_found = len(candidates)
         for cand in candidates:
-            await _process_candidate(sf, fetcher, archive, site, cand, stats)
+            await _process_candidate(sf, fetcher, archive, site, cand, stats, ocr)
         if stats.errors:
             status = RunStatus.PARTIAL
             message = "; ".join(stats.messages[:5])

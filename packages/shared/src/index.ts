@@ -145,6 +145,15 @@ export interface VersionOut {
   char_count: number | null
   parse_strategy: string | null
   error: string | null
+  text_source: 'text_layer' | 'ocr'
+  ocr_confidence: number | null
+  official_number: string | null
+  version_label: string | null
+  published_date: string | null
+  effective_date: string | null
+  repealed_date: string | null
+  legal_status: string
+  metadata_source: string | null
 }
 
 export interface DocumentOut {
@@ -158,6 +167,8 @@ export interface DocumentOut {
   discovered_at: string
   last_checked_at: string | null
   last_error: string | null
+  instrument_family: string | null
+  instrument_kind: string | null
   latest_version: VersionOut | null
 }
 
@@ -170,6 +181,7 @@ export interface ClauseOut {
   ordinal: number
   clause_number: string | null
   heading: string | null
+  section_path: string | null
   original_text: string
   page_start: number | null
   page_end: number | null
@@ -216,6 +228,14 @@ export const STRATEGY_LABEL: Record<string, string> = {
 }
 export const PARSE_STRATEGY_LABEL: Record<string, string> = {
   numbered: '按条款编号',
+  chunk: '按篇幅分块(原文无可靠条款编号)',
+  page: '按页(未识别到编号)',
   paragraph: '按段落(未识别到编号)',
   line: '按行(网页)',
+}
+export const LEGAL_STATUS_LABEL: Record<string, string> = {
+  unknown: '现行状态未核实',
+  in_force: '现行有效',
+  amended: '已被修订',
+  repealed: '已废止',
 }

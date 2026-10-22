@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.ingestion.archive import ArchiveStore
 from app.ingestion.fetcher import PoliteFetcher
+from app.ingestion.ocr import OcrEngine
 from app.ingestion.pipeline import ingest_site
 from app.sources.models import RunStatus, SourceSite, TermsStatus
 
@@ -73,6 +74,7 @@ async def run_due_once(
     archive: ArchiveStore,
     *,
     now_fn: Callable[[], datetime] = _now,
+    ocr: OcrEngine | None = None,
 ) -> int:
     """把当前所有到期站点各跑一次,返回运行次数。"""
     runs = 0
@@ -82,7 +84,7 @@ async def run_due_once(
             return runs
         site_id, trigger = claimed
         try:
-            await ingest_site(sf, make_fetcher(), archive, site_id, trigger=trigger)
+            await ingest_site(sf, make_fetcher(), archive, site_id, trigger=trigger, ocr=ocr)
         except Exception:  # noqa: BLE001 - 单个站点异常不能让调度循环退出
             log.exception("站点运行异常 site=%s", site_id)
         runs += 1

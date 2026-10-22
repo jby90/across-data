@@ -16,6 +16,7 @@ from app.core.config import get_settings
 from app.core.db import get_sessionmaker
 from app.ingestion.archive import ArchiveStore
 from app.ingestion.fetcher import PoliteFetcher
+from app.ingestion.ocr import OcrEngine
 from app.sources.scheduler import run_due_once
 
 log = logging.getLogger("app.worker")
@@ -24,6 +25,8 @@ log = logging.getLogger("app.worker")
 async def main(once: bool) -> None:
     settings = get_settings()
     archive = ArchiveStore(settings.archive_dir)
+    ocr = OcrEngine(settings.tesseract_cmd, settings.tessdata_dir, settings.ocr_dpi)
+    log.info("OCR %s", "可用" if ocr.available else "不可用(扫描件只标记,不识别)")
     sf = get_sessionmaker()
     async with httpx.AsyncClient(timeout=settings.crawl_timeout_seconds) as client:
 
@@ -38,7 +41,7 @@ async def main(once: bool) -> None:
             )
 
         while True:
-            runs = await run_due_once(sf, make_fetcher, archive)
+            runs = await run_due_once(sf, make_fetcher, archive, ocr=ocr)
             if runs:
                 log.info("本轮执行了 %d 个站点", runs)
             if once:

@@ -1,19 +1,25 @@
-"""把原文字节解析成按页的文本。不做 OCR:没有文字层的 PDF 交给后续 OCR 步骤。"""
+"""把原文字节解析成按页的文本。不做 OCR:没有文字层的 PDF 交给 OCR 步骤。
+
+PDF 使用 PDFium(pypdfium2)提取文字层。实测对比:pdfminer 在版面复杂的法条页(如新加坡 2012 年版 PDPA)
+会把句子顺序弄乱,法律文本不能接受;PDFium 保持内容流顺序,且快得多。
+"""
 
 from __future__ import annotations
 
-import io
 import re
+import threading
+import unicodedata
 from collections import Counter
 from dataclasses import dataclass
 
+import pypdfium2 as pdfium
 from bs4 import BeautifulSoup
-from pdfminer.high_level import extract_pages
-from pdfminer.layout import LTTextContainer
-from pdfminer.pdfparser import PDFSyntaxError
 
 # 平均每页字符数低于此值,判定为扫描件(没有文字层)
 NEEDS_OCR_MIN_CHARS_PER_PAGE = 30
+
+# PDFium 不是线程安全的,所有调用串行化
+_PDFIUM_LOCK = threading.Lock()
 
 
 class ParseError(Exception):
@@ -59,15 +65,25 @@ def _decode(content: bytes) -> str:
     raise ParseError("无法识别文本编码(需要 UTF-8)")
 
 
+def _normalise_pdf_text(text: str) -> str:
+    """统一换行,去掉空行(PDFium 在部分文件里每行后会多出空行,空行不可靠)。"""
+    lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    return "\n".join(line.rstrip() for line in lines if line.strip())
+
+
 def parse_pdf(content: bytes) -> list[str]:
-    pages: list[str] = []
     try:
-        for layout in extract_pages(io.BytesIO(content)):
-            parts = [el.get_text() for el in layout if isinstance(el, LTTextContainer)]
-            pages.append("".join(parts))
-    except (PDFSyntaxError, ValueError, KeyError, AttributeError) as e:
+        with _PDFIUM_LOCK:
+            doc = pdfium.PdfDocument(content)
+            try:
+                return [
+                    _normalise_pdf_text(doc[i].get_textpage().get_text_range())
+                    for i in range(len(doc))
+                ]
+            finally:
+                doc.close()
+    except pdfium.PdfiumError as e:
         raise ParseError(f"PDF 解析失败: {e}") from e
-    return pages
 
 
 def parse_html(content: bytes) -> list[str]:
@@ -107,7 +123,8 @@ def strip_running_headers(pages: list[str]) -> tuple[list[str], list[str]]:
             if len(lines[i].strip()) <= _MAX_FURNITURE_LEN
         }
         counts.update(s for s in seen if s)
-    threshold = max(3, (len(pages) + 1) // 2)
+    # 奇偶页页眉不同的文件里,每种页眉只出现在约一半的页面上,所以阈值取 40%
+    threshold = max(3, int(len(pages) * 0.4))
     furniture = {s for s, c in counts.items() if c >= threshold}
     if not furniture:
         return pages, []
@@ -121,6 +138,130 @@ def strip_running_headers(pages: list[str]) -> tuple[list[str], list[str]]:
         ]
         cleaned.append("\n".join(keep))
     return cleaned, sorted(furniture)
+
+
+_MARGIN_NO = re.compile(r"^(?:(?P<body>.*\S)\s+)?(?P<n>\d{1,2})$")  # 行尾数字,或单独成行的数字
+
+
+def _longest_margin_chain(hits: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    best: list[tuple[int, int]] = []
+    for start in range(len(hits)):
+        chain = [hits[start]]
+        for idx, n in hits[start + 1 :]:
+            prev_idx, prev_n = chain[-1]
+            if n > prev_n and abs((idx - prev_idx) - (n - prev_n)) <= 2:
+                chain.append((idx, n))
+        if len(chain) > len(best):
+            best = chain
+    return best
+
+
+def strip_margin_line_numbers(pages: list[str]) -> tuple[list[str], int]:
+    """去掉法条页边的行号(新加坡早期版式每 5 行在行尾带一个 5、10、15...)。
+
+    保守规则(防止误删正文里的 "section 5" 之类):候选行以 5 的倍数结尾;必须形成至少 3 个的"链":
+    后一个数字比前一个大,且行号之间的行距与数字差基本一致(误差不超过 2 行)。
+    只清除链上的行号。返回 (处理后的页面, 被清除的行号个数)。
+    """
+    cleaned: list[str] = []
+    removed = 0
+    for page in pages:
+        lines = page.splitlines()
+        hits: list[tuple[int, int]] = []  # (行下标, 行号)
+        for i, line in enumerate(lines):
+            m = _MARGIN_NO.match(line)
+            if m and int(m.group("n")) % 5 == 0 and int(m.group("n")) <= 60:
+                hits.append((i, int(m.group("n"))))
+        chain = _longest_margin_chain(hits)
+        if len(chain) >= 3:
+            drop: set[int] = set()
+            for i, _ in chain:
+                m = _MARGIN_NO.match(lines[i])
+                assert m is not None
+                if m.group("body"):
+                    lines[i] = m.group("body")
+                else:
+                    drop.add(i)  # 整行只有行号:删除该行
+            removed += len(chain)
+            cleaned.append("\n".join(ln for i, ln in enumerate(lines) if i not in drop))
+        else:
+            cleaned.append(page)
+    return cleaned, removed
+
+
+_STOPWORDS = {
+    "en": {
+        "the",
+        "of",
+        "and",
+        "to",
+        "in",
+        "a",
+        "is",
+        "be",
+        "that",
+        "or",
+        "for",
+        "by",
+        "any",
+        "this",
+    },
+    "fr": {
+        "de",
+        "la",
+        "le",
+        "et",
+        "les",
+        "des",
+        "du",
+        "en",
+        "un",
+        "une",
+        "que",
+        "est",
+        "pour",
+        "au",
+    },
+}
+_WORD = re.compile(r"[^\W\d_]+", re.UNICODE)
+
+
+def _is_arabic(c: str) -> bool:
+    return "\u0600" <= c <= "\u06ff" or "\u0750" <= c <= "\u077f" or "\ufb50" <= c <= "\ufefc"
+
+
+def text_layer_garbled(pages: list[str], language: str) -> str | None:
+    """PDF 有文字层但内容是乱码(字体编码缺失导致)时返回原因,否则返回 None。
+
+    这类文件如果当成"已解析"会把乱码入库,所以要和"没有文字层"一样走 OCR。
+    判断依据:控制字符比例;预期文字(阿拉伯文/拉丁文)占字母的比例;英法文的常用词命中率。
+    """
+    text = "\n".join(pages)
+    if len(text.strip()) < 200:
+        return None
+    controls = sum(1 for c in text if unicodedata.category(c) == "Cc" and c not in "\n\r\t")
+    if controls / len(text) > 0.01:
+        return f"文字层含大量控制字符({controls} 个),疑似字体编码缺失导致的乱码"
+    letters = [c for c in text if c.isalpha()]
+    if len(letters) < 100:
+        return None
+    lang = language.split("-")[0].lower()
+    if lang == "ar":
+        ratio = sum(1 for c in letters if _is_arabic(c)) / len(letters)
+        if ratio < 0.6:
+            return f"阿拉伯文文件的文字层里阿拉伯字母只占 {ratio:.0%},疑似乱码"
+    elif lang in _STOPWORDS:
+        latin = sum(1 for c in letters if unicodedata.name(c, "").startswith("LATIN")) / len(
+            letters
+        )
+        if latin < 0.9:
+            return f"拉丁字母只占 {latin:.0%},疑似乱码"
+        words = [w.lower() for w in _WORD.findall(text)]
+        if words:
+            hit = sum(1 for w in words if w in _STOPWORDS[lang]) / len(words)
+            if hit < 0.04:
+                return f"常用词命中率仅 {hit:.1%},疑似乱码"
+    return None
 
 
 def parse_document(content: bytes, mime: str) -> ParsedDocument:

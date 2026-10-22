@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     crawl_timeout_seconds: float = 30.0
     crawl_max_bytes: int = 100 * 1024 * 1024
     worker_poll_seconds: int = 60
+    # OCR(扫描件):tesseract 可执行文件与语言包目录;不配置则尝试 PATH,找不到就只标记"需要 OCR"
+    tesseract_cmd: str | None = None
+    tessdata_dir: str | None = None
+    ocr_dpi: int = 300
     # 允许「域名解析结果」落入的内网网段(默认空=一律拦截)。仅用于开发机:
     # 代理软件的 fake-IP 模式会把所有域名解析到 198.18.0.0/15,此时可设为 ["198.18.0.0/15"]
     crawl_allow_resolved_cidrs: list[str] = []

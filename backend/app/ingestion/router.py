@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ConfigDict
@@ -27,6 +27,15 @@ class VersionOut(BaseModel):
     char_count: int | None
     parse_strategy: str | None
     error: str | None
+    text_source: str
+    ocr_confidence: float | None
+    official_number: str | None
+    version_label: str | None
+    published_date: date | None
+    effective_date: date | None
+    repealed_date: date | None
+    legal_status: str
+    metadata_source: str | None
 
 
 class DocumentOut(BaseModel):
@@ -42,6 +51,8 @@ class DocumentOut(BaseModel):
     discovered_at: datetime
     last_checked_at: datetime | None
     last_error: str | None
+    instrument_family: str | None = None
+    instrument_kind: str | None = None
     latest_version: VersionOut | None = None
 
 
@@ -56,6 +67,7 @@ class ClauseOut(BaseModel):
     ordinal: int
     clause_number: str | None
     heading: str | None
+    section_path: str | None
     original_text: str
     page_start: int | None
     page_end: int | None

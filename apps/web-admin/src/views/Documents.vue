@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   DOC_TYPE_LABEL,
+  LEGAL_STATUS_LABEL,
   PARSE_STRATEGY_LABEL,
   VERSION_STATE_LABEL,
   type ClauseOut,
@@ -101,6 +102,10 @@ onMounted(load)
           <el-descriptions-item label="条款切分">
             {{ v.parse_strategy ? PARSE_STRATEGY_LABEL[v.parse_strategy] : '—' }}
           </el-descriptions-item>
+          <el-descriptions-item label="现行状态">{{ LEGAL_STATUS_LABEL[v.legal_status] }}</el-descriptions-item>
+          <el-descriptions-item label="官方版本说明">{{ v.version_label ?? '—' }}</el-descriptions-item>
+          <el-descriptions-item label="发布日期">{{ v.published_date ?? '—' }}</el-descriptions-item>
+          <el-descriptions-item label="生效日期">{{ v.effective_date ?? '—' }}</el-descriptions-item>
           <el-descriptions-item label="页数">{{ v.page_count ?? '—' }}</el-descriptions-item>
           <el-descriptions-item label="文本字数">{{ v.char_count ?? '—' }}</el-descriptions-item>
           <el-descriptions-item label="内容指纹(SHA-256)" :span="2">
@@ -108,6 +113,20 @@ onMounted(load)
           </el-descriptions-item>
           <el-descriptions-item v-if="v.error" label="说明" :span="2">{{ v.error }}</el-descriptions-item>
         </el-descriptions>
+        <el-alert
+          v-if="v.text_source === 'ocr'"
+          type="error"
+          :closable="false"
+          style="margin-bottom: 12px"
+          :title="`本版本的文字是 OCR 机器识别结果(平均置信度 ${v.ocr_confidence ?? '—'}),可能有错字、错号,必须人工对照原文核对。`"
+        />
+        <el-alert
+          v-if="v.legal_status === 'unknown'"
+          type="info"
+          :closable="false"
+          style="margin-bottom: 12px"
+          title="该文件的现行有效状态尚未核实,请勿直接当作现行法律使用。"
+        />
         <el-alert
           v-if="v.parse_strategy && v.parse_strategy !== 'numbered'"
           type="warning"
@@ -120,6 +139,12 @@ onMounted(load)
       <h4>条款(共 {{ clauses.length }} 条,原文逐字保留)</h4>
       <el-table :data="clauses" border size="small" max-height="420">
         <el-table-column prop="clause_number" label="编号" width="80" />
+        <el-table-column label="所在章节" width="220">
+          <template #default="{ row }">
+            <div style="font-size: 12px; color: #909399">{{ row.section_path ?? '' }}</div>
+            <div v-if="row.heading" style="font-weight: 600">{{ row.heading }}</div>
+          </template>
+        </el-table-column>
         <el-table-column label="页码" width="80">
           <template #default="{ row }">
             {{ row.page_start === row.page_end ? row.page_start : `${row.page_start}–${row.page_end}` }}
