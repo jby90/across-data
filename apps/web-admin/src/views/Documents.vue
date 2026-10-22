@@ -54,6 +54,21 @@ const detail = ref<DocumentDetail | null>(null)
 const versionId = ref<string>('')
 const clauses = ref<ClauseOut[]>([])
 const events = ref<EventOut[]>([])
+const translatingDocId = ref<string>('')
+
+async function translateDocument(doc: DocumentOut) {
+  translatingDocId.value = doc.id
+  try {
+    const res = await api.post<{ document_id: string; translated_count: number }>(
+      `/admin/knowledge/documents/${doc.id}/translate`,
+    )
+    ElMessage.success(`已完成文档批量翻译（共翻译 ${res.translated_count} 条条款）`)
+  } catch (e) {
+    ElMessage.error((e as Error).message)
+  } finally {
+    translatingDocId.value = ''
+  }
+}
 
 async function open(doc: DocumentOut) {
   detail.value = await api.get<DocumentDetail>(`/admin/documents/${doc.id}`)
@@ -209,6 +224,19 @@ onMounted(load)
       <template #default="{ row }">{{ fmt(row.last_checked_at) }}</template>
     </el-table-column>
     <el-table-column prop="last_error" label="最近错误" min-width="140" show-overflow-tooltip />
+    <el-table-column label="操作" width="140" fixed="right">
+      <template #default="{ row }">
+        <el-button
+          size="small"
+          type="primary"
+          plain
+          :loading="translatingDocId === row.id"
+          @click.stop="translateDocument(row)"
+        >
+          按文档批量翻译
+        </el-button>
+      </template>
+    </el-table-column>
   </el-table>
 
   <el-dialog v-model="uploadDialog" :title="uploadForm.document_id ? '上传该法规的新版本原文' : '手动上传官方原文(WAF 拦截兜底)'" width="560px">

@@ -4,6 +4,7 @@
   python -m app.cli create-platform-admin --email admin@example.com --name 管理员
   python -m app.cli load-sites ../data/seed/source_sites.json   # 导入种子站点(停用、条款待确认)
   python -m app.cli preflight [--country EG] [--report 报告.md]  # 只读预检,不下载文件
+  python -m app.cli translate [--country SG] [--only-missing] [--concurrency 4]
 
 密码从环境变量 CYSH_ADMIN_PASSWORD 读取,未设置则交互输入(不回显)。
 """
@@ -11,6 +12,7 @@
 import argparse
 import asyncio
 import getpass
+import hashlib
 import json
 import os
 import sys
@@ -24,6 +26,33 @@ from app.core.config import get_settings
 from app.core.db import get_sessionmaker
 from app.iam import service
 from app.iam.models import Role
+
+
+def _ensure_dev_env() -> None:
+    """当未显式传入 CYSH_DATABASE_URL / CYSH_JWT_SECRET 时,自动复用 ~/.cyshuhe-dev 本地开发配置。"""
+    dev_dir = Path.home() / ".cyshuhe-dev"
+    creds_path = dev_dir / "credentials.json"
+    if "CYSH_JWT_SECRET" not in os.environ and creds_path.exists():
+        try:
+            creds = json.loads(creds_path.read_text(encoding="utf-8"))
+            if creds.get("jwt_secret"):
+                os.environ["CYSH_JWT_SECRET"] = creds["jwt_secret"]
+        except Exception:
+            pass
+    if "CYSH_JWT_SECRET" not in os.environ:
+        os.environ["CYSH_JWT_SECRET"] = "dev-cli-fallback-jwt-secret-at-least-32-chars"
+
+    if "CYSH_DATABASE_URL" not in os.environ and (dev_dir / "pg").exists():
+        try:
+            import pgserver
+
+            pg = pgserver.get_server(dev_dir / "pg", cleanup_mode=None)
+            os.environ["CYSH_DATABASE_URL"] = pg.get_uri().replace(
+                "postgresql://", "postgresql+asyncpg://", 1
+            )
+        except Exception:
+            pass
+    get_settings.cache_clear()
 
 
 async def _create_platform_admin(email: str, name: str, password: str) -> None:
@@ -159,6 +188,325 @@ def _ocr_engine():
     return OcrEngine(s.tesseract_cmd, s.tessdata_dir, s.ocr_dpi)
 
 
+async def _split_oversized_clauses_for_country(
+    session, country_code: str | None = None, max_clause_chars: int = 2400
+) -> int:
+    """将历史遗留的超长未切分条款按句/款切分为标准条款,并保持 KgEdge 引用完整性。"""
+    from sqlalchemy import func, select
+
+    from app.ingestion.models import Clause, Document, DocumentVersion
+    from app.knowledge.models import KgEdge
+    from app.knowledge.translator import split_clause_into_chunks
+
+    stmt = (
+        select(Clause, DocumentVersion, Document)
+        .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+        .join(Document, Document.id == DocumentVersion.document_id)
+        .where(func.length(Clause.original_text) > max_clause_chars)
+    )
+    if country_code:
+        stmt = stmt.where(Document.country_code == country_code.upper())
+
+    rows = list((await session.execute(stmt)).all())
+    split_count = 0
+    for clause, ver, _doc in rows:
+        chunks = split_clause_into_chunks(clause.original_text, max_chars=1400)
+        if len(chunks) <= 1:
+            continue
+        max_ord = (
+            await session.execute(
+                select(func.max(Clause.ordinal)).where(Clause.version_id == ver.id)
+            )
+        ).scalar_one() or 0
+
+        edges = list(
+            (await session.execute(select(KgEdge).where(KgEdge.evidence_clause_id == clause.id)))
+            .scalars()
+            .all()
+        )
+        clause.original_text = chunks[0]
+        clause.text_hash = hashlib.sha256(chunks[0].encode("utf-8")).hexdigest()
+
+        created_clauses: list[Clause] = [clause]
+        for idx, ch_text in enumerate(chunks[1:], start=1):
+            new_c = Clause(
+                version_id=ver.id,
+                ordinal=max_ord + idx,
+                clause_number=f"{clause.clause_number or clause.ordinal}.{idx}",
+                heading=clause.heading,
+                section_path=clause.section_path,
+                language=clause.language,
+                original_text=ch_text,
+                text_hash=hashlib.sha256(ch_text.encode("utf-8")).hexdigest(),
+                page_start=clause.page_start,
+                page_end=clause.page_end,
+                ocr_required=clause.ocr_required,
+                needs_review=clause.needs_review,
+            )
+            session.add(new_c)
+            created_clauses.append(new_c)
+        await session.flush()
+
+        for edge in edges:
+            if edge.evidence_quote and edge.evidence_quote in clause.original_text:
+                continue
+            matched_c = next(
+                (
+                    nc
+                    for nc in created_clauses
+                    if edge.evidence_quote and edge.evidence_quote in nc.original_text
+                ),
+                clause,
+            )
+            if matched_c.id != clause.id:
+                edge.evidence_clause_id = matched_c.id
+            elif edge.evidence_quote not in clause.original_text:
+                edge.evidence_quote = clause.original_text[:240].strip()
+
+        split_count += 1
+    if split_count:
+        await session.commit()
+    return split_count
+
+
+async def batch_translate(
+    country: str | None = None,
+    only_missing: bool = True,
+    concurrency: int = 4,
+    sf=None,
+) -> dict[str, int]:
+    """批量执行受术语表约束的真实大模型翻译(S1):
+    1. 将已有的非 llm (glossary_assisted) 译文全部标记为 superseded(保留历史行);
+    2. 按国家加载术语库,并发调用 LLM 翻译目标条款并执行四项译后检查。
+    """
+    from sqlalchemy import or_, select
+
+    from app.ingestion.models import Clause, Document, DocumentVersion
+    from app.knowledge.models import (
+        ClauseTranslation,
+        GlossaryTerm,
+        KgEdge,
+        ReviewPoint,
+        TranslationReviewStatus,
+    )
+    from app.knowledge.translator import set_translation_concurrency, translate_clause
+
+    set_translation_concurrency(concurrency)
+    sf = sf or get_sessionmaker()
+
+    async with sf() as s:
+        await _split_oversized_clauses_for_country(s, country_code=country)
+
+        # 1. 作废所有旧的 glossary_assisted 记录(标为 superseded)
+        old_stmt = (
+            select(ClauseTranslation, Clause, Document)
+            .join(Clause, Clause.id == ClauseTranslation.clause_id)
+            .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+            .join(Document, Document.id == DocumentVersion.document_id)
+            .where(
+                ClauseTranslation.engine != "llm",
+                ClauseTranslation.review_status != TranslationReviewStatus.SUPERSEDED.value,
+            )
+        )
+        if country:
+            old_stmt = old_stmt.where(Document.country_code == country.upper())
+        old_rows = list((await s.execute(old_stmt)).all())
+        for tr, _cl, _doc in old_rows:
+            tr.review_status = TranslationReviewStatus.SUPERSEDED.value
+            tr.updated_at = datetime.now(UTC)
+        await s.commit()
+
+        # 2. 收集需要翻译的目标条款集合:
+        #    (a) 原本已有译文(含刚标为 superseded)或处于 failed/not_translated 的条款;
+        #    (b) 知识图谱 KgEdge 或 ReviewPoint 引用的证据条款;
+        #    (c) 各相关文档最新已解析版本的核心条款(SG 前 8 条,其他四国前 15 条)。
+        target_countries = [country.upper()] if country else ["SG", "EG", "TN", "MA", "LB"]
+        clauses_to_run: list[tuple[Clause, str]] = []
+        seen_cids: set = set()
+
+        for cc in target_countries:
+            done_cids: set = set()
+            if only_missing:
+                done_rows = (
+                    (
+                        await s.execute(
+                            select(ClauseTranslation.clause_id)
+                            .join(Clause, Clause.id == ClauseTranslation.clause_id)
+                            .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+                            .join(Document, Document.id == DocumentVersion.document_id)
+                            .where(
+                                Document.country_code == cc,
+                                ClauseTranslation.engine == "llm",
+                                ClauseTranslation.review_status.in_(
+                                    (
+                                        TranslationReviewStatus.MACHINE_TRANSLATED.value,
+                                        TranslationReviewStatus.PENDING_REVIEW.value,
+                                        TranslationReviewStatus.APPROVED.value,
+                                    )
+                                ),
+                                ClauseTranslation.quality_check_passed.is_(True),
+                            )
+                        )
+                    )
+                    .scalars()
+                    .all()
+                )
+                done_cids = set(done_rows)
+
+            tr_cids = set(
+                (
+                    await s.execute(
+                        select(ClauseTranslation.clause_id)
+                        .join(Clause, Clause.id == ClauseTranslation.clause_id)
+                        .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+                        .join(Document, Document.id == DocumentVersion.document_id)
+                        .where(Document.country_code == cc)
+                    )
+                )
+                .scalars()
+                .all()
+            )
+            edge_cids = set(
+                (
+                    await s.execute(
+                        select(KgEdge.evidence_clause_id).where(KgEdge.country_code == cc)
+                    )
+                )
+                .scalars()
+                .all()
+            )
+            rp_cids = set(
+                (
+                    await s.execute(
+                        select(ReviewPoint.clause_id).where(
+                            ReviewPoint.country_code == cc, ReviewPoint.clause_id.is_not(None)
+                        )
+                    )
+                )
+                .scalars()
+                .all()
+            )
+            must_cids = tr_cids | edge_cids | rp_cids
+
+            sample_n = 8 if cc == "SG" else 15
+            docs = list(
+                (
+                    await s.execute(
+                        select(Document).where(
+                            Document.country_code == cc,
+                            Document.relevance == "relevant",
+                        )
+                    )
+                )
+                .scalars()
+                .all()
+            )
+            for doc in docs:
+                ver = (
+                    await s.execute(
+                        select(DocumentVersion)
+                        .where(
+                            DocumentVersion.document_id == doc.id,
+                            DocumentVersion.state == "parsed",
+                        )
+                        .order_by(DocumentVersion.version_no.desc())
+                        .limit(1)
+                    )
+                ).scalar_one_or_none()
+                if ver is None:
+                    continue
+                doc_cids = (
+                    (
+                        await s.execute(
+                            select(Clause.id)
+                            .where(Clause.version_id == ver.id)
+                            .order_by(Clause.ordinal)
+                            .limit(sample_n)
+                        )
+                    )
+                    .scalars()
+                    .all()
+                )
+                must_cids.update(doc_cids)
+
+            pending_cids = [
+                cid for cid in must_cids if cid and cid not in done_cids and cid not in seen_cids
+            ]
+            if pending_cids:
+                c_objs = list(
+                    (
+                        await s.execute(
+                            select(Clause)
+                            .where(Clause.id.in_(pending_cids))
+                            .order_by(Clause.ordinal)
+                        )
+                    )
+                    .scalars()
+                    .all()
+                )
+                for c_obj in c_objs:
+                    seen_cids.add(c_obj.id)
+                    clauses_to_run.append((c_obj, cc))
+
+    print(
+        f"[translate] 已作废旧译文 {len(old_rows)} 条; "
+        f"待翻译条款 {len(clauses_to_run)} 条 (concurrency={concurrency})",
+        flush=True,
+    )
+
+    terms_by_country: dict[str, list[GlossaryTerm]] = {}
+    async with sf() as s:
+        for cc in {cc for _, cc in clauses_to_run}:
+            terms_by_country[cc] = list(
+                (
+                    await s.execute(
+                        select(GlossaryTerm).where(
+                            or_(
+                                GlossaryTerm.country_code == cc,
+                                GlossaryTerm.country_code.is_(None),
+                            )
+                        )
+                    )
+                )
+                .scalars()
+                .all()
+            )
+
+    sem = asyncio.Semaphore(max(1, concurrency))
+    stats = {
+        "superseded": len(old_rows),
+        "total": len(clauses_to_run),
+        "machine_translated": 0,
+        "translation_failed": 0,
+        "not_translated": 0,
+    }
+    done_counter = 0
+
+    async def _worker(clause_obj: Clause, cc: str) -> None:
+        nonlocal done_counter
+        async with sem:
+            async with sf() as task_s:
+                c_in_s = await task_s.get(Clause, clause_obj.id)
+                if c_in_s is None:
+                    return
+                tr = await translate_clause(task_s, c_in_s, cc, terms_by_country.get(cc, []))
+                await task_s.commit()
+                st = tr.review_status
+                stats[st] = stats.get(st, 0) + 1
+                done_counter += 1
+                if done_counter % 20 == 0 or done_counter == len(clauses_to_run):
+                    print(
+                        f"  进度 {done_counter}/{len(clauses_to_run)} | "
+                        f"成功={stats.get('machine_translated', 0)} "
+                        f"失败={stats.get('translation_failed', 0)} "
+                        f"未译={stats.get('not_translated', 0)}",
+                        flush=True,
+                    )
+
+    await asyncio.gather(*(_worker(c_obj, cc) for c_obj, cc in clauses_to_run))
+    return stats
+
+
 async def reparse(state: str, country: str | None, sf=None) -> dict[str, int]:
     """对已有版本重新解析(例如装好 OCR 后,处理之前标为"需要 OCR"的扫描件)。"""
     from sqlalchemy import select
@@ -223,7 +571,18 @@ def main() -> int:
     f = sub.add_parser("preflight", help="只读预检站点(robots.txt 与地址)")
     f.add_argument("--country")
     f.add_argument("--report", help="把结果写成 Markdown 报告")
+    t = sub.add_parser("translate", help="批量执行真实大模型受控法律翻译(S1)")
+    t.add_argument("--country", help="指定国家代码(如 SG/EG/TN/MA/LB),不传则翻译全部五国")
+    t.add_argument(
+        "--only-missing",
+        action="store_true",
+        default=False,
+        help="仅翻译缺少合格 LLM 译文的条款",
+    )
+    t.add_argument("--concurrency", type=int, default=4, help="并发请求数(默认 4)")
     args = parser.parse_args()
+
+    _ensure_dev_env()
 
     if args.command == "create-platform-admin":
         password = os.environ.get("CYSH_ADMIN_PASSWORD") or getpass.getpass("密码(至少12位): ")
@@ -246,6 +605,15 @@ def main() -> int:
             print(f"已写入 {args.report}")
         else:
             print(report)
+    elif args.command == "translate":
+        res = asyncio.run(
+            batch_translate(
+                country=args.country,
+                only_missing=args.only_missing,
+                concurrency=args.concurrency,
+            )
+        )
+        print("批量翻译结果:", json.dumps(res, ensure_ascii=False))
     return 0
 
 

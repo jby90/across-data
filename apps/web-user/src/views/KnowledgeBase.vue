@@ -620,7 +620,7 @@ onMounted(loadData)
               <!-- 条款原文与受控中文左右双栏逐条对照 -->
               <div class="dual-header">
                 <div>官方原文（点击右侧义务/关系芯片可高亮原文依据片段）</div>
-                <div>受术语表约束中译 · 抽取出的合规义务、数据类型与罚则</div>
+                <div>中文译文（机器翻译，待核对） · 抽取出的合规义务、数据类型与罚则</div>
               </div>
               <div class="dual-list">
                 <div
@@ -649,15 +649,24 @@ onMounted(loadData)
                   <!-- 右栏：中文对照 + 术语悬停 + 关联义务/数据类型芯片 -->
                   <div class="dual-col zh-col">
                     <div class="clause-meta" style="display: flex; justify-content: space-between">
-                      <el-tag :type="cl.usable_as_legal_basis ? 'success' : 'warning'" size="small">
-                        {{ cl.status_badge }}
+                      <el-tag
+                        :type="cl.usable_as_legal_basis ? 'success' : cl.translated_text ? 'warning' : 'info'"
+                        size="small"
+                      >
+                        {{
+                          cl.usable_as_legal_basis
+                            ? '中文译文（已复核，可作法律依据）'
+                            : cl.translated_text
+                              ? '中文译文（机器翻译，待核对）'
+                              : '未翻译'
+                        }}
                       </el-tag>
                       <span v-if="cl.linked_edges.length" class="sub">
                         点击下方关联要素芯片高亮左侧原文依据
                       </span>
                     </div>
-                    <div class="clause-text">
-                      {{ cl.translated_text || '（该条款为一般性条文，可按需触发术语受控翻译）' }}
+                    <div class="clause-text" :style="{ color: cl.translated_text ? '#1e293b' : '#94a3b8' }">
+                      {{ cl.translated_text || '暂无中文译文' }}
                     </div>
 
                     <!-- 术语命中与悬停法定定义 -->
@@ -827,9 +836,9 @@ onMounted(loadData)
               <div class="text-box">{{ row.original_text }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="受术语表约束中译 (悬停查看法定定义)" min-width="300">
+          <el-table-column label="中文译文（机器翻译，待核对）" min-width="300">
             <template #default="{ row }">
-              <div class="text-box">{{ row.translated_text }}</div>
+              <div class="text-box">{{ row.translated_text || '暂无中文译文' }}</div>
               <div
                 v-if="row.glossary_hits?.length || row.unmatched_terms?.length"
                 style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px"

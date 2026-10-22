@@ -37,14 +37,255 @@ def test_redact_sensitive_text_and_verify_translation():
     assert any("个人数据" in msg for msg in bad_issues)
     assert any("3" in msg for msg in bad_issues)
 
+    # S1: 译文与原文完全相同 或 CJK 占比 < 30% 均应判定失败
+    same_ok, same_issues, _ = verify_translation(
+        "An organisation must protect personal data within 3 days.",
+        "An organisation must protect personal data within 3 days.",
+        hits,
+    )
+    assert same_ok is False
+    assert any("相同" in msg for msg in same_issues)
+    assert any("CJK" in msg for msg in same_issues)
+
+
+async def test_s1_llm_translation_pass_retry_fail_and_unavailable(session_factory, monkeypatch):
+    """S1 单元测试:
+    1. 假 LLM 返回合格译文 -> machine_translated 且记录 tokens_in/out、duration_ms、prompt_version=translate-v2;
+    2. 返回原文 / 漏数字 / 漏术语 -> 重译一次(共调用 2 次) -> 仍失败标 translation_failed;
+    3. 首次失败但重译修正成功 -> machine_translated;
+    4. LLM 不可用 -> not_translated 且 translated_text 为空;
+    5. 长条款 (>1500 字符) 按句/款分块翻译并按序合并;
+    6. 已有的旧 glossary_assisted 记录标为 superseded 并保留历史行。
+    """
+    import hashlib
+
+    from sqlalchemy import select
+
+    from app.ingestion.models import Clause, Document, DocumentVersion
+    from app.knowledge import translator
+    from app.knowledge.models import ClauseTranslation, GlossaryTerm
+    from app.sources.models import SourceSite
+
+    async with session_factory() as s:
+        site = SourceSite(
+            country_code="SG",
+            publisher="PDPC",
+            language="en",
+            document_type="LAW",
+            entry_url="https://sso.agc.gov.sg/Act/PDPA2012",
+            strategy="DIRECT",
+            terms_status="pending",
+            enabled=False,
+        )
+        s.add(site)
+        await s.flush()
+
+        doc = Document(
+            site_id=site.id,
+            country_code="SG",
+            title="Personal Data Protection Act 2012",
+            document_type="LAW",
+            language="en",
+            source_url="https://sso.agc.gov.sg/Act/PDPA2012",
+        )
+        s.add(doc)
+        await s.flush()
+
+        ver = DocumentVersion(
+            document_id=doc.id,
+            version_no=1,
+            content_hash="a" * 64,
+            archive_path="SG/test.pdf",
+            mime_type="application/pdf",
+            size_bytes=1024,
+            final_url="https://sso.agc.gov.sg/Act/PDPA2012",
+            state="parsed",
+        )
+        s.add(ver)
+        await s.flush()
+
+        term = GlossaryTerm(
+            concept_code="personal_data",
+            country_code="SG",
+            language="en",
+            source_term="personal data",
+            target_zh="个人数据",
+            priority_level=1,
+            statutory_definition="可识别特定个人的数据",
+            review_status="approved",
+        )
+        s.add(term)
+
+        orig = "Section 26: An organisation must protect personal data within 3 calendar days or pay $1,000,000."
+        clause = Clause(
+            version_id=ver.id,
+            ordinal=1,
+            clause_number="26",
+            heading="Transfer limitation",
+            language="en",
+            original_text=orig,
+            text_hash=hashlib.sha256(orig.encode()).hexdigest(),
+        )
+        s.add(clause)
+        await s.flush()
+
+        # 先插入一条历史 glossary_assisted 记录,验证重译后保留历史行并标为 superseded
+        legacy_tr = ClauseTranslation(
+            clause_id=clause.id,
+            translated_text=orig,
+            engine="glossary_assisted",
+            model_name="glossary-constrained-v1",
+            prompt_version="v1",
+            glossary_hits=[],
+            unmatched_terms=[],
+            quality_check_passed=True,
+            quality_issues=[],
+            review_status="pending_review",
+        )
+        s.add(legacy_tr)
+        await s.commit()
+
+        # 场景 A: 假 LLM 返回合格译文 -> 通过并把旧记录标为 superseded
+        async def fake_ok(text, lang, hits, unmatched, **kwargs):
+            return (
+                "第 26 条：组织必须在 3 个日历日内保护个人数据，否则处以 $1,000,000 罚款。",
+                "deepseek-flash",
+                120,
+                48,
+                350,
+            )
+
+        monkeypatch.setattr(translator, "_call_llm_translate", fake_ok)
+        tr_ok = await translator.translate_clause(s, clause, "SG", [term])
+        await s.commit()
+
+        assert tr_ok.review_status == "machine_translated"
+        assert tr_ok.status == "machine_translated"
+        assert tr_ok.quality_check_passed is True
+        assert tr_ok.engine == "llm"
+        assert tr_ok.prompt_version == "translate-v2"
+        assert tr_ok.tokens_in == 120 and tr_ok.tokens_out == 48 and tr_ok.duration_ms == 350
+
+        all_rows = (
+            await s.execute(
+                select(ClauseTranslation).where(ClauseTranslation.clause_id == clause.id)
+            )
+        ).scalars().all()
+        assert any(r.engine == "glossary_assisted" and r.review_status == "superseded" for r in all_rows)
+
+        # 场景 B: 假 LLM 返回漏数字/漏术语/原文 -> 重译 1 次(共 2 次调用) -> 仍失败标 translation_failed
+        calls_fail = 0
+
+        async def fake_bad(text, lang, hits, unmatched, **kwargs):
+            nonlocal calls_fail
+            calls_fail += 1
+            # 故意漏掉数字 3 与 1,000,000 且不写“个人数据”
+            return ("第 26 条：组织必须在若干日内保护私人资料，否则处以高额罚款。", "deepseek-flash", 80, 30, 200)
+
+        monkeypatch.setattr(translator, "_call_llm_translate", fake_bad)
+        tr_fail = await translator.translate_clause(s, clause, "SG", [term])
+        await s.commit()
+
+        assert calls_fail == 2
+        assert tr_fail.review_status == "translation_failed"
+        assert tr_fail.quality_check_passed is False
+        assert any("个人数据" in iss for iss in tr_fail.quality_issues)
+        assert any("3" in iss for iss in tr_fail.quality_issues)
+
+        # 场景 C: 首次漏数字,重译时根据 retry_issues 修正成功 -> machine_translated
+        calls_retry_ok = 0
+
+        async def fake_retry_recover(text, lang, hits, unmatched, **kwargs):
+            nonlocal calls_retry_ok
+            calls_retry_ok += 1
+            if calls_retry_ok == 1:
+                return ("第 26 条：组织必须保护个人数据，否则处以 $1,000,000 罚款。", "deepseek-flash", 90, 35, 180)
+            assert kwargs.get("retry_issues")
+            return (
+                "第 26 条：组织必须在 3 个日历日内保护个人数据，否则处以 $1,000,000 罚款。",
+                "deepseek-flash",
+                110,
+                42,
+                210,
+            )
+
+        monkeypatch.setattr(translator, "_call_llm_translate", fake_retry_recover)
+        tr_rec = await translator.translate_clause(s, clause, "SG", [term])
+        await s.commit()
+        assert calls_retry_ok == 2
+        assert tr_rec.review_status == "machine_translated"
+        assert tr_rec.quality_check_passed is True
+        assert tr_rec.tokens_in == 200 and tr_rec.tokens_out == 77
+
+        # 场景 D: LLM 不可用 -> not_translated 且 translated_text 为空
+        async def fake_unavailable(text, lang, hits, unmatched, **kwargs):
+            return None
+
+        monkeypatch.setattr(translator, "_call_llm_translate", fake_unavailable)
+        tr_unavail = await translator.translate_clause(s, clause, "SG", [term])
+        await s.commit()
+        assert tr_unavail.review_status == "not_translated"
+        assert tr_unavail.translated_text == ""
+        assert tr_unavail.quality_check_passed is False
+
+        # 场景 E: 长条款 (>1500 字符) 分块并按序合并
+        long_orig = (
+            "1. An organisation must protect personal data in accordance with section 24. " * 25
+            + "\n"
+            + "2. Any breach must be notified within 3 days with a penalty up to $1,000,000. " * 25
+        )
+        chunks = translator.split_clause_into_chunks(long_orig, max_chars=1500)
+        assert len(chunks) >= 2
+        assert all(len(c) <= 1500 for c in chunks)
+        long_clause = Clause(
+            version_id=ver.id,
+            ordinal=2,
+            clause_number="27",
+            language="en",
+            original_text=long_orig,
+            text_hash=hashlib.sha256(long_orig.encode()).hexdigest(),
+        )
+        s.add(long_clause)
+        await s.flush()
+
+        async def fake_chunk_llm(text, lang, hits, unmatched, **kwargs):
+            if "24" in text and "1,000,000" not in text:
+                return ("第 1 款：组织必须依照第 24 条保护个人数据。", "deepseek-flash", 100, 30, 150)
+            return (
+                "第 2 款：任何泄露必须在 3 日内通报，最高处以 $1,000,000 罚款，并保护个人数据与第 24 条。",
+                "deepseek-flash",
+                100,
+                35,
+                160,
+            )
+
+        monkeypatch.setattr(translator, "_call_llm_translate", fake_chunk_llm)
+        tr_long = await translator.translate_clause(s, long_clause, "SG", [term])
+        await s.commit()
+        assert tr_long.review_status == "machine_translated"
+        assert "第 1 款" in tr_long.translated_text and "第 2 款" in tr_long.translated_text
+
 
 async def test_knowledge_extraction_glossary_review_points_and_version_linkage(
     client, seed, tmp_path, monkeypatch
 ):
     from app.core.config import get_settings
+    from app.knowledge import translator
 
     monkeypatch.setenv("CYSH_ARCHIVE_DIR", str(tmp_path / "archive"))
     get_settings.cache_clear()
+
+    async def _fake_llm_translate(original_text, language, glossary_hits, unmatched_terms, **kwargs):
+        nums = translator.extract_numeric_tokens(original_text)
+        terms_zh = "、".join(h["target_zh"] for h in glossary_hits) or "数据合规"
+        nums_str = " / ".join(nums) if nums else ""
+        zh = (
+            f"根据本条规定，相关组织与数据处理主体应当严格履行【{terms_zh}】相关的跨境传输、"
+            f"告知同意、安全保护与法定申报义务（保留法定数值与编号：{nums_str}）。"
+        )
+        return zh, "deepseek-flash", 110, 45, 220
+
+    monkeypatch.setattr(translator, "_call_llm_translate", _fake_llm_translate)
     admin_hdr = bearer(await login(client, "admin", "admin@example.com"))
     reviewer_hdr = bearer(await login(client, "admin", "reviewer@example.com"))
     member_hdr = bearer(await login(client, "user", "a-member@example.com"))

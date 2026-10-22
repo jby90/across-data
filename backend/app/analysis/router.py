@@ -949,7 +949,13 @@ async def get_clause_citation_card(
     clause, ver, doc = row
     tr = (
         await session.execute(
-            select(ClauseTranslation).where(ClauseTranslation.clause_id == clause.id)
+            select(ClauseTranslation)
+            .where(
+                ClauseTranslation.clause_id == clause.id,
+                ClauseTranslation.review_status != "superseded",
+            )
+            .order_by(ClauseTranslation.updated_at.desc())
+            .limit(1)
         )
     ).scalar_one_or_none()
 
@@ -1046,6 +1052,15 @@ async def get_clause_citation_card(
         edges=edge_outs,
     )
 
+    valid_tr_text = (
+        tr.translated_text
+        if (
+            tr is not None
+            and tr.review_status not in ("not_translated", "translation_failed", "superseded")
+            and (tr.translated_text or "").strip()
+        )
+        else ""
+    )
     return {
         "clause_id": str(clause.id),
         "document_id": str(doc.id),
@@ -1056,8 +1071,8 @@ async def get_clause_citation_card(
         "version_no": ver.version_no,
         "source_url": doc.source_url,
         "original_text": clause.original_text,
-        "translated_text": tr.translated_text if tr else "（待翻译）",
-        "review_status": tr.review_status if tr else "pending_review",
+        "translated_text": valid_tr_text,
+        "review_status": tr.review_status if tr else "not_translated",
         "mini_graph": mini_graph.model_dump(mode="json"),
     }
 

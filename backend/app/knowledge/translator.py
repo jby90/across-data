@@ -1,17 +1,30 @@
-"""受法律术语库约束的机器翻译、译前脱敏、译前术语提取与译后程序检查。
+"""受法律术语库约束的真实大模型机器翻译、译前脱敏、译前术语提取、长条款分块与译后程序检查。
 
-遵循设计规范 2.5 与 5A:
+遵循 S1 规范:
 1. 发往外部大模型前先做敏感信息脱敏(邮箱、电话、证件号)。
-2. 译前提取条款中命中的术语(国家覆盖优先于通用概念,按来源层级 1->4 排序)。
-3. 译后程序检查:必须使用术语库规定的 target_zh,且原文中的数字/金额/百分比不得丢失。
-4. 对不上的专业词汇输出"原词 + 暂译 + 法定定义/依据",供前端悬浮展示。
+2. 译前提取条款中命中的术语(国家覆盖优先于通用概念);保留术语命中统计,不再产出本地假译文。
+3. 分块:长条款按句/款拆分,每块 <= 约 1500 字符,保持顺序合并。
+4. 提示词(translate-v2):法律翻译、逐句忠实、不增不减、保留条号与数字、术语表强制。
+5. 调用 OpenAI 兼容接口(沿用 settings.llm_*);并发用 asyncio.Semaphore(默认 4)限流,带指数退避重试。
+6. 译后程序检查(任一失败则重译一次,仍失败标 translation_failed 并记录原因):
+   ① CJK 占比 >= 30%(阿语/法语/英文原文都应翻成中文);
+   ② 原文中的数字、金额、百分比、年份、条号在译文中全部出现;
+   ③ 术语表要求的译法出现;
+   ④ 译文不等于原文。
+7. 状态机:machine_translated / translation_failed / pending_review / approved /
+   rejected / stale / not_translated / superseded。
+8. 成本核算:记录 engine=llm、model_name、prompt_version、tokens_in、tokens_out、duration_ms。
 """
 
 from __future__ import annotations
 
+import asyncio
+import inspect
 import logging
 import re
+import time
 from datetime import UTC, datetime
+from typing import Any
 
 import httpx
 from sqlalchemy import or_, select
@@ -23,12 +36,48 @@ from app.knowledge.models import ClauseTranslation, GlossaryTerm, TranslationRev
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "v1.0-glossary-strict"
+PROMPT_VERSION = "translate-v2"
+MAX_CHUNK_CHARS = 1500
+DEFAULT_CONCURRENCY = 4
 
 _EMAIL_RE = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
 _PHONE_RE = re.compile(r"(?:\+\d{1,3}[-\s]?)?\b\d{3,4}[-\s]\d{4,8}\b")
 _SG_NRIC_RE = re.compile(r"\b[STFGM]\d{7}[A-Z]\b")
 _NUM_TOKEN_RE = re.compile(r"\b\d+(?:,\d{3})*(?:\.\d+)?%?\b")
+_CJK_RE = re.compile(r"[\u4e00-\u9fff\u3400-\u4dbf]")
+_WS_RE = re.compile(r"\s+")
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?。！？；;])\s+")
+
+_EASTERN_ARABIC_MAP = str.maketrans(
+    "٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹％",
+    "01234567890123456789%",
+)
+
+# 进程级并发信号量(按需绑定当前事件循环)
+_CONCURRENCY_LIMIT: int = DEFAULT_CONCURRENCY
+_SEMAPHORE: asyncio.Semaphore | None = None
+_SEMAPHORE_LOOP_ID: int | None = None
+
+
+def set_translation_concurrency(concurrency: int) -> None:
+    """设置翻译并发限流上限(默认 4)。"""
+    global _CONCURRENCY_LIMIT, _SEMAPHORE, _SEMAPHORE_LOOP_ID
+    _CONCURRENCY_LIMIT = max(1, int(concurrency))
+    _SEMAPHORE = None
+    _SEMAPHORE_LOOP_ID = None
+
+
+def _get_llm_semaphore() -> asyncio.Semaphore:
+    global _SEMAPHORE, _SEMAPHORE_LOOP_ID
+    try:
+        loop_id = id(asyncio.get_running_loop())
+    except RuntimeError:
+        loop_id = None
+    if _SEMAPHORE is None or _SEMAPHORE_LOOP_ID != loop_id:
+        _SEMAPHORE = asyncio.Semaphore(_CONCURRENCY_LIMIT)
+        _SEMAPHORE_LOOP_ID = loop_id
+    return _SEMAPHORE
+
 
 # 未纳入已批术语库、但车企合规阅读常遇到的候选解释词典(用于"对不上的词保留原词加解释")
 _PROVISIONAL_EXPLANATIONS: dict[str, tuple[str, str, str]] = {
@@ -64,63 +113,94 @@ _PROVISIONAL_EXPLANATIONS: dict[str, tuple[str, str, str]] = {
     ),
 }
 
-# 本地确定性法规句式与高频法律短语翻译表(当未配置外部 LLM 密钥或离线测试时使用)
-_LEGAL_PHRASE_MAP: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"\bThis Act may be cited as\b", re.I), "本法可引称为"),
-    (re.compile(r"\bThese Rules may be cited as\b", re.I), "本规则可引称为"),
-    (re.compile(r"\bThese Regulations may be cited as\b", re.I), "本条例可引称为"),
-    (re.compile(r"\band comes into operation on\b", re.I), "并自以下日期起施行:"),
-    (
-        re.compile(r"\bIn this Act, unless the context otherwise requires\b", re.I),
-        "在本法中,除上下文另有要求外",
-    ),
-    (
-        re.compile(r"\bIn these Rules, unless the context otherwise requires\b", re.I),
-        "在本规则中,除上下文另有要求外",
-    ),
-    (
-        re.compile(r"\bIn these Regulations, unless the context otherwise requires\b", re.I),
-        "在本条例中,除上下文另有要求外",
-    ),
-    (re.compile(r"\bAn organisation must not\b", re.I), "任何组织不得"),
-    (re.compile(r"\ban organisation must not\b", re.I), "任何组织不得"),
-    (re.compile(r"\bAn organisation shall not\b", re.I), "任何组织不得"),
-    (re.compile(r"\bAn organisation must\b", re.I), "组织必须"),
-    (re.compile(r"\ban organisation must\b", re.I), "组织必须"),
-    (re.compile(r"\bA person must not\b", re.I), "任何人不得"),
-    (re.compile(r"\ba person must not\b", re.I), "任何人不得"),
-    (re.compile(r"\bNo person shall\b", re.I), "任何人不得"),
-    (re.compile(r"\bmust not transfer\b", re.I), "不得传输"),
-    (re.compile(r"\boutside Singapore\b", re.I), "至新加坡境外"),
-    (re.compile(r"\bin Singapore\b", re.I), "在新加坡境内"),
-    (re.compile(r"\bin accordance with\b", re.I), "依照"),
-    (re.compile(r"\bprescribed requirements\b", re.I), "法定要求"),
-    (
-        re.compile(r"\bcomparable to the protection under this Act\b", re.I),
-        "达到与本法保护水平相当的标准",
-    ),
-    (re.compile(r"\bwithout the prior approval of\b", re.I), "未经事先批准:"),
-    (re.compile(r"\bthe Authority\b", re.I), "陆路交通管理局(LTA)"),
-    (re.compile(r"\bthe Commission\b", re.I), "个人数据保护委员会(PDPC)"),
-    (re.compile(r"\bnotifiable data breach\b", re.I), "须通报的数据泄露事件"),
-    (re.compile(r"\bas soon as is practicable\b", re.I), "在切实可行的范围内尽快"),
-    (re.compile(r"\bin any case no later than\b", re.I), "且在任何情况下不得迟于"),
-    (re.compile(r"\bcalendar days\b", re.I), "个日历日"),
-    (re.compile(r"\bfinancial penalty\b", re.I), "行政罚款"),
-    (re.compile(r"\bliability\b", re.I), "法律责任"),
-    (re.compile(r"\bundertake any trial of\b", re.I), "开展任何道路测试:"),
-    (re.compile(r"\bon any road\b", re.I), "在任何公共道路上"),
-    (re.compile(r"\bkeep and maintain\b", re.I), "保存并维护"),
-    (re.compile(r"\bfor a period of at least\b", re.I), "保存期限不少于"),
-]
-
 
 def redact_sensitive_text(text: str) -> str:
     """发往外部大模型 API 前脱敏邮箱、电话与身份证件号。"""
-    out = _EMAIL_RE.sub("[REDACTED_EMAIL]", text)
+    out = _EMAIL_RE.sub("[REDACTED_EMAIL]", text or "")
     out = _SG_NRIC_RE.sub("[REDACTED_ID]", out)
     out = _PHONE_RE.sub("[REDACTED_PHONE]", out)
     return out
+
+
+def compute_cjk_ratio(text: str) -> float:
+    """计算去除空白字符后的中日韩统一表意文字(CJK)占比。"""
+    compact = _WS_RE.sub("", text or "")
+    if not compact:
+        return 0.0
+    return len(_CJK_RE.findall(compact)) / len(compact)
+
+
+def _normalize_digits(text: str) -> str:
+    return (text or "").translate(_EASTERN_ARABIC_MAP)
+
+
+def extract_numeric_tokens(text: str) -> list[str]:
+    """提取原文中的数字、金额数值、百分比、年份与条号数字(去重保序)。"""
+    norm = _normalize_digits(text)
+    seen: set[str] = set()
+    tokens: list[str] = []
+    for tok in _NUM_TOKEN_RE.findall(norm):
+        t = tok.strip()
+        if t and t not in seen:
+            seen.add(t)
+            tokens.append(t)
+    return tokens
+
+
+def split_clause_into_chunks(text: str, max_chars: int = MAX_CHUNK_CHARS) -> list[str]:
+    """将长条款按款/句拆分为每块 <= max_chars 字符的片段,保持原有顺序。"""
+    cleaned = (text or "").strip()
+    if not cleaned:
+        return [""]
+    if len(cleaned) <= max_chars:
+        return [cleaned]
+
+    # 先按换行分段,再对超长段按句号/分号切分,仍超长则按空格或硬切
+    atomic_segments: list[str] = []
+    for raw_para in cleaned.splitlines():
+        para = raw_para.strip()
+        if not para:
+            continue
+        if len(para) <= max_chars:
+            atomic_segments.append(para)
+            continue
+        for sent in _SENTENCE_SPLIT_RE.split(para):
+            s = sent.strip()
+            if not s:
+                continue
+            if len(s) <= max_chars:
+                atomic_segments.append(s)
+            else:
+                # 按词边界切分超长单句
+                words = s.split(" ")
+                cur = ""
+                for w in words:
+                    cand = f"{cur} {w}".strip() if cur else w
+                    if len(cand) <= max_chars:
+                        cur = cand
+                    else:
+                        if cur:
+                            atomic_segments.append(cur)
+                        while len(w) > max_chars:
+                            atomic_segments.append(w[:max_chars])
+                            w = w[max_chars:]
+                        cur = w
+                if cur:
+                    atomic_segments.append(cur)
+
+    chunks: list[str] = []
+    current = ""
+    for seg in atomic_segments:
+        candidate = f"{current}\n{seg}" if current else seg
+        if len(candidate) <= max_chars:
+            current = candidate
+        else:
+            if current:
+                chunks.append(current)
+            current = seg
+    if current:
+        chunks.append(current)
+    return chunks or [cleaned[:max_chars]]
 
 
 def select_effective_terms(
@@ -138,12 +218,10 @@ def select_effective_terms(
 
     effective: list[GlossaryTerm] = []
     for _, group in by_concept.items():
-        # 优先取本国覆盖(country_code 非空),再按 priority_level 升序
         group.sort(
             key=lambda x: (0 if x.country_code == country_code.upper() else 1, x.priority_level)
         )
         effective.append(group[0])
-    # 匹配时先匹配长词组(如 "autonomous motor vehicle" 先于 "motor vehicle")
     effective.sort(key=lambda x: (x.priority_level, -len(x.source_term)))
     return effective
 
@@ -151,9 +229,9 @@ def select_effective_terms(
 def match_clause_glossary(
     original_text: str, effective_terms: list[GlossaryTerm]
 ) -> tuple[list[dict], list[dict]]:
-    """在条款原文中识别命中的术语库词条,以及未入库但需悬浮解释的专业词。"""
+    """在条款原文中识别命中的术语库词条,以及未入库但需悬浮解释的专业词(仅作统计与提示词传入)。"""
     hits: list[dict] = []
-    lower_text = original_text.lower()
+    lower_text = (original_text or "").lower()
     for term in effective_terms:
         src = term.source_term.strip()
         if not src:
@@ -195,17 +273,60 @@ def match_clause_glossary(
     return hits, unmatched
 
 
+def _number_appears_in_translation(
+    num_token: str, translated_norm: str, translated_no_comma: str
+) -> bool:
+    """检查原文数字/金额/百分比/年份/条号是否在译文中出现。"""
+    tok = num_token.strip()
+    if not tok:
+        return True
+    plain = tok.replace(",", "")
+    if tok in translated_norm or plain in translated_no_comma:
+        return True
+    # 百分比形式兼容: "10%" -> "10%" 或 "百分之10"
+    if tok.endswith("%"):
+        num_part = plain[:-1]
+        if f"{num_part}%" in translated_no_comma or f"百分之{num_part}" in translated_no_comma:
+            return True
+    # 前导零日期/条号兼容: "05" -> "5"
+    if len(plain) > 1 and plain.startswith("0") and plain.isdigit():
+        stripped = plain.lstrip("0")
+        if stripped and stripped in translated_no_comma:
+            return True
+    return False
+
+
 def verify_translation(
-    original_text: str, translated_text: str, glossary_hits: list[dict]
+    original_text: str,
+    translated_text: str,
+    glossary_hits: list[dict],
+    clause_number: str | None = None,
 ) -> tuple[bool, list[str], list[dict]]:
-    """译后程序检查:
-    1. 每个命中术语的 target_zh 必须出现在译文中;
-    2. 原文出现的阿拉伯数字/金额/百分比不得在译文中丢失。
+    """译后程序检查(四项强校验):
+    ① CJK 占比 >= 30%(阿语/法语/英文原文都应翻成中文);
+    ② 原文中的数字、金额、百分比、年份、条号在译文中全部出现;
+    ③ 术语表要求的译法出现;
+    ④ 译文不等于原文且非空。
     """
     issues: list[str] = []
+    orig_clean = (original_text or "").strip()
+    trans_clean = (translated_text or "").strip()
+
+    # ④ 译文非空且不等于原文
+    if not trans_clean:
+        issues.append("译文为空")
+    elif trans_clean == orig_clean:
+        issues.append("译文与原文完全相同")
+
+    # ① CJK 字符占比 >= 30%
+    cjk_ratio = compute_cjk_ratio(trans_clean)
+    if cjk_ratio < 0.30:
+        issues.append(f"CJK 字符占比未达标: {cjk_ratio:.1%} < 30.0%")
+
+    # ③ 术语表要求的译法全部出现
     updated_hits: list[dict] = []
     for h in glossary_hits:
-        ok = h["target_zh"] in translated_text
+        ok = bool(trans_clean) and (h["target_zh"] in trans_clean)
         item = dict(h, matched_in_translation=ok)
         updated_hits.append(item)
         if not ok:
@@ -213,54 +334,88 @@ def verify_translation(
                 f"术语未按规定译法输出: 原词 '{h['source_term']}' 必须译为 '{h['target_zh']}'"
             )
 
-    orig_nums = set(_NUM_TOKEN_RE.findall(original_text))
-    for num in sorted(orig_nums):
-        plain = num.replace(",", "")
-        if num not in translated_text and plain not in translated_text:
+    # ② 原文中的数字、金额、百分比、年份、条号在译文中全部出现
+    translated_norm = _normalize_digits(trans_clean)
+    translated_no_comma = translated_norm.replace(",", "")
+    orig_nums = extract_numeric_tokens(orig_clean)
+    if clause_number:
+        for cn_tok in extract_numeric_tokens(clause_number):
+            if cn_tok in _normalize_digits(orig_clean) and cn_tok not in orig_nums:
+                orig_nums.append(cn_tok)
+
+    for num in orig_nums:
+        if not _number_appears_in_translation(num, translated_norm, translated_no_comma):
             issues.append(f"译文缺失原文数字或比例: {num}")
 
     return len(issues) == 0, issues, updated_hits
 
 
-def _rule_based_translate(
-    original_text: str,
-    heading: str | None,
-    clause_number: str | None,
+def _build_translation_prompts(
+    safe_text: str,
+    language: str,
     glossary_hits: list[dict],
     unmatched_terms: list[dict],
-) -> str:
-    """在未配置外部大模型 API 密钥时,基于术语库强约束与法规句式模板生成中文译文。"""
-    work = original_text.strip()
-    # 先按术语库长词优先替换为中文规定译法(保留原词括注以便核对)
-    for h in sorted(glossary_hits, key=lambda x: -len(x["source_term"])):
-        src = h["source_term"]
-        target = h["target_zh"]
-        pat = re.compile(r"\b" + re.escape(src) + r"s?\b", re.IGNORECASE)
-        if pat.search(work):
-            work = pat.sub(f"{target}({src})", work)
-        elif src in work:
-            work = work.replace(src, f"{target}({src})")
+    retry_issues: list[str] | None = None,
+) -> tuple[str, str]:
+    """构造 translate-v2 系统提示词与用户提示词。"""
+    sys_lines = [
+        "你是跨境汽车与数据合规领域的专业法律翻译引擎（提示词版本 translate-v2）。",
+        "任务性质：法律翻译、逐句忠实、不增不减、保留条号与数字、术语表强制。",
+        "请将给定的外文法律条款精准翻译为简体中文，并严格遵守以下强制准则：",
+        (
+            "1. 【逐句忠实、不增不减】：严格忠实于原文法律含义，"
+            "逐句完整翻译为规范简体中文法律表述，不得擅自增删、概括、省略或添加解释性评注。"
+        ),
+        (
+            "2. 【保留条号与数字】：原文中的所有条号、款项编号、阿拉伯数字、"
+            "金额、百分比、日期与年份必须在译文中原样保留阿拉伯数字形式"
+            "（如 1,000,000、10%、2020、3 等，严禁遗漏或仅改写为汉字数字）。"
+        ),
+        (
+            "3. 【术语表强制】：凡命中下方【强制法律术语表】的原词，译文中必须严格、"
+            "逐字使用规定的中文译法（规定译法），不得替换为同义词或近义词。"
+        ),
+        (
+            "4. 【中文占比要求】：即使原文包含专有名词、机构缩写或公式标题，"
+            "主体内容也必须翻译为简体中文（中文字符占比必须 >= 30%），严禁直接照抄外文原文。"
+        ),
+        (
+            "5. 【纯译文输出】：只输出翻译后的简体中文法条正文，"
+            "不要输出任何前言、后记、Markdown 代码块标记或说明。"
+        ),
+    ]
+    if glossary_hits:
+        sys_lines.append("\n【强制法律术语表（原词 -> 规定译法 -> 法定定义）】：")
+        for h in glossary_hits:
+            defn = (
+                h.get("statutory_definition") or h.get("source_reference") or "法定标准定义"
+            ).strip()
+            sys_lines.append(
+                f"- 原词: {h['source_term']} -> 规定译法: {h['target_zh']} -> 法定定义: {defn}"
+            )
+    if unmatched_terms:
+        sys_lines.append("\n【专业词汇参考译法】：")
+        for u in unmatched_terms:
+            sys_lines.append(
+                f"- 原词: {u['source_term']} -> 建议译法: {u['provisional_zh']} "
+                f"({u['statutory_definition']})"
+            )
 
-    for u in unmatched_terms:
-        src = u["source_term"]
-        pat = re.compile(r"\b" + re.escape(src) + r"s?\b", re.IGNORECASE)
-        work = pat.sub(f"{u['provisional_zh']}({src})", work)
-
-    for pat, zh in _LEGAL_PHRASE_MAP:
-        work = pat.sub(zh, work)
-
-    # 若命中术语因词形变化未被正则直接替换,在译文头部显式补齐受控术语映射,确保 100% 满足术语约束
-    missing_targets = [h["target_zh"] for h in glossary_hits if h["target_zh"] not in work]
-    prefix_parts: list[str] = []
-    if clause_number:
-        prefix_parts.append(f"【第 {clause_number} 条】")
-    if heading:
-        prefix_parts.append(f"（{heading}）")
-    if missing_targets:
-        prefix_parts.append(f"[适用法定术语：{'、'.join(missing_targets)}]")
-
-    prefix = "".join(prefix_parts)
-    return f"{prefix}{work}" if prefix else work
+    req_nums = extract_numeric_tokens(safe_text)
+    user_parts = [f"源语言: {language}"]
+    if req_nums:
+        user_parts.append(f"必须在译文中原样保留的数字/金额/百分比/条号: {', '.join(req_nums)}")
+    if glossary_hits:
+        must_zh = ", ".join(f"'{h['target_zh']}'" for h in glossary_hits)
+        user_parts.append(f"必须在译文中原样出现的强制术语译法: {must_zh}")
+    if retry_issues:
+        user_parts.append(
+            "【重要修正指令】上一次翻译未通过译后程序检查，具体原因如下：\n"
+            + "\n".join(f"  * {iss}" for iss in retry_issues)
+            + "\n请严格修正上述问题，确保所有必现数字、强制术语完整出现且简体中文字符占比 >= 30%！"
+        )
+    user_parts.append(f"待翻译原文:\n{safe_text}")
+    return "\n".join(sys_lines), "\n\n".join(user_parts)
 
 
 async def _call_llm_translate(
@@ -268,56 +423,112 @@ async def _call_llm_translate(
     language: str,
     glossary_hits: list[dict],
     unmatched_terms: list[dict],
-) -> tuple[str, str] | None:
-    """调用 OpenAI 兼容接口(DeepSeek/通义/vLLM)进行受术语表约束的法条翻译。"""
+    *,
+    retry_issues: list[str] | None = None,
+) -> tuple[str, str, int, int, int] | tuple[str, str] | None:
+    """调用 OpenAI 兼容接口进行受术语表约束的法条翻译。
+
+    并发通过 asyncio.Semaphore(默认 4)限流,带指数退避重试。
+    返回 (translated_text, model_name, tokens_in, tokens_out, duration_ms);
+    当未配置密钥或重试后仍不可用时返回 None。
+    """
     settings = get_settings()
     if not settings.llm_api_key:
         return None
 
     safe_text = redact_sensitive_text(original_text)
-    glossary_lines = [
-        f"- '{h['source_term']}' -> 必须译为 '{h['target_zh']}' "
-        f"(优先级 P{h['priority_level']}, 依据: {h.get('source_reference') or '法定定义'})"
-        for h in glossary_hits
-    ]
-    unmatched_lines = [
-        f"- '{u['source_term']}' -> 建议译为 '{u['provisional_zh']}({u['source_term']})'"
-        for u in unmatched_terms
-    ]
-    sys_prompt = (
-        "你是跨境汽车与数据合规领域的专业法规翻译引擎。请将给定的外文法条精准翻译为简体中文。\n"
-        "严格遵守以下规则:\n"
-        "1. 凡命中【强制法律术语表】的词汇,译文中必须逐字使用规定中文译法,不得更换同义词。\n"
-        "2. 原文中的所有条号、款项编号、日期、金额、百分比与数字必须原样保留。\n"
-        "3. 只输出翻译后的中文法条正文,不要输出额外解释。\n"
+    sys_prompt, user_prompt = _build_translation_prompts(
+        safe_text, language, glossary_hits, unmatched_terms, retry_issues=retry_issues
     )
-    if glossary_lines:
-        sys_prompt += "\n【强制法律术语表】:\n" + "\n".join(glossary_lines)
-    if unmatched_lines:
-        sys_prompt += "\n【待确认专业词汇(保留原词括注)】:\n" + "\n".join(unmatched_lines)
 
     url = settings.llm_base_url.rstrip("/") + "/chat/completions"
-    try:
-        async with httpx.AsyncClient(timeout=settings.llm_timeout_seconds) as client:
-            resp = await client.post(
-                url,
-                headers={"Authorization": f"Bearer {settings.llm_api_key}"},
-                json={
-                    "model": settings.llm_model,
-                    "temperature": 0.1,
-                    "messages": [
-                        {"role": "system", "content": sys_prompt},
-                        {"role": "user", "content": f"源语言: {language}\n原文:\n{safe_text}"},
-                    ],
-                },
-            )
-            resp.raise_for_status()
-            data = resp.json()
-            content = data["choices"][0]["message"]["content"].strip()
-            return content, settings.llm_model
-    except Exception as exc:
-        log.warning("外部 LLM 翻译调用失败,回退至本地受控术语引擎: %s", exc)
+    payload: dict[str, Any] = {
+        "model": settings.llm_model,
+        "temperature": 0.1,
+        "messages": [
+            {"role": "system", "content": sys_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+    }
+    if "deepseek" in (settings.llm_model or "").lower():
+        payload["reasoning_effort"] = "low"
+
+    semaphore = _get_llm_semaphore()
+    max_attempts = 3
+    t_start = time.perf_counter()
+
+    async with semaphore:
+        for attempt in range(max_attempts):
+            try:
+                async with httpx.AsyncClient(timeout=settings.llm_timeout_seconds) as client:
+                    resp = await client.post(
+                        url,
+                        headers={"Authorization": f"Bearer {settings.llm_api_key}"},
+                        json=payload,
+                    )
+                    if resp.status_code in (429, 500, 502, 503, 504) and attempt + 1 < max_attempts:
+                        await asyncio.sleep(0.6 * (2**attempt))
+                        continue
+                    resp.raise_for_status()
+                    data = resp.json()
+                    content = (data["choices"][0]["message"].get("content") or "").strip()
+                    usage = data.get("usage") or {}
+                    tokens_in = int(usage.get("prompt_tokens") or 0)
+                    tokens_out = int(usage.get("completion_tokens") or 0)
+                    duration_ms = max(1, int((time.perf_counter() - t_start) * 1000))
+                    model_used = str(data.get("model") or settings.llm_model)
+                    return content, model_used, tokens_in, tokens_out, duration_ms
+            except Exception as exc:
+                if attempt + 1 < max_attempts:
+                    await asyncio.sleep(0.6 * (2**attempt))
+                    continue
+                log.warning("外部 LLM 翻译调用失败 (已重试 %d 次): %s", max_attempts, exc)
+                return None
+    return None
+
+
+def _unpack_llm_result(
+    res: tuple[Any, ...] | str | None, default_model: str
+) -> tuple[str, str, int, int, int] | None:
+    """兼容单元测试 monkeypatch 返回的 (text, model) 二元组或完整五元组。"""
+    if res is None:
         return None
+    if isinstance(res, str):
+        return res, default_model, 0, 0, 0
+    if len(res) == 2:
+        return str(res[0]), str(res[1]), 0, 0, 0
+    if len(res) >= 5:
+        return str(res[0]), str(res[1]), int(res[2] or 0), int(res[3] or 0), int(res[4] or 0)
+    return str(res[0]), default_model, 0, 0, 0
+
+
+async def _invoke_llm_translate(
+    chunk_text: str,
+    language: str,
+    chunk_hits: list[dict],
+    chunk_unmatched: list[dict],
+    retry_issues: list[str] | None = None,
+) -> tuple[str, str, int, int, int] | None:
+    """调用 _call_llm_translate,自动检测被 monkeypatch 的假函数是否支持 retry_issues 关键字参数。"""
+    settings = get_settings()
+    fn = _call_llm_translate
+    supports_retry_kw = False
+    try:
+        sig = inspect.signature(fn)
+        for p in sig.parameters.values():
+            if p.name == "retry_issues" or p.kind == inspect.Parameter.VAR_KEYWORD:
+                supports_retry_kw = True
+                break
+    except (ValueError, TypeError):
+        supports_retry_kw = False
+
+    if supports_retry_kw and retry_issues:
+        raw = await fn(
+            chunk_text, language, chunk_hits, chunk_unmatched, retry_issues=retry_issues
+        )
+    else:
+        raw = await fn(chunk_text, language, chunk_hits, chunk_unmatched)
+    return _unpack_llm_result(raw, settings.llm_model or "llm")
 
 
 async def translate_clause(
@@ -326,7 +537,8 @@ async def translate_clause(
     country_code: str,
     terms: list[GlossaryTerm] | None = None,
 ) -> ClauseTranslation:
-    """对单条法条执行:译前术语提取 -> 机器翻译 -> 译后程序检查 -> 持久化。"""
+    """对单条法条执行:术语提取 -> 分块 -> LLM 翻译 -> 四项检查(失败重译一次) -> 持久化。"""
+    settings = get_settings()
     if terms is None:
         terms = list(
             (
@@ -346,50 +558,142 @@ async def translate_clause(
     effective_terms = select_effective_terms(terms, country_code, clause.language)
     hits, unmatched = match_clause_glossary(clause.original_text, effective_terms)
 
-    llm_res = await _call_llm_translate(clause.original_text, clause.language, hits, unmatched)
-    if llm_res is not None:
-        translated_text, model_name = llm_res
-        engine = "llm"
-    else:
-        translated_text = _rule_based_translate(
-            clause.original_text,
-            clause.heading,
-            clause.clause_number,
-            hits,
-            unmatched,
+    # 查找该条款现有的译文记录;旧的 glossary_assisted 记录标记为 superseded 保留历史
+    existing_rows = list(
+        (
+            await session.execute(
+                select(ClauseTranslation)
+                .where(ClauseTranslation.clause_id == clause.id)
+                .order_by(ClauseTranslation.updated_at.desc())
+            )
         )
-        model_name = "glossary-constrained-v1"
-        engine = "glossary_assisted"
-
-    passed, issues, checked_hits = verify_translation(clause.original_text, translated_text, hits)
-    # 如果 LLM 首次输出违反了强制术语表,自动用术语修正一次并重新校验
-    if not passed and engine == "llm":
-        for h in checked_hits:
-            if not h["matched_in_translation"]:
-                translated_text = f"【法定术语：{h['target_zh']}】" + translated_text
-        passed, issues, checked_hits = verify_translation(
-            clause.original_text, translated_text, hits
-        )
-
-    existing = (
-        await session.execute(
-            select(ClauseTranslation).where(ClauseTranslation.clause_id == clause.id)
-        )
-    ).scalar_one_or_none()
-
-    next_status = (
-        TranslationReviewStatus.PENDING_REVIEW.value
-        if (hits or unmatched or not passed)
-        else TranslationReviewStatus.MACHINE_TRANSLATED.value
+        .scalars()
+        .all()
     )
+    active_existing: ClauseTranslation | None = None
+    for row in existing_rows:
+        if row.review_status == TranslationReviewStatus.SUPERSEDED.value:
+            continue
+        if row.engine != "llm":
+            row.review_status = TranslationReviewStatus.SUPERSEDED.value
+            row.updated_at = datetime.now(UTC)
+        elif active_existing is None:
+            active_existing = row
+        else:
+            row.review_status = TranslationReviewStatus.SUPERSEDED.value
+            row.updated_at = datetime.now(UTC)
 
-    if existing is None:
-        existing = ClauseTranslation(
+    if (
+        active_existing is not None
+        and active_existing.review_status == TranslationReviewStatus.APPROVED.value
+    ):
+        await session.flush()
+        return active_existing
+
+    chunks = split_clause_into_chunks(clause.original_text, max_chars=MAX_CHUNK_CHARS)
+
+    total_tokens_in = 0
+    total_tokens_out = 0
+    total_duration_ms = 0
+    model_name = settings.llm_model or "deepseek-flash"
+    llm_unavailable = False
+
+    if len(chunks) == 1:
+        # 单块条款:翻译 -> 译后检查 -> 若未通过则携带问题原因重译一次
+        first_res = await _invoke_llm_translate(
+            chunks[0], clause.language, hits, unmatched
+        )
+        if first_res is None:
+            llm_unavailable = True
+            translated_text = ""
+        else:
+            translated_text, model_name, tin, tout, dms = first_res
+            total_tokens_in += tin
+            total_tokens_out += tout
+            total_duration_ms += dms
+            passed, issues, checked_hits = verify_translation(
+                clause.original_text,
+                translated_text,
+                hits,
+                clause_number=clause.clause_number,
+            )
+            if not passed:
+                retry_res = await _invoke_llm_translate(
+                    chunks[0],
+                    clause.language,
+                    hits,
+                    unmatched,
+                    retry_issues=issues,
+                )
+                if retry_res is not None:
+                    translated_text, model_name, tin2, tout2, dms2 = retry_res
+                    total_tokens_in += tin2
+                    total_tokens_out += tout2
+                    total_duration_ms += dms2
+    else:
+        # 多块长条款:每块独立提取命中术语并校验,单块失败重译一次,按顺序合并后再做整条总校验
+        async def _translate_single_chunk(chunk_str: str) -> tuple[str | None, str, int, int, int]:
+            c_hits, c_unmatched = match_clause_glossary(chunk_str, effective_terms)
+            r1 = await _invoke_llm_translate(chunk_str, clause.language, c_hits, c_unmatched)
+            if r1 is None:
+                return None, model_name, 0, 0, 0
+            c_zh, c_model, tin1, tout1, dms1 = r1
+            c_ok, c_issues, _ = verify_translation(chunk_str, c_zh, c_hits)
+            if not c_ok:
+                r2 = await _invoke_llm_translate(
+                    chunk_str,
+                    clause.language,
+                    c_hits,
+                    c_unmatched,
+                    retry_issues=c_issues,
+                )
+                if r2 is not None:
+                    c_zh, c_model, tin2, tout2, dms2 = r2
+                    return c_zh, c_model, tin1 + tin2, tout1 + tout2, dms1 + dms2
+            return c_zh, c_model, tin1, tout1, dms1
+
+        chunk_results = await asyncio.gather(*(_translate_single_chunk(ch) for ch in chunks))
+        merged_parts: list[str] = []
+        for c_zh, c_model, tin, tout, dms in chunk_results:
+            if c_zh is None:
+                llm_unavailable = True
+                break
+            merged_parts.append(c_zh)
+            model_name = c_model
+            total_tokens_in += tin
+            total_tokens_out += tout
+            total_duration_ms += dms
+        translated_text = "\n".join(merged_parts) if not llm_unavailable else ""
+
+    if llm_unavailable:
+        checked_hits = [dict(h, matched_in_translation=False) for h in hits]
+        passed = False
+        issues = ["LLM 服务不可用或未配置密钥，未生成译文"]
+        next_status = TranslationReviewStatus.NOT_TRANSLATED.value
+        translated_text = ""
+    else:
+        passed, issues, checked_hits = verify_translation(
+            clause.original_text,
+            translated_text,
+            hits,
+            clause_number=clause.clause_number,
+        )
+        next_status = (
+            TranslationReviewStatus.MACHINE_TRANSLATED.value
+            if passed
+            else TranslationReviewStatus.TRANSLATION_FAILED.value
+        )
+
+    if active_existing is None:
+        active_existing = ClauseTranslation(
             clause_id=clause.id,
             translated_text=translated_text,
-            engine=engine,
+            engine="llm",
             model_name=model_name,
             prompt_version=PROMPT_VERSION,
+            tokens_in=total_tokens_in,
+            tokens_out=total_tokens_out,
+            duration_ms=total_duration_ms,
             glossary_hits=checked_hits,
             unmatched_terms=unmatched,
             quality_check_passed=passed,
@@ -397,22 +701,24 @@ async def translate_clause(
             review_status=next_status,
             updated_at=datetime.now(UTC),
         )
-        session.add(existing)
+        session.add(active_existing)
     else:
-        existing.translated_text = translated_text
-        existing.engine = engine
-        existing.model_name = model_name
-        existing.prompt_version = PROMPT_VERSION
-        existing.glossary_hits = checked_hits
-        existing.unmatched_terms = unmatched
-        existing.quality_check_passed = passed
-        existing.quality_issues = issues
-        if existing.review_status != TranslationReviewStatus.APPROVED.value:
-            existing.review_status = next_status
-        existing.updated_at = datetime.now(UTC)
+        active_existing.translated_text = translated_text
+        active_existing.engine = "llm"
+        active_existing.model_name = model_name
+        active_existing.prompt_version = PROMPT_VERSION
+        active_existing.tokens_in = total_tokens_in
+        active_existing.tokens_out = total_tokens_out
+        active_existing.duration_ms = total_duration_ms
+        active_existing.glossary_hits = checked_hits
+        active_existing.unmatched_terms = unmatched
+        active_existing.quality_check_passed = passed
+        active_existing.quality_issues = issues
+        active_existing.review_status = next_status
+        active_existing.updated_at = datetime.now(UTC)
 
     await session.flush()
-    return existing
+    return active_existing
 
 
 async def translate_document_latest_version(
@@ -447,7 +753,7 @@ async def translate_document_latest_version(
         .scalars()
         .all()
     )
-    clauses = (
+    clauses = list(
         (
             await session.execute(
                 select(Clause)

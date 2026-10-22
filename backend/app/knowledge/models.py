@@ -51,10 +51,13 @@ class RelationType(enum.StrEnum):
 
 class TranslationReviewStatus(enum.StrEnum):
     MACHINE_TRANSLATED = "machine_translated"
+    TRANSLATION_FAILED = "translation_failed"
+    NOT_TRANSLATED = "not_translated"
     PENDING_REVIEW = "pending_review"
     APPROVED = "approved"
     REJECTED = "rejected"
     STALE = "stale"
+    SUPERSEDED = "superseded"
 
 
 class GraphReviewStatus(enum.StrEnum):
@@ -111,10 +114,10 @@ class ClauseTranslation(Base):
 
     __tablename__ = "clause_translations"
     __table_args__ = (
-        UniqueConstraint("clause_id", name="uq_clause_translations_clause"),
         CheckConstraint(
             "review_status IN ("
-            "'machine_translated','pending_review','approved','rejected','stale'"
+            "'machine_translated','translation_failed','not_translated',"
+            "'pending_review','approved','rejected','stale','superseded'"
             ")",
             name="ck_translations_review_status",
         ),
@@ -128,6 +131,9 @@ class ClauseTranslation(Base):
     engine: Mapped[str] = mapped_column(String(32))
     model_name: Mapped[str] = mapped_column(String(128))
     prompt_version: Mapped[str] = mapped_column(String(32), default="v1", server_default="v1")
+    tokens_in: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    tokens_out: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    duration_ms: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     glossary_hits: Mapped[list] = mapped_column(JSONB, default=list)
     unmatched_terms: Mapped[list] = mapped_column(JSONB, default=list)
     quality_check_passed: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
@@ -143,6 +149,10 @@ class ClauseTranslation(Base):
     reviewer_note: Mapped[str | None] = mapped_column(Text, nullable=True)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    @property
+    def status(self) -> str:
+        return self.review_status
 
 
 class ReviewPoint(Base):

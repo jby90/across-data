@@ -774,8 +774,17 @@ onUnmounted(() => {
           <h4>
             {{ card.document_title }} · {{ card.clause_number }}
             <el-tag size="small">v{{ card.version_no }}</el-tag>
-            <el-tag size="small" :type="card.review_status === 'approved' ? 'success' : 'warning'">
-              {{ card.review_status === 'approved' ? '已复核' : '机器翻译 · 待核对' }}
+            <el-tag
+              size="small"
+              :type="card.review_status === 'approved' ? 'success' : card.translated_text ? 'warning' : 'info'"
+            >
+              {{
+                card.review_status === 'approved'
+                  ? '已复核'
+                  : card.translated_text
+                    ? '中文译文（机器翻译，待核对）'
+                    : '未翻译'
+              }}
             </el-tag>
           </h4>
           <div v-if="card.source_url" class="muted">
@@ -790,8 +799,8 @@ onUnmounted(() => {
               </div>
             </div>
             <div>
-              <div class="col-label">术语受控中文对照</div>
-              <div class="md">{{ card.translated_text }}</div>
+              <div class="col-label">中文译文（机器翻译，待核对）</div>
+              <div class="md">{{ card.translated_text || '暂无中文译文' }}</div>
             </div>
           </div>
           <div class="col-label" style="margin-top: 12px">该条款关联关系</div>

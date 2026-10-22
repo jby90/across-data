@@ -235,7 +235,12 @@ class ToolBox:
             list(
                 (
                     await self.session.execute(
-                        select(ClauseTranslation).where(ClauseTranslation.clause_id.in_(clause_ids))
+                        select(ClauseTranslation).where(
+                            ClauseTranslation.clause_id.in_(clause_ids),
+                            ClauseTranslation.review_status.notin_(
+                                ("superseded", "not_translated", "translation_failed")
+                            ),
+                        )
                     )
                 )
                 .scalars()

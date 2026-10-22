@@ -794,7 +794,11 @@ async def extract_knowledge_for_country(
         for c in clauses[:translate_sample_per_doc]:
             existing_tr = (
                 await session.execute(
-                    select(ClauseTranslation.id).where(ClauseTranslation.clause_id == c.id)
+                    select(ClauseTranslation.id).where(
+                        ClauseTranslation.clause_id == c.id,
+                        ClauseTranslation.review_status != TranslationReviewStatus.SUPERSEDED.value,
+                        ClauseTranslation.engine == "llm",
+                    )
                 )
             ).first()
             if not existing_tr:
@@ -893,7 +897,10 @@ async def extract_knowledge_for_country(
                         has_tr = (
                             await session.execute(
                                 select(ClauseTranslation.id).where(
-                                    ClauseTranslation.clause_id == c.id
+                                    ClauseTranslation.clause_id == c.id,
+                                    ClauseTranslation.review_status
+                                    != TranslationReviewStatus.SUPERSEDED.value,
+                                    ClauseTranslation.engine == "llm",
                                 )
                             )
                         ).first()
@@ -970,7 +977,13 @@ async def handle_new_version_linkage(
     for old_c in old_clauses:
         tr = (
             await session.execute(
-                select(ClauseTranslation).where(ClauseTranslation.clause_id == old_c.id)
+                select(ClauseTranslation)
+                .where(
+                    ClauseTranslation.clause_id == old_c.id,
+                    ClauseTranslation.review_status != TranslationReviewStatus.SUPERSEDED.value,
+                )
+                .order_by(ClauseTranslation.updated_at.desc())
+                .limit(1)
             )
         ).scalar_one_or_none()
         edges = list(
@@ -985,7 +998,9 @@ async def handle_new_version_linkage(
                 exists_new_tr = (
                     await session.execute(
                         select(ClauseTranslation.id).where(
-                            ClauseTranslation.clause_id == matched_new.id
+                            ClauseTranslation.clause_id == matched_new.id,
+                            ClauseTranslation.review_status
+                            != TranslationReviewStatus.SUPERSEDED.value,
                         )
                     )
                 ).first()
@@ -997,6 +1012,9 @@ async def handle_new_version_linkage(
                             engine=tr.engine,
                             model_name=tr.model_name,
                             prompt_version=tr.prompt_version,
+                            tokens_in=tr.tokens_in,
+                            tokens_out=tr.tokens_out,
+                            duration_ms=tr.duration_ms,
                             glossary_hits=tr.glossary_hits,
                             unmatched_terms=tr.unmatched_terms,
                             quality_check_passed=tr.quality_check_passed,

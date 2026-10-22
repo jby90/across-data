@@ -35,11 +35,15 @@ interface ClauseTranslation {
   engine: string
   model_name: string
   prompt_version: string
+  tokens_in?: number
+  tokens_out?: number
+  duration_ms?: number
   glossary_hits: GlossaryHit[]
   unmatched_terms: UnmatchedTerm[]
   quality_check_passed: boolean
   quality_issues: string[]
   review_status: string
+  status?: string
   usable_as_legal_basis: boolean
   status_badge: string
   reviewer_note: string | null
@@ -191,6 +195,21 @@ async function quickApproveTranslation(row: ClauseTranslation) {
   }
 }
 
+async function batchTranslateDoc(row: ClauseTranslation) {
+  loading.value = true
+  try {
+    const res = await api.post<{ document_id: string; translated_count: number }>(
+      `/admin/knowledge/documents/${row.document_id}/translate`,
+    )
+    ElMessage.success(`按文档批量翻译完成：共处理 ${res.translated_count} 条条款`)
+    await loadAll()
+  } catch (e: unknown) {
+    ElMessage.error((e as Error).message)
+  } finally {
+    loading.value = false
+  }
+}
+
 async function decidePoint(point: ReviewPoint, status: 'confirmed' | 'needs_discussion') {
   const reply = point.lawyer_reply?.trim() || point.provisional_interpretation
   try {
@@ -287,9 +306,11 @@ onMounted(loadAll)
           <span>复核状态筛选：</span>
           <el-radio-group v-model="statusFilter" size="small" @change="loadAll">
             <el-radio-button value="">全部</el-radio-button>
+            <el-radio-button value="machine_translated">机翻通过(待核对)</el-radio-button>
             <el-radio-button value="pending_review">待律所复核</el-radio-button>
-            <el-radio-button value="machine_translated">纯机翻待核对</el-radio-button>
             <el-radio-button value="approved">已复核(可作法律依据)</el-radio-button>
+            <el-radio-button value="translation_failed">翻译失败(未过校验)</el-radio-button>
+            <el-radio-button value="not_translated">未翻译</el-radio-button>
             <el-radio-button value="stale">法规已修订(失效待重核)</el-radio-button>
           </el-radio-group>
         </div>
@@ -312,7 +333,7 @@ onMounted(loadAll)
           </el-table-column>
           <el-table-column label="受术语表约束译文与悬停词典" min-width="300">
             <template #default="{ row }">
-              <div class="clause-box">{{ row.translated_text }}</div>
+              <div class="clause-box">{{ row.translated_text || '未翻译' }}</div>
               <div
                 v-if="row.glossary_hits?.length || row.unmatched_terms?.length"
                 style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px"
@@ -340,7 +361,7 @@ onMounted(loadAll)
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="程序校验与法律效力状态" width="195">
+          <el-table-column label="程序校验与法律效力状态" width="215">
             <template #default="{ row }">
               <div>
                 <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
@@ -353,12 +374,18 @@ onMounted(loadAll)
                   size="small"
                   effect="plain"
                 >
-                  {{ row.quality_check_passed ? '术语与数字校验通过' : '译后检查告警' }}
+                  {{ row.quality_check_passed ? '四项程序校验通过' : '译后检查未通过' }}
                 </el-tag>
+              </div>
+              <div class="sub" style="margin-top: 4px">
+                {{ row.engine }}/{{ row.model_name }} · {{ row.prompt_version }}
+                <span v-if="row.tokens_in || row.tokens_out">
+                  ({{ row.tokens_in }}/{{ row.tokens_out }} tok, {{ row.duration_ms }}ms)
+                </span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="复核操作" width="165" fixed="right">
+          <el-table-column label="复核操作" width="210" fixed="right">
             <template #default="{ row }">
               <el-button
                 v-if="row.review_status !== 'approved'"
@@ -371,6 +398,9 @@ onMounted(loadAll)
               </el-button>
               <el-button size="small" type="primary" link @click="openTranslationReview(row)">
                 校订/复核
+              </el-button>
+              <el-button size="small" type="warning" link @click="batchTranslateDoc(row)">
+                按文档批量翻译
               </el-button>
             </template>
           </el-table-column>

@@ -54,11 +54,15 @@ class ClauseTranslationOut(BaseModel):
     engine: str
     model_name: str
     prompt_version: str
+    tokens_in: int = 0
+    tokens_out: int = 0
+    duration_ms: int = 0
     glossary_hits: list[dict]
     unmatched_terms: list[dict]
     quality_check_passed: bool
     quality_issues: list[str]
     review_status: str
+    status: str = ""
     usable_as_legal_basis: bool
     status_badge: str
     reviewer_note: str | None
@@ -188,6 +192,7 @@ class RegulationClauseItemOut(BaseModel):
     section_path: str | None
     original_text: str
     translated_text: str | None
+    translation_status: str = "not_translated"
     status_badge: str
     usable_as_legal_basis: bool
     glossary_hits: list[dict]

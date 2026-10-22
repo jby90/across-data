@@ -67,6 +67,12 @@ def _status_badge(review_status: str) -> tuple[bool, str]:
         return False, "已驳回(待重译)"
     if review_status == TranslationReviewStatus.STALE.value:
         return False, "法规已修订，旧译文待重核"
+    if review_status == TranslationReviewStatus.TRANSLATION_FAILED.value:
+        return False, "翻译校验未通过(待重译)"
+    if review_status == TranslationReviewStatus.NOT_TRANSLATED.value:
+        return False, "未翻译"
+    if review_status == TranslationReviewStatus.SUPERSEDED.value:
+        return False, "旧版已作废"
     return False, "机器翻译，待核对"
 
 
@@ -92,11 +98,15 @@ async def _build_translation_outs(
                 engine=tr.engine,
                 model_name=tr.model_name,
                 prompt_version=tr.prompt_version,
+                tokens_in=int(tr.tokens_in or 0),
+                tokens_out=int(tr.tokens_out or 0),
+                duration_ms=int(tr.duration_ms or 0),
                 glossary_hits=tr.glossary_hits or [],
                 unmatched_terms=tr.unmatched_terms or [],
                 quality_check_passed=tr.quality_check_passed,
                 quality_issues=tr.quality_issues or [],
                 review_status=tr.review_status,
+                status=tr.review_status,
                 usable_as_legal_basis=usable,
                 status_badge=badge,
                 reviewer_note=tr.reviewer_note,
@@ -527,6 +537,10 @@ async def list_translations(
         stmt = stmt.where(Document.country_code == country_code.upper())
     if review_status:
         stmt = stmt.where(ClauseTranslation.review_status == review_status)
+    else:
+        stmt = stmt.where(
+            ClauseTranslation.review_status != TranslationReviewStatus.SUPERSEDED.value
+        )
     if document_id:
         stmt = stmt.where(Document.id == document_id)
     rows = list((await session.execute(stmt)).all())
@@ -814,7 +828,12 @@ async def get_knowledge_overview(
                 .join(Clause, Clause.id == ClauseTranslation.clause_id)
                 .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
                 .join(Document, Document.id == DocumentVersion.document_id)
-                .where(Document.country_code == cc)
+                .where(
+                    Document.country_code == cc,
+                    ClauseTranslation.review_status.notin_(
+                        ("superseded", "not_translated", "translation_failed")
+                    ),
+                )
             )
         ).scalar_one()
         tr_approved = (
@@ -866,7 +885,12 @@ async def search_knowledge_clauses(
         .join(Clause, Clause.id == ClauseTranslation.clause_id)
         .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
         .join(Document, Document.id == DocumentVersion.document_id)
-        .where(Document.country_code == country_code.upper())
+        .where(
+            Document.country_code == country_code.upper(),
+            ClauseTranslation.review_status.notin_(
+                ("superseded", "not_translated", "translation_failed")
+            ),
+        )
         .order_by(Document.title, Clause.ordinal)
         .limit(limit)
     )
@@ -952,7 +976,12 @@ async def _build_regulation_summary(
                 await session.execute(
                     select(func.count(ClauseTranslation.id))
                     .join(Clause, Clause.id == ClauseTranslation.clause_id)
-                    .where(Clause.version_id == latest.id)
+                    .where(
+                        Clause.version_id == latest.id,
+                        ClauseTranslation.review_status.notin_(
+                            ("superseded", "not_translated", "translation_failed")
+                        ),
+                    )
                 )
             ).scalar_one()
             or 0
@@ -1103,7 +1132,11 @@ async def get_user_regulation_detail(
             trs = list(
                 (
                     await session.execute(
-                        select(ClauseTranslation).where(ClauseTranslation.clause_id.in_(c_ids))
+                        select(ClauseTranslation).where(
+                            ClauseTranslation.clause_id.in_(c_ids),
+                            ClauseTranslation.review_status
+                            != TranslationReviewStatus.SUPERSEDED.value,
+                        )
                     )
                 )
                 .scalars()
@@ -1147,16 +1180,23 @@ async def get_user_regulation_detail(
 
         for c in clauses:
             tr = tr_map.get(c.id)
-            if tr is not None:
+            if (
+                tr is not None
+                and tr.review_status not in ("not_translated", "translation_failed", "superseded")
+                and (tr.translated_text or "").strip()
+            ):
                 usable, badge = _status_badge(tr.review_status)
                 tr_text = tr.translated_text
+                tr_status = tr.review_status
                 g_hits = tr.glossary_hits or []
                 u_terms = tr.unmatched_terms or []
             else:
-                usable, badge = False, "原文入库（可按需触发受控机翻）"
+                usable = False
+                tr_status = tr.review_status if tr is not None else "not_translated"
+                badge = "翻译校验未通过" if tr_status == "translation_failed" else "未翻译"
                 tr_text = None
-                g_hits = []
-                u_terms = []
+                g_hits = tr.glossary_hits or [] if tr is not None else []
+                u_terms = tr.unmatched_terms or [] if tr is not None else []
 
             clauses_out.append(
                 RegulationClauseItemOut(
@@ -1167,6 +1207,7 @@ async def get_user_regulation_detail(
                     section_path=c.section_path,
                     original_text=c.original_text,
                     translated_text=tr_text,
+                    translation_status=tr_status,
                     status_badge=badge,
                     usable_as_legal_basis=usable,
                     glossary_hits=g_hits,
