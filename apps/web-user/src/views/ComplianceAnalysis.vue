@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { api } from '../api'
 import KgForceGraph, {
   type FgCategory,
@@ -229,6 +229,8 @@ const STATUS_LABEL: Record<string, string> = {
   collecting_facts: '待补充追问事实',
   ready_to_run: '待启动分析',
   partial_sample: '部分样稿 · 待人工核查',
+  running: '多智能体分析进行中',
+  failed: '分析失败',
 }
 
 const loading = ref(false)
@@ -349,8 +351,7 @@ async function selectTask(taskId: string) {
     const detail = await api.get<TaskDetail>(`/api/analysis/tasks/${taskId}`)
     taskDetail.value = detail
     for (const q of detail.missing_facts) {
-      followUpDraft[q.fact_key] =
-        q.current_value || q.suggested_options[0] || ''
+      followUpDraft[q.fact_key] = q.current_value || ''
     }
     if (detail.report_versions.length > 0) {
       selectedReportVersionNo.value = detail.report_versions[0].version_no
@@ -376,10 +377,10 @@ async function submitFollowUpFacts() {
       selectedReportVersionNo.value = updated.report_versions[0].version_no
     }
     tasks.value = await api.get<TaskSummary[]>('/api/analysis/tasks')
-    ElMessage.success(
-      updated.sufficiency_score >= 100
-        ? '补充事实已通过 100% 完备度核验，多智能体已完成协同分析并生成八维度报告！'
-        : `已保存补充事实（当前完备度 ${updated.sufficiency_score}%）`,
+    ElMessage.info(
+      updated.status === 'running'
+        ? '事实已齐备,多智能体开始分析,可在「页面6」实时查看进度'
+        : `已保存补充事实(当前完备度 ${updated.sufficiency_score}%)`,
     )
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '提交补充事实失败')
@@ -527,10 +528,10 @@ async function handleCreateTask() {
     })
     createDialogVisible.value = false
     await loadTasks(created.id)
-    ElMessage.success(
+    ElMessage.info(
       created.status === 'collecting_facts'
-        ? '任务已创建！检测到必填事实缺失，请在下方的追问引导卡片中补充'
-        : '任务已创建并完成多智能体八维度报告生成！',
+        ? '任务已创建,检测到必填事实缺失,请在追问卡片中补充'
+        : '任务已创建,多智能体分析已开始,可在「页面6」实时查看进度',
     )
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '创建分析任务失败')
@@ -539,8 +540,31 @@ async function handleCreateTask() {
   }
 }
 
+// 分析在后台运行:每 2 秒刷新一次进度,结束后自动停止
+let pollTimer: number | undefined
+async function pollOnce() {
+  if (taskDetail.value?.status !== 'running') {
+    return
+  }
+  try {
+    const detail = await api.get<TaskDetail>(`/api/analysis/tasks/${taskDetail.value.id}`)
+    taskDetail.value = detail
+    tasks.value = await api.get<TaskSummary[]>('/api/analysis/tasks')
+    if (detail.status !== 'running' && detail.report_versions.length > 0) {
+      selectedReportVersionNo.value = detail.report_versions[0].version_no
+    }
+  } catch {
+    /* 下一轮重试 */
+  }
+}
+
 onMounted(() => {
   loadTasks()
+  pollTimer = window.setInterval(pollOnce, 2000)
+})
+
+onUnmounted(() => {
+  if (pollTimer !== undefined) window.clearInterval(pollTimer)
 })
 </script>
 
@@ -616,7 +640,18 @@ onMounted(() => {
               部分样稿 · 待律所人工核查
             </el-tag>
             <el-tag v-else-if="taskDetail.status === 'completed'" type="success" effect="dark">
-              八维度完整闭环报告
+              八维度报告(引用均经程序核验)
+            </el-tag>
+            <el-tag
+              v-else-if="taskDetail.status === 'running'"
+              type="primary"
+              effect="dark"
+              data-testid="task-running-tag"
+            >
+              多智能体分析进行中…(已完成 {{ taskDetail.step_traces.length }} 步)
+            </el-tag>
+            <el-tag v-else-if="taskDetail.status === 'failed'" type="danger" effect="dark">
+              分析失败,请查看页面6的失败原因
             </el-tag>
             <el-tag v-else type="warning" effect="dark">
               信息采集追问中 ({{ taskDetail.sufficiency_score }}%)
@@ -1005,7 +1040,7 @@ onMounted(() => {
           <el-tag type="success">
             MCP 工具调用: {{ taskDetail.mcp_calls_count }} 次
           </el-tag>
-          <el-tag type="danger" effect="dark">
+          <el-tag :type="taskDetail.backtrack_count > 0 ? 'danger' : 'info'" effect="dark">
             编制/质检退回分析补充依据: {{ taskDetail.backtrack_count }} 次
           </el-tag>
           <el-tag type="info">

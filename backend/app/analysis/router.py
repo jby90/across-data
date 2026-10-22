@@ -1,18 +1,21 @@
 from __future__ import annotations
 
 import uuid
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
-from sqlalchemy import or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.analysis.benchmarks import run_retrieval_benchmarks
 from app.analysis.models import (
     AgentWorkflowConfig,
     AnalysisStepTrace,
     AnalysisTask,
     ReportVersion,
 )
+from app.analysis.pipeline import launch_pipeline
 from app.analysis.report_exporter import build_report_docx, build_report_pdf
 from app.analysis.schemas import (
     AgentWorkflowConfigOut,
@@ -40,27 +43,53 @@ from app.analysis.workflow_engine import (
     COUNTRY_NAMES_ZH,
     SCENARIO_LABELS,
     WORKFLOW_KEY,
-    ensure_p3_seed_data,
     ensure_workflow_config,
     evaluate_fact_sufficiency,
-    execute_task_pipeline,
     export_workflow_dsl,
-    run_evaluation_benchmarks,
     validate_and_import_workflow_dsl,
 )
 from app.core.db import get_session
-from app.iam.deps import Principal, require_admin_side, require_user_side
+from app.iam.deps import (
+    Principal,
+    require_admin_side,
+    require_platform_admin,
+    require_user_side,
+)
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
 from app.knowledge.router import _compute_eight_attributes
 from app.knowledge.schemas import GraphPayloadOut, KgEdgeOut, KgNodeOut
 
 AdminOrReviewerDep = Annotated[Principal, Depends(require_admin_side)]
+PlatformAdminDep = Annotated[Principal, Depends(require_platform_admin)]
 UserDep = Annotated[Principal, Depends(require_user_side)]
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 admin_router = APIRouter(prefix="/api/admin/agent-studio", tags=["admin-agent-studio"])
 user_router = APIRouter(prefix="/api/analysis", tags=["user-compliance-analysis"])
+
+
+STALE_RUNNING_SECONDS = 600
+
+
+async def _start(session: AsyncSession, task: AnalysisTask) -> None:
+    """把任务置为运行中并在后台启动流水线,请求立即返回。"""
+    task.status = "running"
+    await session.commit()
+    await session.refresh(task)  # updated_at 由数据库更新,需刷新后才能同步读取
+    factory = async_sessionmaker(session.bind, expire_on_commit=False)
+    launch_pipeline(factory, task.id)
+
+
+async def _expire_stale(session: AsyncSession, task: AnalysisTask) -> None:
+    """服务重启等原因导致长时间无进展的运行中任务,标记为失败,避免界面一直转圈。"""
+    if task.status != "running" or task.updated_at is None:
+        return
+    age = (datetime.now(UTC) - task.updated_at).total_seconds()
+    if age > STALE_RUNNING_SECONDS:
+        task.status = "failed"
+        await session.commit()
+        await session.refresh(task)
 
 
 def _to_workflow_out(cfg: AgentWorkflowConfig) -> AgentWorkflowConfigOut:
@@ -121,6 +150,7 @@ async def _to_task_summary(session: AsyncSession, t: AnalysisTask) -> AnalysisTa
 
 
 async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTaskDetailOut:
+    await _expire_stale(session, t)
     traces = list(
         (
             await session.execute(
@@ -219,7 +249,7 @@ async def get_admin_workflow(
     version_no: int | None = Query(default=None),
 ) -> AgentWorkflowConfigOut:
     """查看当前激活(或指定版本)的多智能体编排拓扑、节点详情与上下游连接(只读锁定态)。"""
-    await ensure_p3_seed_data(session)
+    await ensure_workflow_config(session)
     if version_no is not None:
         cfg = (
             await session.execute(
@@ -244,7 +274,7 @@ async def list_workflow_versions(
     _: AdminOrReviewerDep,
     session: SessionDep,
 ) -> list[WorkflowVersionSummaryOut]:
-    await ensure_p3_seed_data(session)
+    await ensure_workflow_config(session)
     cfgs = list(
         (
             await session.execute(
@@ -279,7 +309,7 @@ async def list_workflow_versions(
 )
 async def activate_workflow_version(
     version_no: int,
-    _: AdminOrReviewerDep,
+    _: PlatformAdminDep,
     session: SessionDep,
 ) -> AgentWorkflowConfigOut:
     cfgs = list(
@@ -308,7 +338,7 @@ async def export_admin_workflow_dsl(
     version_no: int | None = Query(default=None),
 ) -> dict:
     """导出多智能体编排配置包(JSON DSL),供长久维护、跨环境迁移与版本备份。"""
-    await ensure_p3_seed_data(session)
+    await ensure_workflow_config(session)
     if version_no is not None:
         cfg = (
             await session.execute(
@@ -332,11 +362,11 @@ async def export_admin_workflow_dsl(
 )
 async def import_admin_workflow_dsl(
     body: WorkflowDslImportIn,
-    user: AdminOrReviewerDep,
+    user: PlatformAdminDep,
     session: SessionDep,
 ) -> AgentWorkflowConfigOut:
     """导入并校验多智能体编排配置包(JSON DSL),生成新版本并保持生产只读安全锁。"""
-    await ensure_p3_seed_data(session)
+    await ensure_workflow_config(session)
     try:
         new_cfg = await validate_and_import_workflow_dsl(
             session=session,
@@ -355,9 +385,15 @@ async def list_admin_analysis_tasks(
     _: AdminOrReviewerDep,
     session: SessionDep,
 ) -> list[AnalysisTaskSummaryOut]:
-    await ensure_p3_seed_data(session)
+    await ensure_workflow_config(session)
     tasks = list(
-        (await session.execute(select(AnalysisTask).order_by(AnalysisTask.created_at.asc())))
+        (
+            await session.execute(
+                select(AnalysisTask)
+                .where(AnalysisTask.org_id.is_not(None))
+                .order_by(AnalysisTask.created_at.asc())
+            )
+        )
         .scalars()
         .all()
     )
@@ -381,8 +417,8 @@ async def get_admin_benchmarks(
     _: AdminOrReviewerDep,
     session: SessionDep,
 ) -> BenchmarkSummaryOut:
-    await ensure_p3_seed_data(session)
-    res = await run_evaluation_benchmarks(session)
+    await ensure_workflow_config(session)
+    res = await run_retrieval_benchmarks(session)
     return BenchmarkSummaryOut(**res)
 
 
@@ -395,10 +431,8 @@ async def list_user_analysis_tasks(
     session: SessionDep,
     country_code: str | None = None,
 ) -> list[AnalysisTaskSummaryOut]:
-    await ensure_p3_seed_data(session)
-    stmt = select(AnalysisTask).where(
-        or_(AnalysisTask.org_id == user.org_id, AnalysisTask.org_id.is_(None))
-    )
+    await ensure_workflow_config(session)
+    stmt = select(AnalysisTask).where(AnalysisTask.org_id == user.org_id)
     if country_code:
         stmt = stmt.where(AnalysisTask.country_code == country_code.upper())
     stmt = stmt.order_by(AnalysisTask.created_at.asc())
@@ -416,7 +450,7 @@ async def create_user_analysis_task(
     user: UserDep,
     session: SessionDep,
 ) -> AnalysisTaskDetailOut:
-    await ensure_p3_seed_data(session)
+    await ensure_workflow_config(session)
     cc = body.country_code.upper()
     score, missing = evaluate_fact_sufficiency(cc, body.facts or {})
     task = AnalysisTask(
@@ -436,7 +470,7 @@ async def create_user_analysis_task(
     await session.refresh(task)
 
     if score >= 100 and body.auto_run_if_sufficient:
-        task = await execute_task_pipeline(session, task)
+        await _start(session, task)
 
     return await _to_task_detail(session, task)
 
@@ -448,7 +482,7 @@ async def get_user_analysis_task_detail(
     session: SessionDep,
 ) -> AnalysisTaskDetailOut:
     task = await session.get(AnalysisTask, task_id)
-    if task is None or (task.org_id is not None and task.org_id != user.org_id):
+    if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
     return await _to_task_detail(session, task)
 
@@ -462,9 +496,13 @@ async def update_user_task_facts(
 ) -> AnalysisTaskDetailOut:
     """补充追问事实；当事实完备度达到 100% 时自动启动多智能体协同生成八维度报告。"""
     task = await session.get(AnalysisTask, task_id)
-    if task is None or (task.org_id is not None and task.org_id != user.org_id):
+    if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
 
+    if task.status == "running":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="分析正在运行中,请等待完成后再补充事实"
+        )
     merged = dict(task.facts_json or {})
     for k, v in (body.facts or {}).items():
         if v is not None and str(v).strip():
@@ -478,7 +516,7 @@ async def update_user_task_facts(
     await session.refresh(task)
 
     if score >= 100 and body.auto_run_if_sufficient:
-        task = await execute_task_pipeline(session, task)
+        await _start(session, task)
 
     return await _to_task_detail(session, task)
 
@@ -490,14 +528,16 @@ async def run_user_analysis_task(
     session: SessionDep,
 ) -> AnalysisTaskDetailOut:
     task = await session.get(AnalysisTask, task_id)
-    if task is None or (task.org_id is not None and task.org_id != user.org_id):
+    if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
     if task.sufficiency_score < 100:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="必填业务事实尚未补充完整，请先完成追问补充后再启动多智能体分析",
         )
-    task = await execute_task_pipeline(session, task)
+    if task.status == "running":
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="分析正在运行中")
+    await _start(session, task)
     return await _to_task_detail(session, task)
 
 
@@ -510,7 +550,7 @@ async def edit_user_report_version(
 ) -> ReportVersionOut:
     """在线编辑报告章节并保存为新的不可变版本(保留部分样稿标识)。"""
     task = await session.get(AnalysisTask, task_id)
-    if task is None or (task.org_id is not None and task.org_id != user.org_id):
+    if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
 
     rvs = list(
@@ -579,7 +619,7 @@ async def diff_user_report_versions(
     to_version: int = Query(default=2, ge=1),
 ) -> ReportDiffOut:
     task = await session.get(AnalysisTask, task_id)
-    if task is None or (task.org_id is not None and task.org_id != user.org_id):
+    if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
 
     rv_from = (
@@ -638,7 +678,7 @@ async def export_user_report_docx(
     session: SessionDep,
 ) -> Response:
     task = await session.get(AnalysisTask, task_id)
-    if task is None or (task.org_id is not None and task.org_id != user.org_id):
+    if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
     rv = (
         await session.execute(
@@ -668,7 +708,7 @@ async def export_user_report_pdf(
     session: SessionDep,
 ) -> Response:
     task = await session.get(AnalysisTask, task_id)
-    if task is None or (task.org_id is not None and task.org_id != user.org_id):
+    if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
     rv = (
         await session.execute(
@@ -829,6 +869,6 @@ async def get_user_benchmarks(
     _: UserDep,
     session: SessionDep,
 ) -> BenchmarkSummaryOut:
-    await ensure_p3_seed_data(session)
-    res = await run_evaluation_benchmarks(session)
+    await ensure_workflow_config(session)
+    res = await run_retrieval_benchmarks(session)
     return BenchmarkSummaryOut(**res)

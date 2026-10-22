@@ -1,164 +1,284 @@
+import asyncio
+import json
+
+import pytest
+
 from .conftest import bearer, login
 
+TRANSFER_TEXT = (
+    "An organisation must not transfer any personal data to a country or territory outside "
+    "Singapore except in accordance with requirements prescribed under this Act to ensure that "
+    "organisations provide a standard of protection comparable to that under this Act."
+)
+PENALTY_TEXT = (
+    "Where the Commission is satisfied that an organisation has intentionally or negligently "
+    "contravened a data protection provision it may require the organisation to pay a financial "
+    "penalty not exceeding 10% of the annual turnover of the organisation in Singapore or "
+    "$1 million, whichever is higher."
+)
+TOC_TEXT = "Personal data .................... 11 Transfer .................... 36 " * 3
 
-async def test_admin_agent_studio_workflow_export_import_and_readonly_lock(client, seed):
-    admin_hdr = bearer(await login(client, "admin", "admin@example.com"))
+FACTS = {
+    "exterior_video_and_gnss": "采集 8 路环视视频与 GNSS,车端对人脸/车牌实时模糊处理后回传",
+    "cross_border_mechanism": "传输至中国研发中心,已签署跨境数据处理协议并完成评估",
+    "consent_and_notice": "车机弹窗明示同意 + 车身告示 + 已任命本地数据保护官",
+    "retention_and_blackbox": "黑匣子记录留存 3 年;常规个人数据 180 天后销毁",
+    "local_admission_and_safety_operator": "已提交路测准入申请并配备安全员与保险",
+}
 
-    # 1. 获取默认多智能体编排配置
-    wf_resp = await client.get("/api/admin/agent-studio/workflow", headers=admin_hdr)
-    assert wf_resp.status_code == 200
-    wf = wf_resp.json()
-    assert wf["readonly_locked"] is True
-    assert wf["version_no"] >= 1
-    assert len(wf["nodes"]) == 7
-    assert len(wf["edges"]) == 7
-    # 验证包含退回补证回流边
+
+async def _seed_sg_corpus(session_factory):
+    from app.ingestion.models import Clause, Document, DocumentVersion
+    from app.sources.models import SourceSite
+
+    async with session_factory() as s:
+        site = SourceSite(
+            country_code="SG",
+            publisher="PDPC",
+            language="en",
+            document_type="LAW",
+            entry_url="https://example.sg/pdpa",
+            strategy="DIRECT",
+            config={},
+        )
+        s.add(site)
+        await s.flush()
+        doc = Document(
+            site_id=site.id,
+            country_code="SG",
+            source_url="https://example.sg/pdpa.pdf",
+            title="Personal Data Protection Act 2012",
+            language="en",
+            document_type="LAW",
+        )
+        s.add(doc)
+        await s.flush()
+        ver = DocumentVersion(
+            document_id=doc.id,
+            version_no=1,
+            content_hash="a" * 64,
+            archive_path="x",
+            size_bytes=1,
+            mime_type="application/pdf",
+            final_url="https://example.sg/pdpa.pdf",
+            state="parsed",
+        )
+        s.add(ver)
+        await s.flush()
+        for i, (num, text) in enumerate(
+            [("26", TRANSFER_TEXT), ("48J", PENALTY_TEXT), (None, TOC_TEXT)]
+        ):
+            s.add(
+                Clause(
+                    version_id=ver.id,
+                    ordinal=i,
+                    clause_number=num,
+                    original_text=text,
+                    text_hash=str(i) * 64,
+                    language="en",
+                )
+            )
+        await s.commit()
+
+
+def _fake_llm_factory(bad_first: bool):
+    calls = {"n": 0}
+
+    async def fake(messages, **_kw):
+        from app.analysis.llm import LlmResult
+
+        calls["n"] += 1
+        payload = json.loads(messages[1]["content"])
+        findings = []
+        retry = "verifier_feedback_must_fix" in payload
+        for c in payload["candidate_clauses"][:1]:
+            quote = c["text"][:80]
+            if bad_first and not retry:
+                quote = "这段引用并不在条款原文里,应被程序核验拦截并退回"
+            findings.append(
+                {
+                    "business_fact": "跨境回传",
+                    "clause_id": c["clause_id"],
+                    "obligation": "须确保境外接收方提供可比保护",
+                    "risk_level": "HIGH",
+                    "quote": quote,
+                    "quote_zh": "(测试译文)",
+                }
+            )
+        return LlmResult(
+            data={"summary": "测试小结", "findings": findings, "recommendations": ["整改"]},
+            prompt_tokens=100,
+            completion_tokens=50,
+            duration_ms=7,
+            model="fake-model",
+        )
+
+    return fake
+
+
+async def _wait_done(client, hdr, task_id, timeout=20):
+    for _ in range(timeout * 10):
+        r = await client.get(f"/api/analysis/tasks/{task_id}", headers=hdr)
+        assert r.status_code == 200
+        if r.json()["status"] != "running":
+            return r.json()
+        await asyncio.sleep(0.1)
+    raise AssertionError("分析任务超时未结束")
+
+
+async def test_workflow_config_export_import_and_admin_only(client, seed):
+    admin = bearer(await login(client, "admin", "admin@example.com"))
+    reviewer = bearer(await login(client, "admin", "reviewer@example.com"))
+
+    wf = (await client.get("/api/admin/agent-studio/workflow", headers=admin)).json()
+    assert wf["readonly_locked"] is True and len(wf["nodes"]) == 7
     assert any(e["edge_type"] == "backtrack" for e in wf["edges"])
-    # 验证每个节点都处于只读锁定态
-    assert all(n["readonly_locked"] is True for n in wf["nodes"])
+    # 节点说明必须和真实实现一致:不再声称调用未实现的工具
+    names = {t["tool_name"] for n in wf["nodes"] for t in n["mcp_tools"]}
+    assert "write_analysis_findings" not in names
 
-    # 2. 导出 Dify 兼容 DSL 配置包
-    exp_resp = await client.get("/api/admin/agent-studio/workflow/export", headers=admin_hdr)
-    assert exp_resp.status_code == 200
-    dsl = exp_resp.json()
-    assert dsl["kind"] == "cyshuhe.agent_workflow"
-    assert dsl["security_policy"]["readonly_locked"] is True
-    assert len(dsl["workflow"]["graph"]["nodes"]) == 7
-
-    # 3. 尝试在导入的配置包中将某个节点改为 readonly_locked=False，验证后端强制恢复为 True
+    dsl = (await client.get("/api/admin/agent-studio/workflow/export", headers=admin)).json()
     dsl["workflow"]["graph"]["nodes"][0]["readonly_locked"] = False
-    dsl["app"]["name"] = "汽车数据跨境八维度合规评估多智能体工作流 (维护升级版)"
-    imp_resp = await client.post(
-        "/api/admin/agent-studio/workflow/import",
-        headers=admin_hdr,
-        json={
-            "dsl_payload": dsl,
-            "change_note": "单测导入新版本验证",
-            "activate_immediately": True,
-        },
+    body = {"dsl_payload": dsl, "change_note": "单测", "activate_immediately": True}
+    # 复核员可以查看,但不能导入或激活
+    deny = await client.post("/api/admin/agent-studio/workflow/import", headers=reviewer, json=body)
+    assert deny.status_code == 403
+    ok = await client.post("/api/admin/agent-studio/workflow/import", headers=admin, json=body)
+    assert ok.status_code == 201
+    assert all(n["readonly_locked"] for n in ok.json()["nodes"])
+    deny2 = await client.post(
+        f"/api/admin/agent-studio/workflow/versions/{wf['version_no']}/activate",
+        headers=reviewer,
     )
-    assert imp_resp.status_code == 201
-    imported = imp_resp.json()
-    assert imported["version_no"] == wf["version_no"] + 1
-    assert imported["is_active"] is True
-    assert imported["readonly_locked"] is True
-    assert all(n["readonly_locked"] is True for n in imported["nodes"])
-
-    # 4. 查看版本列表并切回 v1
-    vers_resp = await client.get("/api/admin/agent-studio/workflow/versions", headers=admin_hdr)
-    assert vers_resp.status_code == 200
-    assert len(vers_resp.json()) >= 2
-
-    act_resp = await client.post(
-        "/api/admin/agent-studio/workflow/versions/1/activate", headers=admin_hdr
-    )
-    assert act_resp.status_code == 200
-    assert act_resp.json()["version_no"] == 1
-    assert act_resp.json()["is_active"] is True
+    assert deny2.status_code == 403
 
 
-async def test_user_multi_agent_analysis_followup_backtrack_report_and_export(client, seed):
-    member_hdr = bearer(await login(client, "user", "a-member@example.com"))
-    admin_hdr = bearer(await login(client, "admin", "admin@example.com"))
-
-    # 1. 普通企业成员列出任务（含预置新加坡完整报告、待追问任务与四国部分样稿）
-    list_resp = await client.get("/api/analysis/tasks", headers=member_hdr)
-    assert list_resp.status_code == 200
-    tasks = list_resp.json()
-    assert len(tasks) >= 6
-
-    # 2. 创建一个仅填 1 项事实的新加坡任务，验证主动追问机制拦截（不直接给结论）
-    create_inc = await client.post(
+async def test_fact_followup_blocks_analysis_without_model(client, seed):
+    hdr = bearer(await login(client, "user", "a-member@example.com"))
+    r = await client.post(
         "/api/analysis/tasks",
-        headers=member_hdr,
+        headers=hdr,
         json={
-            "title": "新加坡自动驾驶测试车队追问验证任务",
+            "title": "追问验证",
             "country_code": "SG",
-            "vehicle_model": "CYS-AV-Test",
-            "scenario_type": "autonomous_trial",
-            "facts": {
-                "exterior_video_and_gnss": "采集 8 路环视视频与厘米级 GNSS，车端对人脸/车牌实时模糊处理"
-            },
-            "auto_run_if_sufficient": True,
+            "facts": {"exterior_video_and_gnss": "采集环视视频与 GNSS 轨迹数据"},
         },
     )
-    assert create_inc.status_code == 201
-    inc_data = create_inc.json()
-    task_id = inc_data["id"]
-    assert inc_data["status"] == "collecting_facts"
-    assert inc_data["sufficiency_score"] == 20
-    assert len(inc_data["findings"]) == 0
-    assert sum(1 for m in inc_data["missing_facts"] if not m["is_fulfilled"]) == 4
+    assert r.status_code == 201
+    d = r.json()
+    assert d["status"] == "collecting_facts" and d["sufficiency_score"] == 20
+    assert d["findings"] == [] and d["step_traces"] == []
 
-    # 3. 补充剩余 4 项必填事实，验证达到 100% 后自动运行多智能体协同流水线
-    fill_resp = await client.post(
-        f"/api/analysis/tasks/{task_id}/facts",
-        headers=member_hdr,
-        json={
-            "facts": {
-                "cross_border_mechanism": "传输至中国研发中心，已签署对标 PDPA 第三附表保护标准的 DPA 协议",
-                "consent_and_notice": "车机弹窗明示同意 + 车身张贴路测告示 + 已任命新加坡本地 DPO",
-                "retention_and_blackbox": "LTA 黑匣子记录留存 3 年；常规个人数据满 180 天自动销毁",
-                "local_admission_and_safety_operator": "已提交 LTA 路测准入申请、配备持证安全员并投保责任险",
-            },
-            "auto_run_if_sufficient": True,
-        },
-    )
-    assert fill_resp.status_code == 200
-    done_data = fill_resp.json()
-    assert done_data["sufficiency_score"] == 100
-    assert done_data["status"] in ("completed", "partial_sample")
-    assert len(done_data["findings"]) == 6
-    assert len(done_data["step_traces"]) == 7
-    # 验证包含『编制/质检退回分析补充依据』真实记录
-    assert any(st["is_backtrack"] is True for st in done_data["step_traces"])
-    assert len(done_data["report_versions"]) == 1
-    assert len(done_data["report_versions"][0]["dimensions"]) == 8
 
-    # 4. 在线编辑报告章节生成 v2 版本，并对比 v1 与 v2 版本差异
-    edit_resp = await client.post(
-        f"/api/analysis/tasks/{task_id}/reports/edit",
-        headers=member_hdr,
-        json={
-            "change_note": "增补 D3 跨境加密通道说明",
-            "executive_summary": "修订后的执行摘要：已完成全链路合规核查。",
-            "dimension_updates": {
-                "D3": "### 3. 跨境回传研发云的合法路径（v2 人工复核增补版）\n已签署 ASEAN MCCs 并启用双向 mTLS 加密。"
-            },
-        },
-    )
-    assert edit_resp.status_code == 200
-    assert edit_resp.json()["version_no"] == 2
+async def test_pipeline_real_verification_backtrack_and_tenant_isolation(
+    client, seed, session_factory, monkeypatch
+):
+    from app.analysis import pipeline
 
-    diff_resp = await client.get(
-        f"/api/analysis/tasks/{task_id}/reports/diff?from_version=1&to_version=2",
-        headers=member_hdr,
-    )
-    assert diff_resp.status_code == 200
-    diff_data = diff_resp.json()
-    assert diff_data["summary_changed"] is True
-    assert any(
-        d["dimension_code"] == "D3" and d["changed"] is True for d in diff_data["dimension_diffs"]
-    )
+    await _seed_sg_corpus(session_factory)
+    monkeypatch.setattr(pipeline, "call_llm_json", _fake_llm_factory(bad_first=True))
+    a_hdr = bearer(await login(client, "user", "a-member@example.com"))
+    b_hdr = bearer(await login(client, "user", "b-admin@example.com"))
 
-    # 5. 验证导出 Word (.docx) 与 PDF (.pdf)
-    docx_resp = await client.get(
-        f"/api/analysis/tasks/{task_id}/reports/2/export.docx",
-        headers=member_hdr,
+    created = await client.post(
+        "/api/analysis/tasks",
+        headers=a_hdr,
+        json={"title": "SG 路测评估", "country_code": "SG", "facts": FACTS},
     )
-    assert docx_resp.status_code == 200
-    assert docx_resp.content[:2] == b"PK"
+    assert created.status_code == 201
+    assert created.json()["status"] == "running"
+    task_id = created.json()["id"]
+    done = await _wait_done(client, a_hdr, task_id)
 
-    pdf_resp = await client.get(
-        f"/api/analysis/tasks/{task_id}/reports/2/export.pdf",
-        headers=member_hdr,
+    assert done["status"] in ("completed", "partial_sample")
+    traces = done["step_traces"]
+    phases = [t["phase"] for t in traces]
+    # 引用不是原文子串 → 真实触发退回 → 二次分析 → 二次核验
+    assert "verification" in phases and "re_analysis" in phases and "re_verification" in phases
+    back = next(t for t in traces if t["phase"] == "verification")
+    assert back["is_backtrack"] is True and "连续子串" in back["backtrack_reason"]
+    assert done["backtrack_count"] == 1
+    # Token 来自模型返回的真实用量,而不是写死的数字
+    assert done["total_tokens"] > 0 and done["total_tokens"] % 150 == 0
+
+    # 通过核验的结论,引用必须真是条款原文的子串,且条号来自真实条款
+    assert done["findings"]
+    for f in done["findings"]:
+        assert f["verification_status"] == "VERIFIED_SUBSTRING"
+        assert f["basis_quote"] in (TRANSFER_TEXT, PENALTY_TEXT) or any(
+            f["basis_quote"] in t for t in (TRANSFER_TEXT, PENALTY_TEXT)
+        )
+        assert f["clause_number"] in ("26", "48J")
+    # 目录页被过滤,不可能被引用
+    assert all("......" not in f["basis_quote"] for f in done["findings"])
+
+    report = done["report_versions"][0]
+    assert len(report["dimensions"]) == 8
+    # 缺依据的维度如实标注缺口,没有编造
+    gaps = [d for d in report["dimensions"] if d["missing_gap_note"]]
+    assert gaps and report["is_partial_sample"] is True
+    assert report["stale_impacts"] == []
+
+    # 另一家企业看不到、也打不开该任务
+    assert (await client.get("/api/analysis/tasks", headers=b_hdr)).json() == []
+    assert (await client.get(f"/api/analysis/tasks/{task_id}", headers=b_hdr)).status_code == 404
+
+    # 导出
+    docx = await client.get(f"/api/analysis/tasks/{task_id}/reports/1/export.docx", headers=a_hdr)
+    assert docx.status_code == 200 and docx.content[:2] == b"PK"
+    pdf = await client.get(f"/api/analysis/tasks/{task_id}/reports/1/export.pdf", headers=a_hdr)
+    assert pdf.status_code == 200 and pdf.content[:4] == b"%PDF"
+
+
+async def test_model_unavailable_is_reported_not_fabricated(client, seed, session_factory):
+    await _seed_sg_corpus(session_factory)
+    hdr = bearer(await login(client, "user", "a-member@example.com"))
+    created = await client.post(
+        "/api/analysis/tasks",
+        headers=hdr,
+        json={"title": "无模型", "country_code": "SG", "facts": FACTS},
     )
-    assert pdf_resp.status_code == 200
-    assert pdf_resp.content[:4] == b"%PDF"
+    done = await _wait_done(client, hdr, created.json()["id"])
+    assert done["status"] == "partial_sample"
+    assert done["findings"] == []
+    report = done["report_versions"][0]
+    assert all(d["citations"] == [] for d in report["dimensions"])
+    assert any("模型调用失败" in (d["missing_gap_note"] or "") for d in report["dimensions"])
 
-    # 6. 验证 10 道独立评测题接口
-    bm_resp = await client.get("/api/admin/agent-studio/benchmarks", headers=admin_hdr)
-    assert bm_resp.status_code == 200
-    bm = bm_resp.json()
+
+async def test_retrieval_benchmark_is_honest(client, seed, session_factory):
+    await _seed_sg_corpus(session_factory)
+    admin = bearer(await login(client, "admin", "admin@example.com"))
+    bm = (await client.get("/api/admin/agent-studio/benchmarks", headers=admin)).json()
     assert bm["total_cases"] == 10
-    assert bm["dimension_completeness_pct"] == 100.0
+    assert "人工" in bm["human_review_status"] and "不是法律准确率" in bm["note"]
+    by_id = {c["question_id"]: c for c in bm["cases"]}
+    assert by_id["H01"]["passed"] is True  # 迁移条款真实命中
+    assert by_id["H04"]["passed"] is True  # 罚则条款真实命中
+    assert by_id["H07"]["passed"] is False  # 种子库里没有突尼斯法源,不能"通过"
+
+
+@pytest.mark.parametrize(
+    "text", [TOC_TEXT, "short", "?!?! 12 34 .. -- ## @@ 99 88 77 66 55 44 33" * 3]
+)
+def test_unusable_clause_text_is_filtered(text):
+    from app.analysis.tools import is_usable_clause_text
+
+    assert is_usable_clause_text(text) is False
+
+
+def test_verify_finding_checks_substring_and_numbers():
+    from app.analysis.tools import verify_finding
+
+    ok, _ = verify_finding(
+        {"quote": PENALTY_TEXT[40:140], "obligation": "最高罚款 10%"}, PENALTY_TEXT
+    )
+    assert ok is True
+    bad, issues = verify_finding(
+        {"quote": PENALTY_TEXT[40:140], "obligation": "最高罚款 500 万"}, PENALTY_TEXT
+    )
+    assert bad is False and any("500" in i for i in issues)
+    bad2, issues2 = verify_finding(
+        {"quote": "不存在的引用片段不存在的引用片段", "obligation": ""}, PENALTY_TEXT
+    )
+    assert bad2 is False and any("连续子串" in i for i in issues2)

@@ -59,4 +59,3 @@ ignore = ["B008"]
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["E501"]  # 测试夹具里有长字符串
 "app/analysis/workflow_engine.py" = ["E501"]  # 八维度合规报告模板与 Dify 智能体提示词含长段落
-"app/analysis/report_exporter.py" = ["E501"]  # OOXML 与 PDF 排版模板含长标签与段落

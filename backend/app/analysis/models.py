@@ -57,7 +57,8 @@ class AnalysisTask(Base):
     __tablename__ = "analysis_tasks"
     __table_args__ = (
         CheckConstraint(
-            "status IN ('collecting_facts','ready_to_run','completed','partial_sample')",
+            "status IN ('collecting_facts','ready_to_run','running','completed',"
+            "'partial_sample','failed')",
             name="ck_analysis_tasks_status",
         ),
     )

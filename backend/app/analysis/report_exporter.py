@@ -19,315 +19,213 @@ COUNTRY_LABEL = {
     "LB": "黎巴嫩 (Lebanon)",
 }
 
+# 随包携带的开源字体(Source Han Sans,Apache-2.0),不依赖系统字体
+BUNDLED_FONT = Path(__file__).parent / "fonts" / "SourceHanSansCN-Medium.ttf"
 
-def _w_p(text: str, bold: bool = False, size_half_pt: int = 22, color: str = "1E293B") -> str:
-    safe = escape(text or "")
+PARTIAL_NOTICE = (
+    "【部分样稿】部分维度缺少可通过原文核验的依据,已逐维标注缺口;"
+    "引用的中文为机器翻译,尚未经律所人工复核。"
+)
+
+
+def _w_p(text: str, bold: bool = False, size: int = 22, color: str = "1E293B") -> str:
     b_tag = "<w:b/>" if bold else ""
     return (
-        "<w:p>"
-        "<w:pPr><w:spacing w:after='120' w:line='300' w:lineRule='auto'/></w:pPr>"
+        "<w:p><w:pPr><w:spacing w:after='120' w:line='300' w:lineRule='auto'/></w:pPr>"
         f"<w:r><w:rPr>{b_tag}<w:color w:val='{color}'/>"
-        f"<w:sz w:val='{size_half_pt}'/><w:szCs w:val='{size_half_pt}'/></w:rPr>"
-        f"<w:t xml:space='preserve'>{safe}</w:t></w:r>"
-        "</w:p>"
+        f"<w:sz w:val='{size}'/><w:szCs w:val='{size}'/></w:rPr>"
+        f"<w:t xml:space='preserve'>{escape(text or '')}</w:t></w:r></w:p>"
     )
 
 
 def _w_tc(text: str, bold: bool = False, shade: str | None = None) -> str:
     shd = f"<w:shd w:val='clear' w:color='auto' w:fill='{shade}'/>" if shade else ""
-    return (
-        f"<w:tc><w:tcPr>{shd}<w:tcMar>"
-        "<w:top w:w='80' w:type='dxa'/><w:bottom w:w='80' w:type='dxa'/>"
-        "<w:left w:w='100' w:type='dxa'/><w:right w:w='100' w:type='dxa'/>"
-        f"</w:tcMar></w:tcPr>{_w_p(text, bold=bold, size_half_pt=19)}</w:tc>"
-    )
+    return f"<w:tc><w:tcPr>{shd}</w:tcPr>{_w_p(text, bold=bold, size=19)}</w:tc>"
+
+
+def _clause_ref(f: dict) -> str:
+    return f"{f.get('document_title', '')} {f.get('clause_number', '')} (v{f.get('version_no', 1)})"
 
 
 def build_report_docx(task: AnalysisTask, rv: ReportVersion) -> bytes:
-    """生成八维度国别安全评估报告 Word (.docx) 二进制流。"""
-    body_parts: list[str] = []
-    country_zh = COUNTRY_LABEL.get(task.country_code, task.country_code)
-
-    body_parts.append(
+    """生成八维度国别安全评估报告 Word (.docx)。"""
+    country = COUNTRY_LABEL.get(task.country_code, task.country_code)
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    parts: list[str] = [
+        _w_p(f"车研数合 · {country} 汽车数据跨境安全评估八维度报告", bold=True, size=32),
         _w_p(
-            f"车研数合 · {country_zh} 汽车数据跨境安全评估八维度报告",
-            bold=True,
-            size_half_pt=32,
-            color="0F172A",
-        )
-    )
-    body_parts.append(
-        _w_p(
-            f"任务名称：{task.title}  |  报告版本：v{rv.version_no}  |  车型：{task.vehicle_model}  |  生成时间：{datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}",
-            bold=False,
-            size_half_pt=19,
+            f"任务:{task.title} | 版本:v{rv.version_no} | 车型:{task.vehicle_model} | {now}",
+            size=19,
             color="475569",
-        )
-    )
-
+        ),
+    ]
     if rv.is_partial_sample:
-        body_parts.append(
-            _w_p(
-                "【重要声明 · 部分样稿】当前国别部分外文法规/OCR 条款处于待律所人工复核状态(SOURCE_EVIDENCE_PENDING)，本报告仅展示已归档法源事实与核查缺口，不冒充已审定完整法律意见。",
-                bold=True,
-                size_half_pt=20,
-                color="B45309",
-            )
-        )
+        parts.append(_w_p(PARTIAL_NOTICE, bold=True, size=20, color="B45309"))
+    parts.append(_w_p("一、执行摘要", bold=True, size=26, color="1D4ED8"))
+    parts.extend(_w_p(ln.strip()) for ln in (rv.executive_summary or "").splitlines() if ln.strip())
 
-    body_parts.append(
-        _w_p("一、执行摘要 (Executive Summary)", bold=True, size_half_pt=26, color="1D4ED8")
-    )
-    for line in (rv.executive_summary or "").splitlines():
-        if line.strip():
-            body_parts.append(_w_p(line.strip(), size_half_pt=21))
-
-    # 合规分析矩阵表
-    body_parts.append(
-        _w_p(
-            "二、合规分析判定矩阵（业务事实 — 适用条款 — 合规义务 — 风险等级 — 判断依据）",
-            bold=True,
-            size_half_pt=26,
-            color="1D4ED8",
-        )
-    )
-    rows_xml: list[str] = []
-    headers = ["业务事实", "适用条款", "合规义务", "风险等级", "判断依据(原文子串)"]
-    rows_xml.append(
-        "<w:tr>" + "".join(_w_tc(h, bold=True, shade="EFF6FF") for h in headers) + "</w:tr>"
-    )
+    parts.append(_w_p("二、合规分析判定矩阵", bold=True, size=26, color="1D4ED8"))
+    heads = ["业务事实", "适用条款", "合规义务", "风险等级", "判断依据(原文子串)"]
+    rows = ["<w:tr>" + "".join(_w_tc(h, True, "EFF6FF") for h in heads) + "</w:tr>"]
     for f in task.findings_json or []:
-        clause_ref = f"{f.get('document_title', '')} {f.get('clause_number', '')} (v{f.get('version_no', 1)})"
-        rows_xml.append(
+        rows.append(
             "<w:tr>"
             + _w_tc(str(f.get("business_fact", "")))
-            + _w_tc(clause_ref)
+            + _w_tc(_clause_ref(f))
             + _w_tc(str(f.get("compliance_obligation", "")))
-            + _w_tc(str(f.get("risk_level", "")), bold=True)
-            + _w_tc(f"{f.get('basis_quote', '')}\n【中译】{f.get('basis_zh', '')}")
+            + _w_tc(str(f.get("risk_level", "")), True)
+            + _w_tc(f"{f.get('basis_quote', '')}\n【中译(机器翻译)】{f.get('basis_zh', '')}")
             + "</w:tr>"
         )
-    body_parts.append(
-        "<w:tbl>"
-        "<w:tblPr><w:tblW w:w='5000' w:type='pct'/>"
-        "<w:tblBorders>"
-        "<w:top w:val='single' w:sz='4' w:space='0' w:color='CBD5E1'/>"
-        "<w:bottom w:val='single' w:sz='4' w:space='0' w:color='CBD5E1'/>"
-        "<w:left w:val='single' w:sz='4' w:space='0' w:color='CBD5E1'/>"
-        "<w:right w:val='single' w:sz='4' w:space='0' w:color='CBD5E1'/>"
-        "<w:insideH w:val='single' w:sz='4' w:space='0' w:color='CBD5E1'/>"
-        "<w:insideV w:val='single' w:sz='4' w:space='0' w:color='CBD5E1'/>"
-        "</w:tblBorders></w:tblPr>" + "".join(rows_xml) + "</w:tbl>"
+    border = "<w:{0} w:val='single' w:sz='4' w:space='0' w:color='CBD5E1'/>"
+    borders = "".join(
+        border.format(n) for n in ("top", "bottom", "left", "right", "insideH", "insideV")
+    )
+    parts.append(
+        "<w:tbl><w:tblPr><w:tblW w:w='5000' w:type='pct'/>"
+        f"<w:tblBorders>{borders}</w:tblBorders></w:tblPr>" + "".join(rows) + "</w:tbl>"
     )
 
-    # 八个维度正文
-    body_parts.append(
-        _w_p("三、八维度国别合规深度评估章节", bold=True, size_half_pt=26, color="1D4ED8")
-    )
+    parts.append(_w_p("三、八维度评估章节", bold=True, size=26, color="1D4ED8"))
     for dim in rv.dimensions_json or []:
-        dim_title = (
+        title = (
             f"【{dim.get('dimension_code', '')}】{dim.get('dimension_title', '')} "
-            f"（风险等级：{dim.get('risk_level', 'MEDIUM')} | 状态：{dim.get('status', 'COMPLETE')}）"
+            f"(风险:{dim.get('risk_level', '')} | 状态:{dim.get('status', '')})"
         )
-        body_parts.append(_w_p(dim_title, bold=True, size_half_pt=24, color="0F172A"))
+        parts.append(_w_p(title, bold=True, size=24, color="0F172A"))
         if dim.get("missing_gap_note"):
-            body_parts.append(
+            parts.append(_w_p(f"核查缺口:{dim['missing_gap_note']}", True, 20, "B45309"))
+        for line in str(dim.get("content_markdown", "")).splitlines():
+            if line.strip():
+                parts.append(_w_p(line.strip().lstrip("#").strip()))
+        for cite in dim.get("citations", []) or []:
+            parts.append(
                 _w_p(
-                    f"核查缺口说明：{dim['missing_gap_note']}",
-                    bold=True,
-                    size_half_pt=20,
-                    color="B45309",
+                    f"  引用 {cite.get('citation_tag', '')}:{_clause_ref(cite)} — "
+                    f'原文:"{cite.get("quote_original", "")}" | 译文:{cite.get("quote_zh", "")}',
+                    size=18,
+                    color="334155",
                 )
             )
-        for line in str(dim.get("content_markdown", "")).splitlines():
-            clean = line.strip().lstrip("#").strip()
-            if clean:
-                body_parts.append(_w_p(clean, size_half_pt=21))
-        for cite in dim.get("citations", []) or []:
-            cite_line = (
-                f"  • 引用角标 {cite.get('citation_tag', '')}：{cite.get('document_title', '')} "
-                f"{cite.get('clause_number', '')} (版本 v{cite.get('version_no', 1)}) — "
-                f'原文："{cite.get("quote_original", "")}" | 译文：{cite.get("quote_zh", "")}'
-            )
-            body_parts.append(_w_p(cite_line, size_half_pt=18, color="334155"))
 
+    ns = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
     document_xml = (
         "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>"
-        "<w:document xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>"
-        "<w:body>" + "".join(body_parts) + "<w:sectPr><w:pgSz w:w='11906' w:h='16838'/>"
+        f"<w:document xmlns:w='{ns}'><w:body>"
+        + "".join(parts)
+        + "<w:sectPr><w:pgSz w:w='11906' w:h='16838'/>"
         "<w:pgMar w:top='1440' w:right='1440' w:bottom='1440' w:left='1440'/></w:sectPr>"
         "</w:body></w:document>"
     )
-
-    content_types_xml = (
+    rels_ct = "application/vnd.openxmlformats-package.relationships+xml"
+    main_ct = "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"
+    content_types = (
         "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>"
         "<Types xmlns='http://schemas.openxmlformats.org/package/2006/content-types'>"
-        "<Default Extension='rels' ContentType='application/vnd.openxmlformats-package.relationships+xml'/>"
+        f"<Default Extension='rels' ContentType='{rels_ct}'/>"
         "<Default Extension='xml' ContentType='application/xml'/>"
-        "<Override PartName='/word/document.xml' "
-        "ContentType='application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml'/>"
-        "</Types>"
+        f"<Override PartName='/word/document.xml' ContentType='{main_ct}'/></Types>"
     )
-    rels_xml = (
+    rel_type = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+    rels = (
         "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>"
         "<Relationships xmlns='http://schemas.openxmlformats.org/package/2006/relationships'>"
-        "<Relationship Id='rId1' "
-        "Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument' "
-        "Target='word/document.xml'/>"
-        "</Relationships>"
+        f"<Relationship Id='rId1' Type='{rel_type}' Target='word/document.xml'/></Relationships>"
     )
-
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr("[Content_Types].xml", content_types_xml)
-        zf.writestr("_rels/.rels", rels_xml)
+        zf.writestr("[Content_Types].xml", content_types)
+        zf.writestr("_rels/.rels", rels)
         zf.writestr("word/document.xml", document_xml)
     return buf.getvalue()
 
 
-def _load_cjk_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    candidates = [
-        r"C:\Windows\Fonts\msyh.ttc",
-        r"C:\Windows\Fonts\simhei.ttf",
-        r"C:\Windows\Fonts\simsun.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-    ]
-    for path in candidates:
-        if Path(path).exists():
-            try:
-                return ImageFont.truetype(path, size=size)
-            except Exception:
-                continue
+def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    if BUNDLED_FONT.exists():
+        return ImageFont.truetype(str(BUNDLED_FONT), size=size)
     return ImageFont.load_default()
 
 
+def _wrap(text: str, width: int) -> list[str]:
+    return textwrap.wrap(text, width=width) or [""]
+
+
 def build_report_pdf(task: AnalysisTask, rv: ReportVersion) -> bytes:
-    """生成八维度国别安全评估报告多页 PDF (.pdf) 二进制流。"""
-    page_w, page_h = 1240, 1754  # A4 @ 150 DPI
+    """生成多页 PDF(页面图片式,使用随包开源字体,不依赖系统字体)。"""
+    page_w, page_h = 1240, 1754
     margin_x, margin_top, margin_bottom = 80, 90, 90
-    font_title = _load_cjk_font(28)
-    font_h2 = _load_cjk_font(22)
-    font_body = _load_cjk_font(17)
-    font_small = _load_cjk_font(15)
-
-    lines_queue: list[tuple[str, str]] = []
-    country_zh = COUNTRY_LABEL.get(task.country_code, task.country_code)
-    lines_queue.append(("TITLE", f"车研数合 · {country_zh} 汽车数据跨境八维度合规评估报告"))
-    lines_queue.append(
-        (
-            "META",
-            f"任务：{task.title} | 版本：v{rv.version_no} | 车型：{task.vehicle_model} | 状态：{rv.status}",
-        )
-    )
+    fonts = {
+        "TITLE": _load_font(28),
+        "H2": _load_font(22),
+        "BODY": _load_font(17),
+        "SMALL": _load_font(15),
+        "WARN": _load_font(15),
+    }
+    country = COUNTRY_LABEL.get(task.country_code, task.country_code)
+    queue: list[tuple[str, str]] = [
+        ("TITLE", f"车研数合 · {country} 汽车数据跨境八维度合规评估报告"),
+        ("SMALL", f"任务:{task.title} | v{rv.version_no} | 车型:{task.vehicle_model}"),
+    ]
     if rv.is_partial_sample:
-        lines_queue.append(
-            (
-                "WARN",
-                "【部分样稿声明】当前国别部分外文条款处于待人工复核状态(SOURCE_EVIDENCE_PENDING)，仅记录已归档事实与缺口。",
-            )
-        )
-    lines_queue.append(("H2", "一、执行摘要"))
+        queue += [("WARN", ln) for ln in _wrap(PARTIAL_NOTICE, 50)]
+    queue.append(("H2", "一、执行摘要"))
     for raw in (rv.executive_summary or "").splitlines():
-        if raw.strip():
-            for wrapped in textwrap.wrap(raw.strip(), width=54):
-                lines_queue.append(("BODY", wrapped))
-
-    lines_queue.append(("H2", "二、合规分析判定矩阵"))
+        queue += [("BODY", ln) for ln in _wrap(raw.strip(), 50) if raw.strip()]
+    queue.append(("H2", "二、合规分析判定矩阵"))
     for idx, f in enumerate(task.findings_json or [], start=1):
         head = (
-            f"[{idx}] 事实：{f.get('business_fact', '')} -> 适用条款：{f.get('document_title', '')} "
-            f"{f.get('clause_number', '')} (风险：{f.get('risk_level', '')})"
+            f"[{idx}] {f.get('business_fact', '')} → {_clause_ref(f)} "
+            f"风险:{f.get('risk_level', '')}"
         )
-        for wrapped in textwrap.wrap(head, width=54):
-            lines_queue.append(("BODY_BOLD", wrapped))
-        obl = (
-            f"    合规义务：{f.get('compliance_obligation', '')} | 依据：{f.get('basis_quote', '')}"
-        )
-        for wrapped in textwrap.wrap(obl, width=54):
-            lines_queue.append(("SMALL", wrapped))
-
-    lines_queue.append(("H2", "三、八维度深度评估章节 (D1 - D8)"))
+        queue += [("BODY", ln) for ln in _wrap(head, 50)]
+        detail = f"义务:{f.get('compliance_obligation', '')} | 依据:{f.get('basis_quote', '')}"
+        queue += [("SMALL", ln) for ln in _wrap(detail, 56)]
+    queue.append(("H2", "三、八维度评估章节"))
     for dim in rv.dimensions_json or []:
-        lines_queue.append(
-            (
-                "H2",
-                f"【{dim.get('dimension_code', '')}】{dim.get('dimension_title', '')} [{dim.get('risk_level', '')}]",
-            )
-        )
+        title = f"【{dim.get('dimension_code', '')}】{dim.get('dimension_title', '')}"
+        queue.append(("H2", f"{title} [{dim.get('risk_level', '')}]"))
         if dim.get("missing_gap_note"):
-            for wrapped in textwrap.wrap(f"核查缺口：{dim['missing_gap_note']}", width=52):
-                lines_queue.append(("WARN", wrapped))
+            queue += [("WARN", ln) for ln in _wrap(f"核查缺口:{dim['missing_gap_note']}", 50)]
         for raw in str(dim.get("content_markdown", "")).splitlines():
-            clean = raw.strip().lstrip("#").strip()
-            if not clean:
-                continue
-            for wrapped in textwrap.wrap(clean, width=54):
-                lines_queue.append(("BODY", wrapped))
+            if raw.strip():
+                queue += [("BODY", ln) for ln in _wrap(raw.strip().lstrip("#").strip(), 50)]
         for cite in dim.get("citations", []) or []:
-            c_txt = (
-                f"  引用 {cite.get('citation_tag', '')}: {cite.get('document_title', '')} "
-                f'{cite.get("clause_number", "")} - "{cite.get("quote_original", "")}"'
-            )
-            for wrapped in textwrap.wrap(c_txt, width=56):
-                lines_queue.append(("SMALL", wrapped))
+            ref = f"引用 {cite.get('citation_tag', '')}: {_clause_ref(cite)}"
+            queue += [("SMALL", ln) for ln in _wrap(ref, 56)]
 
+    steps = {"TITLE": 48, "H2": 42, "WARN": 34, "SMALL": 26, "BODY": 32}
     pages: list[Image.Image] = []
-    cur_img = Image.new("RGB", (page_w, page_h), color=(255, 255, 255))
-    draw = ImageDraw.Draw(cur_img)
+    img = Image.new("RGB", (page_w, page_h), (255, 255, 255))
+    draw = ImageDraw.Draw(img)
     y = margin_top
-
-    def _new_page() -> tuple[Image.Image, ImageDraw.ImageDraw, int]:
-        pages.append(cur_img)
-        nxt = Image.new("RGB", (page_w, page_h), color=(255, 255, 255))
-        return nxt, ImageDraw.Draw(nxt), margin_top
-
-    for style, text in lines_queue:
-        step = 32
-        if style == "TITLE":
-            step = 48
-        elif style == "H2":
-            step = 42
-        elif style == "WARN":
-            step = 34
-        elif style == "SMALL":
-            step = 26
-
+    colors = {
+        "TITLE": (15, 23, 42),
+        "H2": (29, 78, 216),
+        "WARN": (180, 83, 9),
+        "SMALL": (71, 85, 105),
+        "BODY": (30, 41, 59),
+    }
+    for style, text in queue:
+        step = steps[style]
         if y + step > page_h - margin_bottom:
-            cur_img, draw, y = _new_page()
-
-        if style == "TITLE":
-            draw.text((margin_x, y), text, font=font_title, fill=(15, 23, 42))
-        elif style == "META":
-            draw.text((margin_x, y), text, font=font_small, fill=(100, 116, 139))
-        elif style == "WARN":
+            pages.append(img)
+            img = Image.new("RGB", (page_w, page_h), (255, 255, 255))
+            draw = ImageDraw.Draw(img)
+            y = margin_top
+        if style == "WARN":
             draw.rectangle(
-                [margin_x - 8, y - 4, page_w - margin_x, y + step - 4],
-                fill=(254, 243, 199),
+                [margin_x - 8, y - 4, page_w - margin_x, y + step - 4], fill=(254, 243, 199)
             )
-            draw.text((margin_x, y), text, font=font_small, fill=(180, 83, 9))
-        elif style == "H2":
-            y += 8
-            draw.text((margin_x, y), text, font=font_h2, fill=(29, 78, 216))
-        elif style == "BODY_BOLD":
-            draw.text((margin_x, y), text, font=font_body, fill=(15, 23, 42))
-        elif style == "SMALL":
-            draw.text((margin_x, y), text, font=font_small, fill=(71, 85, 105))
-        else:
-            draw.text((margin_x, y), text, font=font_body, fill=(30, 41, 59))
+        draw.text((margin_x, y), text, font=fonts[style], fill=colors[style])
         y += step
-
-    pages.append(cur_img)
-    for idx, p in enumerate(pages, start=1):
-        d = ImageDraw.Draw(p)
-        d.text(
+    pages.append(img)
+    for idx, page in enumerate(pages, start=1):
+        ImageDraw.Draw(page).text(
             (page_w // 2 - 60, page_h - 50),
-            f"Page {idx} / {len(pages)} · 车研数合",
-            font=font_small,
+            f"Page {idx} / {len(pages)}",
+            font=fonts["SMALL"],
             fill=(148, 163, 184),
         )
-
-    out_buf = io.BytesIO()
-    first, rest = pages[0], pages[1:]
-    first.save(out_buf, format="PDF", resolution=150.0, save_all=True, append_images=rest)
-    return out_buf.getvalue()
+    out = io.BytesIO()
+    pages[0].save(out, format="PDF", resolution=150.0, save_all=True, append_images=pages[1:])
+    return out.getvalue()

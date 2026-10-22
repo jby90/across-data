@@ -128,22 +128,18 @@ interface TaskDetail {
 
 interface BenchmarkSummary {
   total_cases: number
-  passed_cases: number
-  recall_rate_pct: number
-  substring_verify_rate_pct: number
-  dimension_completeness_pct: number
-  fact_consistency_pct: number
+  hit_cases: number
+  retrieval_hit_rate_pct: number
+  human_review_status: string
+  note: string
   cases: Array<{
     question_id: string
     country_code: string
     dimension_code: string
     scenario_question: string
-    expected_regulation: string
-    expected_clause: string
+    required_phrases: string[]
     matched_document_title: string
-    matched_clause_number: string
-    substring_verified: boolean
-    fact_consistent: boolean
+    matched_clause_label: string
     passed: boolean
     evidence_snippet: string
   }>
@@ -549,7 +545,7 @@ onMounted(() => {
           data-testid="btn-open-benchmarks"
           @click="openBenchmarksDrawer"
         >
-          10道独立评测集看板
+          检索命中评测 (H01-H10)
         </el-button>
       </div>
     </div>
@@ -1166,75 +1162,52 @@ onMounted(() => {
       </template>
     </el-dialog>
 
-    <!-- 10 道独立测试问题评测集抽屉 -->
+    <!-- 10 道检索命中评测抽屉 -->
     <el-drawer
       v-model="benchmarkDrawerVisible"
-      title="多智能体合规分析 · 10 道冻结独立评测集 (H01 - H10)"
+      title="检索命中评测 (H01 - H10,自动检查,非法律准确率)"
       size="65%"
     >
       <div v-loading="loadingBenchmarks">
-        <div v-if="benchmarkData" class="benchmark-summary-cards">
-          <div class="bm-card">
-            <div class="bm-num">{{ benchmarkData.recall_rate_pct }}%</div>
-            <div class="bm-label">法条定位召回率 (目标 ≥90%)</div>
-          </div>
-          <div class="bm-card">
-            <div class="bm-num">
-              {{ benchmarkData.substring_verify_rate_pct }}%
+        <template v-if="benchmarkData">
+          <el-alert type="warning" :closable="false" show-icon style="margin-bottom: 12px">
+            <template #title>{{ benchmarkData.note }}</template>
+          </el-alert>
+          <div class="benchmark-summary-cards">
+            <div class="bm-card">
+              <div class="bm-num">
+                {{ benchmarkData.hit_cases }} / {{ benchmarkData.total_cases }}
+              </div>
+              <div class="bm-label">
+                检索命中 ({{ benchmarkData.retrieval_hit_rate_pct }}%)
+              </div>
             </div>
-            <div class="bm-label">原文子串精确核验率 (100%)</div>
-          </div>
-          <div class="bm-card">
-            <div class="bm-num">
-              {{ benchmarkData.dimension_completeness_pct }}%
+            <div class="bm-card">
+              <div class="bm-num">人工核对</div>
+              <div class="bm-label">{{ benchmarkData.human_review_status }}</div>
             </div>
-            <div class="bm-label">八维度结构完整率</div>
           </div>
-          <div class="bm-card">
-            <div class="bm-num">{{ benchmarkData.fact_consistency_pct }}%</div>
-            <div class="bm-label">事实一致性 (目标 ≥90%)</div>
-          </div>
-        </div>
 
-        <el-table
-          v-if="benchmarkData"
-          :data="benchmarkData.cases"
-          border
-          stripe
-          size="small"
-          style="margin-top: 16px"
-        >
-          <el-table-column prop="question_id" label="题号" width="65" />
-          <el-table-column prop="country_code" label="国家" width="65" />
-          <el-table-column prop="dimension_code" label="维度" width="65" />
-          <el-table-column
-            prop="scenario_question"
-            label="独立测试问题"
-            min-width="220"
-          />
-          <el-table-column
-            prop="matched_document_title"
-            label="命中法规"
-            min-width="160"
-          />
-          <el-table-column
-            prop="matched_clause_number"
-            label="命中条款"
-            width="100"
-          />
-          <el-table-column label="子串核验" width="90">
-            <template #default="{ row }">
-              <el-tag :type="row.substring_verified ? 'success' : 'danger'" size="small">
-                {{ row.substring_verified ? '100%匹配' : '未匹配' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="evidence_snippet"
-            label="核验原文子串片段"
-            min-width="220"
-          />
-        </el-table>
+          <el-table :data="benchmarkData.cases" border stripe size="small" style="margin-top: 16px">
+            <el-table-column prop="question_id" label="题号" width="65" />
+            <el-table-column prop="country_code" label="国家" width="65" />
+            <el-table-column prop="dimension_code" label="维度" width="65" />
+            <el-table-column prop="scenario_question" label="测试问题" min-width="220" />
+            <el-table-column label="要求出现的原文词句" min-width="150">
+              <template #default="{ row }">{{ row.required_phrases.join(' + ') }}</template>
+            </el-table-column>
+            <el-table-column prop="matched_document_title" label="命中法规" min-width="160" />
+            <el-table-column prop="matched_clause_label" label="命中条款" width="100" />
+            <el-table-column label="检索命中" width="90">
+              <template #default="{ row }">
+                <el-tag :type="row.passed ? 'success' : 'danger'" size="small">
+                  {{ row.passed ? '命中' : '未命中' }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="evidence_snippet" label="命中的原文片段" min-width="220" />
+          </el-table>
+        </template>
       </div>
     </el-drawer>
   </div>

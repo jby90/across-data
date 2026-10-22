@@ -275,22 +275,17 @@ class BenchmarkCaseOut(BaseModel):
     country_code: str
     dimension_code: str
     scenario_question: str
-    expected_regulation: str
-    expected_clause: str
-    matched_clause_id: str | None = None
+    required_phrases: list[str]
     matched_document_title: str
-    matched_clause_number: str
-    substring_verified: bool
-    fact_consistent: bool
+    matched_clause_label: str
     passed: bool
     evidence_snippet: str
 
 
 class BenchmarkSummaryOut(BaseModel):
     total_cases: int
-    passed_cases: int
-    recall_rate_pct: float
-    substring_verify_rate_pct: float
-    dimension_completeness_pct: float
-    fact_consistency_pct: float
+    hit_cases: int
+    retrieval_hit_rate_pct: float
+    human_review_status: str
+    note: str
     cases: list[BenchmarkCaseOut]

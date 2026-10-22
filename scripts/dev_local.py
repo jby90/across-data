@@ -132,13 +132,20 @@ async def seed(creds: dict) -> None:
                     flush=True,
                 )
 
-    from app.analysis.workflow_engine import ensure_p3_seed_data
+    from app.analysis.workflow_engine import ensure_workflow_config
     from app.knowledge.extractor import extract_knowledge_for_country
 
     async with sf() as s:
         for cc in ("SG", "EG", "TN", "MA", "LB"):
             await extract_knowledge_for_country(s, cc, translate_sample_per_doc=4)
-        await ensure_p3_seed_data(s)
+        await ensure_workflow_config(s)
+        # 清理旧版本写死的演示分析任务(无租户、无创建人,不是任何用户真实发起的)
+        from sqlalchemy import text
+
+        await s.execute(
+            text("DELETE FROM analysis_tasks WHERE org_id IS NULL AND created_by IS NULL")
+        )
+        await s.commit()
 
 
 def main() -> int:

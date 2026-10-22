@@ -197,7 +197,7 @@ async def verify_admin_portal(browser, creds: dict, bad_responses: list[str], pa
     # 打开 10 道独立评测集看板
     await page.locator("[data-testid=btn-open-benchmarks]").click()
     await page.wait_for_timeout(800)
-    await _assert_no_error_toast(page, "10道独立评测集看板")
+    await _assert_no_error_toast(page, "检索命中评测")
 
     await context.close()
 
@@ -265,57 +265,88 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     await page.wait_for_timeout(1200)
     await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_compliance_map.png"))
 
-    print("[9/10] 点击用户端「合规分析与八维报告」验证页面 4（工作台、追问机制、五列矩阵） ...")
+    print("[9/10] 用户端「合规分析与八维报告」:新建评估 → 真实模型分析 → 页面4/5/6 ...")
     await page.locator(".el-menu-item", has_text="合规分析与八维报告").click()
     await page.wait_for_load_state("networkidle")
-    await page.wait_for_timeout(1200)
+    await page.wait_for_timeout(800)
     await _assert_no_error_toast(page, "用户端合规分析工作台")
 
-    # 验证五列合规判定矩阵存在并点击第一条适用条款打开原文与 1 跳关联图谱抽屉
-    findings_rows = await page.locator("[data-testid=compliance-findings-table] .el-table__row").count()
-    assert findings_rows >= 5, f"五列合规分析矩阵行数不足: {findings_rows}"
+    async def wait_finished(label: str, timeout_s: int = 240) -> None:
+        for _ in range(timeout_s // 2):
+            await page.wait_for_timeout(2000)
+            if await page.locator("[data-testid=task-running-tag]").count() == 0:
+                return
+        raise RuntimeError(f"{label}: 分析超时未结束")
+
+    await page.locator("[data-testid=btn-new-analysis-task]").click()
+    await page.wait_for_timeout(400)
+    await page.locator("[data-testid=btn-confirm-create-task]").click()
+    await page.wait_for_timeout(1500)
+    await _assert_no_error_toast(page, "创建评估任务")
+    # 分析是后台运行的:界面应出现「进行中」标签,而不是一直转圈或直接给结论
+    assert await page.locator("[data-testid=task-running-tag]").count() == 1, "未显示运行中状态"
+    await wait_finished("预填事实任务")
+    await _assert_no_error_toast(page, "分析完成")
+
+    findings_rows = await page.locator(
+        "[data-testid=compliance-findings-table] .el-table__row"
+    ).count()
+    assert findings_rows >= 3, f"五列合规矩阵行数不足: {findings_rows}"
     await page.locator("[data-testid=finding-clause-link]").first.click()
-    await page.wait_for_timeout(1000)
+    await page.wait_for_timeout(1200)
     await _assert_no_error_toast(page, "点击适用条款查看原文与图谱")
     drawer_text = await page.locator("[data-testid=citation-detail-drawer]").inner_text()
     assert "官方原文" in drawer_text and "术语受控中文对照" in drawer_text
     await page.keyboard.press("Escape")
     await page.wait_for_timeout(400)
 
-    print("[10/10] 验证页面 5（八维度国别报告整份/拆分、版本对比）与页面 6（多智能体协同过程与退回补证高亮） ...")
-    await page.locator("[data-testid=analysis-subpage-tabs]").get_by_text("页面5 · 八维度国别报告").click()
+    print("[10/10] 页面5(整份/拆分/导出)与页面6(真实过程)+ 追问补充闭环 ...")
+    tabs = page.locator("[data-testid=analysis-subpage-tabs]")
+    await tabs.get_by_text("页面5 · 八维度国别报告").click()
     await page.wait_for_timeout(800)
-    await _assert_no_error_toast(page, "切换页面5八维度国别报告")
-
-    # 验证整份报告包含 8 个维度，切换为「按维度独立拆分查看」并点击 D3
-    full_chapters = await page.locator(".dimension-chapter-card").count()
-    assert full_chapters == 8, f"整份八维度报告章节数应为 8，实际为: {full_chapters}"
-    await page.locator("[data-testid=report-view-mode-switch]").get_by_text("按维度独立拆分查看").click()
+    assert await page.locator(".dimension-chapter-card").count() == 8
+    await page.locator("[data-testid=report-view-mode-switch]").get_by_text(
+        "按维度独立拆分查看"
+    ).click()
     await page.wait_for_timeout(400)
-    split_chapters = await page.locator(".dimension-chapter-card").count()
-    assert split_chapters == 1, f"按维度拆分查看时应只显示 1 个维度，实际为: {split_chapters}"
+    assert await page.locator(".dimension-chapter-card").count() == 1
     await page.locator("[data-dimension-code=D3]").click()
+    await page.locator("[data-testid=report-view-mode-switch]").get_by_text(
+        "整份八维度完整报告"
+    ).click()
     await page.wait_for_timeout(400)
-    await page.locator("[data-testid=report-view-mode-switch]").get_by_text("整份八维度完整报告").click()
-    await page.wait_for_timeout(400)
+    async with page.expect_download() as dl:
+        await page.locator("[data-testid=btn-export-docx]").click()
+    assert (await dl.value).suggested_filename.endswith(".docx")
+    async with page.expect_download() as dl2:
+        await page.locator("[data-testid=btn-export-pdf]").click()
+    assert (await dl2.value).suggested_filename.endswith(".pdf")
     await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_8dim_report.png"))
 
-    # 切换页面 6：多智能体协同过程，验证存在高亮的『编制/质检退回分析补充依据』卡片
-    await page.locator("[data-testid=analysis-subpage-tabs]").get_by_text("页面6 · 多智能体协同过程").click()
+    await tabs.get_by_text("页面6 · 多智能体协同过程").click()
     await page.wait_for_timeout(600)
-    backtrack_cards = await page.locator("[data-testid=backtrack-step-card]").count()
-    assert backtrack_cards >= 1, "多智能体协同过程时间线未展示『编制/质检退回分析补充依据』高亮记录"
+    steps = await page.locator("[data-testid=agent-process-timeline] .timeline-step-card").count()
+    assert steps >= 6, f"协同过程步骤过少: {steps}"
     await page.screenshot(path=str(Path.home() / ".cyshuhe-dev" / "user_agent_trace.png"))
 
-    # 切换到待补充事实任务，点击「提交补充事实并启动多智能体分析」验证端到端追问闭环
-    await page.locator("[data-testid=analysis-task-item]", has_text="待补充事实").first.click()
-    await page.wait_for_timeout(600)
-    await page.locator("[data-testid=analysis-subpage-tabs]").get_by_text("页面4 · 合规分析工作台").click()
+    # 追问闭环:新建仅 1 项事实的任务 → 逐项点选补充 → 提交 → 后台分析
+    await page.locator("[data-testid=btn-new-analysis-task]").click()
+    await page.wait_for_timeout(400)
+    await page.get_by_text("仅填 1 项事实").click()
+    await page.locator("[data-testid=btn-confirm-create-task]").click()
+    await page.wait_for_timeout(1500)
+    await tabs.get_by_text("页面4 · 合规分析工作台").click()
     await page.wait_for_timeout(500)
+    assert await page.locator("[data-testid=compliance-findings-table]").count() == 0
+    cards = page.locator("[data-testid=followup-questions-panel] .question-item:not(.fulfilled)")
+    for i in range(await cards.count()):
+        await cards.nth(i).locator(".opt-chip").first.click()
     await page.locator("[data-testid=btn-submit-followup-facts]").click()
-    await page.wait_for_load_state("networkidle")
-    await page.wait_for_timeout(1200)
-    await _assert_no_error_toast(page, "提交追问补充事实并启动多智能体分析")
+    await page.wait_for_timeout(1500)
+    await _assert_no_error_toast(page, "提交追问补充事实")
+    assert await page.locator("[data-testid=task-running-tag]").count() == 1
+    await wait_finished("追问补充任务")
+    await _assert_no_error_toast(page, "追问任务分析完成")
 
     await context.close()
 

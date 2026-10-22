@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     llm_base_url: str = "https://api.deepseek.com/v1"
     llm_model: str = "deepseek-chat"
     llm_timeout_seconds: float = 30.0
+    # 多智能体合规分析单次调用允许更长的生成时间
+    llm_analysis_timeout_seconds: float = 150.0
 
     @field_validator("database_url")
     @classmethod
