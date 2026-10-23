@@ -159,7 +159,36 @@ def test_numeric_protection_is_lossless_and_does_not_weaken_currency_gate():
 
 def test_bare_citation_remains_a_failed_translation_without_padding():
     assert not translator.verify_translation("[40/2020]", "[40/2020]", [])[0]
-    assert not translator.verify_translation("[40/2020]", "原文所引用的相关法规编号标记为：[40/2020]", [])[0]
+    assert not translator.verify_translation(
+        "[40/2020]", "原文所引用的相关法规编号标记为：[40/2020]", []
+    )[0]
+
+
+def test_derived_clause_identifier_does_not_invent_a_number_inside_a_year():
+    original = "The organisation must protect personal data. [40/2020]"
+    translated = "组织必须依法保护相关个人数据并遵守规定。[40/2020]"
+    assert translator.verify_translation(original, translated, [], clause_number="53.2")[0]
+    assert not translator.verify_translation(
+        original, translated.replace("2020", "2021"), [], clause_number="53.2"
+    )[0]
+
+
+@pytest.mark.parametrize(
+    "source,expected",
+    [
+        ("1 February 2021", "2021年2月1日"),
+        ("30 جويلية 2004", "2004年7月30日"),
+        ("27 juillet 2004", "2004年7月27日"),
+        ("December 19, 2022", "2022年12月19日"),
+    ],
+)
+def test_explicit_date_format_is_exact_and_wrong_year_day_remains_rejected(source, expected):
+    safe, mapping = translator._protect_explicit_dates(source)
+    assert safe == "__CYSH_DATE_A__" and mapping[safe] == expected
+    assert translator.dates(source) == translator.dates(mapping[safe])
+    assert not translator.verify_translation(
+        source, "法律条款明确载明的相关日期为2020年1月1日。", []
+    )[0]
 
 
 def test_privacy_placeholders_preserve_legal_reference_without_sending_original():

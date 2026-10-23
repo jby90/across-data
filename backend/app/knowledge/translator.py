@@ -23,7 +23,7 @@ import inspect
 import logging
 import re
 import time
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from typing import Any
 
 import httpx
@@ -34,6 +34,7 @@ from app.core.config import get_settings
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.knowledge.models import ClauseTranslation, GlossaryTerm, TranslationReviewStatus
 from app.knowledge.numeric_integrity import (
+    MONTHS,
     NUMERIC,
     canonical,
     dates,
@@ -44,7 +45,7 @@ from app.knowledge.numeric_integrity import (
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "translate-v4"
+PROMPT_VERSION = "translate-v5"
 MAX_CHUNK_CHARS = 1500
 DEFAULT_CONCURRENCY = 4
 
@@ -180,6 +181,35 @@ def _protect_numeric_literals(text: str) -> tuple[str, dict[str, str]]:
     )
     safe = currency_amount.sub(replace, text)
     return _NUM_TOKEN_RE.sub(replace, safe), mapping
+
+
+def _protect_explicit_dates(text: str) -> tuple[str, dict[str, str]]:
+    """Format only fully explicit, valid day/month/year dates, without model guessing."""
+    mapping = {}
+    month_words = "|".join(sorted(MONTHS, key=len, reverse=True))
+
+    def replace(match):
+        day, month, year = match.group("day", "month", "year")
+        try:
+            value = date(int(year), MONTHS[month.casefold()], int(day))
+        except (KeyError, ValueError):
+            return match.group()
+        number, letters = len(mapping), ""
+        while True:
+            number, remainder = divmod(number, 26)
+            letters = chr(65 + remainder) + letters
+            if not number:
+                break
+        marker = f"__CYSH_DATE_{letters}__"
+        mapping[marker] = f"{value.year}年{value.month}月{value.day}日"
+        return marker
+
+    for pattern in (
+        rf"(?<!\d)(?P<day>\d{{1,2}})\s+(?P<month>{month_words})\s+(?P<year>\d{{4}})(?!\d)",
+        rf"(?P<month>{month_words})\s+(?P<day>\d{{1,2}}),?\s+(?P<year>\d{{4}})(?!\d)",
+    ):
+        text = re.sub(pattern, replace, text, flags=re.IGNORECASE)
+    return text, mapping
 
 
 def compute_cjk_ratio(text: str) -> float:
@@ -395,10 +425,8 @@ def verify_translation(
     translated_norm = _normalize_digits(trans_clean)
     translated_no_comma = translated_norm.replace(",", "")
     orig_nums = extract_numeric_tokens(orig_clean)
-    if clause_number:
-        for cn_tok in extract_numeric_tokens(clause_number):
-            if cn_tok in _normalize_digits(orig_clean) and cn_tok not in orig_nums:
-                orig_nums.append(cn_tok)
+    # Persisted derived identifiers (e.g. 53.2) are not source numbers. Every real source
+    # token is already in orig_nums; substring matching "2" inside "2020" invents an obligation.
 
     for num in orig_nums:
         if not _number_appears_in_translation(num, translated_norm, translated_no_comma):
@@ -455,6 +483,7 @@ def _build_translation_prompts(
         "不要为提高中文占比添加原文没有的解释或法律结论。",
         "10. 文字月份也应规范转为中文年月日格式，如 19 December 2022 应输出2022年12月19日。"
         "若年份和日是占位符，移动对应占位符到正确位置；月份仍须使用阿拉伯数字，不可留成七月等文字。",
+        "11. __CYSH_DATE_ 是经程序核对的完整日期，必须原样保留，系统会还原为准确中文日期。",
     ]
     if glossary_hits:
         sys_lines.append("\n【强制法律术语表（原词 -> 规定译法 -> 法定定义）】：")
@@ -475,7 +504,7 @@ def _build_translation_prompts(
 
     req_nums = extract_numeric_tokens(safe_text)
     user_parts = [f"源语言: {language}"]
-    protected_markers = re.findall(r"__CYSH_(?:PRIVATE|LITERAL)_[A-Z]+__", safe_text)
+    protected_markers = re.findall(r"__CYSH_(?:PRIVATE|LITERAL|DATE)_[A-Z]+__", safe_text)
     if protected_markers:
         user_parts.append(
             "完整性清单：下列每个标记必须且只能原样输出一次（包括版面行号，禁止省略）：\n"
@@ -515,8 +544,9 @@ async def _call_llm_translate(
         return None
 
     safe_text, private_tokens = _redact_with_mapping(original_text)
+    safe_text, date_tokens = _protect_explicit_dates(safe_text)
     safe_text, numeric_tokens = _protect_numeric_literals(safe_text)
-    protected_tokens = private_tokens | numeric_tokens
+    protected_tokens = private_tokens | date_tokens | numeric_tokens
     sys_prompt, user_prompt = _build_translation_prompts(
         safe_text, language, glossary_hits, unmatched_terms, retry_issues=retry_issues
     )
