@@ -1,0 +1,49 @@
+{
+  "invalid_current": [
+    {
+      "translation_id": "409d0811-4d9d-4bac-98fb-de0c2755b204",
+      "clause_id": "bf35708a-0e6a-4e0a-944a-ea1dd354d19b",
+      "issues": [
+        "短表格单元译文含原文未支持的扩写；须关联真实表头或上下文"
+      ],
+      "status": "machine_translated",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "6. 1,000,000 $0.01 per number",
+      "translated": "6. 1,000,000 $0.01 按照编号逐项一一对应并进行相应处理及相关事项的工作",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": true
+    },
+    {
+      "translation_id": "139f8029-70f1-4c24-af5b-9e9e9a62c568",
+      "clause_id": "1226dd89-1989-42d6-919a-d84e3f17aa77",
+      "issues": [
+        "短表格单元译文含原文未支持的扩写；须关联真实表头或上下文"
+      ],
+      "status": "machine_translated",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "Amount\n1. 5,000 $100",
+      "translated": "金额：本条款项下应支付或收取的相关款项的具体数额如下，本项金额为1.\n5,000 $100",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": true
+    },
+    {
+      "translation_id": "a786f38b-7c4a-4ef9-8612-b83555a54827",
+      "clause_id": "60033c36-4329-4bd6-a19d-7bfc0f2077b3",
+      "issues": [
+        "短表格单元译文含原文未支持的扩写；须关联真实表头或上下文"
+      ],
+      "status": "machine_translated",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "Fee\n1. 1 – 20 $100",
+      "translated": "费用项目如下：\n1. 1 – 20 $100",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": true
+    }
+  ]
+}

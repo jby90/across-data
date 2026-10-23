@@ -343,7 +343,7 @@ onMounted(loadAll)
       </div>
     </div>
 
-    <el-dialog v-model="historyDialog" title="历史与审批记录" width="760px">
+    <el-dialog v-model="historyDialog" title="历史与审批记录" width="760px" append-to-body>
       <p>机器重试不会沿用旧审批。既有历史未补造审批记录；以下仅展示本次修复后留存的快照与提案。</p>
       <pre style="max-height: 480px; overflow: auto; white-space: pre-wrap">{{
         JSON.stringify(historyResult, null, 2)

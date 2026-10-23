@@ -1,0 +1,46 @@
+{
+  "summary": {
+    "targets": 3,
+    "standalone_passed": 0,
+    "context_passed": 3,
+    "failed": 0,
+    "tokens_in": 3620,
+    "tokens_out": 5646,
+    "duration_seconds": 13.541,
+    "human_approved": 0,
+    "started_at": "2026-10-23T14:56:42.742029+00:00",
+    "completed_at": "2026-10-23T14:56:56.282649+00:00"
+  },
+  "results": [
+    {
+      "clause_id": "1226dd89-1989-42d6-919a-d84e3f17aa77",
+      "path": "context_revision",
+      "record_id": "6871aa6b-820b-4675-9327-8afe42cc1098",
+      "passed": true,
+      "review_status": "pending_review",
+      "issues": [],
+      "tokens_in": 1179,
+      "tokens_out": 1656
+    },
+    {
+      "clause_id": "bf35708a-0e6a-4e0a-944a-ea1dd354d19b",
+      "path": "context_revision",
+      "record_id": "3fa75729-0537-4231-b9d4-3deabe31f596",
+      "passed": true,
+      "review_status": "pending_review",
+      "issues": [],
+      "tokens_in": 1204,
+      "tokens_out": 1690
+    },
+    {
+      "clause_id": "60033c36-4329-4bd6-a19d-7bfc0f2077b3",
+      "path": "context_revision",
+      "record_id": "f4573f1f-ce88-4b74-9b07-3cd9b09fbc3f",
+      "passed": true,
+      "review_status": "pending_review",
+      "issues": [],
+      "tokens_in": 1237,
+      "tokens_out": 2300
+    }
+  ]
+}
