@@ -116,9 +116,7 @@ def _to_workflow_out(cfg: AgentWorkflowConfig) -> AgentWorkflowConfigOut:
     )
 
 
-async def _load_org_and_creator(
-    session: AsyncSession, t: AnalysisTask
-) -> tuple[str, str, str]:
+async def _load_org_and_creator(session: AsyncSession, t: AnalysisTask) -> tuple[str, str, str]:
     org_name = "系统示例"
     if t.org_id is not None:
         org = await session.get(Organization, t.org_id)
@@ -952,7 +950,11 @@ async def get_clause_citation_card(
             select(ClauseTranslation)
             .where(
                 ClauseTranslation.clause_id == clause.id,
-                ClauseTranslation.review_status != "superseded",
+                ClauseTranslation.is_current.is_(True),
+                ClauseTranslation.review_status.in_(
+                    ("machine_translated", "pending_review", "approved")
+                ),
+                ClauseTranslation.quality_check_passed.is_(True),
             )
             .order_by(ClauseTranslation.updated_at.desc())
             .limit(1)

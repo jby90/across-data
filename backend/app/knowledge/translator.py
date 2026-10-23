@@ -33,6 +33,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.knowledge.models import ClauseTranslation, GlossaryTerm, TranslationReviewStatus
+from app.knowledge.numeric_integrity import (
+    NUMERIC,
+    canonical,
+    dates,
+    missing_amounts,
+    normalize,
+    tokens,
+)
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +51,7 @@ DEFAULT_CONCURRENCY = 4
 _EMAIL_RE = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
 _PHONE_RE = re.compile(r"(?:\+\d{1,3}[-\s]?)?\b\d{3,4}[-\s]\d{4,8}\b")
 _SG_NRIC_RE = re.compile(r"\b[STFGM]\d{7}[A-Z]\b")
-_NUM_TOKEN_RE = re.compile(r"\b\d+(?:,\d{3})*(?:\.\d+)?%?\b")
+_NUM_TOKEN_RE = NUMERIC
 _CJK_RE = re.compile(r"[\u4e00-\u9fff\u3400-\u4dbf]")
 _WS_RE = re.compile(r"\s+")
 _SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?。！？；;])\s+")
@@ -131,7 +139,7 @@ def compute_cjk_ratio(text: str) -> float:
 
 
 def _normalize_digits(text: str) -> str:
-    return (text or "").translate(_EASTERN_ARABIC_MAP)
+    return normalize(text)
 
 
 def extract_numeric_tokens(text: str) -> list[str]:
@@ -277,23 +285,7 @@ def _number_appears_in_translation(
     num_token: str, translated_norm: str, translated_no_comma: str
 ) -> bool:
     """检查原文数字/金额/百分比/年份/条号是否在译文中出现。"""
-    tok = num_token.strip()
-    if not tok:
-        return True
-    plain = tok.replace(",", "")
-    if tok in translated_norm or plain in translated_no_comma:
-        return True
-    # 百分比形式兼容: "10%" -> "10%" 或 "百分之10"
-    if tok.endswith("%"):
-        num_part = plain[:-1]
-        if f"{num_part}%" in translated_no_comma or f"百分之{num_part}" in translated_no_comma:
-            return True
-    # 前导零日期/条号兼容: "05" -> "5"
-    if len(plain) > 1 and plain.startswith("0") and plain.isdigit():
-        stripped = plain.lstrip("0")
-        if stripped and stripped in translated_no_comma:
-            return True
-    return False
+    return not num_token.strip() or canonical(num_token) in tokens(translated_norm)
 
 
 def verify_translation(
@@ -346,6 +338,10 @@ def verify_translation(
     for num in orig_nums:
         if not _number_appears_in_translation(num, translated_norm, translated_no_comma):
             issues.append(f"译文缺失原文数字或比例: {num}")
+    for amount in missing_amounts(orig_clean, trans_clean):
+        issues.append(f"译文金额或币种不一致: {amount}")
+    for year, month, day in sorted(dates(orig_clean) - dates(trans_clean)):
+        issues.append(f"译文日期不一致: {year:04}-{month:02}-{day:02}")
 
     return len(issues) == 0, issues, updated_hits
 
@@ -523,9 +519,7 @@ async def _invoke_llm_translate(
         supports_retry_kw = False
 
     if supports_retry_kw and retry_issues:
-        raw = await fn(
-            chunk_text, language, chunk_hits, chunk_unmatched, retry_issues=retry_issues
-        )
+        raw = await fn(chunk_text, language, chunk_hits, chunk_unmatched, retry_issues=retry_issues)
     else:
         raw = await fn(chunk_text, language, chunk_hits, chunk_unmatched)
     return _unpack_llm_result(raw, settings.llm_model or "llm")
@@ -558,37 +552,37 @@ async def translate_clause(
     effective_terms = select_effective_terms(terms, country_code, clause.language)
     hits, unmatched = match_clause_glossary(clause.original_text, effective_terms)
 
-    # 查找该条款现有的译文记录;旧的 glossary_assisted 记录标记为 superseded 保留历史
+    # Serialize retries for one clause; never reuse a previous row for new model output.
+    await session.execute(select(Clause.id).where(Clause.id == clause.id).with_for_update())
     existing_rows = list(
         (
-            await session.execute(
+            await session.scalars(
                 select(ClauseTranslation)
                 .where(ClauseTranslation.clause_id == clause.id)
-                .order_by(ClauseTranslation.updated_at.desc())
+                .order_by(ClauseTranslation.updated_at.desc(), ClauseTranslation.id)
             )
-        )
-        .scalars()
-        .all()
+        ).all()
     )
-    active_existing: ClauseTranslation | None = None
-    for row in existing_rows:
-        if row.review_status == TranslationReviewStatus.SUPERSEDED.value:
-            continue
-        if row.engine != "llm":
-            row.review_status = TranslationReviewStatus.SUPERSEDED.value
-            row.updated_at = datetime.now(UTC)
-        elif active_existing is None:
-            active_existing = row
-        else:
-            row.review_status = TranslationReviewStatus.SUPERSEDED.value
-            row.updated_at = datetime.now(UTC)
-
-    if (
-        active_existing is not None
-        and active_existing.review_status == TranslationReviewStatus.APPROVED.value
-    ):
-        await session.flush()
-        return active_existing
+    current_rows = [
+        row
+        for row in existing_rows
+        if row.is_current and row.review_status not in ("superseded", "stale", "rejected")
+    ]
+    approved = next((row for row in current_rows if row.review_status == "approved"), None)
+    if approved is not None:
+        return approved  # Human approval is bound to exactly this text, not to a retry.
+    previous_good = next(
+        (
+            row
+            for row in current_rows
+            if row.engine == "llm"
+            and row.quality_check_passed
+            and verify_translation(
+                clause.original_text, row.translated_text, row.glossary_hits or []
+            )[0]
+        ),
+        None,
+    )
 
     chunks = split_clause_into_chunks(clause.original_text, max_chars=MAX_CHUNK_CHARS)
 
@@ -597,12 +591,11 @@ async def translate_clause(
     total_duration_ms = 0
     model_name = settings.llm_model or "deepseek-flash"
     llm_unavailable = False
+    chunk_failures: list[str] = []
 
     if len(chunks) == 1:
         # 单块条款:翻译 -> 译后检查 -> 若未通过则携带问题原因重译一次
-        first_res = await _invoke_llm_translate(
-            chunks[0], clause.language, hits, unmatched
-        )
+        first_res = await _invoke_llm_translate(chunks[0], clause.language, hits, unmatched)
         if first_res is None:
             llm_unavailable = True
             translated_text = ""
@@ -649,20 +642,24 @@ async def translate_clause(
                 )
                 if r2 is not None:
                     c_zh, c_model, tin2, tout2, dms2 = r2
+                    retry_ok, retry_issues, _ = verify_translation(chunk_str, c_zh, c_hits)
+                    if not retry_ok:
+                        chunk_failures.extend(retry_issues)
                     return c_zh, c_model, tin1 + tin2, tout1 + tout2, dms1 + dms2
+                chunk_failures.extend(c_issues)
             return c_zh, c_model, tin1, tout1, dms1
 
         chunk_results = await asyncio.gather(*(_translate_single_chunk(ch) for ch in chunks))
         merged_parts: list[str] = []
         for c_zh, c_model, tin, tout, dms in chunk_results:
-            if c_zh is None:
-                llm_unavailable = True
-                break
-            merged_parts.append(c_zh)
-            model_name = c_model
             total_tokens_in += tin
             total_tokens_out += tout
             total_duration_ms += dms
+            if c_zh is None:
+                llm_unavailable = True
+                continue
+            merged_parts.append(c_zh)
+            model_name = c_model
         translated_text = "\n".join(merged_parts) if not llm_unavailable else ""
 
     if llm_unavailable:
@@ -678,51 +675,55 @@ async def translate_clause(
             hits,
             clause_number=clause.clause_number,
         )
+        if chunk_failures:
+            passed = False
+            issues.extend("分块校验未通过: " + issue for issue in chunk_failures)
         next_status = (
             TranslationReviewStatus.MACHINE_TRANSLATED.value
             if passed
             else TranslationReviewStatus.TRANSLATION_FAILED.value
         )
 
-    if active_existing is None:
-        active_existing = ClauseTranslation(
-            clause_id=clause.id,
-            translated_text=translated_text,
-            engine="llm",
-            model_name=model_name,
-            prompt_version=PROMPT_VERSION,
-            tokens_in=total_tokens_in,
-            tokens_out=total_tokens_out,
-            duration_ms=total_duration_ms,
-            glossary_hits=checked_hits,
-            unmatched_terms=unmatched,
-            quality_check_passed=passed,
-            quality_issues=issues,
-            review_status=next_status,
-            updated_at=datetime.now(UTC),
-        )
-        session.add(active_existing)
-    else:
-        active_existing.translated_text = translated_text
-        active_existing.engine = "llm"
-        active_existing.model_name = model_name
-        active_existing.prompt_version = PROMPT_VERSION
-        active_existing.tokens_in = total_tokens_in
-        active_existing.tokens_out = total_tokens_out
-        active_existing.duration_ms = total_duration_ms
-        active_existing.glossary_hits = checked_hits
-        active_existing.unmatched_terms = unmatched
-        active_existing.quality_check_passed = passed
-        active_existing.quality_issues = issues
-        active_existing.review_status = next_status
-        active_existing.updated_at = datetime.now(UTC)
+    from app.knowledge.history import snapshot
 
+    # A failed attempt is retained for diagnostics, while a good current translation stays usable.
+    make_current = passed or previous_good is None
+    if make_current:
+        for row in existing_rows:
+            if not row.is_current:
+                continue
+            snapshot(session, row, "before_translation_replacement")
+            row.is_current = False
+            if row.review_status not in ("approved", "rejected"):
+                row.review_status = TranslationReviewStatus.SUPERSEDED.value
+    attempt = ClauseTranslation(
+        clause_id=clause.id,
+        is_current=make_current,
+        translated_text=translated_text,
+        engine="llm",
+        model_name=model_name,
+        prompt_version=PROMPT_VERSION,
+        tokens_in=total_tokens_in,
+        tokens_out=total_tokens_out,
+        duration_ms=total_duration_ms,
+        glossary_hits=checked_hits,
+        unmatched_terms=unmatched,
+        quality_check_passed=passed,
+        quality_issues=issues,
+        review_status=next_status,
+        updated_at=datetime.now(UTC),
+    )
+    session.add(attempt)
     await session.flush()
-    return active_existing
+    snapshot(session, attempt, "translation_attempt")
+    return attempt
 
 
 async def translate_document_latest_version(
-    session: AsyncSession, document_id, limit_clauses: int = 200
+    session: AsyncSession,
+    document_id,
+    limit_clauses: int | None = None,
+    only_missing: bool = True,
 ) -> list[ClauseTranslation]:
     """对指定文档最新已解析版本的条款批量执行受术语约束翻译。"""
     doc = await session.get(Document, document_id)
@@ -756,10 +757,7 @@ async def translate_document_latest_version(
     clauses = list(
         (
             await session.execute(
-                select(Clause)
-                .where(Clause.version_id == ver.id)
-                .order_by(Clause.ordinal)
-                .limit(limit_clauses)
+                select(Clause).where(Clause.version_id == ver.id).order_by(Clause.ordinal)
             )
         )
         .scalars()
@@ -767,6 +765,30 @@ async def translate_document_latest_version(
     )
     out: list[ClauseTranslation] = []
     for c in clauses:
+        current = (
+            await session.scalars(
+                select(ClauseTranslation).where(
+                    ClauseTranslation.clause_id == c.id,
+                    ClauseTranslation.is_current.is_(True),
+                    ClauseTranslation.review_status.in_(
+                        ("machine_translated", "pending_review", "approved")
+                    ),
+                )
+            )
+        ).all()
+        if only_missing and any(
+            row.review_status == "approved"
+            or (
+                row.quality_check_passed
+                and verify_translation(
+                    c.original_text, row.translated_text, row.glossary_hits or []
+                )[0]
+            )
+            for row in current
+        ):
+            continue
+        if limit_clauses is not None and len(out) >= limit_clauses:
+            break
         out.append(await translate_clause(session, c, doc.country_code, terms))
-    await session.commit()
+        await session.commit()  # Resume skips completed clauses after a later failure.
     return out

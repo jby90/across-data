@@ -4,7 +4,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -83,8 +83,10 @@ async def _build_translation_outs(
     out: list[ClauseTranslationOut] = []
     for tr, clause, doc in rows:
         usable, badge = _status_badge(tr.review_status)
+        usable = usable and tr.is_current and tr.quality_check_passed
         out.append(
             ClauseTranslationOut(
+                is_current=tr.is_current,
                 id=tr.id,
                 clause_id=clause.id,
                 document_id=doc.id,
@@ -587,20 +589,22 @@ async def review_glossary_term(
 
 @admin_router.get("/translations", response_model=list[ClauseTranslationOut])
 async def list_translations(
+    response: Response,
     _: AdminOrReviewerDep,
     session: SessionDep,
     country_code: str | None = None,
     review_status: str | None = None,
     document_id: uuid.UUID | None = None,
     limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+    include_history: bool = False,
 ) -> list[ClauseTranslationOut]:
     stmt = (
         select(ClauseTranslation, Clause, Document)
         .join(Clause, Clause.id == ClauseTranslation.clause_id)
         .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
         .join(Document, Document.id == DocumentVersion.document_id)
-        .order_by(ClauseTranslation.updated_at.desc(), Clause.ordinal)
-        .limit(limit)
+        .order_by(ClauseTranslation.updated_at.desc(), Clause.ordinal, ClauseTranslation.id)
     )
     if country_code:
         stmt = stmt.where(Document.country_code == country_code.upper())
@@ -612,7 +616,15 @@ async def list_translations(
         )
     if document_id:
         stmt = stmt.where(Document.id == document_id)
-    rows = list((await session.execute(stmt)).all())
+    if not include_history and review_status not in (
+        "translation_failed",
+        "not_translated",
+        "superseded",
+    ):
+        stmt = stmt.where(ClauseTranslation.is_current.is_(True))
+    total = await session.scalar(select(func.count()).select_from(stmt.order_by(None).subquery()))
+    response.headers["X-Total-Count"] = str(total)
+    rows = list((await session.execute(stmt.offset(offset).limit(limit))).all())
     return await _build_translation_outs(session, rows)
 
 
@@ -644,10 +656,16 @@ async def trigger_document_translate(
     document_id: uuid.UUID,
     _: AdminOrReviewerDep,
     session: SessionDep,
-    limit_clauses: int = Query(default=30, ge=1, le=200),
+    limit_clauses: int | None = Query(default=None, ge=1, le=500),
 ) -> dict:
     trs = await translate_document_latest_version(session, document_id, limit_clauses=limit_clauses)
-    return {"document_id": str(document_id), "translated_count": len(trs)}
+    return {
+        "document_id": str(document_id),
+        "attempted_count": len(trs),
+        "translated_count": sum(tr.quality_check_passed for tr in trs),
+        "failed_count": sum(not tr.quality_check_passed for tr in trs),
+        "limited": limit_clauses is not None,
+    }
 
 
 @admin_router.post("/translations/{translation_id}/review", response_model=ClauseTranslationOut)
@@ -671,15 +689,40 @@ async def review_clause_translation(
     tr, clause, doc = row
     from app.knowledge.history import snapshot
 
-    snapshot(session, tr, "before_human_review", user.user_id)
-    if body.translated_text:
-        tr.translated_text = body.translated_text.strip()
-        passed, issues, checked_hits = verify_translation(
-            clause.original_text, tr.translated_text, tr.glossary_hits or []
+    proposed_text = (body.translated_text or tr.translated_text).strip()
+    passed, issues, checked_hits = verify_translation(
+        clause.original_text, proposed_text, tr.glossary_hits or []
+    )
+    if body.decision == "approved" and (not passed or tr.review_status in ("superseded", "stale")):
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "message": "该译文不能审批通过：请修正校验问题，历史/失效版本须另建修订",
+                "issues": issues,
+            },
         )
-        tr.quality_check_passed = passed
-        tr.quality_issues = issues
-        tr.glossary_hits = checked_hits
+    snapshot(session, tr, "before_human_review", user.user_id)
+    if proposed_text != tr.translated_text:
+        # Corrections are new revisions. Approval of the old text is never inherited.
+        old = tr
+        tr = ClauseTranslation(
+            clause_id=old.clause_id,
+            translated_text=proposed_text,
+            engine="human_revision",
+            model_name=old.model_name,
+            prompt_version="human-edit",
+            glossary_hits=checked_hits,
+            unmatched_terms=old.unmatched_terms,
+            quality_check_passed=passed,
+            quality_issues=issues,
+            is_current=old.is_current,
+        )
+        old.is_current = False
+        session.add(tr)
+        await session.flush()
+    tr.quality_check_passed = passed
+    tr.quality_issues = issues
+    tr.glossary_hits = checked_hits
     tr.review_status = body.decision
     tr.reviewer_id = user.user_id
     tr.reviewer_note = body.reviewer_note
@@ -948,8 +991,9 @@ async def get_knowledge_overview(
                 .join(Document, Document.id == DocumentVersion.document_id)
                 .where(
                     Document.country_code == cc,
+                    ClauseTranslation.is_current.is_(True),
                     ClauseTranslation.review_status.notin_(
-                        ("superseded", "not_translated", "translation_failed")
+                        ("superseded", "not_translated", "translation_failed", "rejected", "stale")
                     ),
                 )
             )
@@ -1015,8 +1059,9 @@ async def search_knowledge_clauses(
         .join(Document, Document.id == DocumentVersion.document_id)
         .where(
             Document.country_code == country_code.upper(),
+            ClauseTranslation.is_current.is_(True),
             ClauseTranslation.review_status.notin_(
-                ("superseded", "not_translated", "translation_failed")
+                ("superseded", "not_translated", "translation_failed", "rejected", "stale")
             ),
         )
         .order_by(Document.title, Clause.ordinal)
@@ -1108,8 +1153,15 @@ async def _build_regulation_summary(
                     .join(Clause, Clause.id == ClauseTranslation.clause_id)
                     .where(
                         Clause.version_id == latest.id,
+                        ClauseTranslation.is_current.is_(True),
                         ClauseTranslation.review_status.notin_(
-                            ("superseded", "not_translated", "translation_failed")
+                            (
+                                "superseded",
+                                "not_translated",
+                                "translation_failed",
+                                "rejected",
+                                "stale",
+                            )
                         ),
                     )
                 )
@@ -1269,6 +1321,7 @@ async def get_user_regulation_detail(
                     await session.execute(
                         select(ClauseTranslation).where(
                             ClauseTranslation.clause_id.in_(c_ids),
+                            ClauseTranslation.is_current.is_(True),
                             ClauseTranslation.review_status
                             != TranslationReviewStatus.SUPERSEDED.value,
                         )

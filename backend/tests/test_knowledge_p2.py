@@ -167,11 +167,17 @@ async def test_s1_llm_translation_pass_retry_fail_and_unavailable(session_factor
         assert tr_ok.tokens_in == 120 and tr_ok.tokens_out == 48 and tr_ok.duration_ms == 350
 
         all_rows = (
-            await s.execute(
-                select(ClauseTranslation).where(ClauseTranslation.clause_id == clause.id)
+            (
+                await s.execute(
+                    select(ClauseTranslation).where(ClauseTranslation.clause_id == clause.id)
+                )
             )
-        ).scalars().all()
-        assert any(r.engine == "glossary_assisted" and r.review_status == "superseded" for r in all_rows)
+            .scalars()
+            .all()
+        )
+        assert any(
+            r.engine == "glossary_assisted" and r.review_status == "superseded" for r in all_rows
+        )
 
         # 场景 B: 假 LLM 返回漏数字/漏术语/原文 -> 重译 1 次(共 2 次调用) -> 仍失败标 translation_failed
         calls_fail = 0
@@ -180,7 +186,13 @@ async def test_s1_llm_translation_pass_retry_fail_and_unavailable(session_factor
             nonlocal calls_fail
             calls_fail += 1
             # 故意漏掉数字 3 与 1,000,000 且不写“个人数据”
-            return ("第 26 条：组织必须在若干日内保护私人资料，否则处以高额罚款。", "deepseek-flash", 80, 30, 200)
+            return (
+                "第 26 条：组织必须在若干日内保护私人资料，否则处以高额罚款。",
+                "deepseek-flash",
+                80,
+                30,
+                200,
+            )
 
         monkeypatch.setattr(translator, "_call_llm_translate", fake_bad)
         tr_fail = await translator.translate_clause(s, clause, "SG", [term])
@@ -199,7 +211,13 @@ async def test_s1_llm_translation_pass_retry_fail_and_unavailable(session_factor
             nonlocal calls_retry_ok
             calls_retry_ok += 1
             if calls_retry_ok == 1:
-                return ("第 26 条：组织必须保护个人数据，否则处以 $1,000,000 罚款。", "deepseek-flash", 90, 35, 180)
+                return (
+                    "第 26 条：组织必须保护个人数据，否则处以 $1,000,000 罚款。",
+                    "deepseek-flash",
+                    90,
+                    35,
+                    180,
+                )
             assert kwargs.get("retry_issues")
             return (
                 "第 26 条：组织必须在 3 个日历日内保护个人数据，否则处以 $1,000,000 罚款。",
@@ -250,9 +268,15 @@ async def test_s1_llm_translation_pass_retry_fail_and_unavailable(session_factor
 
         async def fake_chunk_llm(text, lang, hits, unmatched, **kwargs):
             if "24" in text and "1,000,000" not in text:
-                return ("第 1 款：组织必须依照第 24 条保护个人数据。", "deepseek-flash", 100, 30, 150)
+                return (
+                    "第 1 款：组织必须依照第 24 条保护个人数据。",
+                    "deepseek-flash",
+                    100,
+                    30,
+                    150,
+                )
             return (
-                "第 2 款：任何泄露必须在 3 日内通报，最高处以 $1,000,000 罚款，并保护个人数据与第 24 条。",
+                "第 1 款及第 2 款：任何泄露必须在 3 日内通报，最高处以 $1,000,000 罚款，并保护个人数据与第 24 条。",
                 "deepseek-flash",
                 100,
                 35,
@@ -425,7 +449,9 @@ async def test_s2_kg_type_constraints_verbatim_judge_and_out_of_scope(session_fa
         s.add(ver_bad)
         await s.flush()
 
-        c_bad_txt = "The High Court may order civil proceedings to be transferred from the State Courts."
+        c_bad_txt = (
+            "The High Court may order civil proceedings to be transferred from the State Courts."
+        )
         c_bad = Clause(
             version_id=ver_bad.id,
             ordinal=1,
@@ -443,7 +469,9 @@ async def test_s2_kg_type_constraints_verbatim_judge_and_out_of_scope(session_fa
 
         extract_called_for_bad = False
 
-        async def _spy_extract(clause_text, clause_number, document_title, publisher_name, country_code):
+        async def _spy_extract(
+            clause_text, clause_number, document_title, publisher_name, country_code
+        ):
             nonlocal extract_called_for_bad
             if "Courts" in document_title:
                 extract_called_for_bad = True
@@ -458,8 +486,10 @@ async def test_s2_kg_type_constraints_verbatim_judge_and_out_of_scope(session_fa
         assert extract_called_for_bad is False
         # 范围外文件: 不产生任何语义边,但图谱节点与结构边保留(文档库与图谱口径一致)
         edges_bad = (
-            await s.execute(select(KgEdge).where(KgEdge.evidence_clause_id == c_bad.id))
-        ).scalars().all()
+            (await s.execute(select(KgEdge).where(KgEdge.evidence_clause_id == c_bad.id)))
+            .scalars()
+            .all()
+        )
         assert edges_bad
         assert all(e.is_structural for e in edges_bad)
         inst_bad = (
@@ -617,17 +647,29 @@ async def test_knowledge_extraction_glossary_review_points_and_version_linkage(
     monkeypatch.setenv("CYSH_ARCHIVE_DIR", str(tmp_path / "archive"))
     get_settings.cache_clear()
 
-    async def _fake_llm_translate(original_text, language, glossary_hits, unmatched_terms, **kwargs):
+    async def _fake_llm_translate(
+        original_text, language, glossary_hits, unmatched_terms, **kwargs
+    ):
         nums = translator.extract_numeric_tokens(original_text)
         terms_zh = "、".join(h["target_zh"] for h in glossary_hits) or "数据合规"
         nums_str = " / ".join(nums) if nums else ""
+        # This fixture exercises persistence, not translation quality. Preserve units too.
+        from app.knowledge.numeric_integrity import amounts, dates
+
+        units = " / ".join(
+            f"{'$' if currency == 'DOLLAR_UNSPECIFIED' else currency} {value}"
+            for currency, value in amounts(original_text)
+        )
+        date_text = " / ".join(f"{y}年{m}月{d}日" for y, m, d in dates(original_text))
         zh = (
             f"根据本条规定，相关组织与数据处理主体应当严格履行【{terms_zh}】相关的跨境传输、"
-            f"告知同意、安全保护与法定申报义务（保留法定数值与编号：{nums_str}）。"
+            f"告知同意、安全保护与法定申报义务（保留法定数值与编号：{nums_str}；{units}；{date_text}）。"
         )
         return zh, "deepseek-flash", 110, 45, 220
 
-    async def _fake_llm_extract(clause_text, clause_number, document_title, publisher_name, country_code):
+    async def _fake_llm_extract(
+        clause_text, clause_number, document_title, publisher_name, country_code
+    ):
         low = clause_text.lower()
         entities: list[ExtractedEntity] = []
         relations: list[ExtractedRelation] = []

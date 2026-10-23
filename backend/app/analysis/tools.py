@@ -237,8 +237,15 @@ class ToolBox:
                     await self.session.execute(
                         select(ClauseTranslation).where(
                             ClauseTranslation.clause_id.in_(clause_ids),
+                            ClauseTranslation.is_current.is_(True),
                             ClauseTranslation.review_status.notin_(
-                                ("superseded", "not_translated", "translation_failed")
+                                (
+                                    "superseded",
+                                    "not_translated",
+                                    "translation_failed",
+                                    "rejected",
+                                    "stale",
+                                )
                             ),
                         )
                     )

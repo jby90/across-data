@@ -203,236 +203,147 @@ async def batch_translate(
     only_missing: bool = True,
     concurrency: int = 4,
     sf=None,
+    dry_run: bool = False,
+    limit: int | None = None,
 ) -> dict[str, int]:
-    """批量执行受术语表约束的真实大模型翻译(S1):
-    1. 将已有的非 llm (glossary_assisted) 译文全部标记为 superseded(保留历史行);
-    2. 按国家加载术语库,并发调用 LLM 翻译目标条款并执行四项译后检查。
+    """Translate every latest parsed clause; explicit limits are samples, never full coverage.
+
+    Dry runs do not write. Successful attempts commit independently, allowing safe resume.
+    All source/evidence rows and previous translation attempt contents remain untouched.
     """
-    from sqlalchemy import or_, select
+    from sqlalchemy import func, or_, select
 
     from app.ingestion.models import Clause, Document, DocumentVersion
-    from app.knowledge.models import (
-        ClauseTranslation,
-        GlossaryTerm,
-        KgEdge,
-        ReviewPoint,
-        TranslationReviewStatus,
+    from app.knowledge.models import ClauseTranslation, GlossaryTerm
+    from app.knowledge.translator import (
+        set_translation_concurrency,
+        translate_clause,
+        verify_translation,
     )
-    from app.knowledge.translator import set_translation_concurrency, translate_clause
 
     set_translation_concurrency(concurrency)
     sf = sf or get_sessionmaker()
-
-    async with sf() as s:
-        await _split_oversized_clauses_for_country(s, country_code=country)
-
-        # 1. 作废所有旧的 glossary_assisted 记录(标为 superseded)
-        old_stmt = (
-            select(ClauseTranslation, Clause, Document)
-            .join(Clause, Clause.id == ClauseTranslation.clause_id)
-            .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
-            .join(Document, Document.id == DocumentVersion.document_id)
-            .where(
-                ClauseTranslation.engine != "llm",
-                ClauseTranslation.review_status != TranslationReviewStatus.SUPERSEDED.value,
+    target_countries = [country.upper()] if country else ["SG", "EG", "TN", "MA", "LB"]
+    async with sf() as session:
+        latest = (
+            select(
+                DocumentVersion.document_id,
+                func.max(DocumentVersion.version_no).label("version_no"),
             )
+            .where(DocumentVersion.state == "parsed")
+            .group_by(DocumentVersion.document_id)
+            .subquery()
         )
-        if country:
-            old_stmt = old_stmt.where(Document.country_code == country.upper())
-        old_rows = list((await s.execute(old_stmt)).all())
-        for tr, _cl, _doc in old_rows:
-            tr.review_status = TranslationReviewStatus.SUPERSEDED.value
-            tr.updated_at = datetime.now(UTC)
-        await s.commit()
-
-        # 2. 收集需要翻译的目标条款集合:
-        #    (a) 原本已有译文(含刚标为 superseded)或处于 failed/not_translated 的条款;
-        #    (b) 知识图谱 KgEdge 或 ReviewPoint 引用的证据条款;
-        #    (c) 各相关文档最新已解析版本的核心条款(SG 前 8 条,其他四国前 15 条)。
-        target_countries = [country.upper()] if country else ["SG", "EG", "TN", "MA", "LB"]
-        clauses_to_run: list[tuple[Clause, str]] = []
-        seen_cids: set = set()
-
-        for cc in target_countries:
-            done_cids: set = set()
-            if only_missing:
-                done_rows = (
-                    (
-                        await s.execute(
-                            select(ClauseTranslation.clause_id)
-                            .join(Clause, Clause.id == ClauseTranslation.clause_id)
-                            .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
-                            .join(Document, Document.id == DocumentVersion.document_id)
-                            .where(
-                                Document.country_code == cc,
-                                ClauseTranslation.engine == "llm",
-                                ClauseTranslation.review_status.in_(
-                                    (
-                                        TranslationReviewStatus.MACHINE_TRANSLATED.value,
-                                        TranslationReviewStatus.PENDING_REVIEW.value,
-                                        TranslationReviewStatus.APPROVED.value,
-                                    )
-                                ),
-                                ClauseTranslation.quality_check_passed.is_(True),
-                            )
-                        )
-                    )
-                    .scalars()
-                    .all()
+        rows = (
+            await session.execute(
+                select(Clause, Document.country_code)
+                .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+                .join(Document, Document.id == DocumentVersion.document_id)
+                .join(
+                    latest,
+                    (latest.c.document_id == Document.id)
+                    & (latest.c.version_no == DocumentVersion.version_no),
                 )
-                done_cids = set(done_rows)
-
-            tr_cids = set(
-                (
-                    await s.execute(
-                        select(ClauseTranslation.clause_id)
-                        .join(Clause, Clause.id == ClauseTranslation.clause_id)
-                        .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
-                        .join(Document, Document.id == DocumentVersion.document_id)
-                        .where(Document.country_code == cc)
-                    )
-                )
-                .scalars()
-                .all()
+                .where(Document.country_code.in_(target_countries))
+                .order_by(Document.country_code, Document.id, Clause.ordinal, Clause.id)
             )
-            edge_cids = set(
-                (
-                    await s.execute(
-                        select(KgEdge.evidence_clause_id).where(KgEdge.country_code == cc)
-                    )
+        ).all()
+        current = (
+            await session.scalars(
+                select(ClauseTranslation).where(
+                    ClauseTranslation.is_current.is_(True),
+                    ClauseTranslation.review_status.in_(
+                        ("machine_translated", "pending_review", "approved")
+                    ),
                 )
-                .scalars()
-                .all()
             )
-            rp_cids = set(
-                (
-                    await s.execute(
-                        select(ReviewPoint.clause_id).where(
-                            ReviewPoint.country_code == cc, ReviewPoint.clause_id.is_not(None)
-                        )
+        ).all()
+        qualified = set()
+        clauses_by_id = {clause.id: clause for clause, _ in rows}
+        for tr in current:
+            clause = clauses_by_id.get(tr.clause_id)
+            if clause and (
+                tr.review_status == "approved"
+                or (
+                    tr.engine == "llm"
+                    and tr.quality_check_passed
+                    and verify_translation(
+                        clause.original_text, tr.translated_text, tr.glossary_hits or []
+                    )[0]
+                )
+            ):
+                qualified.add(tr.clause_id)
+        pending = [
+            (clause.id, cc) for clause, cc in rows if not only_missing or clause.id not in qualified
+        ]
+        total_missing = len(pending)
+        if limit is not None:
+            if limit < 1:
+                raise ValueError("limit must be positive")
+            pending = pending[:limit]
+        terms = (
+            await session.scalars(
+                select(GlossaryTerm).where(
+                    or_(
+                        GlossaryTerm.country_code.in_(target_countries),
+                        GlossaryTerm.country_code.is_(None),
                     )
                 )
-                .scalars()
-                .all()
             )
-            must_cids = tr_cids | edge_cids | rp_cids
-
-            sample_n = 8 if cc == "SG" else 15
-            docs = list(
-                (
-                    await s.execute(
-                        select(Document).where(
-                            Document.country_code == cc,
-                            Document.relevance == "relevant",
-                        )
-                    )
-                )
-                .scalars()
-                .all()
-            )
-            for doc in docs:
-                ver = (
-                    await s.execute(
-                        select(DocumentVersion)
-                        .where(
-                            DocumentVersion.document_id == doc.id,
-                            DocumentVersion.state == "parsed",
-                        )
-                        .order_by(DocumentVersion.version_no.desc())
-                        .limit(1)
-                    )
-                ).scalar_one_or_none()
-                if ver is None:
-                    continue
-                doc_cids = (
-                    (
-                        await s.execute(
-                            select(Clause.id)
-                            .where(Clause.version_id == ver.id)
-                            .order_by(Clause.ordinal)
-                            .limit(sample_n)
-                        )
-                    )
-                    .scalars()
-                    .all()
-                )
-                must_cids.update(doc_cids)
-
-            pending_cids = [
-                cid for cid in must_cids if cid and cid not in done_cids and cid not in seen_cids
-            ]
-            if pending_cids:
-                c_objs = list(
-                    (
-                        await s.execute(
-                            select(Clause)
-                            .where(Clause.id.in_(pending_cids))
-                            .order_by(Clause.ordinal)
-                        )
-                    )
-                    .scalars()
-                    .all()
-                )
-                for c_obj in c_objs:
-                    seen_cids.add(c_obj.id)
-                    clauses_to_run.append((c_obj, cc))
-
-    print(
-        f"[translate] 已作废旧译文 {len(old_rows)} 条; "
-        f"待翻译条款 {len(clauses_to_run)} 条 (concurrency={concurrency})",
-        flush=True,
+        ).all()
+    stats = dict(
+        total_eligible=len(rows),
+        total_missing=total_missing,
+        total=len(pending),
+        skipped_qualified=len(rows) - total_missing,
+        limited=int(limit is not None),
+        machine_translated=0,
+        translation_failed=0,
+        not_translated=0,
+        errors=0,
+        dry_run=int(dry_run),
+        superseded=0,
+        tokens_in=0,
+        tokens_out=0,
     )
-
-    terms_by_country: dict[str, list[GlossaryTerm]] = {}
-    async with sf() as s:
-        for cc in {cc for _, cc in clauses_to_run}:
-            terms_by_country[cc] = list(
-                (
-                    await s.execute(
-                        select(GlossaryTerm).where(
-                            or_(
-                                GlossaryTerm.country_code == cc,
-                                GlossaryTerm.country_code.is_(None),
-                            )
-                        )
-                    )
-                )
-                .scalars()
-                .all()
-            )
-
+    print("[translate] " + json.dumps(stats, ensure_ascii=False), flush=True)
+    if dry_run:
+        return stats
     sem = asyncio.Semaphore(max(1, concurrency))
-    stats = {
-        "superseded": len(old_rows),
-        "total": len(clauses_to_run),
-        "machine_translated": 0,
-        "translation_failed": 0,
-        "not_translated": 0,
-    }
-    done_counter = 0
+    completed = 0
 
-    async def _worker(clause_obj: Clause, cc: str) -> None:
-        nonlocal done_counter
+    async def worker(clause_id, cc):
+        nonlocal completed
         async with sem:
-            async with sf() as task_s:
-                c_in_s = await task_s.get(Clause, clause_obj.id)
-                if c_in_s is None:
-                    return
-                tr = await translate_clause(task_s, c_in_s, cc, terms_by_country.get(cc, []))
-                await task_s.commit()
-                st = tr.review_status
-                stats[st] = stats.get(st, 0) + 1
-                done_counter += 1
-                if done_counter % 20 == 0 or done_counter == len(clauses_to_run):
+            async with sf() as session:
+                try:
+                    clause = await session.get(Clause, clause_id)
+                    if clause is None:
+                        stats["errors"] += 1
+                        return
+                    tr = await translate_clause(session, clause, cc, terms)
+                    await session.commit()
+                    stats[tr.review_status] = stats.get(tr.review_status, 0) + 1
+                    if tr.review_status != "approved":
+                        stats["tokens_in"] += tr.tokens_in
+                        stats["tokens_out"] += tr.tokens_out
+                    completed += 1
+                    if completed % 20 == 0 or completed == len(pending):
+                        print(
+                            f"[translate] {completed}/{len(pending)} "
+                            + json.dumps(stats, ensure_ascii=False),
+                            flush=True,
+                        )
+                except Exception:
+                    await session.rollback()
+                    stats["errors"] += 1
+                    # Never print request bodies, credentials, or untrusted exception payloads.
                     print(
-                        f"  进度 {done_counter}/{len(clauses_to_run)} | "
-                        f"成功={stats.get('machine_translated', 0)} "
-                        f"失败={stats.get('translation_failed', 0)} "
-                        f"未译={stats.get('not_translated', 0)}",
+                        f"[translate] clause {clause_id}: processing failed; safe to retry",
                         flush=True,
                     )
 
-    await asyncio.gather(*(_worker(c_obj, cc) for c_obj, cc in clauses_to_run))
+    await asyncio.gather(*(worker(clause_id, cc) for clause_id, cc in pending))
     return stats
 
 
@@ -535,6 +446,8 @@ def main() -> int:
         default=False,
         help="仅翻译缺少合格 LLM 译文的条款",
     )
+    t.add_argument("--dry-run", action="store_true", help="只列出全量目标/缺口，不调用模型、不写库")
+    t.add_argument("--limit", type=int, help="显式小样本上限；不传则全量")
     t.add_argument("--concurrency", type=int, default=4, help="并发请求数(默认 4)")
     kg = sub.add_parser("extract-kg", help="批量执行 S2 知识图谱结构化抽取与语义裁判")
     kg.add_argument("--country", help="指定国家代码(如 SG/EG/TN/MA/LB),不传则抽取全部五国")
@@ -576,6 +489,8 @@ def main() -> int:
                 country=args.country,
                 only_missing=args.only_missing,
                 concurrency=args.concurrency,
+                dry_run=args.dry_run,
+                limit=args.limit,
             )
         )
         print("批量翻译结果:", json.dumps(res, ensure_ascii=False))

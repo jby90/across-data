@@ -2383,6 +2383,7 @@ async def handle_new_version_linkage(
                 select(ClauseTranslation)
                 .where(
                     ClauseTranslation.clause_id == old_c.id,
+                    ClauseTranslation.is_current.is_(True),
                     ClauseTranslation.review_status != TranslationReviewStatus.SUPERSEDED.value,
                 )
                 .order_by(ClauseTranslation.updated_at.desc())
@@ -2421,9 +2422,9 @@ async def handle_new_version_linkage(
                             engine=tr.engine,
                             model_name=tr.model_name,
                             prompt_version=tr.prompt_version,
-                            tokens_in=tr.tokens_in,
-                            tokens_out=tr.tokens_out,
-                            duration_ms=tr.duration_ms,
+                            tokens_in=0,  # Reuse is not a new paid model call.
+                            tokens_out=0,
+                            duration_ms=0,
                             glossary_hits=tr.glossary_hits,
                             unmatched_terms=tr.unmatched_terms,
                             quality_check_passed=tr.quality_check_passed,
@@ -2438,10 +2439,16 @@ async def handle_new_version_linkage(
                     reused_tr += 1
         else:
             if tr is not None and tr.review_status != TranslationReviewStatus.STALE.value:
+                from app.knowledge.history import snapshot
+
+                snapshot(session, tr, "before_version_stale")
                 tr.review_status = TranslationReviewStatus.STALE.value
                 stale_tr += 1
             for e in edges:
                 if e.review_status != GraphReviewStatus.STALE.value:
+                    from app.knowledge.history import snapshot
+
+                    snapshot(session, e, "before_version_stale")
                     e.review_status = GraphReviewStatus.STALE.value
                     stale_edges += 1
 

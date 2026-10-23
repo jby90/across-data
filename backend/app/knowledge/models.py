@@ -162,6 +162,7 @@ class ClauseTranslation(Base):
     clause_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("clauses.id", ondelete="CASCADE"), index=True
     )
+    is_current: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
     translated_text: Mapped[str] = mapped_column(Text)
     engine: Mapped[str] = mapped_column(String(32))
     model_name: Mapped[str] = mapped_column(String(128))

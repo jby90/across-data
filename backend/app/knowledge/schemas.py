@@ -41,6 +41,7 @@ class GlossaryTermOut(BaseModel):
 
 
 class ClauseTranslationOut(BaseModel):
+    is_current: bool = True
     id: uuid.UUID
     clause_id: uuid.UUID
     document_id: uuid.UUID

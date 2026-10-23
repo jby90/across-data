@@ -82,6 +82,26 @@ const statusFilter = ref('')
 const loading = ref(false)
 
 const translations = ref<ClauseTranslation[]>([])
+const translationPage = ref(1)
+const translationPageSize = 50
+const hasNextTranslations = ref(false)
+const historyDialog = ref(false)
+const historyResult = ref<{ history: unknown[]; proposals: unknown[] } | null>(null)
+
+async function showHistory(id: string) {
+  historyResult.value = await api.get(`/admin/knowledge/history/${id}`)
+  historyDialog.value = true
+}
+
+function resetAndLoad() {
+  translationPage.value = 1
+  return loadAll()
+}
+
+function turnTranslationPage(delta: number) {
+  translationPage.value = Math.max(1, translationPage.value + delta)
+  return loadAll()
+}
 const reviewPoints = ref<ReviewPoint[]>([])
 const glossaryTerms = ref<GlossaryTerm[]>([])
 
@@ -120,14 +140,16 @@ async function loadAll() {
     const qTr = new URLSearchParams()
     if (countryFilter.value) qTr.set('country_code', countryFilter.value)
     if (statusFilter.value) qTr.set('review_status', statusFilter.value)
-    qTr.set('limit', '120')
+    qTr.set('limit', String(translationPageSize + 1))
+    qTr.set('offset', String((translationPage.value - 1) * translationPageSize))
 
     const [trList, rpList, glList] = await Promise.all([
       api.get<ClauseTranslation[]>(`/admin/knowledge/translations?${qTr.toString()}`),
       api.get<ReviewPoint[]>(`/admin/knowledge/review-points${qCountry}`),
       api.get<GlossaryTerm[]>(`/admin/knowledge/glossary${qCountry}`),
     ])
-    translations.value = trList
+    hasNextTranslations.value = trList.length > translationPageSize
+    translations.value = trList.slice(0, translationPageSize)
     reviewPoints.value = rpList
     glossaryTerms.value = glList
   } catch (e: unknown) {
@@ -286,7 +308,7 @@ onMounted(loadAll)
         </div>
       </div>
       <div style="display: flex; gap: 8px; align-items: center">
-        <el-select v-model="countryFilter" style="width: 140px" @change="loadAll">
+        <el-select v-model="countryFilter" style="width: 140px" @change="resetAndLoad">
           <el-option value="SG" label="SG 新加坡" />
           <el-option value="EG" label="EG 埃及" />
           <el-option value="TN" label="TN 突尼斯" />
@@ -306,6 +328,12 @@ onMounted(loadAll)
       </div>
     </div>
 
+    <el-dialog v-model="historyDialog" title="历史与审批记录" width="760px">
+      <p>机器重试不会沿用旧审批。既有历史未补造审批记录；以下仅展示本次修复后留存的快照与提案。</p>
+      <pre style="max-height: 480px; overflow: auto; white-space: pre-wrap">{{
+        JSON.stringify(historyResult, null, 2)
+      }}</pre>
+    </el-dialog>
     <el-tabs v-model="activeTab">
       <!-- 第一页签：条款级机器翻译与复核 -->
       <el-tab-pane label="条款翻译" name="translations">
@@ -316,7 +344,7 @@ onMounted(loadAll)
             placeholder="全部状态"
             style="width: 240px"
             aria-label="复核状态筛选"
-            @change="loadAll"
+            @change="resetAndLoad"
             ><el-option value="" label="全部状态" /><el-option
               value="machine_translated"
               label="机翻通过 · 待核对" /><el-option
@@ -414,6 +442,8 @@ onMounted(loadAll)
                       >直接通过复核</el-dropdown-item
                     ><el-dropdown-item @click="batchTranslateDoc(row)"
                       >按文档批量翻译</el-dropdown-item
+                    ><el-dropdown-item @click="showHistory(row.id)"
+                      >历史与审批记录</el-dropdown-item
                     ></el-dropdown-menu
                   ></template
                 ></el-dropdown
@@ -421,6 +451,23 @@ onMounted(loadAll)
             ></el-table-column
           >
         </el-table>
+        <div
+          style="
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+          "
+        >
+          <el-button :disabled="translationPage === 1 || loading" @click="turnTranslationPage(-1)"
+            >上一页</el-button
+          >
+          <span>第 {{ translationPage }} 页 · 每页 {{ translationPageSize }} 条</span>
+          <el-button :disabled="!hasNextTranslations || loading" @click="turnTranslationPage(1)"
+            >下一页</el-button
+          >
+        </div>
       </el-tab-pane>
 
       <!-- 第二页签：解读要点确认单 -->
