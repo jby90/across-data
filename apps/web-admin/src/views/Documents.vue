@@ -405,7 +405,7 @@ onMounted(load)
       </template>
     </el-dialog>
 
-    <el-drawer v-model="drawer" :title="detail?.title" size="880px">
+    <el-drawer v-model="drawer" :title="detail?.title" size="880px" append-to-body>
       <template v-if="detail">
         <el-alert
           v-for="(hold, index) in provenance?.source_integrity_holds"

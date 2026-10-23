@@ -165,6 +165,33 @@ async def test_first_run_discovers_downloads_parses(session_factory, tmp_path):
         assert site.last_status == "success" and site.consecutive_failures == 0
 
 
+async def test_download_success_parse_failure_is_partial_and_preserves_raw(
+    session_factory, tmp_path
+):
+    state = Site()
+    state.pdf = b"%PDF-1.7 not a complete valid PDF"
+    site_id = await add_site(
+        session_factory, strategy="DIRECT", entry="https://example.org/laws/act.pdf"
+    )
+    result, archive = await run(session_factory, tmp_path, state, site_id)
+    assert result.status == "partial" and result.errors == 1
+    assert result.versions_new == 1 and "Parse" in result.message
+    async with session_factory() as session:
+        version = (await session.scalars(select(DocumentVersion))).one()
+        doc = await session.get(Document, version.document_id)
+        assert version.state == "failed" and doc.last_error == version.error
+        assert archive.read(version.archive_path) == state.pdf
+        assert await session.scalar(select(func.count()).select_from(Clause)) == 0
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(PipelineEvent)
+                .where(PipelineEvent.status == "error")
+            )
+            == 1
+        )
+
+
 async def test_rerun_unchanged_creates_nothing_new(session_factory, tmp_path):
     state = Site()
     site_id = await add_site(session_factory)

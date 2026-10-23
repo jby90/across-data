@@ -466,6 +466,10 @@ async def _process_candidate(
         )
         stats.versions_new += 1
         await parse_version(s, archive, version, site.language, ocr)
+        if version.state in (VersionState.FAILED.value, VersionState.NEEDS_OCR.value):
+            doc.last_error = version.error or f"原文尚未解析完成: {version.state}"
+            stats.errors += 1
+            stats.messages.append(f"{cand.url}: {doc.last_error}")
         await s.commit()
 
 
