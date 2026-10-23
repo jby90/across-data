@@ -53,7 +53,11 @@ from app.knowledge.translator import translate_clause
 
 logger = logging.getLogger(__name__)
 
-EXTRACTOR_PROMPT_VERSION = "kg-extract-v3"
+EXTRACTOR_PROMPT_VERSION = "kg-extract-v4"
+# These releases share the same output schema and quote/type/judge-v2 contract.
+# Their already-complete results may be replayed, with fresh source/schema checks;
+# invalid responses were never cached. Future prompt versions are not auto-trusted.
+COMPATIBLE_EXTRACTION_CACHE_PROMPTS = ("kg-extract-v3", "kg-extract-v2")
 JUDGE_PROMPT_VERSION = "kg-judge-v2"
 STRUCTURAL_EXTRACTOR_MODEL = "structural-metadata-v2"
 LEGACY_RULE_EXTRACTOR_MODEL = "kg-rule-extractor-v1"
@@ -1146,33 +1150,9 @@ _CANONICAL_ENTITY_ALIASES: list[tuple[NodeType, re.Pattern[str], str, str, str]]
             r"(?:敏感个人数据|敏感数据|sensitive\s+personal\s+data|données\s+sensibles|بيانات\s+حساسة)",
             re.I,
         ),
-        "data:sensitive_personal_data",
-        "敏感个人数据(含生物识别与位置轨迹)",
+        "data:sensitive_personal_data_literal",
+        "敏感个人数据",
         "Sensitive Personal Data",
-    ),
-    (
-        NodeType.DATA_CATEGORY,
-        re.compile(
-            r"(?:数据记录器|黑匣子|data\s+recorder|black\s+box|自动驾驶传感器|av\s+sensor)",
-            re.I,
-        ),
-        "data:av_recorder_and_sensor_data",
-        "自动驾驶车载数据记录器(黑匣子)与传感器数据",
-        "Autonomous Vehicle Data Recorder & Sensor Data",
-    ),
-    (
-        NodeType.DATA_CATEGORY,
-        re.compile(r"(?:物联网|车联网|iot|telematics|远程信息处理)", re.I),
-        "data:iot_and_telematics_data",
-        "车联网与物联网终端运行及连接数据(IoT/Telematics)",
-        "IoT & Vehicle Telematics Data",
-    ),
-    (
-        NodeType.DATA_CATEGORY,
-        re.compile(r"(?:数据泄露|安全事件|data\s+breach|notifiable\s+data\s+breach)", re.I),
-        "data:notifiable_breach_data",
-        "须通报的数据泄露事件受影响个人数据",
-        "Notifiable Data Breach Affected Personal Data",
     ),
 ]
 
@@ -1185,11 +1165,11 @@ def normalize_entity_node_key(
     """
     zh_clean = re.sub(r"\s+", " ", (name_zh or "").strip())
     orig_clean = re.sub(r"\s+", " ", (name_orig or zh_clean).strip())
-    combined = f"{zh_clean} {orig_clean}".strip()
-
     for c_type, pat, key, canon_zh, canon_orig in _CANONICAL_ENTITY_ALIASES:
-        if c_type == node_type and (
-            pat.search(zh_clean) or pat.search(orig_clean) or pat.search(combined)
+        # Only equivalent complete terms may merge. Device, telematics and breach
+        # aliases previously invented wider data categories; keep their literal names.
+        if key in ("data:personal_data", "data:sensitive_personal_data_literal") and (
+            c_type == node_type and (pat.fullmatch(zh_clean) or pat.fullmatch(orig_clean))
         ):
             return key, canon_zh, canon_orig
 
@@ -1250,7 +1230,8 @@ async def _call_llm_extract_clause(
         "2. 关系中的 source 或 target 若指代本法规文件本身，请直接填写给定的「所属法规文件标题」；"
         "若指代发布/监管机构，填写给定的「发布机构」。\n"
         "3. 如果该条款只是目录、纯粹定义或无实质合规关系，请返回空列表。\n"
-        "4. name_zh、name_orig、source、target 都必须是1~255字符的简短实体名称，"
+        "4. name_zh、name_orig、source、target 的Schema上限是255字符。"
+        "实体名称请优先控制在80字符以内，"
         "不得复制整段条文作名称；长描述放在 definition 中。原文证据放在 evidence_quote 中，"
         "不能截断或改写证据来满足名称长度限制。\n"
         "请严格按以下 JSON Schema 输出:\n"
@@ -1310,6 +1291,7 @@ async def _call_llm_extract_clause(
             # Re-request the complete object, never truncate names or silently discard
             # invalid entities/relations. Report only schema locations, not credentials.
             details = exc.errors(include_input=False, include_url=False)
+            payload["messages"].append({"role": "assistant", "content": raw})
             payload["messages"].append(
                 {
                     "role": "user",
@@ -2180,7 +2162,7 @@ async def _extract_knowledge_for_country_impl(
     from app.knowledge.history import payload_hash
     from app.knowledge.models import KnowledgeAuditRecord
 
-    def cache_key(doc, clause, publisher):
+    def cache_key(doc, clause, publisher, prompt_version):
         return payload_hash(
             dict(
                 contract="kg-rebuild-v3",
@@ -2191,17 +2173,25 @@ async def _extract_knowledge_for_country_impl(
                 scope=(doc.relevance, doc.relevance_source),
                 model=get_settings().llm_model,
                 base_url=get_settings().llm_base_url,
-                extractor_prompt=EXTRACTOR_PROMPT_VERSION,
+                extractor_prompt=prompt_version,
                 judge_prompt=JUDGE_PROMPT_VERSION,
                 extraction_thinking=get_settings().llm_kg_extraction_thinking,
             )
         )
 
     keys = {
-        clause.id: cache_key(doc, clause, publisher)
+        clause.id: cache_key(doc, clause, publisher, EXTRACTOR_PROMPT_VERSION)
+        for doc, clause, _reg, _inst, publisher in extraction_tasks
+    }
+    allowed_keys = {
+        clause.id: {
+            cache_key(doc, clause, publisher, version): version
+            for version in (EXTRACTOR_PROMPT_VERSION, *COMPATIBLE_EXTRACTION_CACHE_PROMPTS)
+        }
         for doc, clause, _reg, _inst, publisher in extraction_tasks
     }
     cached, cache_records, completed, cache_hits = {}, [], 0, 0
+    cached_prompt_versions = {}
     if keys:
         for record in (
             await session.scalars(
@@ -2213,8 +2203,9 @@ async def _extract_knowledge_for_country_impl(
                 .order_by(KnowledgeAuditRecord.created_at.desc())
             )
         ).all():
-            if record.payload.get("cache_key") == keys[record.target_id]:
-                cached.setdefault(record.target_id, record.payload)
+            version = allowed_keys[record.target_id].get(record.payload.get("cache_key"))
+            if version and payload_hash(record.payload) == record.content_hash:
+                cached.setdefault(record.target_id, (record.payload, version))
 
     async def _extract_and_judge_one(
         doc: Document, clause: Clause, reg_node: KgNode, inst_node: KgNode, pub_name: str
@@ -2256,6 +2247,7 @@ async def _extract_knowledge_for_country_impl(
                 return None
             if prior := cached.get(clause.id):
                 try:
+                    prior, cache_prompt = prior
                     restored = []
                     for item in prior["validated_relations"]:
                         rel = ExtractedRelation.model_validate(item["relation"])
@@ -2293,6 +2285,9 @@ async def _extract_knowledge_for_country_impl(
                         )
                     parsed = ClauseExtractionPayload.model_validate(prior["extraction_payload"])
                     cache_hits += 1
+                    cached_prompt_versions[cache_prompt] = (
+                        cached_prompt_versions.get(cache_prompt, 0) + 1
+                    )
                     completed += 1
                     return (
                         doc,
@@ -2446,6 +2441,7 @@ async def _extract_knowledge_for_country_impl(
                     source_hash=clause.text_hash,
                     cache_key=keys[clause.id],
                     extractor_model=model_name,
+                    extractor_prompt_version=EXTRACTOR_PROMPT_VERSION,
                     extraction_payload=payload.model_dump(mode="json"),
                     validated_relations=[
                         dict(
@@ -2485,6 +2481,7 @@ async def _extract_knowledge_for_country_impl(
             "_candidate_evaluations": evaluation_records,
             "_clause_cache_records": cache_records,
             "cache_hits": cache_hits,
+            "cached_prompt_versions": cached_prompt_versions,
             "attempted_clauses": len(extraction_tasks),
             "failed_clauses": sum(item is None for item in batch_results),
             "previous_graph_preserved": True,
@@ -2706,6 +2703,7 @@ async def _extract_knowledge_for_country_impl(
         "_candidate_evaluations": evaluation_records,
         "_clause_cache_records": cache_records,
         "cache_hits": cache_hits,
+        "cached_prompt_versions": cached_prompt_versions,
         "sampled": max_clauses_per_doc is not None,
         "attempted_clauses": len(extraction_tasks),
         "failed_clauses": 0,

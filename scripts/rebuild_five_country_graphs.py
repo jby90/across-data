@@ -65,6 +65,12 @@ async def run(output, concurrency, attempts, countries):
             new_edges=len(new_edges), new_nodes=len(new_nodes),
             all_new_edges_pending=all(row.review_status == "pending_review" for row in new_edges),
             all_new_nodes_pending=all(row.review_status == "pending_review" for row in new_nodes),
+            all_new_active_edges_pending=all(row.review_status == "pending_review" for row in new_edges
+                if row.review_status not in ("superseded", "stale")),
+            all_new_active_nodes_pending=all(row.review_status == "pending_review" for row in new_nodes
+                if row.review_status not in ("superseded", "stale")),
+            new_human_approved_or_rejected=sum(row.review_status in ("approved", "rejected")
+                for row in [*new_nodes, *new_edges]),
             human_approved=0, latest_by_country=latest,
             tokens_in=sum(row.get("model_usage", {}).get("tokens_in", 0) for row in results),
             tokens_out=sum(row.get("model_usage", {}).get("tokens_out", 0) for row in results))

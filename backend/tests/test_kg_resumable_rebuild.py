@@ -26,6 +26,8 @@ async def test_schema_retry_regenerates_long_names_instead_of_truncating(monkeyp
         if len(requests) == 2:
             assert "string_too_long" in body["messages"][-1]["content"]
             assert "255" in body["messages"][-1]["content"]
+            assert body["messages"][-2]["role"] == "assistant"
+            assert "A" * 256 in body["messages"][-2]["content"]
         return httpx.Response(
             200,
             json={
@@ -160,15 +162,19 @@ async def test_retry_reuses_only_complete_verified_source_results_and_keeps_huma
         old, _, _ = await make_edge(session, clauses[0], "approved")
         await session.commit()
         protected = (old.evidence_quote, old.review_status, old.reviewed_at)
+        current_prompt = extractor.EXTRACTOR_PROMPT_VERSION
+        monkeypatch.setattr(extractor, "EXTRACTOR_PROMPT_VERSION", "kg-extract-v2")
         first = await extractor.extract_knowledge_for_country(session, "SG")
         assert first["status"] == "failed" and first["previous_graph_preserved"]
         assert await session.scalar(
             select(KnowledgeAuditRecord.id).where(KnowledgeAuditRecord.action == "kg_clause_result")
         )
         fail_second = False
+        monkeypatch.setattr(extractor, "EXTRACTOR_PROMPT_VERSION", current_prompt)
         second = await extractor.extract_knowledge_for_country(session, "SG")
         assert second["status"] == "completed" and second["attempted_clauses"] == 2
         assert second["cache_hits"] == 1
+        assert second["cached_prompt_versions"] == {"kg-extract-v2": 1}
         assert counts[clauses[0].original_text] == 1 and counts[clauses[1].original_text] == 2
         await session.refresh(old)
         assert protected == (old.evidence_quote, old.review_status, old.reviewed_at)
@@ -184,6 +190,31 @@ async def test_retry_reuses_only_complete_verified_source_results_and_keeps_huma
         third = await extractor.extract_knowledge_for_country(session, "SG")
         assert third["cache_hits"] == 0
         assert counts[clauses[0].original_text] == 2
+
+
+def test_entity_normalization_does_not_add_unstated_scope_or_merge_distinct_data():
+    from app.knowledge.models import NodeType
+
+    key, zh, _ = extractor.normalize_entity_node_key(
+        NodeType.DATA_CATEGORY, "敏感个人数据", "Sensitive Personal Data"
+    )
+    assert key == "data:sensitive_personal_data_literal" and zh == "敏感个人数据"
+    assert "生物识别" not in zh and "位置" not in zh
+    keys = set()
+    for zh, original in [
+        ("位置敏感个人数据", "sensitive location data"),
+        ("车载数据记录器", "data recorder"),
+        ("自动驾驶传感器数据", "AV sensor data"),
+        ("物联网数据", "IoT"),
+        ("车联网数据", "telematics"),
+        ("数据泄露", "data breach"),
+    ]:
+        node_key, label, orig = extractor.normalize_entity_node_key(
+            NodeType.DATA_CATEGORY, zh, original
+        )
+        assert label == zh and orig == original
+        keys.add(node_key)
+    assert len(keys) == 6
 
 
 async def test_successful_rebuild_proposes_scope_changes_without_overwriting_metadata(
