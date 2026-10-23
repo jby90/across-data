@@ -127,7 +127,8 @@ const graph = ref<GraphPayload>({
 
 const maxEdges = ref(300)
 const selectedId = ref('')
-const showAttrCard = ref(true)
+const showAttrCard = ref(false)
+const graphView = ref('graph')
 
 function isTypeVisible(ntype: string): boolean {
   return visibleNodeTypes.value.includes(ntype)
@@ -267,7 +268,12 @@ const fgNodes = computed(() => {
   }
   return graph.value.nodes
     .filter((n) => vis.has(n.node_type) && degree[n.id])
-    .map((n) => ({ id: n.id, name: n.name_zh, type: n.node_type, degree: degree[n.id] }))
+    .map((n) => ({
+      id: n.id,
+      name: n.name_zh,
+      type: n.node_type,
+      degree: degree[n.id],
+    }))
 })
 
 const tableEdges = computed(() =>
@@ -282,11 +288,7 @@ const activeNode = computed<KgNode | null>(() => {
   if (selectedId.value) {
     return graph.value.nodes.find((n) => n.id === selectedId.value) || null
   }
-  return (
-    graph.value.nodes.find((n) => n.node_type === 'INSTRUMENT') ||
-    graph.value.nodes[0] ||
-    null
-  )
+  return graph.value.nodes.find((n) => n.node_type === 'INSTRUMENT') || graph.value.nodes[0] || null
 })
 
 const selectedName = computed(
@@ -341,439 +343,473 @@ async function reviewEdge(edge: KgEdge, decision: 'approved' | 'rejected') {
 
 onMounted(loadGraph)
 </script>
-
 <template>
-  <div>
-    <div class="bar">
+  <div class="knowledge-graph-page">
+    <header class="page-heading">
       <div>
-        <h2 style="margin: 0">六要素 · 十二类语义关系法规知识图谱</h2>
-        <div class="sub">
-          每条语义关系边均强制挂载证据条款原文摘录；结构包含关系（文件包含条款）独立存储，不混入语义边统计。
-        </div>
+        <div class="eyebrow">LEGAL KNOWLEDGE</div>
+        <h1>法规知识图谱</h1>
+        <p>探索法规、义务与数据之间的关系，沿每一条关联追溯原文依据。</p>
       </div>
-      <div style="display: flex; gap: 10px; align-items: center">
-        <el-select v-model="countryCode" style="width: 140px" @change="loadGraph">
-          <el-option value="SG" label="SG 新加坡" />
-          <el-option value="EG" label="EG 埃及" />
-          <el-option value="TN" label="TN 突尼斯" />
-          <el-option value="MA" label="MA 摩洛哥" />
-          <el-option value="LB" label="LB 黎巴嫩" />
-        </el-select>
-        <el-switch v-model="onlyApproved" active-text="仅展示已复核依据" @change="loadGraph" />
-        <el-switch
-          v-model="showOutOfScope"
-          active-text="显示范围外文件"
-          data-testid="kg-show-out-of-scope"
-        />
-        <el-button type="primary" :loading="loading" @click="runExtract">
-          重新抽取本国图谱
-        </el-button>
+      <div class="page-actions">
+        <el-select
+          v-model="countryCode"
+          style="width: 168px"
+          aria-label="图谱国家"
+          @change="loadGraph"
+          ><el-option value="SG" label="新加坡 · SG" /><el-option
+            value="EG"
+            label="埃及 · EG" /><el-option value="TN" label="突尼斯 · TN" /><el-option
+            value="MA"
+            label="摩洛哥 · MA" /><el-option value="LB" label="黎巴嫩 · LB" /></el-select
+        ><el-popover trigger="click" placement="bottom-end" :width="300"
+          ><template #reference><el-button>图谱管理</el-button></template>
+          <div class="secondary-actions">
+            <p class="page-description">
+              重新抽取会更新本国图谱，并调用模型。已有复核状态仍以实际记录为准。
+            </p>
+            <el-button :loading="loading" @click="runExtract">重新抽取本国图谱</el-button>
+          </div></el-popover
+        >
       </div>
-    </div>
-
-    <!-- 六要素统计卡片（点击可直接切换该类节点的显示/隐藏） -->
-    <div class="stat-grid">
-      <div
+    </header>
+    <div class="stat-grid" aria-label="按要素类型筛选">
+      <button
         v-for="(meta, ntype) in NODE_TYPE_META"
         :key="ntype"
         class="stat-card"
         :class="{ 'stat-card-hidden': !isTypeVisible(ntype) }"
-        :style="{ borderColor: isTypeVisible(ntype) ? meta.color : '#dcdfe6' }"
+        :aria-pressed="isTypeVisible(ntype)"
         :data-testid="`kg-stat-card-${ntype}`"
         @click="toggleNodeType(ntype)"
       >
-        <div class="stat-head">
-          <span class="stat-label" :style="{ color: meta.color }">
-            {{ meta.label }} ({{ ntype }})
-          </span>
+        <span class="stat-label"><i :style="{ background: meta.color }" />{{ meta.label }}</span
+        ><strong class="stat-num">{{ graph.node_counts_by_type[ntype] || 0 }}</strong
+        ><span class="stat-state">{{
+          isTypeVisible(ntype) ? '点击隐藏' : '已隐藏 · 点击显示'
+        }}</span>
+      </button>
+    </div>
+    <div class="surface graph-surface">
+      <div class="graph-filter-toolbar">
+        <el-select
+          v-model="relationFilter"
+          placeholder="全部关系"
+          aria-label="关系类型"
+          style="width: 190px"
+          ><el-option value="" :label="`全部关系 (${typeFilteredEdges.length})`" /><el-option
+            v-for="(label, rtype) in RELATION_LABEL"
+            :key="rtype"
+            :value="rtype"
+            :label="`${label} (${visibleEdgeCountsByRelation[rtype] || 0})`"
+        /></el-select>
+        <el-select v-model="qualityFilter" aria-label="复核状态" style="width: 168px"
+          ><el-option value="all" label="全部复核状态" /><el-option
+            value="pending_review"
+            :label="`待核对 (${graph.quality_summary?.pending_review_edges_count ?? 0})`" /><el-option
+            value="approved"
+            :label="`已复核 (${graph.quality_summary?.approved_edges_count ?? 0})`"
+        /></el-select>
+        <el-popover trigger="click" placement="bottom-end" :width="310"
+          ><template #reference><el-button>显示设置</el-button></template>
+          <div class="display-settings">
+            <el-switch
+              aria-label="仅展示已复核依据"
+              v-model="onlyApproved"
+              active-text="仅展示已复核依据"
+              @change="loadGraph"
+            /><el-switch
+              aria-label="显示范围外文件"
+              v-model="showOutOfScope"
+              active-text="显示范围外文件"
+              data-testid="kg-show-out-of-scope"
+            /><label
+              >最大显示关系数<el-select v-model="maxEdges" data-testid="kg-max-edges"
+                ><el-option :value="60" label="60" /><el-option
+                  :value="150"
+                  label="150" /><el-option :value="300" label="300" /><el-option
+                  :value="600"
+                  label="600" /></el-select></label
+            ><el-button data-testid="kg-hide-hub-btn" @click="hideHubNodeTypes"
+              >隐藏国家与监管枢纽</el-button
+            ><el-button data-testid="kg-show-all-types-btn" @click="showAllNodeTypes"
+              >显示全部要素</el-button
+            >
+          </div></el-popover
+        >
+        <el-tag v-if="selectedId" closable type="info" @close="selectedId = ''">{{
+          selectedName
+        }}</el-tag>
+      </div>
+      <el-tabs v-model="graphView"
+        ><el-tab-pane label="关系图谱" name="graph"
+          ><div class="graph-canvas" v-loading="loading">
+            <KgForceGraph
+              :nodes="fgNodes"
+              :edges="fgEdges"
+              :categories="fgCategories"
+              :visible-types="visibleNodeTypes"
+              :selected-id="selectedId"
+              height="540px"
+              @node-click="onNodeClick"
+              @toggle-type="toggleNodeType"
+            />
+          </div>
+          <div class="graph-caption">
+            <span>{{ fgNodes.length }} 个节点 · {{ fgEdges.length }} 组关系</span
+            ><span>滚轮缩放 · 拖拽移动 · 点击节点查看属性</span
+            ><el-button link @click="showAttrCard = true">查看节点详情</el-button>
+          </div></el-tab-pane
+        ><el-tab-pane :label="`证据明细 (${tableEdges.length})`" name="evidence">
+          <el-table
+            data-testid="kg-edge-table"
+            :data="tableEdges"
+            v-loading="loading"
+            border
+            stripe
+            style="margin-top: 14px"
+          >
+            <el-table-column label="来源要素" min-width="180">
+              <template #default="{ row }">
+                <el-tag size="small" effect="plain">
+                  {{ NODE_TYPE_META[row.source_node_type]?.label || row.source_node_type }}
+                </el-tag>
+                <div style="font-weight: 600; margin-top: 3px">
+                  {{ row.source_name_zh }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="语义关系" width="145">
+              <template #default="{ row }">
+                <el-tag type="primary" size="small">
+                  {{ RELATION_LABEL[row.relation_type] || row.relation_type }}
+                </el-tag>
+                <div class="sub">{{ row.relation_type }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="关联要素" min-width="180">
+              <template #default="{ row }">
+                <el-tag size="small" effect="plain">
+                  {{ NODE_TYPE_META[row.target_node_type]?.label || row.target_node_type }}
+                </el-tag>
+                <div style="font-weight: 600; margin-top: 3px">
+                  {{ row.target_name_zh }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="证据条款与原文" min-width="320">
+              <template #default="{ row }">
+                <div class="sub" style="font-weight: 600">
+                  {{ row.document_title || '官方法规文本' }} · 条号
+                  {{ row.clause_number || '-' }}
+                </div>
+                <div class="quote-box">{{ row.evidence_quote }}</div>
+                <div v-if="row.judge_reason" class="sub" style="margin-top: 3px; color: #0f766e">
+                  语义裁判 ({{ row.judge_verdict || 'yes' }} · 置信度
+                  {{ ((row.confidence ?? 0.85) * 100).toFixed(0) }}% · {{ row.extractor_model }}):
+                  {{ row.judge_reason }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="复核状态" width="150">
+              <template #default="{ row }">
+                <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
+                  {{ row.usable_as_legal_basis ? '已复核(可作依据)' : '待核对(大模型抽取)' }}
+                </el-tag>
+                <div class="sub" style="margin-top: 2px">
+                  {{ row.is_structural ? '结构边' : '语义边' }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="140" fixed="right">
+              <template #default="{ row }">
+                <el-button
+                  v-if="!row.usable_as_legal_basis"
+                  size="small"
+                  type="success"
+                  link
+                  @click="reviewEdge(row, 'approved')"
+                >
+                  通过
+                </el-button>
+                <el-button size="small" type="danger" link @click="reviewEdge(row, 'rejected')">
+                  驳回
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table></el-tab-pane
+        ></el-tabs
+      >
+    </div>
+    <details class="ui-disclosure">
+      <summary>
+        数据质量与覆盖情况
+        <span
+          >待核对 {{ graph.quality_summary?.pending_review_edges_count ?? 0 }} · 已复核
+          {{ graph.quality_summary?.approved_edges_count ?? 0 }}</span
+        >
+      </summary>
+      <div class="disclosure-body">
+        <div class="quality-bar" data-testid="kg-quality-bar">
           <el-tag
-            size="small"
-            :type="isTypeVisible(ntype) ? 'success' : 'info'"
+            :type="qualityFilter === 'all' ? 'primary' : 'info'"
+            style="cursor: pointer"
+            data-testid="kg-quality-all"
+            @click="qualityFilter = 'all'"
+          >
+            活跃总边 ({{ graph.edges.length }})
+          </el-tag>
+          <el-tag
+            v-if="(graph.quality_summary?.documents_total ?? 0) > 0"
+            type="success"
+            effect="plain"
+            data-testid="kg-doc-scope"
+          >
+            法规文件 {{ graph.quality_summary?.documents_total }} 份(核心
+            {{ graph.quality_summary?.documents_core ?? 0 }} / 相关
+            {{ graph.quality_summary?.documents_related ?? 0 }} / 范围外
+            {{ graph.quality_summary?.documents_out_of_scope ?? 0 }}),其中
+            {{ graph.quality_summary?.documents_extracted ?? 0 }} 份参与语义抽取
+          </el-tag>
+          <el-tag type="primary" effect="plain">
+            条款语义边: {{ graph.quality_summary?.semantic_edges ?? 0 }} 条
+          </el-tag>
+          <el-tag type="info" effect="plain">
+            结构边(发布/监管):
+            {{ graph.quality_summary?.structural_edges ?? 0 }} 条
+          </el-tag>
+          <el-tag
+            :type="qualityFilter === 'pending_review' ? 'warning' : 'info'"
+            style="cursor: pointer"
+            data-testid="kg-quality-pending"
+            @click="qualityFilter = qualityFilter === 'pending_review' ? 'all' : 'pending_review'"
+          >
+            待核对 ({{ graph.quality_summary?.pending_review_edges_count ?? 0 }})
+          </el-tag>
+          <el-tag
+            :type="qualityFilter === 'approved' ? 'success' : 'info'"
+            style="cursor: pointer"
+            data-testid="kg-quality-approved"
+            @click="qualityFilter = qualityFilter === 'approved' ? 'all' : 'approved'"
+          >
+            已复核 ({{ graph.quality_summary?.approved_edges_count ?? 0 }})
+          </el-tag>
+          <el-tag type="success" effect="plain">
+            子串校验失配:
+            {{
+              graph.quality_summary?.quote_mismatch ??
+              graph.quality_summary?.quote_mismatch_edges_count ??
+              0
+            }}
+            条
+          </el-tag>
+          <el-tag type="success" effect="plain">
+            未裁判语义边: {{ graph.quality_summary?.semantic_unjudged ?? 0 }} 条 | 低置信度:
+            {{ graph.quality_summary?.low_confidence ?? 0 }} 条
+          </el-tag>
+          <el-tag
+            v-if="(graph.quality_summary?.superseded_edges_count ?? 0) > 0"
+            type="info"
             effect="plain"
           >
-            {{ isTypeVisible(ntype) ? '显示中' : '已隐藏' }}
+            已隐藏旧规则边(superseded):
+            {{ graph.quality_summary?.superseded_edges_count }} 条
+          </el-tag>
+          <el-tag type="info" effect="plain">
+            孤立节点: {{ graph.quality_summary?.isolated_nodes_count ?? 0 }} 个
+          </el-tag>
+          <el-tag type="info" effect="plain">
+            未挂图谱条款:
+            {{ graph.quality_summary?.unlinked_clauses_count ?? 0 }} /
+            {{ graph.quality_summary?.total_clauses_count ?? 0 }} 条
           </el-tag>
         </div>
-        <div class="stat-num">{{ graph.node_counts_by_type[ntype] || 0 }}</div>
       </div>
-    </div>
-
-    <!-- 图谱与数据质量体检视图（S2 结构边与语义边分层统计 + 语义裁判核验） -->
-    <div class="quality-bar" data-testid="kg-quality-bar">
-      <span class="sub" style="font-weight: 700; color: #1e293b">图谱质量体检视图：</span>
-      <el-tag
-        :type="qualityFilter === 'all' ? 'primary' : 'info'"
-        style="cursor: pointer"
-        data-testid="kg-quality-all"
-        @click="qualityFilter = 'all'"
-      >
-        活跃总边 ({{ graph.edges.length }})
-      </el-tag>
-      <el-tag
-        v-if="(graph.quality_summary?.documents_total ?? 0) > 0"
-        type="success"
-        effect="plain"
-        data-testid="kg-doc-scope"
-      >
-        法规文件 {{ graph.quality_summary?.documents_total }} 份(核心
-        {{ graph.quality_summary?.documents_core ?? 0 }} / 相关
-        {{ graph.quality_summary?.documents_related ?? 0 }} / 范围外
-        {{ graph.quality_summary?.documents_out_of_scope ?? 0 }}),其中
-        {{ graph.quality_summary?.documents_extracted ?? 0 }} 份参与语义抽取
-      </el-tag>
-      <el-tag type="primary" effect="plain">
-        条款语义边: {{ graph.quality_summary?.semantic_edges ?? 0 }} 条
-      </el-tag>
-      <el-tag type="info" effect="plain">
-        结构边(发布/监管): {{ graph.quality_summary?.structural_edges ?? 0 }} 条
-      </el-tag>
-      <el-tag
-        :type="qualityFilter === 'pending_review' ? 'warning' : 'info'"
-        style="cursor: pointer"
-        data-testid="kg-quality-pending"
-        @click="qualityFilter = qualityFilter === 'pending_review' ? 'all' : 'pending_review'"
-      >
-        待核对 ({{ graph.quality_summary?.pending_review_edges_count ?? 0 }})
-      </el-tag>
-      <el-tag
-        :type="qualityFilter === 'approved' ? 'success' : 'info'"
-        style="cursor: pointer"
-        data-testid="kg-quality-approved"
-        @click="qualityFilter = qualityFilter === 'approved' ? 'all' : 'approved'"
-      >
-        已复核 ({{ graph.quality_summary?.approved_edges_count ?? 0 }})
-      </el-tag>
-      <el-tag type="success" effect="plain">
-        子串校验失配: {{ graph.quality_summary?.quote_mismatch ?? graph.quality_summary?.quote_mismatch_edges_count ?? 0 }} 条 (100% 逐字匹配)
-      </el-tag>
-      <el-tag type="success" effect="plain">
-        未裁判语义边: {{ graph.quality_summary?.semantic_unjudged ?? 0 }} 条 | 低置信度: {{ graph.quality_summary?.low_confidence ?? 0 }} 条
-      </el-tag>
-      <el-tag
-        v-if="(graph.quality_summary?.superseded_edges_count ?? 0) > 0"
-        type="info"
-        effect="plain"
-      >
-        已隐藏旧规则边(superseded): {{ graph.quality_summary?.superseded_edges_count }} 条
-      </el-tag>
-      <el-tag type="info" effect="plain">
-        孤立节点: {{ graph.quality_summary?.isolated_nodes_count ?? 0 }} 个
-      </el-tag>
-      <el-tag type="info" effect="plain">
-        未挂图谱条款: {{ graph.quality_summary?.unlinked_clauses_count ?? 0 }} /
-        {{ graph.quality_summary?.total_clauses_count ?? 0 }} 条
-      </el-tag>
-    </div>
-
-    <!-- 按节点类型显示/隐藏控制栏 -->
-    <div class="filter-row" data-testid="kg-node-type-filter-bar">
-      <span class="sub" style="font-weight: 600">按节点类型显示/隐藏：</span>
-      <el-tag
-        v-for="(meta, ntype) in NODE_TYPE_META"
-        :key="ntype"
-        :effect="isTypeVisible(ntype) ? 'dark' : 'plain'"
-        :style="{
-          cursor: 'pointer',
-          backgroundColor: isTypeVisible(ntype) ? meta.color : '#f4f4f5',
-          borderColor: isTypeVisible(ntype) ? meta.color : '#d4d7de',
-          color: isTypeVisible(ntype) ? '#ffffff' : '#909399',
-          textDecoration: isTypeVisible(ntype) ? 'none' : 'line-through',
-        }"
-        :data-testid="`kg-node-type-tag-${ntype}`"
-        @click="toggleNodeType(ntype)"
-      >
-        {{ isTypeVisible(ntype) ? '✓ ' : '✕ ' }}{{ meta.label }} ({{
-          graph.node_counts_by_type[ntype] || 0
-        }})
-      </el-tag>
-      <el-button size="small" plain data-testid="kg-hide-hub-btn" @click="hideHubNodeTypes">
-        隐藏枢纽节点（国家/监管机构）
-      </el-button>
-      <el-button
-        v-if="visibleNodeTypes.length < ALL_NODE_TYPES.length"
-        size="small"
-        type="primary"
-        plain
-        data-testid="kg-show-all-types-btn"
-        @click="showAllNodeTypes"
-      >
-        显示全部 6 类要素 ({{ visibleNodeTypes.length }}/6)
-      </el-button>
-    </div>
-
-    <!-- 十二类关系筛选标签 -->
-    <div class="filter-row">
-      <span class="sub" style="font-weight: 600">十二类语义关系筛选：</span>
-      <el-tag
-        :type="relationFilter === '' ? 'primary' : 'info'"
-        style="cursor: pointer"
-        @click="relationFilter = ''"
-      >
-        全部 ({{ typeFilteredEdges.length }})
-      </el-tag>
-      <el-tag
-        v-for="(label, rtype) in RELATION_LABEL"
-        :key="rtype"
-        :type="relationFilter === rtype ? 'primary' : 'info'"
-        style="cursor: pointer"
-        @click="relationFilter = rtype"
-      >
-        {{ label }} ({{ visibleEdgeCountsByRelation[rtype] || 0 }})
-      </el-tag>
-    </div>
-
-    <!-- ECharts 力导向知识图谱 -->
-    <div class="graph-canvas">
-      <div class="graph-tools">
-        <span class="sub">
-          图中展示 {{ fgNodes.length }} 个节点 / {{ fgEdges.length }} 条关系（合并自
-          {{ filteredEdges.length }} 条可见证据边，已启用
-          {{ visibleNodeTypes.length }}/6 类节点）；滚轮缩放、拖拽节点、点击节点或底部图例可筛选。绿线=已复核，灰线=待复核
-        </span>
-        <span class="sub">最多显示边数：</span>
-        <el-select v-model="maxEdges" size="small" style="width: 90px" data-testid="kg-max-edges">
-          <el-option :value="60" label="60" />
-          <el-option :value="150" label="150" />
-          <el-option :value="300" label="300" />
-          <el-option :value="600" label="600" />
-        </el-select>
-        <el-button size="small" link type="primary" @click="showAttrCard = !showAttrCard">
-          {{ showAttrCard ? '收起八项核心属性' : '展开八项核心属性' }}
-        </el-button>
-        <el-tag v-if="selectedId" closable type="warning" @close="selectedId = ''">
-          已选：{{ selectedName }}
-        </el-tag>
-      </div>
-      <KgForceGraph
-        :nodes="fgNodes"
-        :edges="fgEdges"
-        :categories="fgCategories"
-        :visible-types="visibleNodeTypes"
-        :selected-id="selectedId"
-        height="540px"
-        @node-click="onNodeClick"
-        @toggle-type="toggleNodeType"
-      />
-    </div>
-
-    <!-- 八项核心法规/要素结构化属性画像（需求文档 1.3.3） -->
-    <div
-      v-if="showAttrCard && activeNode"
-      class="attr-panel"
-      data-testid="kg-eight-attributes-panel"
-    >
-      <div class="attr-head">
-        <div>
-          <el-tag size="small" effect="dark" :style="{ backgroundColor: NODE_TYPE_META[activeNode.node_type]?.color || '#409eff', borderColor: 'transparent' }">
-            {{ NODE_TYPE_META[activeNode.node_type]?.label || activeNode.node_type }}
-          </el-tag>
-          <strong style="margin-left: 8px; font-size: 14px">{{ activeNode.name_zh }}</strong>
-          <span class="sub" style="margin-left: 8px">
-            （{{ selectedId ? '当前点击选中节点' : '本国代表性法规要素节点，点击图中任意节点可切换' }} · 八项必备结构化属性）
-          </span>
-        </div>
-      </div>
-      <div class="attr-grid">
-        <div v-for="item in EIGHT_ATTR_LABELS" :key="item.key" class="attr-item">
-          <div class="attr-key">{{ item.label }}</div>
-          <div class="attr-val">{{ activeNode.attributes?.[item.key] || '-' }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 语义关系边与证据条款明细表 -->
-    <el-table
-      data-testid="kg-edge-table"
-      :data="tableEdges"
-      v-loading="loading"
-      border
-      stripe
-      style="margin-top: 14px"
-    >
-      <el-table-column label="源要素节点" min-width="180">
-        <template #default="{ row }">
-          <el-tag size="small" effect="plain">
-            {{ NODE_TYPE_META[row.source_node_type]?.label || row.source_node_type }}
-          </el-tag>
-          <div style="font-weight: 600; margin-top: 3px">{{ row.source_name_zh }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="语义关系" width="145">
-        <template #default="{ row }">
-          <el-tag type="primary" size="small">
-            {{ RELATION_LABEL[row.relation_type] || row.relation_type }}
-          </el-tag>
-          <div class="sub">{{ row.relation_type }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="目标要素节点" min-width="180">
-        <template #default="{ row }">
-          <el-tag size="small" effect="plain">
-            {{ NODE_TYPE_META[row.target_node_type]?.label || row.target_node_type }}
-          </el-tag>
-          <div style="font-weight: 600; margin-top: 3px">{{ row.target_name_zh }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="挂载证据条款与原文摘录" min-width="290">
-        <template #default="{ row }">
-          <div class="sub" style="font-weight: 600">
-            {{ row.document_title || '官方法规文本' }} · 条号 {{ row.clause_number || '-' }}
+    </details>
+    <el-drawer v-model="showAttrCard" title="节点详情" size="520px"
+      ><template v-if="activeNode"
+        ><el-tag effect="plain">{{
+          NODE_TYPE_META[activeNode.node_type]?.label || activeNode.node_type
+        }}</el-tag>
+        <h3 class="node-detail-title">{{ activeNode.name_zh }}</h3>
+        <p class="page-description">
+          {{ selectedId ? '当前选中节点' : '当前国家的代表性法规节点' }} · 结构化属性
+        </p>
+        <div class="attr-grid" data-testid="kg-eight-attributes-panel">
+          <div v-for="item in EIGHT_ATTR_LABELS" :key="item.key" class="attr-item">
+            <div class="attr-key">{{ item.label }}</div>
+            <div class="attr-val">
+              {{ activeNode.attributes?.[item.key] || '暂无登记信息' }}
+            </div>
           </div>
-          <div class="quote-box">{{ row.evidence_quote }}</div>
-          <div v-if="row.judge_reason" class="sub" style="margin-top: 3px; color: #0f766e">
-            语义裁判 ({{ row.judge_verdict || 'yes' }} · 置信度 {{ ((row.confidence ?? 0.85) * 100).toFixed(0) }}% · {{ row.extractor_model }}): {{ row.judge_reason }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="复核状态" width="150">
-        <template #default="{ row }">
-          <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
-            {{ row.usable_as_legal_basis ? '已复核(可作依据)' : '待核对(大模型抽取)' }}
-          </el-tag>
-          <div class="sub" style="margin-top: 2px">
-            {{ row.is_structural ? '结构边' : '语义边' }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="140" fixed="right">
-        <template #default="{ row }">
-          <el-button
-            v-if="!row.usable_as_legal_basis"
-            size="small"
-            type="success"
-            link
-            @click="reviewEdge(row, 'approved')"
-          >
-            通过
-          </el-button>
-          <el-button size="small" type="danger" link @click="reviewEdge(row, 'rejected')">
-            驳回
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        </div></template
+      ><el-empty v-else description="请先在图谱中选择一个节点"
+    /></el-drawer>
   </div>
 </template>
-
 <style scoped>
-.bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-.sub {
-  color: #606266;
-  font-size: 12px;
-}
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
 }
 .stat-card {
-  border: 1.5px solid #e4e7ed;
-  border-radius: 6px;
-  padding: 10px 12px;
-  background: #fafafa;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px 18px;
+  background: white;
+  border: 1px solid var(--cy-line);
+  border-radius: 11px;
+  text-align: left;
+  transition:
+    border-color 0.18s,
+    transform 0.18s;
 }
 .stat-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  border-color: #bdcdee;
+  transform: translateY(-2px);
 }
 .stat-card-hidden {
-  opacity: 0.48;
-  background: #f4f4f5;
-}
-.stat-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 4px;
+  background: #f0f3f6;
+  color: #9aa7b4;
 }
 .stat-label {
-  font-size: 12px;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #74828e;
+  font-size: 13px;
+}
+.stat-label i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
 }
 .stat-num {
-  font-size: 22px;
-  font-weight: 700;
-  margin-top: 4px;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 8px 0 3px;
+  color: #273b4a;
 }
-.quality-bar {
-  margin: 10px 0 6px;
-  padding: 8px 12px;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  border-radius: 6px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
+.stat-state {
+  font-size: 11px;
+  color: #a0acb5;
 }
-.filter-row {
-  margin: 8px 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
+.graph-surface {
+  padding: 22px 24px 10px;
 }
-.graph-tools {
+.graph-filter-toolbar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  padding: 4px 6px 8px;
+  margin-bottom: 6px;
 }
 .graph-canvas {
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #f8fafc;
-  padding: 6px;
+  border: 1px solid #edf0f4;
+  overflow: hidden;
 }
-.attr-panel {
-  margin-top: 12px;
-  border: 1px solid #dbeafe;
-  background: #f8fafc;
-  border-radius: 8px;
-  padding: 10px 14px;
-}
-.attr-head {
+.graph-caption {
   display: flex;
-  justify-content: space-between;
+  gap: 18px;
   align-items: center;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #81919d;
+  padding: 12px 0 4px;
+}
+.display-settings {
+  display: grid;
+  gap: 14px;
+  padding: 4px;
+}
+.display-settings label {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  font-size: 13px;
+  color: #6a7b89;
+}
+.display-settings label .el-select {
+  width: 105px;
+}
+.quality-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 8px;
+}
+.quality-bar .el-tag {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.node-detail-title {
+  font-size: 20px;
+  margin: 18px 0 12px;
+  overflow-wrap: anywhere;
 }
 .attr-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
 }
 .attr-item {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 8px 10px;
+  padding: 16px;
+  background: #f7f9fc;
+  border-radius: 8px;
 }
 .attr-key {
-  font-size: 12px;
-  font-weight: 700;
-  color: #1e40af;
-  margin-bottom: 3px;
+  color: #70828f;
+  font-size: 13px;
+  margin-bottom: 8px;
 }
 .attr-val {
-  font-size: 12px;
-  color: #334155;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.9;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 .quote-box {
-  font-size: 12px;
-  color: #303133;
-  max-height: 75px;
+  font-size: 14px;
+  line-height: 1.8;
+  max-height: 140px;
   overflow-y: auto;
   white-space: pre-wrap;
+  margin-top: 10px;
+}
+@media (max-width: 1100px) {
+  .stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .stat-state {
+    display: none;
+  }
+  .stat-card {
+    padding: 14px 16px;
+  }
+  .stat-num {
+    font-size: 24px;
+  }
+}
+@media (max-width: 600px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .graph-surface {
+    padding: 16px 12px 6px;
+  }
+  .attr-grid {
+    grid-template-columns: 1fr;
+  }
+  .graph-caption {
+    gap: 8px;
+  }
 }
 </style>

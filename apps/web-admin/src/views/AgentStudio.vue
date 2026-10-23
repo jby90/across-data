@@ -240,7 +240,7 @@ interface BenchmarkSummary {
 }
 
 const STATUS_LABEL_MAP: Record<string, string> = {
-  running: '⚡ 实时运行中',
+  running: '实时运行中',
   collecting_facts: '💬 对话采集中',
   ready_to_run: '⏳ 待启动分析',
   completed: '✅ 已出报告',
@@ -278,6 +278,7 @@ const tasks = ref<TaskSummary[]>([])
 const selectedTaskId = ref<string>('')
 const selectedTaskDetail = ref<TaskDetail | null>(null)
 
+const inspectorOpen = ref(false)
 const selectedNodeId = ref<string>('node_dimension_analyst')
 const inspectorTab = ref<'config' | 'tools' | 'trace'>('config')
 const canvasScale = ref<number>(0.72)
@@ -343,25 +344,17 @@ const nodeMap = computed(() => {
 
 const selectedNode = computed<WorkflowNode | null>(() => {
   if (!workflow.value) return null
-  return (
-    nodeMap.value.get(selectedNodeId.value) ||
-    workflow.value.nodes[0] ||
-    null
-  )
+  return nodeMap.value.get(selectedNodeId.value) || workflow.value.nodes[0] || null
 })
 
 const upstreamEdges = computed(() => {
   if (!workflow.value || !selectedNode.value) return []
-  return workflow.value.edges.filter(
-    (e) => e.target_node_id === selectedNode.value?.node_id,
-  )
+  return workflow.value.edges.filter((e) => e.target_node_id === selectedNode.value?.node_id)
 })
 
 const downstreamEdges = computed(() => {
   if (!workflow.value || !selectedNode.value) return []
-  return workflow.value.edges.filter(
-    (e) => e.source_node_id === selectedNode.value?.node_id,
-  )
+  return workflow.value.edges.filter((e) => e.source_node_id === selectedNode.value?.node_id)
 })
 
 const nodeTraceStatsMap = computed(() => {
@@ -452,10 +445,7 @@ async function loadStudioData(versionNo?: number) {
     selectedVersionNo.value = wf.version_no
     versions.value = verList
     tasks.value = taskList
-    if (
-      wf.nodes.length > 0 &&
-      !wf.nodes.some((n) => n.node_id === selectedNodeId.value)
-    ) {
+    if (wf.nodes.length > 0 && !wf.nodes.some((n) => n.node_id === selectedNodeId.value)) {
       selectedNodeId.value = wf.nodes[0].node_id
     }
     if (!selectedTaskId.value && taskList.length > 0) {
@@ -483,9 +473,7 @@ async function loadStudioData(versionNo?: number) {
 async function loadTaskTrace(taskId: string) {
   if (!taskId) return
   try {
-    const detail = await api.get<TaskDetail>(
-      `/api/admin/agent-studio/tasks/${taskId}`,
-    )
+    const detail = await api.get<TaskDetail>(`/api/admin/agent-studio/tasks/${taskId}`)
     selectedTaskDetail.value = detail
     // 如果当前任务正在实时运行中，且开启了自动跟随，自动选中当前活跃节点
     if (detail.status === 'running' && detail.current_active_node_id && autoFollowRunning.value) {
@@ -578,10 +566,7 @@ async function copyCode(code: string) {
 
 async function rerunTaskWorkflow(task: TaskSummary) {
   try {
-    const detail = await api.post<TaskDetail>(
-      `/api/admin/agent-studio/tasks/${task.id}/rerun`,
-      {},
-    )
+    const detail = await api.post<TaskDetail>(`/api/admin/agent-studio/tasks/${task.id}/rerun`, {})
     selectedTaskId.value = detail.id
     selectedTaskDetail.value = detail
     await pollLiveWorkflows()
@@ -596,7 +581,11 @@ async function deleteTaskRecord(task: TaskSummary) {
     await ElMessageBox.confirm(
       `确定删除对话工作流记录「${task.conversation_code} (${task.title})」吗？`,
       '删除对话工作流记录',
-      { type: 'warning', confirmButtonText: '确认删除', cancelButtonText: '取消' },
+      {
+        type: 'warning',
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+      },
     )
   } catch {
     return
@@ -684,9 +673,7 @@ async function copyExportedJson() {
 
 async function openImportModal() {
   if (!importDslText.value && workflow.value) {
-    const dsl = await api.get<Record<string, unknown>>(
-      '/api/admin/agent-studio/workflow/export',
-    )
+    const dsl = await api.get<Record<string, unknown>>('/api/admin/agent-studio/workflow/export')
     importDslText.value = JSON.stringify(dsl, null, 2)
   }
   importDialogVisible.value = true
@@ -714,19 +701,14 @@ async function submitImportWorkflow() {
   }
   importing.value = true
   try {
-    const newWf = await api.post<WorkflowConfig>(
-      '/api/admin/agent-studio/workflow/import',
-      {
-        dsl_payload: parsed,
-        change_note: importChangeNote.value,
-        activate_immediately: true,
-      },
-    )
+    const newWf = await api.post<WorkflowConfig>('/api/admin/agent-studio/workflow/import', {
+      dsl_payload: parsed,
+      change_note: importChangeNote.value,
+      activate_immediately: true,
+    })
     importDialogVisible.value = false
     await loadStudioData(newWf.version_no)
-    ElMessage.success(
-      `配置导入成功！已生成并激活版本 v${newWf.version_no}（保持生产只读安全锁）`,
-    )
+    ElMessage.success(`配置导入成功！已生成并激活版本 v${newWf.version_no}（保持生产只读安全锁）`)
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '导入配置失败')
   } finally {
@@ -738,9 +720,7 @@ async function openBenchmarksDrawer() {
   benchmarkDrawerVisible.value = true
   loadingBenchmarks.value = true
   try {
-    benchmarkData.value = await api.get<BenchmarkSummary>(
-      '/api/admin/agent-studio/benchmarks',
-    )
+    benchmarkData.value = await api.get<BenchmarkSummary>('/api/admin/agent-studio/benchmarks')
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '加载评测集结果失败')
   } finally {
@@ -749,6 +729,7 @@ async function openBenchmarksDrawer() {
 }
 
 function selectNode(nodeId: string) {
+  inspectorOpen.value = true
   selectedNodeId.value = nodeId
 }
 
@@ -767,18 +748,14 @@ onUnmounted(() => {
     <!-- 顶部 Dify 风格工作流导航与锁定状态栏 -->
     <div class="studio-topbar" data-testid="agent-studio-toolbar">
       <div class="topbar-left">
-        <div class="studio-badge">Dify-Style Workflow Studio</div>
+        <div class="studio-badge">工作流</div>
         <div class="workflow-title-block">
-          <h2 class="workflow-title">
-            {{ workflow?.name || '多智能体合规评估编排工作台' }}
-          </h2>
+          <h2 class="workflow-title">智能体工作台</h2>
           <div class="workflow-meta">
-            <el-tag type="danger" effect="dark" size="small" data-testid="agent-readonly-lock-badge">
-              🔒 生产只读锁定：仅开放查看工作流、连接关系与节点详情（禁止在线修改参数与代码）
+            <el-tag type="info" effect="plain" size="small" data-testid="agent-readonly-lock-badge">
+              只读查看 · 工作流与节点配置
             </el-tag>
-            <el-tag type="info" size="small">
-              DSL: {{ workflow?.dsl_version }}
-            </el-tag>
+            <el-tag type="info" size="small"> DSL: {{ workflow?.dsl_version }} </el-tag>
           </div>
         </div>
       </div>
@@ -834,7 +811,7 @@ onUnmounted(() => {
           data-testid="btn-open-conversation-history"
           @click="conversationHistoryVisible = true"
         >
-          对话工作流历史管理 ({{ tasks.length }})
+          任务历史 ({{ tasks.length }})
         </el-button>
         <el-button
           size="small"
@@ -843,34 +820,42 @@ onUnmounted(() => {
           :disabled="!selectedTaskDetail"
           @click="openStageDeliverables()"
         >
-          展开查看各环节产出 ({{ selectedTaskDetail?.step_traces.length || 0 }} 步)
+          查看环节产出
         </el-button>
-        <el-button
-          size="small"
-          type="primary"
-          plain
-          data-testid="btn-export-workflow"
-          @click="openExportModal"
+        <el-button size="small" @click="inspectorOpen = !inspectorOpen">{{
+          inspectorOpen ? '收起节点详情' : '节点详情'
+        }}</el-button
+        ><el-popover trigger="click" placement="bottom-end" :width="280"
+          ><template #reference><el-button size="small">配置与评测</el-button></template>
+          <div class="secondary-actions">
+            <el-button
+              size="small"
+              type="primary"
+              plain
+              data-testid="btn-export-workflow"
+              @click="openExportModal"
+            >
+              导出工作流配置
+            </el-button>
+            <el-button
+              size="small"
+              type="success"
+              plain
+              data-testid="btn-import-workflow"
+              @click="openImportModal"
+            >
+              导入配置
+            </el-button>
+            <el-button
+              size="small"
+              type="warning"
+              data-testid="btn-open-benchmarks"
+              @click="openBenchmarksDrawer"
+            >
+              检索评测
+            </el-button>
+          </div></el-popover
         >
-          导出配置 (JSON DSL)
-        </el-button>
-        <el-button
-          size="small"
-          type="success"
-          plain
-          data-testid="btn-import-workflow"
-          @click="openImportModal"
-        >
-          导入配置
-        </el-button>
-        <el-button
-          size="small"
-          type="warning"
-          data-testid="btn-open-benchmarks"
-          @click="openBenchmarksDrawer"
-        >
-          检索命中评测 (H01-H10)
-        </el-button>
       </div>
     </div>
 
@@ -886,16 +871,12 @@ onUnmounted(() => {
         >
           {{
             runningTasks.length > 0
-              ? `⚡ 实时运行中工作流: ${runningTasks.length} 个`
-              : '🟢 实时监控就绪 (0 个运行中)'
+              ? `实时运行中工作流: ${runningTasks.length} 个`
+              : '实时监控就绪 (0 个运行中)'
           }}
         </el-tag>
-        <el-tag size="small" type="info">
-          对话采集中: {{ collectingTasks.length }} 个
-        </el-tag>
-        <el-tag size="small" type="info">
-          累计对话工作流: {{ tasks.length }} 条
-        </el-tag>
+        <el-tag size="small" type="info"> 对话采集中: {{ collectingTasks.length }} 个 </el-tag>
+        <el-tag size="small" type="info"> 累计对话工作流: {{ tasks.length }} 条 </el-tag>
 
         <template v-if="runningTasks.length > 0">
           <div class="live-running-pills">
@@ -908,7 +889,8 @@ onUnmounted(() => {
               data-testid="live-running-task-pill"
               @click="trackConversationOnCanvas(rt)"
             >
-              ⚡ {{ rt.conversation_code }} · {{ rt.current_active_node_title || '执行中' }}
+              {{ rt.conversation_code }} ·
+              {{ rt.current_active_node_title || '执行中' }}
             </el-button>
           </div>
         </template>
@@ -924,10 +906,7 @@ onUnmounted(() => {
           >
             当前对话 ID: {{ selectedTaskDetail.conversation_code }}
           </el-tag>
-          <el-tag
-            size="small"
-            :type="STATUS_TAG_TYPE[selectedTaskDetail.status] || 'info'"
-          >
+          <el-tag size="small" :type="STATUS_TAG_TYPE[selectedTaskDetail.status] || 'info'">
             {{ STATUS_LABEL_MAP[selectedTaskDetail.status] || selectedTaskDetail.status }}
           </el-tag>
           <el-tag
@@ -941,9 +920,10 @@ onUnmounted(() => {
           </el-tag>
         </template>
         <el-switch
+          aria-label="自动同步"
           v-model="autoPollEnabled"
           size="small"
-          active-text="2s实时同步"
+          active-text="自动同步"
         />
         <el-button size="small" @click="pollLiveWorkflows">刷新</el-button>
       </div>
@@ -960,26 +940,29 @@ onUnmounted(() => {
           <el-tag size="small" effect="plain" type="success">
             连接边: {{ workflow?.edges.length || 0 }} 条（含 1 条退回补证回流边）
           </el-tag>
-          <template v-if="selectedTaskDetail">
-            <el-tag size="small" type="primary">
-              对话问答: {{ selectedTaskDetail.messages.length }} 条
-            </el-tag>
-            <el-tag size="small" type="primary">
-              累计 MCP 工具调用: {{ selectedTaskDetail.mcp_calls_count }} 次
-            </el-tag>
-            <el-tag size="small" type="warning">
-              质检退回补证: {{ selectedTaskDetail.backtrack_count }} 次
-            </el-tag>
-            <el-tag size="small" type="info">
-              总耗时: {{ selectedTaskDetail.total_duration_ms }} ms | Token:
-              {{ selectedTaskDetail.total_tokens }}
-            </el-tag>
-          </template>
+          <el-popover v-if="selectedTaskDetail" trigger="click" placement="bottom" :width="320"
+            ><template #reference><el-button size="small" text>任务统计</el-button></template>
+            <div class="task-metrics-list">
+              <el-tag size="small" type="primary">
+                对话问答: {{ selectedTaskDetail.messages.length }} 条
+              </el-tag>
+              <el-tag size="small" type="primary">
+                累计 MCP 工具调用: {{ selectedTaskDetail.mcp_calls_count }} 次
+              </el-tag>
+              <el-tag size="small" type="warning">
+                质检退回补证: {{ selectedTaskDetail.backtrack_count }} 次
+              </el-tag>
+              <el-tag size="small" type="info">
+                总耗时: {{ selectedTaskDetail.total_duration_ms }} ms | Token:
+                {{ selectedTaskDetail.total_tokens }}
+              </el-tag>
+            </div></el-popover
+          >
           <div class="zoom-controls">
             <el-button
               size="small"
               circle
-              @click="canvasScale = Math.max(0.75, +(canvasScale - 0.1).toFixed(2))"
+              @click="canvasScale = Math.max(0.4, +(canvasScale - 0.1).toFixed(2))"
             >
               -
             </el-button>
@@ -991,7 +974,7 @@ onUnmounted(() => {
             >
               +
             </el-button>
-            <el-button size="small" @click="canvasScale = 1">重置</el-button>
+            <el-button size="small" @click="canvasScale = 0.72">重置</el-button>
           </div>
         </div>
 
@@ -1053,9 +1036,7 @@ onUnmounted(() => {
                         : '#3b82f6'
                   "
                   :stroke-width="edge.edge_type === 'backtrack' ? 2.6 : 2.2"
-                  :stroke-dasharray="
-                    edge.edge_type === 'backtrack' ? '6,4' : undefined
-                  "
+                  :stroke-dasharray="edge.edge_type === 'backtrack' ? '6,4' : undefined"
                   :marker-end="
                     edge.edge_type === 'backtrack'
                       ? 'url(#arrow-backtrack)'
@@ -1064,35 +1045,21 @@ onUnmounted(() => {
                         : 'url(#arrow-forward)'
                   "
                 />
-                <g
-                  :transform="`translate(${edge.labelX}, ${edge.labelY})`"
-                >
+                <g :transform="`translate(${edge.labelX}, ${edge.labelY})`">
                   <rect
                     x="-78"
                     y="-11"
                     width="156"
                     height="20"
                     rx="10"
-                    :fill="
-                      edge.edge_type === 'backtrack'
-                        ? '#fff7ed'
-                        : '#f8fafc'
-                    "
-                    :stroke="
-                      edge.edge_type === 'backtrack'
-                        ? '#fdba74'
-                        : '#cbd5e1'
-                    "
+                    :fill="edge.edge_type === 'backtrack' ? '#fff7ed' : '#f8fafc'"
+                    :stroke="edge.edge_type === 'backtrack' ? '#fdba74' : '#cbd5e1'"
                   />
                   <text
                     text-anchor="middle"
                     dominant-baseline="middle"
                     font-size="11"
-                    :fill="
-                      edge.edge_type === 'backtrack'
-                        ? '#c2410c'
-                        : '#334155'
-                    "
+                    :fill="edge.edge_type === 'backtrack' ? '#c2410c' : '#334155'"
                     font-weight="600"
                   >
                     {{ edge.label }}
@@ -1108,8 +1075,7 @@ onUnmounted(() => {
               class="dify-node-card"
               :class="{
                 active: selectedNode?.node_id === node.node_id,
-                'has-backtrack':
-                  nodeTraceStatsMap.get(node.node_id)?.hasBacktrack,
+                'has-backtrack': nodeTraceStatsMap.get(node.node_id)?.hasBacktrack,
                 'is-live-running':
                   selectedTaskDetail?.status === 'running' &&
                   selectedTaskDetail?.current_active_node_id === node.node_id,
@@ -1133,15 +1099,9 @@ onUnmounted(() => {
                 :style="{ borderColor: node.color }"
               />
               <!-- 右侧输出端口圆点 -->
-              <span
-                class="port-dot port-out"
-                :style="{ borderColor: node.color }"
-              />
+              <span class="port-dot port-out" :style="{ borderColor: node.color }" />
 
-              <div
-                class="node-card-header"
-                :style="{ borderTop: `3px solid ${node.color}` }"
-              >
+              <div class="node-card-header" :style="{ borderTop: `3px solid ${node.color}` }">
                 <span
                   class="node-type-pill"
                   :style="{
@@ -1177,7 +1137,7 @@ onUnmounted(() => {
                 class="node-live-running-banner"
                 data-testid="node-live-running-badge"
               >
-                ⚡ 实时运行中...
+                实时运行中...
               </div>
               <div
                 v-else-if="
@@ -1190,17 +1150,10 @@ onUnmounted(() => {
               </div>
 
               <!-- 叠加任务运行耗时与退回状态条 -->
-              <div
-                v-if="nodeTraceStatsMap.get(node.node_id)"
-                class="node-trace-footer"
-              >
+              <div v-if="nodeTraceStatsMap.get(node.node_id)" class="node-trace-footer">
                 <el-tag
                   size="small"
-                  :type="
-                    nodeTraceStatsMap.get(node.node_id)?.hasBacktrack
-                      ? 'warning'
-                      : 'success'
-                  "
+                  :type="nodeTraceStatsMap.get(node.node_id)?.hasBacktrack ? 'warning' : 'success'"
                 >
                   {{
                     nodeTraceStatsMap.get(node.node_id)?.hasBacktrack
@@ -1220,22 +1173,17 @@ onUnmounted(() => {
 
       <!-- 右侧 Dify 风格节点检查器与运行调试栏（只读） -->
       <div
-        v-if="selectedNode"
+        v-if="selectedNode && inspectorOpen"
         class="inspector-sidebar"
         data-testid="dify-inspector-panel"
       >
         <div class="inspector-header">
           <div class="inspector-title-row">
-            <span
-              class="inspector-dot"
-              :style="{ backgroundColor: selectedNode.color }"
-            />
+            <span class="inspector-dot" :style="{ backgroundColor: selectedNode.color }" />
             <span class="inspector-node-title" data-testid="inspector-node-title">
               {{ selectedNode.title }}
             </span>
-            <el-tag size="small" type="danger" effect="plain">
-              🔒 参数与代码只读
-            </el-tag>
+            <el-tag size="small" type="danger" effect="plain"> 🔒 参数与代码只读 </el-tag>
           </div>
           <div class="inspector-node-sub">
             节点 ID: <code>{{ selectedNode.node_id }}</code> ·
@@ -1243,12 +1191,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <el-alert
-          type="warning"
-          :closable="false"
-          show-icon
-          class="readonly-banner"
-        >
+        <el-alert type="warning" :closable="false" show-icon class="readonly-banner">
           <template #title>
             生产保护模式：当前仅可查看工作流连接关系、参数配置与运行轨迹，禁止直接修改模型参数或节点代码。
           </template>
@@ -1275,15 +1218,10 @@ onUnmounted(() => {
                   class="link-item"
                   @click="selectNode(e.source_node_id)"
                 >
-                  <el-tag
-                    size="small"
-                    :type="e.edge_type === 'backtrack' ? 'warning' : 'info'"
-                  >
+                  <el-tag size="small" :type="e.edge_type === 'backtrack' ? 'warning' : 'info'">
                     {{ e.label }}
                   </el-tag>
-                  <span class="link-node-name">
-                    ← {{ nodeMap.get(e.source_node_id)?.title }}
-                  </span>
+                  <span class="link-node-name"> ← {{ nodeMap.get(e.source_node_id)?.title }} </span>
                   <div class="link-cond">{{ e.condition_desc }}</div>
                 </div>
               </div>
@@ -1299,15 +1237,10 @@ onUnmounted(() => {
                   class="link-item"
                   @click="selectNode(e.target_node_id)"
                 >
-                  <el-tag
-                    size="small"
-                    :type="e.edge_type === 'backtrack' ? 'danger' : 'success'"
-                  >
+                  <el-tag size="small" :type="e.edge_type === 'backtrack' ? 'danger' : 'success'">
                     {{ e.label }}
                   </el-tag>
-                  <span class="link-node-name">
-                    → {{ nodeMap.get(e.target_node_id)?.title }}
-                  </span>
+                  <span class="link-node-name"> → {{ nodeMap.get(e.target_node_id)?.title }} </span>
                   <div class="link-cond">{{ e.condition_desc }}</div>
                 </div>
               </div>
@@ -1321,19 +1254,11 @@ onUnmounted(() => {
               <div class="readonly-form-grid">
                 <div class="form-item">
                   <label>模型供应方</label>
-                  <el-input
-                    :model-value="selectedNode.model_provider"
-                    disabled
-                    size="small"
-                  />
+                  <el-input :model-value="selectedNode.model_provider" disabled size="small" />
                 </div>
                 <div class="form-item">
                   <label>绑定模型标识</label>
-                  <el-input
-                    :model-value="selectedNode.model_name"
-                    disabled
-                    size="small"
-                  />
+                  <el-input :model-value="selectedNode.model_name" disabled size="small" />
                 </div>
                 <div
                   v-for="(val, key) in selectedNode.parameters"
@@ -1399,21 +1324,11 @@ onUnmounted(() => {
           </el-tab-pane>
 
           <!-- Tab 2: 绑定 MCP 工具清单 -->
-          <el-tab-pane
-            :label="`MCP 工具 (${selectedNode.mcp_tools.length})`"
-            name="tools"
-          >
-            <div
-              v-if="selectedNode.mcp_tools.length === 0"
-              class="empty-state-box"
-            >
+          <el-tab-pane :label="`MCP 工具 (${selectedNode.mcp_tools.length})`" name="tools">
+            <div v-if="selectedNode.mcp_tools.length === 0" class="empty-state-box">
               该节点不直接调用外部 MCP 工具。
             </div>
-            <div
-              v-for="tool in selectedNode.mcp_tools"
-              :key="tool.tool_name"
-              class="mcp-tool-card"
-            >
+            <div v-for="tool in selectedNode.mcp_tools" :key="tool.tool_name" class="mcp-tool-card">
               <div class="tool-header">
                 <span class="tool-title">{{ tool.display_name }}</span>
                 <el-tag size="small" type="primary">{{ tool.tool_name }}</el-tag>
@@ -1433,16 +1348,13 @@ onUnmounted(() => {
           </el-tab-pane>
 
           <!-- Tab 3: 最近任务运行轨迹观测与本环节产出展开 -->
-          <el-tab-pane
-            :label="`运行轨迹 (${selectedNodeTraces.length})`"
-            name="trace"
-          >
+          <el-tab-pane :label="`运行轨迹 (${selectedNodeTraces.length})`" name="trace">
             <div v-if="selectedTaskDetail" class="inspector-trace-top">
               <div>
-                <div style="font-size: 12px; font-weight: 700; color: #0f172a">
+                <div style="font-size: 13px; font-weight: 700; color: #0f172a">
                   对话 ID: {{ selectedTaskDetail.conversation_code }}
                 </div>
-                <div style="font-size: 11.5px; color: #64748b">
+                <div style="font-size: 13px; color: #64748b">
                   {{ selectedTaskDetail.title }} ·
                   {{ STATUS_LABEL_MAP[selectedTaskDetail.status] || selectedTaskDetail.status }}
                 </div>
@@ -1458,17 +1370,14 @@ onUnmounted(() => {
               </el-button>
             </div>
 
-            <div
-              v-if="selectedNodeTraces.length === 0"
-              class="empty-state-box"
-            >
+            <div v-if="selectedNodeTraces.length === 0" class="empty-state-box">
               <template
                 v-if="
                   selectedTaskDetail?.status === 'running' &&
                   selectedTaskDetail?.current_active_node_id === selectedNode.node_id
                 "
               >
-                ⚡ 当前节点正在实时执行中，完成后将立即写入本环节产出与工具调用明细...
+                当前节点正在实时执行中，完成后将立即写入本环节产出与工具调用明细...
               </template>
               <template v-else>
                 当前选中任务在该节点无执行记录（或任务处于待补充事实阶段）。
@@ -1482,11 +1391,9 @@ onUnmounted(() => {
               data-testid="inspector-trace-step-card"
             >
               <div class="trace-step-head">
-                <el-tag
-                  size="small"
-                  :type="tr.is_backtrack ? 'danger' : 'success'"
-                >
-                  步骤 #{{ tr.seq_no }} · {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
+                <el-tag size="small" :type="tr.is_backtrack ? 'danger' : 'success'">
+                  步骤 #{{ tr.seq_no }} ·
+                  {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
                 </el-tag>
                 <span class="trace-metrics">
                   耗时 {{ tr.duration_ms }} ms · {{ tr.tokens_used }} tokens
@@ -1495,9 +1402,7 @@ onUnmounted(() => {
               <div class="trace-summary">{{ tr.business_summary }}</div>
 
               <div v-if="tr.is_backtrack" class="backtrack-detail-box">
-                <div>
-                  <strong>退回原因：</strong>{{ tr.backtrack_reason }}
-                </div>
+                <div><strong>退回原因：</strong>{{ tr.backtrack_reason }}</div>
                 <div style="margin-top: 4px">
                   <strong>补证结果：</strong>{{ tr.backtrack_resolution }}
                 </div>
@@ -1505,11 +1410,7 @@ onUnmounted(() => {
 
               <div v-if="tr.tool_calls.length > 0" class="trace-tools-list">
                 <div class="sub-label">调用的 MCP 工具明细：</div>
-                <div
-                  v-for="tc in tr.tool_calls"
-                  :key="tc.call_id"
-                  class="trace-tool-item"
-                >
+                <div v-for="tc in tr.tool_calls" :key="tc.call_id" class="trace-tool-item">
                   <div class="tc-top">
                     <el-tag size="small" effect="plain">
                       {{ tc.tool_name }}
@@ -1572,7 +1473,7 @@ onUnmounted(() => {
             data-testid="conv-history-status-select"
           >
             <el-option label="全部状态" value="" />
-            <el-option label="⚡ 实时运行中" value="running" />
+            <el-option label="实时运行中" value="running" />
             <el-option label="💬 对话采集中" value="collecting_facts" />
             <el-option label="✅ 已出报告" value="completed" />
             <el-option label="⚠️ 部分样稿" value="partial_sample" />
@@ -1611,7 +1512,12 @@ onUnmounted(() => {
             <template #default="{ row }">
               <div class="conv-code-cell">
                 <code data-testid="history-row-conv-code">{{ row.conversation_code }}</code>
-                <el-button link type="primary" size="small" @click="copyCode(row.conversation_code)">
+                <el-button
+                  link
+                  type="primary"
+                  size="small"
+                  @click="copyCode(row.conversation_code)"
+                >
                   复制
                 </el-button>
               </div>
@@ -1621,7 +1527,9 @@ onUnmounted(() => {
 
           <el-table-column label="所属企业 / 发起用户" width="180">
             <template #default="{ row }">
-              <div style="font-weight: 600">{{ row.org_name || '示范企业' }}</div>
+              <div style="font-weight: 600">
+                {{ row.org_name || '示范企业' }}
+              </div>
               <div class="cell-muted">
                 {{ row.creator_name || '企业成员' }}
                 <span v-if="row.creator_email">({{ row.creator_email }})</span>
@@ -1643,25 +1551,20 @@ onUnmounted(() => {
           <el-table-column label="工作流状态与当前环节" min-width="220">
             <template #default="{ row }">
               <div>
-                <el-tag
-                  size="small"
-                  :type="STATUS_TAG_TYPE[row.status] || 'info'"
-                >
+                <el-tag size="small" :type="STATUS_TAG_TYPE[row.status] || 'info'">
                   {{ STATUS_LABEL_MAP[row.status] || row.status }}
                 </el-tag>
                 <el-tag size="small" type="info" style="margin-left: 4px">
                   完备度 {{ row.sufficiency_score }}%
                 </el-tag>
               </div>
-              <div
-                v-if="row.current_active_node_title"
-                class="cell-active-node"
-              >
+              <div v-if="row.current_active_node_title" class="cell-active-node">
                 {{ row.current_active_node_title }}
               </div>
               <div v-else class="cell-muted">
-                已完成 {{ row.steps_count }} 个环节 · 结论 {{ row.findings_count }} 条 ·
-                报告 v{{ row.latest_report_version }}
+                已完成 {{ row.steps_count }} 个环节 · 结论 {{ row.findings_count }} 条 · 报告 v{{
+                  row.latest_report_version
+                }}
               </div>
             </template>
           </el-table-column>
@@ -1670,8 +1573,8 @@ onUnmounted(() => {
             <template #default="{ row }">
               <div>问答消息: {{ row.messages_count }} 条</div>
               <div class="cell-muted">
-                {{ row.total_duration_ms }} ms · {{ row.total_tokens }} tok ·
-                退回 {{ row.backtrack_count }} 次
+                {{ row.total_duration_ms }} ms · {{ row.total_tokens }} tok · 退回
+                {{ row.backtrack_count }} 次
               </div>
             </template>
           </el-table-column>
@@ -1744,9 +1647,12 @@ onUnmounted(() => {
             </el-tag>
             <span class="stage-meta-text">
               企业: {{ selectedTaskDetail.org_name }} | 发起人:
-              {{ selectedTaskDetail.creator_name || selectedTaskDetail.creator_email || '企业用户' }} |
-              国家: {{ selectedTaskDetail.country_name_zh }} ({{ selectedTaskDetail.country_code }}) |
-              车型: {{ selectedTaskDetail.vehicle_model || '待填写' }}
+              {{
+                selectedTaskDetail.creator_name || selectedTaskDetail.creator_email || '企业用户'
+              }}
+              | 国家: {{ selectedTaskDetail.country_name_zh }} ({{
+                selectedTaskDetail.country_code
+              }}) | 车型: {{ selectedTaskDetail.vehicle_model || '待填写' }}
             </span>
           </div>
           <div class="stage-drawer-actions">
@@ -1771,7 +1677,7 @@ onUnmounted(() => {
           style="margin-bottom: 12px"
         >
           <template #title>
-            ⚡ 该对话工作流正在实时运行中（当前环节：{{
+            该对话工作流正在实时运行中（当前环节：{{
               selectedTaskDetail.current_active_node_title || '执行中'
             }}），每完成一个环节将自动在此展开最新产出。
           </template>
@@ -1779,14 +1685,15 @@ onUnmounted(() => {
 
         <el-collapse v-model="expandedStageNames">
           <!-- 环节 0：用户对话问答与八维度业务事实采集产出 -->
-          <el-collapse-item
-            name="stage-chat"
-            data-testid="stage-collapse-chat"
-          >
+          <el-collapse-item name="stage-chat" data-testid="stage-collapse-chat">
             <template #title>
               <div class="stage-collapse-header">
                 <el-tag size="small" type="primary">环节 0 · 对话交互与槽位采集</el-tag>
-                <b>用户对话问答记录 ({{ selectedTaskDetail.messages.length }} 条) & 已采集业务事实 (完备度 {{ selectedTaskDetail.sufficiency_score }}%)</b>
+                <b
+                  >用户对话问答记录 ({{ selectedTaskDetail.messages.length }}
+                  条) & 已采集业务事实 (完备度
+                  {{ selectedTaskDetail.sufficiency_score }}%)</b
+                >
               </div>
             </template>
 
@@ -1844,13 +1751,17 @@ onUnmounted(() => {
               <div class="stage-collapse-header">
                 <el-tag
                   size="small"
-                  :type="tr.is_backtrack ? 'danger' : tr.status === 'passed' ? 'success' : 'warning'"
+                  :type="
+                    tr.is_backtrack ? 'danger' : tr.status === 'passed' ? 'success' : 'warning'
+                  "
                 >
-                  步骤 #{{ tr.seq_no }} · {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
+                  步骤 #{{ tr.seq_no }} ·
+                  {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
                 </el-tag>
                 <b>{{ tr.agent_name }}</b>
                 <span class="cell-muted">
-                  （耗时 {{ tr.duration_ms }} ms · {{ tr.tokens_used }} tokens · 工具调用 {{ tr.tool_calls.length }} 次）
+                  （耗时 {{ tr.duration_ms }} ms · {{ tr.tokens_used }} tokens · 工具调用
+                  {{ tr.tool_calls.length }} 次）
                 </span>
               </div>
             </template>
@@ -1868,10 +1779,16 @@ onUnmounted(() => {
               </div>
 
               <!-- 针对 retrieval 环节：展示每个维度检索出的候选条款明细 -->
-              <template v-if="tr.phase === 'retrieval' && tr.output_snapshot.retrieved_clauses_by_dimension">
+              <template
+                v-if="tr.phase === 'retrieval' && tr.output_snapshot.retrieved_clauses_by_dimension"
+              >
                 <div class="sub-label">本环节检索命中的各维度候选法规条款产出：</div>
                 <div
-                  v-for="(clauses, dimCode) in (tr.output_snapshot.retrieved_clauses_by_dimension as Record<string, Array<Record<string, unknown>>>)"
+                  v-for="(clauses, dimCode) in tr.output_snapshot
+                    .retrieved_clauses_by_dimension as Record<
+                    string,
+                    Array<Record<string, unknown>>
+                  >"
                   :key="dimCode"
                   class="dim-output-card"
                 >
@@ -1889,11 +1806,17 @@ onUnmounted(() => {
 
               <!-- 针对 analysis / re_analysis 环节：展示每个维度的模型分析初稿产出 -->
               <template
-                v-if="(tr.phase === 'analysis' || tr.phase === 're_analysis') && tr.output_snapshot.dimension_outputs"
+                v-if="
+                  (tr.phase === 'analysis' || tr.phase === 're_analysis') &&
+                  tr.output_snapshot.dimension_outputs
+                "
               >
                 <div class="sub-label">本环节各维度模型分析产出明细：</div>
                 <div
-                  v-for="(dimOut, dimCode) in (tr.output_snapshot.dimension_outputs as Record<string, Record<string, unknown>>)"
+                  v-for="(dimOut, dimCode) in tr.output_snapshot.dimension_outputs as Record<
+                    string,
+                    Record<string, unknown>
+                  >"
                   :key="dimCode"
                   class="dim-output-card"
                 >
@@ -1910,7 +1833,7 @@ onUnmounted(() => {
                       产出结论 {{ dimOut.findings_count || 0 }} 条
                     </el-tag>
                   </div>
-                  <div v-if="dimOut.summary" style="margin: 6px 0; font-size: 12.5px">
+                  <div v-if="dimOut.summary" style="margin: 6px 0; font-size: 13px">
                     <strong>维度小结：</strong>{{ dimOut.summary }}
                   </div>
                   <div v-if="dimOut.gaps" class="cell-muted" style="margin-bottom: 6px">
@@ -1932,10 +1855,15 @@ onUnmounted(() => {
 
               <!-- 针对 verification / re_verification 环节：展示每条结论的子串与数字核验产出 -->
               <template
-                v-if="(tr.phase === 'verification' || tr.phase === 're_verification') && tr.output_snapshot.verification_items"
+                v-if="
+                  (tr.phase === 'verification' || tr.phase === 're_verification') &&
+                  tr.output_snapshot.verification_items
+                "
               >
                 <div class="sub-label">
-                  本环节程序化原文子串与数字核验明细（通过 {{ tr.output_snapshot.verified_passed_count }} 条 / 拦截 {{ tr.output_snapshot.verified_failed_count }} 条）：
+                  本环节程序化原文子串与数字核验明细（通过
+                  {{ tr.output_snapshot.verified_passed_count }} 条 / 拦截
+                  {{ tr.output_snapshot.verified_failed_count }} 条）：
                 </div>
                 <el-table
                   :data="tr.output_snapshot.verification_items as Array<Record<string, unknown>>"
@@ -1958,12 +1886,16 @@ onUnmounted(() => {
               </template>
 
               <!-- 针对 compilation 环节：展示八维度报告章节产出 -->
-              <template v-if="tr.phase === 'compilation' && tr.output_snapshot.dimensions_deliverables">
+              <template
+                v-if="tr.phase === 'compilation' && tr.output_snapshot.dimensions_deliverables"
+              >
                 <div class="sub-label">
                   本环节编制的八维度报告章节产出（版本 v{{ tr.output_snapshot.report_version }}）：
                 </div>
                 <el-table
-                  :data="tr.output_snapshot.dimensions_deliverables as Array<Record<string, unknown>>"
+                  :data="
+                    tr.output_snapshot.dimensions_deliverables as Array<Record<string, unknown>>
+                  "
                   border
                   size="small"
                 >
@@ -1971,7 +1903,10 @@ onUnmounted(() => {
                   <el-table-column prop="dimension_title" label="章节标题" width="180" />
                   <el-table-column label="状态" width="100">
                     <template #default="{ row }">
-                      <el-tag size="small" :type="row.status === 'COMPLETE' ? 'success' : 'warning'">
+                      <el-tag
+                        size="small"
+                        :type="row.status === 'COMPLETE' ? 'success' : 'warning'"
+                      >
                         {{ row.status === 'COMPLETE' ? '依据已核验' : '部分缺口' }}
                       </el-tag>
                     </template>
@@ -1984,7 +1919,9 @@ onUnmounted(() => {
 
               <!-- 工具调用与原始输入输出 JSON 快照 -->
               <div v-if="tr.tool_calls.length > 0" style="margin-top: 10px">
-                <div class="sub-label">本环节调用的 MCP 工具 / 模型记录 ({{ tr.tool_calls.length }})：</div>
+                <div class="sub-label">
+                  本环节调用的 MCP 工具 / 模型记录 ({{ tr.tool_calls.length }})：
+                </div>
                 <el-table :data="tr.tool_calls" border size="small">
                   <el-table-column prop="tool_label" label="工具/模型名称" min-width="160" />
                   <el-table-column prop="tool_name" label="方法标识" width="180" />
@@ -2015,14 +1952,9 @@ onUnmounted(() => {
       title="导出多智能体编排配置 (Dify-Compatible Workflow DSL)"
       width="720px"
     >
-      <el-alert
-        type="info"
-        :closable="false"
-        show-icon
-        style="margin-bottom: 12px"
-      >
-        导出的 JSON 配置包包含全部 7 个智能体节点的拓扑坐标、上下游连接边、MCP 工具绑定、I/O
-        Schema 与只读安全策略，可用于版本归档、长久维护与跨环境迁移。
+      <el-alert type="info" :closable="false" show-icon style="margin-bottom: 12px">
+        导出的 JSON 配置包包含全部 7 个智能体节点的拓扑坐标、上下游连接边、MCP 工具绑定、I/O Schema
+        与只读安全策略，可用于版本归档、长久维护与跨环境迁移。
       </el-alert>
       <el-input
         v-model="exportedDslText"
@@ -2034,11 +1966,7 @@ onUnmounted(() => {
       <template #footer>
         <el-button @click="exportDialogVisible = false">关闭</el-button>
         <el-button @click="copyExportedJson">复制 JSON</el-button>
-        <el-button
-          type="primary"
-          data-testid="btn-download-dsl"
-          @click="downloadExportedJson"
-        >
+        <el-button type="primary" data-testid="btn-download-dsl" @click="downloadExportedJson">
           下载 .json 配置文件
         </el-button>
       </template>
@@ -2054,20 +1982,11 @@ onUnmounted(() => {
         <label style="font-weight: 600; display: block; margin-bottom: 6px">
           方式一：选择本地 .json 配置文件
         </label>
-        <input
-          type="file"
-          accept=".json,application/json"
-          @change="handleImportFileChange"
-        />
+        <input type="file" accept=".json,application/json" @change="handleImportFileChange" />
       </div>
       <div style="margin-bottom: 12px">
-        <label style="font-weight: 600; display: block; margin-bottom: 6px">
-          版本变更说明
-        </label>
-        <el-input
-          v-model="importChangeNote"
-          placeholder="填写本次导入维护说明"
-        />
+        <label style="font-weight: 600; display: block; margin-bottom: 6px"> 版本变更说明 </label>
+        <el-input v-model="importChangeNote" placeholder="填写本次导入维护说明" />
       </div>
       <div>
         <label style="font-weight: 600; display: block; margin-bottom: 6px">
@@ -2109,13 +2028,13 @@ onUnmounted(() => {
               <div class="bm-num">
                 {{ benchmarkData.hit_cases }} / {{ benchmarkData.total_cases }}
               </div>
-              <div class="bm-label">
-                检索命中 ({{ benchmarkData.retrieval_hit_rate_pct }}%)
-              </div>
+              <div class="bm-label">检索命中 ({{ benchmarkData.retrieval_hit_rate_pct }}%)</div>
             </div>
             <div class="bm-card">
               <div class="bm-num">人工核对</div>
-              <div class="bm-label">{{ benchmarkData.human_review_status }}</div>
+              <div class="bm-label">
+                {{ benchmarkData.human_review_status }}
+              </div>
             </div>
           </div>
 
@@ -2177,7 +2096,7 @@ onUnmounted(() => {
   background: linear-gradient(135deg, #1d4ed8, #4f46e5);
   color: #fff;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
   padding: 6px 10px;
   border-radius: 6px;
   letter-spacing: 0.3px;
@@ -2211,7 +2130,7 @@ onUnmounted(() => {
 }
 
 .ctrl-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #475569;
   font-weight: 600;
 }
@@ -2253,7 +2172,7 @@ onUnmounted(() => {
 }
 
 .zoom-text {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #334155;
   min-width: 42px;
@@ -2335,14 +2254,14 @@ onUnmounted(() => {
 }
 
 .node-type-pill {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 999px;
 }
 
 .node-lock-tag {
-  font-size: 11px;
+  font-size: 13px;
   color: #64748b;
   font-weight: 600;
 }
@@ -2355,7 +2274,7 @@ onUnmounted(() => {
 }
 
 .node-card-subtitle {
-  font-size: 11px;
+  font-size: 13px;
   color: #64748b;
   margin-bottom: 8px;
 }
@@ -2364,7 +2283,7 @@ onUnmounted(() => {
   background: #f8fafc;
   border-radius: 6px;
   padding: 6px 8px;
-  font-size: 11px;
+  font-size: 13px;
   border: 1px solid #f1f5f9;
 }
 
@@ -2393,7 +2312,7 @@ onUnmounted(() => {
 }
 
 .trace-ms {
-  font-size: 11px;
+  font-size: 13px;
   color: #475569;
   font-weight: 600;
 }
@@ -2433,7 +2352,7 @@ onUnmounted(() => {
 }
 
 .inspector-node-sub {
-  font-size: 12px;
+  font-size: 13px;
   color: #64748b;
   margin-top: 4px;
 }
@@ -2461,13 +2380,13 @@ onUnmounted(() => {
 
 .sec-desc {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 13px;
   color: #334155;
   line-height: 1.6;
 }
 
 .link-sub {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #475569;
   margin-bottom: 4px;
@@ -2487,20 +2406,20 @@ onUnmounted(() => {
 }
 
 .link-node-name {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   color: #1e293b;
   margin-left: 6px;
 }
 
 .link-cond {
-  font-size: 11.5px;
+  font-size: 13px;
   color: #64748b;
   margin-top: 3px;
 }
 
 .empty-link {
-  font-size: 12px;
+  font-size: 13px;
   color: #94a3b8;
 }
 
@@ -2512,7 +2431,7 @@ onUnmounted(() => {
 
 .form-item label {
   display: block;
-  font-size: 11.5px;
+  font-size: 13px;
   color: #475569;
   margin-bottom: 3px;
 }
@@ -2522,11 +2441,11 @@ onUnmounted(() => {
   color: #38bdf8;
   padding: 8px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .io-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #475569;
   margin-bottom: 4px;
@@ -2554,13 +2473,13 @@ onUnmounted(() => {
 }
 
 .tool-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: #475569;
   margin: 0 0 8px 0;
 }
 
 .tool-schema-row {
-  font-size: 11.5px;
+  font-size: 13px;
   color: #334155;
   display: flex;
   flex-direction: column;
@@ -2588,13 +2507,13 @@ onUnmounted(() => {
 }
 
 .trace-metrics {
-  font-size: 11.5px;
+  font-size: 13px;
   color: #475569;
   font-weight: 600;
 }
 
 .trace-summary {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #0f172a;
   line-height: 1.5;
@@ -2606,7 +2525,7 @@ onUnmounted(() => {
   background: #ffedd5;
   border-left: 3px solid #ea580c;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 13px;
   color: #9a3412;
 }
 
@@ -2615,7 +2534,7 @@ onUnmounted(() => {
 }
 
 .sub-label {
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   color: #334155;
   margin-bottom: 4px;
@@ -2627,7 +2546,7 @@ onUnmounted(() => {
   border-radius: 6px;
   padding: 6px 8px;
   margin-bottom: 6px;
-  font-size: 11.5px;
+  font-size: 13px;
 }
 
 .tc-top {
@@ -2641,7 +2560,7 @@ onUnmounted(() => {
   color: #e2e8f0;
   padding: 6px 8px;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 13px;
   overflow-x: auto;
   max-height: 140px;
 }
@@ -2667,7 +2586,7 @@ onUnmounted(() => {
 }
 
 .bm-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #475569;
   margin-top: 4px;
 }
@@ -2726,7 +2645,9 @@ onUnmounted(() => {
 
 .dify-node-card.is-live-running {
   border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.28), 0 8px 24px rgba(37, 99, 235, 0.22);
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.28),
+    0 8px 24px rgba(37, 99, 235, 0.22);
   animation: pulse-card 1.5s infinite ease-in-out;
 }
 
@@ -2738,10 +2659,14 @@ onUnmounted(() => {
 @keyframes pulse-card {
   0%,
   100% {
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22), 0 6px 18px rgba(37, 99, 235, 0.16);
+    box-shadow:
+      0 0 0 3px rgba(37, 99, 235, 0.22),
+      0 6px 18px rgba(37, 99, 235, 0.16);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.35), 0 10px 26px rgba(37, 99, 235, 0.28);
+    box-shadow:
+      0 0 0 6px rgba(37, 99, 235, 0.35),
+      0 10px 26px rgba(37, 99, 235, 0.28);
   }
 }
 
@@ -2751,7 +2676,7 @@ onUnmounted(() => {
   border-radius: 6px;
   background: linear-gradient(90deg, #2563eb, #1d4ed8);
   color: #ffffff;
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   text-align: center;
 }
@@ -2763,7 +2688,7 @@ onUnmounted(() => {
   background: #ecfeff;
   border: 1px solid #a5f3fc;
   color: #0e7490;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   text-align: center;
 }
@@ -2795,13 +2720,13 @@ onUnmounted(() => {
 }
 
 .cell-muted {
-  font-size: 11.5px;
+  font-size: 13px;
   color: #64748b;
 }
 
 .cell-active-node {
   margin-top: 4px;
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   color: #1d4ed8;
 }
@@ -2827,7 +2752,7 @@ onUnmounted(() => {
 }
 
 .stage-meta-text {
-  font-size: 12.5px;
+  font-size: 13px;
   color: #334155;
   font-weight: 600;
 }
@@ -2871,7 +2796,7 @@ onUnmounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -2894,5 +2819,204 @@ onUnmounted(() => {
   margin-bottom: 6px;
   font-size: 13px;
   color: #0f172a;
+}
+
+.agent-studio-page {
+  height: calc(100dvh - 145px);
+  min-height: 700px;
+  border-radius: 14px;
+  background: #fff;
+  border-color: var(--cy-line);
+}
+.studio-topbar {
+  padding: 20px 24px;
+  gap: 18px;
+}
+.topbar-left {
+  gap: 12px;
+}
+.workflow-title {
+  font-size: 23px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.studio-badge {
+  display: none;
+}
+.workflow-meta {
+  gap: 8px;
+}
+.topbar-actions {
+  gap: 10px;
+}
+.ctrl-label {
+  font-size: 12px;
+  color: #8493a0;
+  font-weight: 400;
+}
+.canvas-wrapper {
+  background-color: #f7f9fc;
+  background-image: radial-gradient(#dce4ed 0.8px, transparent 0.8px);
+  background-size: 22px 22px;
+}
+.canvas-floating-bar {
+  padding: 12px 16px;
+  gap: 10px;
+}
+.canvas-floating-bar .el-tag {
+  background: transparent;
+  border-color: transparent;
+  color: #8293a0;
+}
+.dify-node-card {
+  border-width: 1px;
+  padding: 16px;
+  border-color: #d9e2ed;
+  box-shadow: 0 4px 16px #273f5810;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
+}
+.dify-node-card.active {
+  border-width: 2px;
+  box-shadow: 0 5px 20px #315fe817;
+}
+.node-card-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+.node-card-subtitle {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.inspector-sidebar {
+  width: 370px;
+  max-width: 40%;
+  min-width: 300px;
+  background: #fff;
+}
+.live-monitor-bar {
+  background: #f9fbfd;
+  border-color: var(--cy-line);
+  padding: 12px 20px;
+  gap: 12px;
+}
+.live-monitor-left,
+.live-monitor-right {
+  gap: 10px;
+}
+.live-monitor-left .el-tag,
+.live-monitor-right .el-tag {
+  font-size: 12px;
+}
+.live-monitor-bar .el-tag--dark {
+  background: #edf3fa;
+  border-color: #dce5ee;
+  color: #506d89;
+}
+.live-dot {
+  display: none;
+}
+.readonly-banner {
+  background: #f4f6f9;
+  border-radius: 8px;
+}
+.history-filter-bar,
+.stage-drawer-actions {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.trace-step-card {
+  padding: 18px;
+}
+.form-item label {
+  font-size: 13px;
+}
+.node-type-pill,
+.node-lock-tag {
+  font-size: 11px;
+}
+@media (max-width: 1100px) {
+  .studio-topbar {
+    padding: 18px;
+  }
+  .topbar-actions {
+    width: 100%;
+  }
+  .inspector-sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+    box-shadow: -8px 0 32px #263e5522;
+    max-width: 90%;
+  }
+  .studio-workspace {
+    position: relative;
+  }
+  .live-monitor-left,
+  .live-monitor-right {
+    flex-wrap: wrap;
+  }
+  .task-selector .el-select {
+    width: 240px !important;
+  }
+}
+@media (max-width: 800px) {
+  .agent-studio-page {
+    height: auto;
+    min-height: 820px;
+  }
+  .studio-workspace {
+    min-height: 550px;
+  }
+  .studio-topbar {
+    padding: 16px;
+  }
+  .topbar-actions {
+    align-items: flex-start;
+  }
+  .task-selector {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .task-selector .el-select {
+    width: 100% !important;
+  }
+  .live-monitor-bar {
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+  .canvas-floating-bar {
+    gap: 4px;
+  }
+  .canvas-stage {
+    transform-origin: 0 0;
+  }
+  .inspector-sidebar {
+    min-width: 0;
+    width: 340px;
+  }
+  .zoom-controls {
+    margin-left: 0;
+  }
+}
+
+/* Node cards show the business role; implementation details remain in the inspector. */
+.node-card-subtitle,
+.node-lock-tag {
+  display: none;
+}
+.node-card-meta .meta-row:first-child {
+  display: none;
+}
+.node-card-title {
+  font-size: 18px;
+  line-height: 1.5;
+}
+.task-metrics-list {
+  display: grid;
+  gap: 10px;
 }
 </style>

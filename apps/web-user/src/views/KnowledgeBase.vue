@@ -202,7 +202,7 @@ const clauses = ref<ClauseTranslation[]>([])
 const regulations = ref<RegulationSummary[]>([])
 const regDetail = ref<RegulationDetail | null>(null)
 const regLoading = ref(false)
-const showMiniGraph = ref(true)
+const showMiniGraph = ref(false)
 const showVersions = ref(false)
 const highlightedQuotes = ref<Record<string, string>>({})
 
@@ -340,13 +340,19 @@ const fgNodes = computed(() => {
   }
   return (graph.value.nodes || [])
     .filter((n) => vis.has(n.node_type) && degree[n.id])
-    .map((n) => ({ id: n.id, name: n.name_zh, type: n.node_type, degree: degree[n.id] }))
+    .map((n) => ({
+      id: n.id,
+      name: n.name_zh,
+      type: n.node_type,
+      degree: degree[n.id],
+    }))
 })
 
 const tableEdges = computed(() =>
   selectedNodeId.value
     ? filteredEdges.value.filter(
-        (e) => e.source_node_id === selectedNodeId.value || e.target_node_id === selectedNodeId.value,
+        (e) =>
+          e.source_node_id === selectedNodeId.value || e.target_node_id === selectedNodeId.value,
       )
     : filteredEdges.value,
 )
@@ -482,55 +488,58 @@ onMounted(loadData)
 
 <template>
   <div>
-    <h2 style="margin-top: 0">五国官方法规知识库与合规关系地图</h2>
-    <p class="sub">
-      提示：只有经合作律所确认、标记为「已复核(可作法律依据)」的条款与关系，才会被安全评估报告与跨境申请表作为正式法律依据引用；「机器翻译，待核对」仅供检索参考。
+    <header class="page-heading">
+      <div>
+        <div class="eyebrow">REGULATORY LIBRARY</div>
+        <h1>法规知识库</h1>
+        <p>从官方原文出发，查阅条款、对照译文与关联依据。</p>
+      </div>
+    </header>
+    <p class="knowledge-notice">
+      仅已复核的条款与关系可作正式法律依据；机器译文仅供检索参考，请核对原文。
     </p>
 
-    <!-- 五国概览卡片 -->
-    <div class="country-grid">
-      <div
+    <div class="country-grid" aria-label="选择国家">
+      <el-tooltip
         v-for="c in overviews"
         :key="c.country_code"
-        class="country-card"
-        :class="{ active: selectedCountry === c.country_code }"
-        @click="selectCountry(c.country_code)"
+        :content="`${c.country_name_orig} · ${c.clauses_count} 条款 · ${c.translations_count} 条译文（已复核 ${c.approved_translations_count}） · ${c.kg_edges_count} 条关系`"
+        ><button
+          class="country-card"
+          :class="{ active: selectedCountry === c.country_code }"
+          :aria-pressed="selectedCountry === c.country_code"
+          :aria-label="`${c.country_name_zh}，${c.documents_count} 份法规，${c.approved_translations_count} 条已复核译文`"
+          @click="selectCountry(c.country_code)"
+        >
+          <strong>{{ c.country_name_zh }}</strong
+          ><span class="country-code">{{ c.country_code }}</span>
+          <div class="country-summary">{{ c.documents_count }} 份法规</div>
+        </button></el-tooltip
       >
-        <div style="font-weight: 700; font-size: 16px">
-          {{ c.country_name_zh }} ({{ c.country_code }})
-        </div>
-        <div class="sub">{{ c.country_name_orig }}</div>
-        <div style="margin-top: 8px; font-size: 12px">
-          官方法规 <strong>{{ c.documents_count }}</strong> 份 · 条款
-          <strong>{{ c.clauses_count }}</strong> 条
-        </div>
-        <div style="font-size: 12px; margin-top: 2px">
-          受控译文 <strong>{{ c.translations_count }}</strong> 条（已复核
-          <strong>{{ c.approved_translations_count }}</strong>） · 图谱边
-          <strong>{{ c.kg_edges_count }}</strong> 条
-        </div>
-      </div>
     </div>
 
     <!-- 检索栏 -->
-    <div style="margin: 16px 0; display: flex; gap: 10px; align-items: center">
+    <div class="toolbar knowledge-search">
       <el-input
         v-model="keyword"
         style="width: 340px"
         clearable
-        placeholder="输入英文/中文关键词检索法规与条款（如 transfer、autonomous、个人数据）"
+        placeholder="搜索法规名称、条款或关键词"
+        aria-label="搜索法规条款"
         @keyup.enter="loadData"
       />
-      <el-switch v-model="onlyApproved" active-text="只看律所已复核依据" @change="loadData" />
+      <el-switch
+        aria-label="只看律所已复核依据"
+        v-model="onlyApproved"
+        active-text="只看律所已复核依据"
+        @change="loadData"
+      />
       <el-button type="primary" :loading="loading" @click="loadData">检索</el-button>
     </div>
 
     <el-tabs v-model="activeTab">
       <!-- 页签 1: 法规中心 + 法规详情（左右双栏对照 + 8项属性 + 1跳关联图 + 点击义务高亮原文） -->
-      <el-tab-pane
-        name="center"
-        :label="`法规中心 · 分级目录与双栏对照 (${regulations.length} 份法规)`"
-      >
+      <el-tab-pane name="center" :label="`法规原文 (${regulations.length})`">
         <div class="center-layout" v-loading="loading">
           <!-- 左侧三级分类树：国家 -> 法律层级 -> 法规 -->
           <div class="reg-sidebar" data-testid="user-reg-tree">
@@ -550,7 +559,10 @@ onMounted(loadData)
                 <div class="reg-item-title">{{ r.title }}</div>
                 <div class="reg-item-meta">
                   <span>{{ r.publisher }}</span>
-                  <span>v{{ r.version_no }} · {{ r.clauses_count }} 条款 · {{ r.edges_count }} 关系</span>
+                  <span
+                    >v{{ r.version_no }} · {{ r.clauses_count }} 条款 ·
+                    {{ r.edges_count }} 关系</span
+                  >
                 </div>
               </div>
             </div>
@@ -561,12 +573,29 @@ onMounted(loadData)
             <template v-if="regDetail">
               <div class="detail-header">
                 <div>
-                  <h3 style="margin: 0 0 6px 0">{{ regDetail.regulation.title }}</h3>
-                  <div class="sub" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
-                    <span>发布机构：<strong>{{ regDetail.regulation.publisher }}</strong></span>
-                    <span>层级：<strong>{{ regDetail.regulation.document_type_zh }}</strong></span>
-                    <span>当前版本：<strong>v{{ regDetail.regulation.version_no }} ({{ regDetail.regulation.legal_status }})</strong></span>
-                    <span>条款数：<strong>{{ regDetail.regulation.clauses_count }} 条</strong></span>
+                  <h3 style="margin: 0 0 6px 0">
+                    {{ regDetail.regulation.title }}
+                  </h3>
+                  <div
+                    class="sub"
+                    style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center"
+                  >
+                    <span
+                      >发布机构：<strong>{{ regDetail.regulation.publisher }}</strong></span
+                    >
+                    <span
+                      >层级：<strong>{{ regDetail.regulation.document_type_zh }}</strong></span
+                    >
+                    <span
+                      >当前版本：<strong
+                        >v{{ regDetail.regulation.version_no }} ({{
+                          regDetail.regulation.legal_status
+                        }})</strong
+                      ></span
+                    >
+                    <span
+                      >条款数：<strong>{{ regDetail.regulation.clauses_count }} 条</strong></span
+                    >
                     <a
                       :href="regDetail.regulation.source_url"
                       target="_blank"
@@ -589,34 +618,55 @@ onMounted(loadData)
 
               <!-- 版本历史折叠面板 -->
               <div v-if="showVersions" class="version-box">
-                <div style="font-weight: 600; font-size: 12px; margin-bottom: 6px">
+                <div style="font-weight: 600; font-size: 13px; margin-bottom: 6px">
                   法规版本归档记录（官方渠道仅提供现行版本时如实登记）
                 </div>
-                <div v-for="v in regDetail.versions" :key="v.version_no" class="sub" style="margin-bottom: 4px">
-                  版本 v{{ v.version_no }} · 状态: {{ v.legal_status }} · 解析来源: {{ v.text_source }} ·
-                  SHA-256: <code>{{ v.content_hash.slice(0, 16) }}…</code> · {{ v.note }}
+                <div
+                  v-for="v in regDetail.versions"
+                  :key="v.version_no"
+                  class="sub"
+                  style="margin-bottom: 4px"
+                >
+                  版本 v{{ v.version_no }} · 状态: {{ v.legal_status }} · 解析来源:
+                  {{ v.text_source }} · SHA-256: <code>{{ v.content_hash.slice(0, 16) }}…</code> ·
+                  {{ v.note }}
                 </div>
               </div>
 
               <!-- 八项必备核心结构化属性（需求文档 1.3.3） -->
-              <div class="eight-attr-box" data-testid="user-eight-attributes">
-                <div style="font-weight: 700; font-size: 13px; color: #1e3a8a; margin-bottom: 6px">
-                  八项合规核心属性画像（点击下方条款中的义务标签可在原文中高亮依据片段）
-                </div>
-                <div class="eight-attr-grid">
-                  <div v-for="item in EIGHT_ATTR_LABELS" :key="item.key" class="eight-attr-cell">
-                    <div class="eight-attr-k">{{ item.label }}</div>
-                    <div class="eight-attr-v">
-                      {{ regDetail.regulation.eight_attributes?.[item.key] || '-' }}
+              <details class="ui-disclosure">
+                <summary>合规要点 <span>查看八项结构化属性</span></summary>
+                <div class="disclosure-body">
+                  <div class="eight-attr-box" data-testid="user-eight-attributes">
+                    <div
+                      style="font-weight: 700; font-size: 13px; color: #1e3a8a; margin-bottom: 6px"
+                    >
+                      合规属性摘要 · 可通过义务标签定位原文依据
+                    </div>
+                    <div class="eight-attr-grid">
+                      <div
+                        v-for="item in EIGHT_ATTR_LABELS"
+                        :key="item.key"
+                        class="eight-attr-cell"
+                      >
+                        <div class="eight-attr-k">{{ item.label }}</div>
+                        <div class="eight-attr-v">
+                          {{ regDetail.regulation.eight_attributes?.[item.key] || '-' }}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </details>
 
               <!-- 单法规 1 跳关联关系面板（复用 ECharts 力导向图组件） -->
-              <div v-if="activeTab === 'center' && showMiniGraph && miniFgNodes.length" class="mini-graph-box">
+              <div
+                v-if="activeTab === 'center' && showMiniGraph && miniFgNodes.length"
+                class="mini-graph-box"
+              >
                 <div class="sub" style="padding: 4px 8px; font-weight: 600">
-                  本法规一层关联关系面板（{{ miniFgNodes.length }} 个关联要素 / {{ miniFgEdges.length }} 条关系）
+                  本法规一层关联关系面板（{{ miniFgNodes.length }} 个关联要素 /
+                  {{ miniFgEdges.length }} 条关系）
                 </div>
                 <KgForceGraph
                   :nodes="miniFgNodes"
@@ -632,21 +682,26 @@ onMounted(loadData)
                 <div>中文译文（机器翻译，待核对） · 抽取出的合规义务、数据类型与罚则</div>
               </div>
               <div class="dual-list">
-                <div
-                  v-for="cl in regDetail.clauses"
-                  :key="cl.clause_id"
-                  class="dual-row"
-                >
+                <div v-for="cl in regDetail.clauses" :key="cl.clause_id" class="dual-row">
                   <!-- 左栏：官方原文（支持高亮依据片段） -->
                   <div class="dual-col orig-col">
                     <div class="clause-meta">
-                      <el-tag size="small" effect="plain">条号 {{ cl.clause_number || cl.ordinal }}</el-tag>
-                      <span v-if="cl.heading" style="font-weight: 600; margin-left: 6px">{{ cl.heading }}</span>
-                      <span v-if="cl.section_path" class="sub" style="margin-left: 6px">[{{ cl.section_path }}]</span>
+                      <el-tag size="small" effect="plain"
+                        >条号 {{ cl.clause_number || cl.ordinal }}</el-tag
+                      >
+                      <span v-if="cl.heading" style="font-weight: 600; margin-left: 6px">{{
+                        cl.heading
+                      }}</span>
+                      <span v-if="cl.section_path" class="sub" style="margin-left: 6px"
+                        >[{{ cl.section_path }}]</span
+                      >
                     </div>
                     <div class="clause-text">
                       <template
-                        v-for="(seg, idx) in splitByHighlight(cl.original_text, highlightedQuotes[cl.clause_id])"
+                        v-for="(seg, idx) in splitByHighlight(
+                          cl.original_text,
+                          highlightedQuotes[cl.clause_id],
+                        )"
                         :key="idx"
                       >
                         <mark v-if="seg.mark" class="quote-highlight">{{ seg.text }}</mark>
@@ -659,7 +714,13 @@ onMounted(loadData)
                   <div class="dual-col zh-col">
                     <div class="clause-meta" style="display: flex; justify-content: space-between">
                       <el-tag
-                        :type="cl.usable_as_legal_basis ? 'success' : cl.translated_text ? 'warning' : 'info'"
+                        :type="
+                          cl.usable_as_legal_basis
+                            ? 'success'
+                            : cl.translated_text
+                              ? 'warning'
+                              : 'info'
+                        "
                         size="small"
                       >
                         {{
@@ -674,7 +735,12 @@ onMounted(loadData)
                         点击下方关联要素芯片高亮左侧原文依据
                       </span>
                     </div>
-                    <div class="clause-text" :style="{ color: cl.translated_text ? '#1e293b' : '#94a3b8' }">
+                    <div
+                      class="clause-text"
+                      :style="{
+                        color: cl.translated_text ? '#1e293b' : '#94a3b8',
+                      }"
+                    >
                       {{ cl.translated_text || '暂无中文译文' }}
                     </div>
 
@@ -714,13 +780,17 @@ onMounted(loadData)
                         v-for="le in cl.linked_edges"
                         :key="le.edge_id"
                         size="small"
-                        :effect="highlightedQuotes[cl.clause_id] === le.evidence_quote ? 'dark' : 'plain'"
+                        :effect="
+                          highlightedQuotes[cl.clause_id] === le.evidence_quote ? 'dark' : 'plain'
+                        "
                         type="primary"
                         style="cursor: pointer"
                         data-testid="clause-obligation-chip"
                         @click="toggleHighlightQuote(cl.clause_id, le.evidence_quote)"
                       >
-                        🔍 {{ RELATION_LABEL[le.relation_type] || le.relation_type }} →
+                        🔍
+                        {{ RELATION_LABEL[le.relation_type] || le.relation_type }}
+                        →
                         {{ le.target_name_zh }}
                       </el-tag>
                     </div>
@@ -733,10 +803,7 @@ onMounted(loadData)
       </el-tab-pane>
 
       <!-- 页签 2: 六要素 · 十二关系合规图谱（ECharts 合规地图 + 按节点类型显隐） -->
-      <el-tab-pane
-        name="graph"
-        :label="`六要素 · 十二关系合规图谱 (${graph.edges.length})`"
-      >
+      <el-tab-pane name="graph" :label="`关系图谱 (${graph.edges.length})`">
         <!-- 按节点类型显示/隐藏控制栏 -->
         <div class="filter-row" data-testid="user-kg-node-type-bar">
           <span class="sub" style="font-weight: 600">按节点类型显示/隐藏：</span>
@@ -757,8 +824,13 @@ onMounted(loadData)
               graph.node_counts_by_type?.[ntype] || 0
             }})
           </el-tag>
-          <el-button size="small" plain data-testid="user-kg-hide-hub-btn" @click="hideHubNodeTypes">
-            隐藏枢纽节点（国家/监管机构）
+          <el-button
+            size="small"
+            plain
+            data-testid="user-kg-hide-hub-btn"
+            @click="hideHubNodeTypes"
+          >
+            隐藏国家与监管枢纽
           </el-button>
           <el-button
             v-if="visibleNodeTypes.length < ALL_NODE_TYPES.length"
@@ -796,9 +868,11 @@ onMounted(loadData)
         <div class="graph-canvas">
           <div class="sub" style="padding: 4px 8px">
             合规地图展示 {{ fgNodes.length }} 个节点 / {{ fgEdges.length }} 条关系（合并自
-            {{ filteredEdges.length }} 条可见证据边，仅展示「已复核」与明确标注「待核对」的合规边；结构边
+            {{ filteredEdges.length }}
+            条可见证据边，仅展示「已复核」与明确标注「待核对」的合规边；结构边
             {{ graph.quality_summary?.structural_edges ?? 0 }} 条，大模型语义边
-            {{ graph.quality_summary?.semantic_edges ?? 0 }} 条）；点击节点可筛选下方逐字证据明细。
+            {{ graph.quality_summary?.semantic_edges ?? 0 }}
+            条）；点击节点可筛选下方逐字证据明细。
           </div>
           <KgForceGraph
             v-if="activeTab === 'graph'"
@@ -826,7 +900,8 @@ onMounted(loadData)
           <el-table-column label="证据条款与逐字原文摘录" min-width="280">
             <template #default="{ row }">
               <div class="sub" style="font-weight: 600">
-                {{ row.document_title || '官方法规' }} · 条号 {{ row.clause_number || '-' }}
+                {{ row.document_title || '官方法规' }} · 条号
+                {{ row.clause_number || '-' }}
               </div>
               <div>{{ row.evidence_quote }}</div>
             </template>
@@ -842,10 +917,7 @@ onMounted(loadData)
       </el-tab-pane>
 
       <!-- 页签 3: 法规条款跨文件检索 -->
-      <el-tab-pane
-        name="clauses"
-        :label="`法规条款与受控中译 (${clauses.length})`"
-      >
+      <el-tab-pane name="clauses" :label="`条款检索 (${clauses.length})`">
         <el-table :data="clauses" v-loading="loading" border stripe>
           <el-table-column prop="document_title" label="法规文件" width="230" />
           <el-table-column prop="clause_number" label="条号" width="90" />
@@ -856,7 +928,9 @@ onMounted(loadData)
           </el-table-column>
           <el-table-column label="中文译文（机器翻译，待核对）" min-width="300">
             <template #default="{ row }">
-              <div class="text-box">{{ row.translated_text || '暂无中文译文' }}</div>
+              <div class="text-box">
+                {{ row.translated_text || '暂无中文译文' }}
+              </div>
               <div
                 v-if="row.glossary_hits?.length || row.unmatched_terms?.length"
                 style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px"
@@ -900,7 +974,7 @@ onMounted(loadData)
 <style scoped>
 .sub {
   color: #606266;
-  font-size: 12px;
+  font-size: 13px;
 }
 .country-grid {
   display: grid;
@@ -942,7 +1016,7 @@ onMounted(loadData)
   margin-bottom: 10px;
 }
 .tier-header {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: #475569;
   background: #e2e8f0;
@@ -966,7 +1040,7 @@ onMounted(loadData)
   background: #eff6ff;
 }
 .reg-item-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #1e293b;
   line-height: 1.35;
@@ -974,7 +1048,7 @@ onMounted(loadData)
 .reg-item-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 13px;
   color: #64748b;
   margin-top: 4px;
 }
@@ -1018,12 +1092,12 @@ onMounted(loadData)
   padding: 6px 8px;
 }
 .eight-attr-k {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   color: #1d4ed8;
 }
 .eight-attr-v {
-  font-size: 12px;
+  font-size: 13px;
   color: #334155;
   margin-top: 2px;
   line-height: 1.4;
@@ -1064,7 +1138,7 @@ onMounted(loadData)
 }
 .clause-meta {
   margin-bottom: 6px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .clause-text {
   white-space: pre-wrap;
@@ -1095,5 +1169,214 @@ onMounted(loadData)
   overflow-y: auto;
   white-space: pre-wrap;
   font-size: 13px;
+}
+
+.knowledge-notice {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #7f7458;
+  background: #faf7ef;
+  border: 1px solid #eee7d8;
+  padding: 13px 16px;
+  border-radius: 9px;
+  margin: 0 0 24px;
+}
+.country-grid {
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.country-card {
+  position: relative;
+  text-align: left;
+  padding: 16px;
+  background: #fff;
+  border-color: var(--cy-line);
+  transition:
+    border-color 0.18s,
+    background 0.18s;
+}
+.country-card strong {
+  font-size: 15px;
+  color: #334e62;
+}
+.country-code {
+  float: right;
+  font-size: 11px;
+  color: #91a0ad;
+  letter-spacing: 0.08em;
+}
+.country-summary {
+  font-size: 12px;
+  color: #7c8c99;
+  margin-top: 7px;
+}
+.country-more {
+  font-size: 11px;
+  color: #9aa8b4;
+}
+.country-card.active {
+  border-color: #9eb6f2;
+  background: #f1f5ff;
+}
+.country-card.active strong {
+  color: #315fe8;
+}
+.knowledge-search {
+  margin: 20px 0;
+}
+.center-layout {
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 20px;
+}
+.reg-sidebar {
+  padding: 16px;
+  background: #f7f9fc;
+  border-color: var(--cy-line);
+}
+.reg-item {
+  padding: 13px 12px;
+  margin-bottom: 8px;
+  border-color: transparent;
+}
+.reg-item-title {
+  font-size: 14px;
+  line-height: 1.65;
+}
+.reg-item-meta {
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+}
+.reg-item.active {
+  border-color: #c1d0f4;
+  background: #edf2fc;
+}
+.reg-detail {
+  min-width: 0;
+  padding: 24px;
+  border-color: var(--cy-line);
+}
+.detail-header {
+  flex-wrap: wrap;
+  gap: 18px;
+  padding-bottom: 20px;
+}
+.eight-attr-box {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+.eight-attr-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.eight-attr-cell {
+  border: 0;
+  background: #f6f8fb;
+  padding: 14px;
+}
+.eight-attr-k {
+  font-size: 13px;
+  color: #758694;
+}
+.eight-attr-v {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-top: 8px;
+}
+.dual-row {
+  gap: 20px;
+  padding: 18px 8px;
+}
+.dual-col {
+  font-size: 14px;
+  line-height: 1.9;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.dual-list {
+  max-height: 680px;
+}
+.filter-row {
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.text-box {
+  font-size: 14px;
+  line-height: 1.8;
+}
+@media (max-width: 1200px) {
+  .center-layout {
+    grid-template-columns: 1fr;
+  }
+  .reg-sidebar {
+    max-height: 230px;
+  }
+  .tier-group {
+    margin-bottom: 12px;
+  }
+  .reg-item-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .country-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 800px) {
+  .country-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .reg-detail {
+    padding: 16px;
+  }
+  .dual-header {
+    display: none;
+  }
+  .dual-row {
+    grid-template-columns: 1fr;
+  }
+  .dual-col:first-child::before {
+    content: '官方原文';
+    display: block;
+    color: #8192a0;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .dual-col:nth-child(2)::before {
+    content: '中文译文';
+    display: block;
+    color: #8192a0;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .eight-attr-grid {
+    grid-template-columns: 1fr;
+  }
+  .knowledge-search .el-input {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 800px) {
+  .country-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 8px;
+    scroll-snap-type: x proximity;
+  }
+  .country-card {
+    flex: 0 0 145px;
+    scroll-snap-align: start;
+    padding: 14px;
+  }
+  .country-summary {
+    font-size: 13px;
+  }
+  .knowledge-notice {
+    font-size: 13px;
+    line-height: 1.75;
+  }
 }
 </style>

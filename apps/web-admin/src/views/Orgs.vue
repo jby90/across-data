@@ -27,15 +27,31 @@ onMounted(load)
 </script>
 
 <template>
-  <h3>企业管理</h3>
-  <div style="display: flex; gap: 8px; margin-bottom: 12px; max-width: 420px">
-    <el-input v-model="name" placeholder="新企业名称" @keyup.enter="create" />
-    <el-button type="primary" @click="create">创建</el-button>
+  <div class="management-page">
+    <header class="page-heading">
+      <div>
+        <h1>企业管理</h1>
+        <p>维护企业组织，账号与成员按企业隔离管理。</p>
+      </div>
+    </header>
+    <div class="toolbar">
+      <el-input
+        v-model="name"
+        placeholder="输入新企业名称"
+        aria-label="新企业名称"
+        @keyup.enter="create"
+      />
+      <el-button type="primary" @click="create">创建企业</el-button>
+    </div>
+    <el-table :data="orgs" border>
+      <el-table-column prop="name" label="企业名称" />
+      <el-table-column label="状态">
+        <template #default="{ row }"
+          ><el-tag :type="row.is_active ? 'success' : 'info'" effect="plain">{{
+            row.is_active ? '正常' : '已停用'
+          }}</el-tag></template
+        >
+      </el-table-column>
+    </el-table>
   </div>
-  <el-table :data="orgs" border>
-    <el-table-column prop="name" label="企业名称" />
-    <el-table-column label="状态">
-      <template #default="{ row }">{{ row.is_active ? '正常' : '已停用' }}</template>
-    </el-table-column>
-  </el-table>
 </template>

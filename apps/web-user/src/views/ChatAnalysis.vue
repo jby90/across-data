@@ -41,7 +41,12 @@ interface StepTrace {
   is_backtrack: boolean
   backtrack_reason: string | null
   backtrack_resolution: string | null
-  tool_calls: Array<{ call_id: string; tool_label: string; result_summary: string; duration_ms: number }>
+  tool_calls: Array<{
+    call_id: string
+    tool_label: string
+    result_summary: string
+    duration_ms: number
+  }>
   tokens_used: number
   duration_ms: number
 }
@@ -230,7 +235,7 @@ const report = computed<ReportVersion | null>(() => {
 const inputPlaceholder = computed(() => {
   if (status.value === 'running') return '多智能体分析进行中,请稍候…'
   if (status.value === 'completed' || status.value === 'partial_sample')
-    return '报告已生成。可在上方导出,或点击左侧「新对话」评估新的场景'
+    return '报告已生成。可在上方导出,或点击左侧「新建评估」评估新的场景'
   const slot = lastAssistant.value?.slot
   if (slot === 'country_code') return '输入或点选目标国家…'
   if (slot === 'vehicle_model') return '输入车型或车队名称…'
@@ -265,13 +270,22 @@ const citationEdges = computed<FgEdge[]>(() =>
 function scrollBottom() {
   nextTick(() => {
     const el = streamEl.value
-    if (el) el.scrollTop = el.scrollHeight
+    if (!el) return
+    const summary = el.querySelector<HTMLElement>('[data-testid="report-card"]')
+    if (hasReport.value && summary) {
+      el.scrollTop += summary.getBoundingClientRect().top - el.getBoundingClientRect().top - 20
+    } else {
+      el.scrollTop = el.scrollHeight
+    }
   })
 }
 
 function apply(d: TaskDetail) {
   detail.value = d
-  if (d.report_versions.length > 0 && !d.report_versions.some((r) => r.version_no === reportVersionNo.value)) {
+  if (
+    d.report_versions.length > 0 &&
+    !d.report_versions.some((r) => r.version_no === reportVersionNo.value)
+  ) {
     reportVersionNo.value = d.report_versions[0].version_no
   }
 }
@@ -319,7 +333,9 @@ async function send(text?: string) {
       slot: null,
     })
     scrollBottom()
-    apply(await api.post<TaskDetail>(`/api/analysis/tasks/${detail.value.id}/messages`, { content }))
+    apply(
+      await api.post<TaskDetail>(`/api/analysis/tasks/${detail.value.id}/messages`, { content }),
+    )
     await refreshTasks()
     scrollBottom()
   } catch (e: unknown) {
@@ -391,11 +407,14 @@ async function saveEdit() {
   if (!detail.value) return
   savingEdit.value = true
   try {
-    const rv = await api.post<ReportVersion>(`/api/analysis/tasks/${detail.value.id}/reports/edit`, {
-      change_note: editNote.value,
-      executive_summary: editSummary.value,
-      dimension_updates: { ...editDims },
-    })
+    const rv = await api.post<ReportVersion>(
+      `/api/analysis/tasks/${detail.value.id}/reports/edit`,
+      {
+        change_note: editNote.value,
+        executive_summary: editSummary.value,
+        dimension_updates: { ...editDims },
+      },
+    )
     editVisible.value = false
     await openTask(detail.value.id)
     reportVersionNo.value = rv.version_no
@@ -479,7 +498,7 @@ onUnmounted(() => {
       <div class="sessions-top">
         <strong>评估对话</strong>
         <el-button type="primary" size="small" data-testid="btn-new-chat" @click="newChat">
-          + 新对话
+          + 新建评估
         </el-button>
       </div>
       <div class="session-list">
@@ -527,7 +546,7 @@ onUnmounted(() => {
             data-testid="chat-conversation-id"
             :title="`完整对话 UUID: ${detail.id}`"
           >
-            对话 ID: {{ detail.conversation_code || detail.id }}
+            {{ detail.conversation_code || detail.id }}
           </el-tag>
           <el-button
             size="small"
@@ -536,7 +555,7 @@ onUnmounted(() => {
             data-testid="btn-copy-conversation-id"
             @click="copyConversationId"
           >
-            复制对话ID
+            复制编号
           </el-button>
         </div>
       </header>
@@ -588,7 +607,9 @@ onUnmounted(() => {
                 <span class="muted">{{ s.duration_ms }} ms · {{ s.tokens_used }} tokens</span>
               </div>
               <div>{{ s.business_summary }}</div>
-              <div v-if="s.backtrack_reason" class="back-reason">退回原因:{{ s.backtrack_reason }}</div>
+              <div v-if="s.backtrack_reason" class="back-reason">
+                退回原因:{{ s.backtrack_reason }}
+              </div>
             </div>
             <div class="muted" style="margin-top: 6px">正在进行下一步,请稍候…</div>
           </div>
@@ -637,14 +658,24 @@ onUnmounted(() => {
                   :value="r.version_no"
                 />
               </el-select>
-              <el-button type="primary" size="small" data-testid="btn-export-docx" @click="download('docx')">
-                导出 Word
-              </el-button>
-              <el-button type="success" size="small" data-testid="btn-export-pdf" @click="download('pdf')">
-                导出 PDF
-              </el-button>
-              <el-button size="small" data-testid="btn-edit-report" @click="openEdit">在线修订</el-button>
-              <el-button size="small" data-testid="btn-diff-report" @click="openDiff">版本对比</el-button>
+              <el-dropdown trigger="click"
+                ><el-button type="primary" size="small">导出报告</el-button
+                ><template #dropdown
+                  ><el-dropdown-menu
+                    ><el-dropdown-item data-testid="btn-export-docx" @click="download('docx')"
+                      >Word 文档</el-dropdown-item
+                    ><el-dropdown-item data-testid="btn-export-pdf" @click="download('pdf')"
+                      >PDF 文档</el-dropdown-item
+                    ></el-dropdown-menu
+                  ></template
+                ></el-dropdown
+              >
+              <el-button size="small" data-testid="btn-edit-report" @click="openEdit"
+                >在线修订</el-button
+              >
+              <el-button size="small" data-testid="btn-diff-report" @click="openDiff"
+                >版本对比</el-button
+              >
             </div>
 
             <div class="sub-title">八个维度(点开查看,引用可点击溯源)</div>
@@ -656,7 +687,8 @@ onUnmounted(() => {
                 :data-testid="`report-chapter-${d.dimension_code}`"
               >
                 <template #title>
-                  <b>{{ d.dimension_code }}</b>&nbsp;{{ d.dimension_title }}&nbsp;
+                  <b>{{ d.dimension_code }}</b
+                  >&nbsp;{{ d.dimension_title }}&nbsp;
                   <el-tag size="small" :type="d.status === 'COMPLETE' ? 'success' : 'warning'">
                     {{ d.status === 'COMPLETE' ? '依据已核验' : '有缺口' }}
                   </el-tag>
@@ -675,7 +707,9 @@ onUnmounted(() => {
                 />
                 <div class="md">{{ d.content_markdown }}</div>
                 <ul v-if="d.key_recommendations.length" class="recs">
-                  <li v-for="(r, i) in d.key_recommendations" :key="i">{{ r }}</li>
+                  <li v-for="(r, i) in d.key_recommendations" :key="i">
+                    {{ r }}
+                  </li>
                 </ul>
                 <div class="cites">
                   <el-button
@@ -687,26 +721,43 @@ onUnmounted(() => {
                     data-testid="report-citation-badge"
                     @click="openCitation(c.clause_id, c.quote_original)"
                   >
-                    {{ c.citation_tag }} {{ c.document_title.slice(0, 22) }} · {{ c.clause_number }}
+                    {{ c.citation_tag }} {{ c.document_title.slice(0, 22) }} ·
+                    {{ c.clause_number }}
                   </el-button>
                 </div>
               </el-collapse-item>
             </el-collapse>
 
             <el-collapse v-model="openExtras" style="margin-top: 10px">
-              <el-collapse-item name="matrix" title="合规判定矩阵(业务事实 | 适用条款 | 合规义务 | 风险等级 | 判断依据)">
-                <el-table :data="detail.findings" border size="small" data-testid="compliance-findings-table">
+              <el-collapse-item
+                name="matrix"
+                title="合规判定矩阵(业务事实 | 适用条款 | 合规义务 | 风险等级 | 判断依据)"
+              >
+                <el-table
+                  :data="detail.findings"
+                  border
+                  size="small"
+                  data-testid="compliance-findings-table"
+                >
                   <el-table-column prop="business_fact" label="业务事实" min-width="140" />
                   <el-table-column label="适用条款" min-width="170">
                     <template #default="{ row }">
-                      <el-button link type="primary" data-testid="finding-clause-link" @click="openCitation(row.clause_id, row.basis_quote)">
-                        {{ row.document_title.slice(0, 24) }} · {{ row.clause_number }}
+                      <el-button
+                        link
+                        type="primary"
+                        data-testid="finding-clause-link"
+                        @click="openCitation(row.clause_id, row.basis_quote)"
+                      >
+                        {{ row.document_title.slice(0, 24) }} ·
+                        {{ row.clause_number }}
                       </el-button>
                     </template>
                   </el-table-column>
                   <el-table-column prop="compliance_obligation" label="合规义务" min-width="200" />
                   <el-table-column label="风险" width="80">
-                    <template #default="{ row }">{{ RISK_LABEL[row.risk_level] || row.risk_level }}</template>
+                    <template #default="{ row }">{{
+                      RISK_LABEL[row.risk_level] || row.risk_level
+                    }}</template>
                   </el-table-column>
                   <el-table-column label="判断依据(原文)" min-width="200">
                     <template #default="{ row }">
@@ -716,7 +767,10 @@ onUnmounted(() => {
                   </el-table-column>
                 </el-table>
               </el-collapse-item>
-              <el-collapse-item name="process" :title="`协同过程(${detail.step_traces.length} 步 · ${detail.mcp_calls_count} 次工具调用 · ${detail.total_tokens} tokens · 退回补证 ${detail.backtrack_count} 次)`">
+              <el-collapse-item
+                name="process"
+                :title="`协同过程(${detail.step_traces.length} 步 · ${detail.mcp_calls_count} 次工具调用 · ${detail.total_tokens} tokens · 退回补证 ${detail.backtrack_count} 次)`"
+              >
                 <div
                   v-for="s in detail.step_traces"
                   :key="s.id"
@@ -776,7 +830,13 @@ onUnmounted(() => {
             <el-tag size="small">v{{ card.version_no }}</el-tag>
             <el-tag
               size="small"
-              :type="card.review_status === 'approved' ? 'success' : card.translated_text ? 'warning' : 'info'"
+              :type="
+                card.review_status === 'approved'
+                  ? 'success'
+                  : card.translated_text
+                    ? 'warning'
+                    : 'info'
+              "
             >
               {{
                 card.review_status === 'approved'
@@ -788,7 +848,9 @@ onUnmounted(() => {
             </el-tag>
           </h4>
           <div v-if="card.source_url" class="muted">
-            官方来源:<a :href="card.source_url" target="_blank" rel="noopener">{{ card.source_url }}</a>
+            官方来源:<a :href="card.source_url" target="_blank" rel="noopener">{{
+              card.source_url
+            }}</a>
           </div>
           <div class="dual">
             <div>
@@ -827,7 +889,12 @@ onUnmounted(() => {
       </div>
       <template #footer>
         <el-button @click="editVisible = false">取消</el-button>
-        <el-button type="primary" :loading="savingEdit" data-testid="btn-confirm-save-report-edit" @click="saveEdit">
+        <el-button
+          type="primary"
+          :loading="savingEdit"
+          data-testid="btn-confirm-save-report-edit"
+          @click="saveEdit"
+        >
           保存为新版本
         </el-button>
       </template>
@@ -835,9 +902,16 @@ onUnmounted(() => {
 
     <el-dialog v-model="diffVisible" title="报告版本对比" width="780px">
       <div v-if="diffData" data-testid="report-diff-content">
-        <div v-for="x in diffData.dimension_diffs" :key="x.dimension_code" class="diff-row" :class="{ changed: x.changed }">
+        <div
+          v-for="x in diffData.dimension_diffs"
+          :key="x.dimension_code"
+          class="diff-row"
+          :class="{ changed: x.changed }"
+        >
           <b>{{ x.dimension_code }} {{ x.dimension_title }}</b>
-          <el-tag size="small" :type="x.changed ? 'warning' : 'info'">{{ x.changed ? '有修订' : '一致' }}</el-tag>
+          <el-tag size="small" :type="x.changed ? 'warning' : 'info'">{{
+            x.changed ? '有修订' : '一致'
+          }}</el-tag>
           <div v-if="x.changed" class="dual">
             <pre>{{ x.from_markdown }}</pre>
             <pre>{{ x.to_markdown }}</pre>
@@ -1093,5 +1167,210 @@ onUnmounted(() => {
   white-space: pre-wrap;
   font-size: 12px;
   margin: 0;
+}
+
+.chat-page {
+  height: calc(100dvh - 145px);
+  min-height: 650px;
+  border-color: var(--cy-line);
+  border-radius: 14px;
+  background: #f7f9fc;
+}
+.sessions {
+  width: 240px;
+  flex-shrink: 0;
+  background: #fbfcfe;
+  border-color: var(--cy-line);
+}
+.sessions-top {
+  padding: 20px 16px;
+  gap: 12px;
+}
+.session-list {
+  padding: 12px;
+}
+.session-item {
+  padding: 14px;
+  border-color: transparent;
+  background: transparent;
+  margin-bottom: 8px;
+  transition: background 0.15s;
+}
+.session-item:hover {
+  background: #f0f4fa;
+}
+.session-item.active {
+  background: #eaf0fc;
+  border-color: #d4dff6;
+}
+.s-title {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+.s-code {
+  font-size: 11px;
+  color: #98a5b2;
+}
+.chat-head {
+  padding: 18px 24px;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 76px;
+}
+.chat-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+.conv-id-bar {
+  font-size: 12px;
+}
+.stream {
+  padding: 30px 28px;
+}
+.row {
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.avatar {
+  border-radius: 11px;
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+  background: #4767a5;
+}
+.bubble {
+  font-size: 15px;
+  line-height: 1.9;
+  padding: 16px 20px;
+  border-color: #e8edf3;
+  max-width: 85%;
+}
+.row.user .bubble {
+  background: #eaf0ff;
+  border-color: #dce5f8;
+}
+.row.user .avatar {
+  background: #5c8d84;
+}
+.card {
+  padding: 22px 24px;
+  margin-left: 46px;
+  border-color: #e4eaf1;
+}
+.card-title {
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 16px;
+}
+.summary {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.composer {
+  padding: 18px 24px;
+  gap: 12px;
+}
+.composer .el-button {
+  min-height: 44px;
+}
+.composer .el-textarea__inner {
+  min-height: 48px;
+}
+.md {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.actions {
+  gap: 10px;
+  margin: 20px 0;
+}
+.sub-title {
+  font-size: 14px;
+  color: #738492;
+  margin-top: 26px;
+}
+.step {
+  font-size: 14px;
+  padding: 14px;
+}
+.muted {
+  font-size: 12px;
+}
+.recs {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.el-collapse-item {
+  margin-top: 4px;
+}
+@media (max-width: 1100px) {
+  .sessions {
+    width: 205px;
+  }
+  .stream {
+    padding: 24px 18px;
+  }
+  .card {
+    margin-left: 0;
+  }
+  .conv-id-bar {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+@media (max-width: 800px) {
+  .chat-page {
+    flex-direction: column;
+    height: calc(100dvh - 115px);
+    min-height: 680px;
+  }
+  .sessions {
+    width: 100%;
+    max-height: 170px;
+    border-right: 0;
+    border-bottom: 1px solid var(--cy-line);
+  }
+  .sessions-top {
+    padding: 12px 16px;
+  }
+  .session-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    flex: 1;
+    padding: 8px 12px;
+  }
+  .session-item {
+    min-width: 200px;
+    margin-bottom: 0;
+  }
+  .s-code {
+    display: none;
+  }
+  .session-item .el-tag {
+    font-size: 11px;
+  }
+  .chat-main {
+    min-height: 0;
+  }
+  .chat-head {
+    padding: 14px 16px;
+  }
+  .stream {
+    padding: 20px 14px;
+  }
+  .bubble {
+    max-width: 90%;
+  }
+  .card {
+    padding: 18px 16px;
+  }
+  .composer {
+    padding: 12px;
+  }
+  .dual {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

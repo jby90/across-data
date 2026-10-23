@@ -39,11 +39,7 @@ let chart: echarts.ECharts | null = null
 let observer: ResizeObserver | null = null
 
 function buildOption(): echarts.EChartsOption {
-  const showEdgeLabel = props.edges.length <= 40
-  const selectedLegend: Record<string, boolean> = {}
-  for (const c of props.categories) {
-    selectedLegend[c.name] = !props.visibleTypes || props.visibleTypes.includes(c.type)
-  }
+  const showEdgeLabel = props.edges.length <= 20
   const data = props.nodes.map((n) => {
     const selected = n.id === props.selectedId
     return {
@@ -52,49 +48,54 @@ function buildOption(): echarts.EChartsOption {
       category: props.categories.findIndex((c) => c.type === n.type),
       symbolSize: selected ? 34 : Math.min(40, 12 + Math.sqrt(n.degree) * 4),
       itemStyle: selected ? { borderColor: '#0f172a', borderWidth: 3 } : undefined,
-      label: { show: n.type === 'COUNTRY' || n.degree >= 6 || selected },
+      label: { show: n.type === 'COUNTRY' || n.degree >= 10 || selected },
     }
   })
   const links = props.edges.map((e) => ({
     source: e.source,
     target: e.target,
     value: e.label as unknown as number,
-    label: { show: showEdgeLabel, formatter: e.label, fontSize: 10 },
+    label: { show: showEdgeLabel, formatter: e.label, fontSize: 12 },
     lineStyle: { color: e.approved ? '#16a34a' : '#94a3b8', curveness: 0.12 },
   }))
   return {
+    animation: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    animationDuration: 240,
+    animationDurationUpdate: 180,
     tooltip: {
+      renderMode: 'richText',
       formatter: (p: any) => {
         if (p.dataType === 'edge') return `${p.data.value}`
         const cat = props.categories[p.data.category]
-        return `${cat?.name ?? ''}<br/>${p.data.name}`
+        return `${cat?.name ?? ''}\n${p.data.name}`
       },
     },
-    legend: [
-      {
-        data: props.categories.map((c) => c.name),
-        selected: selectedLegend,
-        bottom: 0,
-        itemWidth: 12,
-        itemHeight: 12,
-        textStyle: { color: '#475569' },
-      },
-    ],
     series: [
       {
         type: 'graph',
         layout: 'force',
+        zoom: 0.6,
+        scaleLimit: { min: 0.2, max: 3 },
         roam: true,
         draggable: true,
-        categories: props.categories.map((c) => ({ name: c.name, itemStyle: { color: c.color } })),
+        categories: props.categories.map((c) => ({
+          name: c.name,
+          itemStyle: { color: c.color },
+        })),
         data,
         links,
-        force: { repulsion: 420, edgeLength: [70, 170], gravity: 0.06 },
+        force: { repulsion: 150, edgeLength: [45, 115], gravity: 0.15 },
         edgeSymbol: ['none', 'arrow'],
         edgeSymbolSize: 6,
         emphasis: { focus: 'adjacency', label: { show: true } },
         lineStyle: { width: 1.2 },
-        label: { position: 'right', fontSize: 11, color: '#334155', overflow: 'truncate', width: 140 },
+        label: {
+          position: 'right',
+          fontSize: 13,
+          color: '#334155',
+          overflow: 'truncate',
+          width: 180,
+        },
       },
     ],
   }
@@ -127,7 +128,13 @@ watch(
 
 onMounted(() => {
   if (typeof ResizeObserver !== 'undefined' && host.value) {
-    observer = new ResizeObserver(() => render())
+    observer = new ResizeObserver(() => {
+      const el = canvas.value
+      // Hidden tabs have a zero-sized canvas; ECharts must not resize until visible.
+      if (!el || !el.clientWidth || !el.clientHeight) return
+      if (chart) chart.resize()
+      else render()
+    })
     observer.observe(host.value)
   }
   render()
@@ -140,8 +147,21 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="host" class="kg-force" :style="{ height: height || '500px' }" data-testid="user-kg-force-graph">
-    <div ref="canvas" class="canvas"></div>
+  <div
+    ref="host"
+    class="kg-force"
+    :style="{ height: height || '500px' }"
+    data-testid="user-kg-force-graph"
+  >
+    <div
+      ref="canvas"
+      class="canvas"
+      role="img"
+      aria-label="法规知识关系图，证据明细可在列表中查看"
+    ></div>
+    <button class="reset-view" type="button" @click="chart?.dispatchAction({ type: 'restore' })">
+      重置视图
+    </button>
     <div v-if="!nodes.length" class="empty">当前筛选条件下暂无关联节点</div>
   </div>
 </template>
@@ -164,5 +184,21 @@ onUnmounted(() => {
   justify-content: center;
   color: #64748b;
   font-size: 13px;
+}
+.reset-view {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 1;
+  background: #ffffffeb;
+  border: 1px solid #dce4ed;
+  border-radius: 7px;
+  padding: 7px 12px;
+  font-size: 12px;
+  color: #64798a;
+}
+.reset-view:hover {
+  color: #315fe8;
+  border-color: #b8c9f1;
 }
 </style>

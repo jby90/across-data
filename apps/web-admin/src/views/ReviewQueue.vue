@@ -198,9 +198,10 @@ async function quickApproveTranslation(row: ClauseTranslation) {
 async function batchTranslateDoc(row: ClauseTranslation) {
   loading.value = true
   try {
-    const res = await api.post<{ document_id: string; translated_count: number }>(
-      `/admin/knowledge/documents/${row.document_id}/translate`,
-    )
+    const res = await api.post<{
+      document_id: string
+      translated_count: number
+    }>(`/admin/knowledge/documents/${row.document_id}/translate`)
     ElMessage.success(`按文档批量翻译完成：共处理 ${res.translated_count} 条条款`)
     await loadAll()
   } catch (e: unknown) {
@@ -277,9 +278,9 @@ onMounted(loadAll)
 
 <template>
   <div>
-    <div class="bar">
+    <div class="page-heading">
       <div>
-        <h2 style="margin: 0">法律术语库 · 机器翻译 · 律所三层复核</h2>
+        <h1>翻译与复核</h1>
         <div class="sub">
           只有标记为「已复核(可作法律依据)」的条款与关系才会被安全报告与申请表当作法律依据引用；未复核内容显式标注「机器翻译，待核对」。
         </div>
@@ -292,32 +293,46 @@ onMounted(loadAll)
           <el-option value="MA" label="MA 摩洛哥" />
           <el-option value="LB" label="LB 黎巴嫩" />
         </el-select>
-        <el-button type="primary" :loading="loading" @click="runCountryExtract">
-          运行本国受控机翻与图谱抽取
-        </el-button>
+        <el-popover trigger="click" placement="bottom-end" :width="310"
+          ><template #reference><el-button>批量处理</el-button></template>
+          <div class="secondary-actions">
+            <p class="page-description">对当前国家执行受控翻译与图谱抽取，此操作会调用模型。</p>
+            <el-button :loading="loading" @click="runCountryExtract"
+              >运行本国翻译与图谱抽取</el-button
+            >
+          </div></el-popover
+        >
         <el-button @click="loadAll">刷新</el-button>
       </div>
     </div>
 
     <el-tabs v-model="activeTab">
       <!-- 第一页签：条款级机器翻译与复核 -->
-      <el-tab-pane label="1. 条款机翻与复核队列" name="translations">
+      <el-tab-pane label="条款翻译" name="translations">
         <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center">
-          <span>复核状态筛选：</span>
-          <el-radio-group v-model="statusFilter" size="small" @change="loadAll">
-            <el-radio-button value="">全部</el-radio-button>
-            <el-radio-button value="machine_translated">机翻通过(待核对)</el-radio-button>
-            <el-radio-button value="pending_review">待律所复核</el-radio-button>
-            <el-radio-button value="approved">已复核(可作法律依据)</el-radio-button>
-            <el-radio-button value="translation_failed">翻译失败(未过校验)</el-radio-button>
-            <el-radio-button value="not_translated">未翻译</el-radio-button>
-            <el-radio-button value="stale">法规已修订(失效待重核)</el-radio-button>
-          </el-radio-group>
+          <span class="section-description">复核状态</span
+          ><el-select
+            v-model="statusFilter"
+            placeholder="全部状态"
+            style="width: 240px"
+            aria-label="复核状态筛选"
+            @change="loadAll"
+            ><el-option value="" label="全部状态" /><el-option
+              value="machine_translated"
+              label="机翻通过 · 待核对" /><el-option
+              value="pending_review"
+              label="待律所复核" /><el-option
+              value="approved"
+              label="已复核 · 可作依据" /><el-option
+              value="translation_failed"
+              label="翻译失败" /><el-option value="not_translated" label="未翻译" /><el-option
+              value="stale"
+              label="原文已更新 · 待重核"
+          /></el-select>
         </div>
 
         <el-table :data="translations" v-loading="loading" border stripe>
-          <el-table-column prop="country_code" label="国家" width="68" />
-          <el-table-column label="所属法规与条号" width="230">
+          <el-table-column label="所属法规与条号" width="210">
             <template #default="{ row }">
               <div style="font-weight: 600">{{ row.document_title }}</div>
               <div class="sub">
@@ -326,14 +341,16 @@ onMounted(loadAll)
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="官方原文" min-width="260">
+          <el-table-column label="官方原文" min-width="220">
             <template #default="{ row }">
               <div class="clause-box">{{ row.original_text }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="受术语表约束译文与悬停词典" min-width="300">
+          <el-table-column label="中文译文与术语" min-width="260">
             <template #default="{ row }">
-              <div class="clause-box">{{ row.translated_text || '未翻译' }}</div>
+              <div class="clause-box">
+                {{ row.translated_text || '未翻译' }}
+              </div>
               <div
                 v-if="row.glossary_hits?.length || row.unmatched_terms?.length"
                 style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px"
@@ -361,7 +378,7 @@ onMounted(loadAll)
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="程序校验与法律效力状态" width="215">
+          <el-table-column label="质量与状态" width="170">
             <template #default="{ row }">
               <div>
                 <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
@@ -385,30 +402,29 @@ onMounted(loadAll)
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="复核操作" width="210" fixed="right">
-            <template #default="{ row }">
-              <el-button
-                v-if="row.review_status !== 'approved'"
-                size="small"
-                type="success"
-                link
-                @click="quickApproveTranslation(row)"
-              >
-                直接通过
-              </el-button>
-              <el-button size="small" type="primary" link @click="openTranslationReview(row)">
-                校订/复核
-              </el-button>
-              <el-button size="small" type="warning" link @click="batchTranslateDoc(row)">
-                按文档批量翻译
-              </el-button>
-            </template>
-          </el-table-column>
+          <el-table-column label="操作" width="160" fixed="right"
+            ><template #default="{ row }"
+              ><el-button size="small" type="primary" link @click="openTranslationReview(row)"
+                >校订与复核</el-button
+              ><el-dropdown trigger="click"
+                ><el-button size="small" text>更多</el-button
+                ><template #dropdown
+                  ><el-dropdown-menu
+                    ><el-dropdown-item @click="quickApproveTranslation(row)"
+                      >直接通过复核</el-dropdown-item
+                    ><el-dropdown-item @click="batchTranslateDoc(row)"
+                      >按文档批量翻译</el-dropdown-item
+                    ></el-dropdown-menu
+                  ></template
+                ></el-dropdown
+              ></template
+            ></el-table-column
+          >
         </el-table>
       </el-tab-pane>
 
       <!-- 第二页签：解读要点确认单 -->
-      <el-tab-pane label="2. 解读要点确认单 (仅少数关键争议项)" name="points">
+      <el-tab-pane label="解读确认" name="points">
         <div style="margin-bottom: 12px; display: flex; justify-content: space-between">
           <div class="sub">
             把法规未明确定义、官方无解释、又直接影响结论的少数关键问题汇总成一份确认单，交由合作律所一次性确认。
@@ -422,7 +438,11 @@ onMounted(loadAll)
           <el-table-column prop="point_code" label="编号" width="110" />
           <el-table-column prop="title" label="核心争议议题" width="220" />
           <el-table-column prop="question" label="待律所确认问题" min-width="240" />
-          <el-table-column prop="impact_on_conclusion" label="对车企合规结论的影响" min-width="200" />
+          <el-table-column
+            prop="impact_on_conclusion"
+            label="对车企合规结论的影响"
+            min-width="200"
+          />
           <el-table-column label="平台暂拟口径与律所复核意见" min-width="280">
             <template #default="{ row }">
               <div class="sub" style="margin-bottom: 6px">
@@ -452,10 +472,11 @@ onMounted(loadAll)
       </el-tab-pane>
 
       <!-- 第三页签：两层法律术语库 -->
-      <el-tab-pane label="3. 两层法律术语库 (通用概念 + 国家覆盖)" name="glossary">
+      <el-tab-pane label="法律术语" name="glossary">
         <div style="margin-bottom: 12px; display: flex; justify-content: space-between">
           <div class="sub">
-            按四级优先级管理：P1 法律自身定义条款 &gt; P2 监管指南 &gt; P3 官方多语版本 &gt; P4 国际通行概念。本国覆盖自动优先于通用概念。
+            按四级优先级管理：P1 法律自身定义条款 &gt; P2 监管指南 &gt; P3 官方多语版本 &gt; P4
+            国际通行概念。本国覆盖自动优先于通用概念。
           </div>
           <el-button type="primary" size="small" @click="newTermDialog = true">
             新增术语词条
@@ -488,7 +509,8 @@ onMounted(loadAll)
     <el-dialog v-model="editTranslationDialog" title="校订与复核法规条款译文" width="680px">
       <template v-if="currentTranslation">
         <div style="margin-bottom: 8px; font-weight: 600">
-          {{ currentTranslation.document_title }} · 条号 {{ currentTranslation.clause_number || '-' }}
+          {{ currentTranslation.document_title }} · 条号
+          {{ currentTranslation.clause_number || '-' }}
         </div>
         <div class="clause-box" style="background: #f5f7fa; padding: 10px; margin-bottom: 12px">
           {{ currentTranslation.original_text }}
@@ -514,12 +536,18 @@ onMounted(loadAll)
     </el-dialog>
 
     <!-- 导出/导入解读要点确认单弹窗 -->
-    <el-dialog v-model="exportDialog" title="《解读要点确认单》导出与律所回执批量导入" width="760px">
+    <el-dialog
+      v-model="exportDialog"
+      title="《解读要点确认单》导出与律所回执批量导入"
+      width="760px"
+    >
       <el-form label-position="top">
         <el-form-item label="Markdown 确认单 (可直接复制发给合作律所)">
           <el-input v-model="exportedMarkdown" type="textarea" :rows="7" readonly />
         </el-form-item>
-        <el-form-item label="JSON 结构化回执 (修改 status='confirmed' 与 lawyer_reply 后点击下方批量回写)">
+        <el-form-item
+          label="JSON 结构化回执 (修改 status='confirmed' 与 lawyer_reply 后点击下方批量回写)"
+        >
           <el-input v-model="exportedJson" type="textarea" :rows="8" />
         </el-form-item>
       </el-form>
@@ -583,7 +611,7 @@ onMounted(loadAll)
 }
 .sub {
   color: #606266;
-  font-size: 12px;
+  font-size: 13px;
 }
 .clause-box {
   max-height: 110px;
