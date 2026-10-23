@@ -24,6 +24,7 @@ import asyncio
 import json
 import logging
 import re
+import time
 import uuid
 from datetime import UTC, datetime
 from typing import Any, Literal
@@ -35,6 +36,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.ingestion.models import Clause, Document, DocumentVersion
+from app.knowledge.kg_run_state import begin_usage, end_usage, request_started, response_received
 from app.knowledge.models import (
     ClauseTranslation,
     GlossaryTerm,
@@ -552,11 +554,13 @@ async def _call_llm_doc_relevance(
     }
     url = f"{settings.llm_base_url.rstrip('/')}/chat/completions"
     try:
+        request_started()
         async with httpx.AsyncClient(timeout=45.0) as client:
             resp = await client.post(url, headers=headers, json=payload)
             if resp.status_code != 200:
                 return None
             response_payload = resp.json()
+            response_received(response_payload)
             raw = response_payload["choices"][0]["message"]["content"]
             data = _parse_json_object(raw)
             rel = data.get("relevance", "relevant")
@@ -923,11 +927,13 @@ async def _call_llm_judge(
     }
     url = f"{settings.llm_base_url.rstrip('/')}/chat/completions"
     try:
+        request_started()
         async with httpx.AsyncClient(timeout=45.0) as client:
             resp = await client.post(url, headers=headers, json=payload)
             if resp.status_code != 200:
                 return None
             response_payload = resp.json()
+            response_received(response_payload)
             raw = response_payload["choices"][0]["message"]["content"]
             data = _parse_json_object(raw)
             sup = str(data.get("supports", "no")).lower().strip()
@@ -1267,7 +1273,9 @@ async def _call_llm_extract_clause(
         "temperature": 0.1,
     }
     if "deepseek" in settings.llm_model.lower():
-        payload["reasoning_effort"] = "low"
+        payload["thinking"] = {"type": settings.llm_kg_extraction_thinking}
+        if settings.llm_kg_extraction_thinking == "enabled":
+            payload["reasoning_effort"] = "low"
 
     headers = {
         "Authorization": f"Bearer {settings.llm_api_key}",
@@ -1277,12 +1285,14 @@ async def _call_llm_extract_clause(
 
     for attempt in range(2):
         try:
+            request_started()
             async with httpx.AsyncClient(timeout=60.0) as client:
                 resp = await client.post(url, headers=headers, json=payload)
                 if resp.status_code != 200:
                     await asyncio.sleep(0.8 * (attempt + 1))
                     continue
                 response_payload = resp.json()
+                response_received(response_payload)
                 raw = response_payload["choices"][0]["message"]["content"]
                 data = _parse_json_object(raw)
                 if not isinstance(data.get("entities"), list) or not isinstance(
@@ -1365,7 +1375,7 @@ async def seed_glossary_and_review_points(session: AsyncSession) -> dict[str, in
             statutory_definition=item["statutory_definition"],
             source_reference=item["source_reference"],
             evidence_clause_id=evidence_clause.id if evidence_clause else None,
-            review_status=item.get("review_status", "approved"),
+            review_status="pending",
         )
         session.add(term)
         terms_added += 1
@@ -1433,7 +1443,7 @@ async def _upsert_node(
     attributes: dict | None = None,
     document_id: uuid.UUID | None = None,
     evidence_clause_id: uuid.UUID | None = None,
-    review_status: str = GraphReviewStatus.APPROVED.value,
+    review_status: str = GraphReviewStatus.PENDING_REVIEW.value,
 ) -> KgNode:
     node = (
         await session.execute(
@@ -1850,6 +1860,8 @@ async def extract_knowledge_for_country(
     if not acquired:
         return {"status": "busy", "reason": "country_extraction_already_running"}
     transaction = await session.begin_nested()
+    usage_token, usage = begin_usage()
+    clock = time.perf_counter()
     try:
         result = await _extract_knowledge_for_country_impl(
             session, cc, translate_sample_per_doc, max_clauses_per_doc, concurrency
@@ -1866,6 +1878,23 @@ async def extract_knowledge_for_country(
             "previous_graph_preserved": True,
             "semantic_edges_added": 0,
         }
+    finally:
+        end_usage(usage_token)
+    result["duration_ms"] = round((time.perf_counter() - clock) * 1000)
+    result["extraction_thinking"] = get_settings().llm_kg_extraction_thinking
+    result["model_usage"] = usage | {
+        "calls_without_reported_usage": usage["requests"] - usage["responses_with_usage"]
+    }
+    for cache in result.pop("_clause_cache_records", []):
+        session.add(
+            KnowledgeAuditRecord(
+                target_type="clauses",
+                target_id=uuid.UUID(cache["clause_id"]),
+                action="kg_clause_result",
+                payload=cache,
+                content_hash=payload_hash(cache),
+            )
+        )
     for record in result.pop("_candidate_evaluations", []):
         session.add(
             KnowledgeAuditRecord(
@@ -1920,7 +1949,7 @@ async def _extract_knowledge_for_country_impl(
         name_zh=country_zh,
         name_orig=country_orig,
         summary=f"{country_zh}跨境数据与智能网联汽车合规司法辖区",
-        review_status=GraphReviewStatus.APPROVED.value,
+        review_status=GraphReviewStatus.PENDING_REVIEW.value,
     )
 
     docs = list(
@@ -1985,7 +2014,18 @@ async def _extract_knowledge_for_country_impl(
         if not clauses:
             continue
 
+        prior_scope = (doc.relevance, doc.relevance_note, doc.relevance_source)
         rel_status, rel_note = await classify_document_relevance(doc, clauses[:3])
+        if prior_scope != (doc.relevance, doc.relevance_note, doc.relevance_source):
+            from app.knowledge.history import propose
+
+            proposed_scope = dict(
+                relevance=doc.relevance,
+                relevance_note=doc.relevance_note,
+                relevance_source=doc.relevance_source,
+            )
+            doc.relevance, doc.relevance_note, doc.relevance_source = prior_scope
+            await propose(session, doc, proposed_scope)
         if rel_status == "needs_review":
             return {
                 "status": "failed",
@@ -2023,7 +2063,7 @@ async def _extract_knowledge_for_country_impl(
             name_orig=publisher_name,
             summary=f"{country_zh}法规发布与监管主管机构",
             evidence_clause_id=first_clause.id,
-            review_status=GraphReviewStatus.APPROVED.value,
+            review_status=GraphReviewStatus.PENDING_REVIEW.value,
         )
 
         inst_key = f"inst:{str(doc.id)[:12]}"
@@ -2046,7 +2086,7 @@ async def _extract_knowledge_for_country_impl(
             },
             document_id=doc.id,
             evidence_clause_id=first_clause.id,
-            review_status=GraphReviewStatus.APPROVED.value,
+            review_status=GraphReviewStatus.PENDING_REVIEW.value,
         )
         inst_by_title[doc.title.lower().strip()] = inst_node
         inst_node_by_doc[doc.id] = inst_node
@@ -2067,7 +2107,7 @@ async def _extract_knowledge_for_country_impl(
             judge_verdict="structural",
             judge_reason="基于官方站点与法规元数据确立的机构发布结构关系",
             is_structural=True,
-            review_status=GraphReviewStatus.APPROVED.value,
+            review_status=GraphReviewStatus.PENDING_REVIEW.value,
         )
         # 结构边 2: 监管机构 SUPERVISES 国家司法辖区 (is_structural=True)
         await _upsert_edge(
@@ -2083,7 +2123,7 @@ async def _extract_knowledge_for_country_impl(
             judge_verdict="structural",
             judge_reason="基于官方站点与司法辖区确立的监管结构关系",
             is_structural=True,
-            review_status=GraphReviewStatus.APPROVED.value,
+            review_status=GraphReviewStatus.PENDING_REVIEW.value,
         )
 
         # 对前 N 条核心条款补齐受控翻译(范围外文件不消耗模型额度)
@@ -2118,6 +2158,45 @@ async def _extract_knowledge_for_country_impl(
 
     evaluation_records = []
     failure_records = []
+    from app.ingestion.archive import ArchiveStore
+    from app.knowledge.history import payload_hash
+    from app.knowledge.models import KnowledgeAuditRecord
+
+    def cache_key(doc, clause, publisher):
+        return payload_hash(
+            dict(
+                contract="kg-rebuild-v3",
+                source_hash=clause.text_hash,
+                version_id=str(clause.version_id),
+                title=doc.title,
+                publisher=publisher,
+                scope=(doc.relevance, doc.relevance_source),
+                model=get_settings().llm_model,
+                base_url=get_settings().llm_base_url,
+                extractor_prompt=EXTRACTOR_PROMPT_VERSION,
+                judge_prompt=JUDGE_PROMPT_VERSION,
+                extraction_thinking=get_settings().llm_kg_extraction_thinking,
+            )
+        )
+
+    keys = {
+        clause.id: cache_key(doc, clause, publisher)
+        for doc, clause, _reg, _inst, publisher in extraction_tasks
+    }
+    cached, cache_records, completed, cache_hits = {}, [], 0, 0
+    if keys:
+        for record in (
+            await session.scalars(
+                select(KnowledgeAuditRecord)
+                .where(
+                    KnowledgeAuditRecord.target_id.in_(keys),
+                    KnowledgeAuditRecord.action == "kg_clause_result",
+                )
+                .order_by(KnowledgeAuditRecord.created_at.desc())
+            )
+        ).all():
+            if record.payload.get("cache_key") == keys[record.target_id]:
+                cached.setdefault(record.target_id, record.payload)
 
     async def _extract_and_judge_one(
         doc: Document, clause: Clause, reg_node: KgNode, inst_node: KgNode, pub_name: str
@@ -2144,8 +2223,70 @@ async def _extract_knowledge_for_country_impl(
         ]
         | None
     ):
+        nonlocal completed, cache_hits
         async with sem:
             from app.knowledge.translator import split_clause_into_chunks
+
+            if ArchiveStore.sha256(clause.original_text.encode("utf-8")) != clause.text_hash:
+                failure_records.append(
+                    dict(
+                        clause_id=str(clause.id),
+                        step="source_integrity",
+                        reason="text_hash_mismatch",
+                    )
+                )
+                return None
+            if prior := cached.get(clause.id):
+                try:
+                    restored = []
+                    for item in prior["validated_relations"]:
+                        rel = ExtractedRelation.model_validate(item["relation"])
+                        evaluation = CandidateEvaluationResult.model_validate(item["evaluation"])
+                        st, dt = NodeType(item["source_type"]), NodeType(item["target_type"])
+                        ok, _ = validate_relation_type_constraints(
+                            relation_type=rel.type,
+                            source_type=st,
+                            target_type=dt,
+                            evidence_quote=evaluation.aligned_quote or "",
+                            source_name=item["source_name"],
+                            target_name=item["target_name"],
+                            document_title=doc.title,
+                        )
+                        if not (
+                            ok
+                            and evaluation.admitted
+                            and evaluation.judge_verdict == "yes"
+                            and evaluation.judge_model
+                            and evaluation.aligned_quote
+                            and evaluation.aligned_quote in clause.original_text
+                        ):
+                            raise ValueError("cached evidence/judge invalid")
+                        restored.append(
+                            (
+                                rel,
+                                evaluation,
+                                st,
+                                item["source_name"],
+                                item["source_orig"],
+                                dt,
+                                item["target_name"],
+                                item["target_orig"],
+                            )
+                        )
+                    parsed = ClauseExtractionPayload.model_validate(prior["extraction_payload"])
+                    cache_hits += 1
+                    completed += 1
+                    return (
+                        doc,
+                        clause,
+                        reg_node,
+                        inst_node,
+                        prior["extractor_model"],
+                        parsed,
+                        restored,
+                    )
+                except (ValueError, KeyError, ValidationError):
+                    pass  # Recompute invalid caches; never downgrade the verification gate.
 
             # Long source clauses stay intact. Every chunk is evaluated against its real source ID.
             entities, relations, models = [], [], []
@@ -2281,6 +2422,37 @@ async def _extract_knowledge_for_country_impl(
                         (rel, eval_res, src_type, src_zh, src_orig, dst_type, dst_zh, dst_orig)
                     )
 
+            cache_records.append(
+                dict(
+                    clause_id=str(clause.id),
+                    source_hash=clause.text_hash,
+                    cache_key=keys[clause.id],
+                    extractor_model=model_name,
+                    extraction_payload=payload.model_dump(mode="json"),
+                    validated_relations=[
+                        dict(
+                            relation=rel.model_dump(mode="json"),
+                            evaluation=ev.model_dump(mode="json"),
+                            source_type=st.value,
+                            source_name=sz,
+                            source_orig=so,
+                            target_type=dt.value,
+                            target_name=dz,
+                            target_orig=do,
+                        )
+                        for rel, ev, st, sz, so, dt, dz, do in validated_rels
+                    ],
+                )
+            )
+            completed += 1
+            if completed % 20 == 0 or completed == len(extraction_tasks):
+                logger.warning(
+                    "KG %s: %s/%s clauses completed, cached=%s",
+                    cc,
+                    completed,
+                    len(extraction_tasks),
+                    cache_hits,
+                )
             return (doc, clause, reg_node, inst_node, model_name, payload, validated_rels)
 
     batch_results = await asyncio.gather(
@@ -2293,6 +2465,8 @@ async def _extract_knowledge_for_country_impl(
             "reason": "extractor_or_judge_unavailable",
             "failures": failure_records,
             "_candidate_evaluations": evaluation_records,
+            "_clause_cache_records": cache_records,
+            "cache_hits": cache_hits,
             "attempted_clauses": len(extraction_tasks),
             "failed_clauses": sum(item is None for item in batch_results),
             "previous_graph_preserved": True,
@@ -2323,6 +2497,13 @@ async def _extract_knowledge_for_country_impl(
     superseded_unreviewed = len(prior)
 
     semantic_edges_added = 0
+    seen_semantic_ids = set(
+        (
+            await session.scalars(
+                select(KgEdge.id).where(KgEdge.country_code == cc, KgEdge.is_structural.is_(False))
+            )
+        ).all()
+    )
     for item in batch_results:
         if item is None:
             continue
@@ -2439,8 +2620,9 @@ async def _extract_knowledge_for_country_impl(
                 is_structural=False,
                 review_status=GraphReviewStatus.PENDING_REVIEW.value,
             )
-            if edge_obj is not None:
+            if edge_obj is not None and edge_obj.id not in seen_semantic_ids:
                 semantic_edges_added += 1
+                seen_semantic_ids.add(edge_obj.id)
 
     # 修正案 -> 被修正主法: 由标题层级确定性推断的结构边(待核对,不冒充条款证据)
     inferred_amend_edges = await _add_title_inferred_amend_edges(
@@ -2448,12 +2630,14 @@ async def _extract_knowledge_for_country_impl(
     )
 
     # 将没有任何活跃边连接的旧孤立节点标记为 superseded,确保活跃图谱干净
+    from app.knowledge.graph_evidence import active_edge_filters
+
     active_edges = list(
         (
             await session.execute(
                 select(KgEdge).where(
                     KgEdge.country_code == cc,
-                    KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
+                    *active_edge_filters(),
                 )
             )
         )
@@ -2502,6 +2686,8 @@ async def _extract_knowledge_for_country_impl(
     return {
         "status": "completed",
         "_candidate_evaluations": evaluation_records,
+        "_clause_cache_records": cache_records,
+        "cache_hits": cache_hits,
         "sampled": max_clauses_per_doc is not None,
         "attempted_clauses": len(extraction_tasks),
         "failed_clauses": 0,

@@ -14,6 +14,8 @@ FIELDS = {
     "clauses": "id,version_id,ordinal,clause_number,heading,section_path,language,original_text,text_hash,page_start,page_end,ocr_required,needs_review",
     "source_sites": "id,terms_status,terms_note,terms_decided_by,terms_decided_at",
     "kg_edges": "id,source_node_id,target_node_id,relation_type,evidence_clause_id,evidence_quote,extractor_model,review_status,reviewed_by,reviewed_at",
+    "kg_nodes": "id,node_type,node_key,name_zh,name_orig,summary,attributes,document_id,evidence_clause_id,review_status",
+    "glossary_terms": "id,source_term,target_zh,statutory_definition,review_status,reviewed_by,reviewed_at",
     "clause_translations": "id,clause_id,translated_text,review_status,reviewer_id,reviewer_note,reviewed_at",
 }
 
@@ -33,11 +35,40 @@ async def verify(copy_name):
     try:
         result = {}
         for table, fields in FIELDS.items():
-            predicate = " WHERE reviewed_at IS NOT NULL OR reviewer_id IS NOT NULL" if table == "clause_translations" else ""
+            predicate = (
+                " WHERE reviewed_at IS NOT NULL OR reviewer_id IS NOT NULL OR review_status IN ('approved','rejected')" if table == "clause_translations"
+                else " WHERE review_status IN ('approved','rejected')" if table in ("kg_nodes", "glossary_terms")
+                else ""
+            )
             query = f"SELECT {fields} FROM {table}{predicate} ORDER BY id"
             old, new = await original.fetch(query), await copy.fetch(query)
-            result[table] = dict(original_count=len(old), copy_count=len(new),
-                original_sha256=digest(old), copy_sha256=digest(new), equal=digest(old) == digest(new))
+            new_by_id = {row["id"]: dict(row) for row in new}
+            matched, mismatches, verified_retirements = [], [], []
+            for row in old:
+                current = new_by_id.get(row["id"])
+                if current is None:
+                    mismatches.append(str(row["id"]))
+                    continue
+                if (table == "kg_edges" and row["review_status"] == "pending_review"
+                    and current["review_status"] in ("superseded", "stale")):
+                    expected = json.loads(json.dumps(dict(row), default=str))
+                    snapshots = await copy.fetch("SELECT payload FROM knowledge_audit_records "
+                        "WHERE target_id=$1 AND action LIKE 'before_%'", row["id"])
+                    immutable = [key for key in expected if key != "review_status"]
+                    identical = all(current[key] == row[key] for key in immutable)
+                    retained = any(all(json.loads(item["payload"]).get(key) == expected[key]
+                        for key in expected) for item in snapshots)
+                    if identical and retained:
+                        verified_retirements.append(str(row["id"]))
+                        current["review_status"] = row["review_status"]
+                if dict(row) != current:
+                    mismatches.append(str(row["id"]))
+                matched.append(current)
+            appended = set(new_by_id) - {row["id"] for row in old}
+            result[table] = dict(original_count=len(old), copy_count=len(new), appended_count=len(appended),
+                original_sha256=digest(old), matched_original_sha256=digest(matched),
+                audited_machine_retirements=verified_retirements, mismatched_original_ids=mismatches,
+                equal=not mismatches and len(matched) == len(old))
         versions = await original.fetch("SELECT archive_path, content_hash FROM document_versions")
         checked = 0
         for version in versions:

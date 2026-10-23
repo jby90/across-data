@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     llm_model: str = "deepseek-flash"
     llm_timeout_seconds: float = 30.0
     llm_translation_thinking: Literal["enabled", "disabled"] = "enabled"
+    llm_kg_extraction_thinking: Literal["enabled", "disabled"] = "enabled"
     # 多智能体合规分析单次调用允许更长的生成时间
     llm_analysis_timeout_seconds: float = 150.0
 
