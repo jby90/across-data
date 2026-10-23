@@ -1,0 +1,28 @@
+{
+  "summary": {
+    "targets": 1,
+    "standalone_passed": 0,
+    "context_passed": 0,
+    "failed": 1,
+    "tokens_in": 1894,
+    "tokens_out": 9046,
+    "duration_seconds": 52.174,
+    "human_approved": 0,
+    "started_at": "2026-10-23T14:38:46.937386+00:00",
+    "completed_at": "2026-10-23T14:39:39.111669+00:00"
+  },
+  "results": [
+    {
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "path": "standalone_translation",
+      "record_id": "00615edd-81d4-4eef-8d99-c04dc690e1e2",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 26.7% < 30.0%"
+      ],
+      "tokens_in": 1894,
+      "tokens_out": 9046
+    }
+  ]
+}

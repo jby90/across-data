@@ -1,0 +1,19 @@
+{
+  "invalid_current": [
+    {
+      "translation_id": "2e4363e9-4608-4e37-8594-d74b1f665eb8",
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "issues": [
+        "CJK 字符占比未达标: 25.7% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "7. 100,001 and above $3,200\nMade this 21st day of November 2013.\nAUBECK KAM\nPermanent Secretary,\nMinistry of Communications\nand Information,\nSingapore.\n[Y03.002.001.EV30/13; AG/LLRD/SL/227A/2012/5 Vol. 1]",
+      "translated": "7. 100,001及以上 $3,200\n本文件于2013年11月21日订立。\nAUBECK KAM\n新加坡通讯及新闻部\n常任秘书\n[Y03.002.001.EV30/13; AG/LLRD/SL/227A/2012/5 第1卷]",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": false
+    }
+  ]
+}

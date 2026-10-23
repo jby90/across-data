@@ -53,7 +53,7 @@ from app.knowledge.translator import translate_clause
 
 logger = logging.getLogger(__name__)
 
-EXTRACTOR_PROMPT_VERSION = "kg-extract-v2"
+EXTRACTOR_PROMPT_VERSION = "kg-extract-v3"
 JUDGE_PROMPT_VERSION = "kg-judge-v2"
 STRUCTURAL_EXTRACTOR_MODEL = "structural-metadata-v2"
 LEGACY_RULE_EXTRACTOR_MODEL = "kg-rule-extractor-v1"
@@ -1250,6 +1250,9 @@ async def _call_llm_extract_clause(
         "2. 关系中的 source 或 target 若指代本法规文件本身，请直接填写给定的「所属法规文件标题」；"
         "若指代发布/监管机构，填写给定的「发布机构」。\n"
         "3. 如果该条款只是目录、纯粹定义或无实质合规关系，请返回空列表。\n"
+        "4. name_zh、name_orig、source、target 都必须是1~255字符的简短实体名称，"
+        "不得复制整段条文作名称；长描述放在 definition 中。原文证据放在 evidence_quote 中，"
+        "不能截断或改写证据来满足名称长度限制。\n"
         "请严格按以下 JSON Schema 输出:\n"
         '{"entities": [{"type": "DATA_CATEGORY|OBLIGATION|PENALTY|INSTRUMENT|REGULATOR", '
         '"name_zh": "精炼中文名称", "name_orig": "原文对应术语", "definition": "简要说明"}], '
@@ -1303,8 +1306,21 @@ async def _call_llm_extract_clause(
                     )
                 parsed = ClauseExtractionPayload.model_validate(data)
                 return parsed, str(response_payload.get("model") or settings.llm_model)
+        except ValidationError as exc:
+            # Re-request the complete object, never truncate names or silently discard
+            # invalid entities/relations. Report only schema locations, not credentials.
+            details = exc.errors(include_input=False, include_url=False)
+            payload["messages"].append(
+                {
+                    "role": "user",
+                    "content": "上一次JSON未通过原有Schema校验。请完整重新抽取，"
+                    "保持原文证据和含义不变，不要省略任何必要字段。校验错误："
+                    + json.dumps(details, ensure_ascii=False),
+                }
+            )
+            logger.debug("Clause extraction schema attempt %d failed: %s", attempt + 1, details)
+            await asyncio.sleep(0.6 * (attempt + 1))
         except (
-            ValidationError,
             ValueError,
             json.JSONDecodeError,
             httpx.HTTPError,
@@ -1882,6 +1898,8 @@ async def extract_knowledge_for_country(
         end_usage(usage_token)
     result["duration_ms"] = round((time.perf_counter() - clock) * 1000)
     result["extraction_thinking"] = get_settings().llm_kg_extraction_thinking
+    result["extractor_prompt_version"] = EXTRACTOR_PROMPT_VERSION
+    result["judge_prompt_version"] = JUDGE_PROMPT_VERSION
     result["model_usage"] = usage | {
         "calls_without_reported_usage": usage["requests"] - usage["responses_with_usage"]
     }

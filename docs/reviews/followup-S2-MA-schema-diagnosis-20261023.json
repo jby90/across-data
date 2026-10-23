@@ -1,0 +1,106 @@
+[
+  {
+    "clause_id": "fb6b36d3-34b9-4970-b5e3-40f63b3b10b4",
+    "parsed": false,
+    "validation_errors": [
+      {
+        "type": "string_too_long",
+        "loc": [
+          "entities",
+          2,
+          "name_orig"
+        ],
+        "msg": "String should have at most 255 characters",
+        "ctx": {
+          "max_length": 255
+        }
+      },
+      {
+        "type": "string_too_long",
+        "loc": [
+          "entities",
+          2,
+          "name_orig"
+        ],
+        "msg": "String should have at most 255 characters",
+        "ctx": {
+          "max_length": 255
+        }
+      }
+    ],
+    "model_usage": {
+      "requests": 2,
+      "responses_with_usage": 2,
+      "tokens_in": 2016,
+      "tokens_out": 1985,
+      "response_models": {
+        "deepseek-flash": 2
+      }
+    },
+    "source_unchanged": true
+  },
+  {
+    "clause_id": "e5533a5b-551e-4650-b8e0-809eeaf2d77b",
+    "parsed": false,
+    "validation_errors": [
+      {
+        "type": "string_too_long",
+        "loc": [
+          "entities",
+          1,
+          "name_orig"
+        ],
+        "msg": "String should have at most 255 characters",
+        "ctx": {
+          "max_length": 255
+        }
+      },
+      {
+        "type": "string_too_long",
+        "loc": [
+          "entities",
+          2,
+          "name_orig"
+        ],
+        "msg": "String should have at most 255 characters",
+        "ctx": {
+          "max_length": 255
+        }
+      },
+      {
+        "type": "string_too_long",
+        "loc": [
+          "entities",
+          1,
+          "name_orig"
+        ],
+        "msg": "String should have at most 255 characters",
+        "ctx": {
+          "max_length": 255
+        }
+      },
+      {
+        "type": "string_too_long",
+        "loc": [
+          "entities",
+          2,
+          "name_orig"
+        ],
+        "msg": "String should have at most 255 characters",
+        "ctx": {
+          "max_length": 255
+        }
+      }
+    ],
+    "model_usage": {
+      "requests": 2,
+      "responses_with_usage": 2,
+      "tokens_in": 2200,
+      "tokens_out": 1661,
+      "response_models": {
+        "deepseek-flash": 2
+      }
+    },
+    "source_unchanged": true
+  }
+]

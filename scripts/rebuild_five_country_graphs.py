@@ -21,7 +21,7 @@ from app.knowledge.extractor import extract_knowledge_for_country
 from app.knowledge.models import KgEdge, KgNode
 
 
-async def run(output, concurrency, attempts):
+async def run(output, concurrency, attempts, countries):
     settings = get_settings()
     if not settings.database_url.rsplit("/", 1)[-1].startswith("remediation_"):
         raise ValueError("only isolated remediation copies are permitted")
@@ -34,7 +34,7 @@ async def run(output, concurrency, attempts):
         old_edges = set((await session.scalars(select(KgEdge.id))).all())
         old_nodes = set((await session.scalars(select(KgNode.id))).all())
     results = []
-    for cc in ("EG", "TN", "MA", "LB", "SG"):
+    for cc in countries:
         for attempt in range(1, attempts + 1):
             print(json.dumps(dict(country=cc, attempt=attempt, event="full_rebuild_started")), flush=True)
             async with get_sessionmaker()() as session:
@@ -55,9 +55,10 @@ async def run(output, concurrency, attempts):
         new_edges = [row for row in edges if row.id not in old_edges]
         new_nodes = [row for row in nodes if row.id not in old_nodes]
         latest = {cc: next(row for row in reversed(results) if row["country"] == cc)
-                  for cc in ("EG", "TN", "MA", "LB", "SG")}
+                  for cc in countries}
         summary = dict(started_at=started.isoformat(), completed_at=datetime.now(UTC).isoformat(),
             duration_seconds=round(time.perf_counter()-clock, 3),
+            requested_countries=list(countries),
             all_countries_completed=all(row.get("status") == "completed" for row in latest.values()),
             no_sampling=all(row.get("sampled") is False for row in latest.values()
                             if row.get("status") == "completed"),
@@ -77,5 +78,7 @@ if __name__ == "__main__":
     parser.add_argument("--json", type=Path, required=True)
     parser.add_argument("--concurrency", type=int, choices=range(1, 17), default=16)
     parser.add_argument("--attempts", type=int, choices=range(1, 4), default=3)
+    parser.add_argument("--countries", nargs="+", choices=("EG", "TN", "MA", "LB", "SG"),
+                        default=["EG", "TN", "MA", "LB", "SG"])
     args = parser.parse_args()
-    asyncio.run(run(args.json, args.concurrency, args.attempts))
+    asyncio.run(run(args.json, args.concurrency, args.attempts, tuple(dict.fromkeys(args.countries))))

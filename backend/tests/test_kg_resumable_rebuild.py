@@ -9,6 +9,67 @@ from app.knowledge.models import KgEdge, KgNode, KnowledgeAuditRecord, Knowledge
 from .review_s1_s2_contracts import make_document, make_edge
 
 
+async def test_schema_retry_regenerates_long_names_instead_of_truncating(monkeypatch):
+    import json
+
+    import httpx
+
+    settings = get_settings()
+    monkeypatch.setattr(settings, "llm_api_key", "test-only")
+    monkeypatch.setattr(settings, "llm_model", "deepseek-flash")
+    client_type, requests = httpx.AsyncClient, []
+
+    def handler(request):
+        body = json.loads(request.content)
+        requests.append(body)
+        original = "A" * 256 if len(requests) == 1 else "protection obligation"
+        if len(requests) == 2:
+            assert "string_too_long" in body["messages"][-1]["content"]
+            assert "255" in body["messages"][-1]["content"]
+        return httpx.Response(
+            200,
+            json={
+                "model": "test-model",
+                "choices": [
+                    {
+                        "message": {
+                            "content": json.dumps(
+                                {
+                                    "entities": [
+                                        {
+                                            "type": "OBLIGATION",
+                                            "name_zh": "保护义务",
+                                            "name_orig": original,
+                                            "definition": "Complete original description remains here.",
+                                        }
+                                    ],
+                                    "relations": [],
+                                }
+                            )
+                        }
+                    }
+                ],
+            },
+        )
+
+    monkeypatch.setattr(
+        extractor.httpx,
+        "AsyncClient",
+        lambda **kwargs: client_type(transport=httpx.MockTransport(handler), **kwargs),
+    )
+    result = await extractor._call_llm_extract_clause(
+        "An organisation must protect personal data.", "1", "Law", "Regulator", "MA"
+    )
+    assert result is not None and len(requests) == 2
+    assert result[0].entities[0].name_orig == "protection obligation"
+    assert result[0].entities[0].definition == "Complete original description remains here."
+    import pytest
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        extractor.ExtractedEntity(type="OBLIGATION", name_zh="保护义务", name_orig="A" * 256)
+
+
 async def test_extraction_mode_is_separate_from_independent_judge_and_usage_is_recorded(
     monkeypatch,
 ):
