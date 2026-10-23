@@ -42,8 +42,9 @@ async def run(input_path, output_path, concurrency):
                     version = await session.get(DocumentVersion, clause.version_id)
                     if await document_is_held(session, version.document_id):
                         raise ValueError("source held; refused")
-                    if is_numeric_fragment(clause.original_text):
-                        record = await translate_fragment_context(session, clause)
+                    if is_numeric_fragment(clause.original_text) or item.get("context_revision"):
+                        record = await translate_fragment_context(session, clause,
+                            density_context=bool(item.get("context_revision")))
                         payload = record.payload
                         new_call = record.created_at >= started
                         result = dict(clause_id=str(clause.id), path="context_revision",

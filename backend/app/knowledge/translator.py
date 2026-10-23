@@ -45,7 +45,7 @@ from app.knowledge.numeric_integrity import (
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "translate-v5"
+PROMPT_VERSION = "translate-v6"
 MAX_CHUNK_CHARS = 1500
 DEFAULT_CONCURRENCY = 4
 
@@ -179,7 +179,8 @@ def _protect_numeric_literals(text: str) -> tuple[str, dict[str, str]]:
         r"\s*\d+(?:,\d{3})*(?:\.\d+)?",
         re.IGNORECASE,
     )
-    safe = currency_amount.sub(replace, text)
+    safe = re.sub(r"٪\s*\d+(?:[٫.]\d+)?", replace, text)
+    safe = currency_amount.sub(replace, safe)
     return _NUM_TOKEN_RE.sub(replace, safe), mapping
 
 
@@ -205,7 +206,7 @@ def _protect_explicit_dates(text: str) -> tuple[str, dict[str, str]]:
         return marker
 
     for pattern in (
-        rf"(?<!\d)(?P<day>\d{{1,2}})\s+(?P<month>{month_words})\s+(?P<year>\d{{4}})(?!\d)",
+        rf"(?<!\d)(?P<day>\d{{1,2}})\s+(?P<month>{month_words})\s*[,،]?\s*(?P<year>\d{{4}})(?!\d)",
         rf"(?P<month>{month_words})\s+(?P<day>\d{{1,2}}),?\s+(?P<year>\d{{4}})(?!\d)",
     ):
         text = re.sub(pattern, replace, text, flags=re.IGNORECASE)

@@ -1,0 +1,76 @@
+{
+  "summary": {
+    "targets": 6,
+    "standalone_passed": 1,
+    "context_passed": 3,
+    "failed": 2,
+    "tokens_in": 10359,
+    "tokens_out": 36744,
+    "duration_seconds": 139.676,
+    "human_approved": 0,
+    "started_at": "2026-10-23T14:31:22.258000+00:00",
+    "completed_at": "2026-10-23T14:33:41.933992+00:00"
+  },
+  "results": [
+    {
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "path": "error",
+      "passed": false,
+      "error_type": "ValueError",
+      "tokens_in": 0,
+      "tokens_out": 0
+    },
+    {
+      "clause_id": "12a105b8-0f27-45ce-9768-af1890aa8cb4",
+      "path": "context_revision",
+      "record_id": "000268ff-5911-437d-9740-c946fae57695",
+      "passed": true,
+      "review_status": "pending_review",
+      "issues": [],
+      "tokens_in": 1074,
+      "tokens_out": 909
+    },
+    {
+      "clause_id": "01124562-5dfa-47ca-9938-56111f3cc2aa",
+      "path": "standalone_translation",
+      "record_id": "f58f3b1c-48e7-4dfa-87da-c162bfffd10f",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1118,
+      "tokens_out": 3258
+    },
+    {
+      "clause_id": "8a1dd9a1-eda9-4bee-8649-867c630fff73",
+      "path": "context_revision",
+      "record_id": "d0efec9e-45ca-4c0b-8235-779e1acdfa37",
+      "passed": true,
+      "review_status": "pending_review",
+      "issues": [],
+      "tokens_in": 919,
+      "tokens_out": 3403
+    },
+    {
+      "clause_id": "74fe152f-5688-4cd6-99b3-2ca9cb322c90",
+      "path": "context_revision",
+      "record_id": "87a5ce97-8ecf-40d3-876e-118716a70269",
+      "passed": true,
+      "review_status": "pending_review",
+      "issues": [],
+      "tokens_in": 2191,
+      "tokens_out": 3692
+    },
+    {
+      "clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+      "path": "context_revision",
+      "record_id": "1087a05b-f8d0-43c1-8df1-4f116413eb6b",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 29.9% < 30.0%"
+      ],
+      "tokens_in": 5057,
+      "tokens_out": 25482
+    }
+  ]
+}

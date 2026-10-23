@@ -11,16 +11,31 @@ from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import document_is_held
 from app.knowledge import translator
 from app.knowledge.history import payload_hash
-from app.knowledge.models import GlossaryTerm, KnowledgeAuditRecord
+from app.knowledge.models import ClauseTranslation, GlossaryTerm, KnowledgeAuditRecord
 
 
 def is_numeric_fragment(text):
     return bool(text.strip()) and not any(char.isalpha() for char in text)
 
 
-async def translate_fragment_context(session, clause):
+async def translate_fragment_context(session, clause, *, density_context=False):
     if not is_numeric_fragment(clause.original_text):
-        raise ValueError("only non-prose numeric/citation fragments use this revision path")
+        current = await session.scalar(
+            select(ClauseTranslation)
+            .where(ClauseTranslation.clause_id == clause.id, ClauseTranslation.is_current.is_(True))
+            .order_by(ClauseTranslation.updated_at.desc())
+            .limit(1)
+        )
+        if not (
+            density_context
+            and current
+            and current.review_status == "translation_failed"
+            and current.quality_issues
+            and all(issue.startswith("CJK 字符占比未达标") for issue in current.quality_issues)
+        ):
+            raise ValueError(
+                "context requires an unchanged failed density check, never a semantic repair"
+            )
     version = await session.get(DocumentVersion, clause.version_id)
     document = await session.get(Document, version.document_id)
     if await document_is_held(session, document.id):
@@ -39,7 +54,17 @@ async def translate_fragment_context(session, clause):
         (
             index
             for index, row in enumerate(sources)
-            if sum(char.isalpha() for char in row.original_text) >= 40
+            if (not density_context and sum(char.isalpha() for char in row.original_text) >= 40)
+            or (
+                density_context
+                and index > 0
+                and sum(
+                    char.isalpha()
+                    for prior in sources[1 : index + 1]
+                    for char in prior.original_text
+                )
+                >= 200
+            )
         ),
         None,
     )
@@ -125,6 +150,9 @@ async def translate_fragment_context(session, clause):
         translated_text=translated,
         standalone_translation=False,
         standalone_fragment_unchanged=True,
+        context_reason=(
+            "failed_density_with_real_adjacent_source" if density_context else "numeric_fragment"
+        ),
         quality_check_passed=passed,
         quality_issues=list(dict.fromkeys(issues)),
         review_status="pending_review" if passed else "translation_failed",

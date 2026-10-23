@@ -10,6 +10,9 @@ NUMERIC = re.compile(rf"(?<!\d){NUMBER}(?:\s*%)?(?!\d)")
 
 def normalize(text: str) -> str:
     text = unicodedata.normalize("NFKC", text or "")
+    # Arabic sources place the percentage sign before the number. Preserve the
+    # percentage identity, rather than misreading it as a bare numeric amount.
+    text = re.sub(rf"٪\s*({NUMBER})", r"\1%", text)
     text = text.translate(str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹٪٫٬", "01234567890123456789%.,"))
     return re.sub(rf"百分之\s*({NUMBER})", r"\1%", text)
 
@@ -98,7 +101,7 @@ def dates(text: str) -> set[tuple[int, int, int]]:
         found.add((int(year), int(month), int(day)))
     month_words = "|".join(sorted(MONTHS, key=len, reverse=True))
     for day, month, year in re.findall(
-        rf"(?<!\d)(\d{{1,2}})\s+({month_words})\s+(\d{{4}})(?!\d)", text
+        rf"(?<!\d)(\d{{1,2}})\s+({month_words})\s*[,،]?\s*(\d{{4}})(?!\d)", text
     ):
         found.add((int(year), MONTHS[month], int(day)))
     for month, day, year in re.findall(rf"({month_words})\s+(\d{{1,2}}),?\s+(\d{{4}})(?!\d)", text):
