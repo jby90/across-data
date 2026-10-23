@@ -60,9 +60,15 @@ async def test_provenance_does_not_treat_manual_upload_as_crawl_or_approval(
     assert version["integrity_ok"]
     assert version["acquisition"] == "manual_upload"
     assert version["official_authenticity"] == "pending_human_review"
+    path = f"/api/admin/versions/{version['version_id']}/original"
+    assert (await client.get(path)).status_code == 401
+    download = await client.get(path, headers=headers)
+    assert download.status_code == 200 and download.content == raw
+    assert download.headers["X-Content-Type-Options"] == "nosniff"
     (tmp_path / version_path(archive, raw)).write_bytes(b"damaged")
     result = await client.get(f"/api/admin/documents/{doc_id}/provenance", headers=headers)
     assert not result.json()["versions"][0]["integrity_ok"]
+    assert (await client.get(path, headers=headers)).status_code == 409
 
 
 def version_path(archive, raw):

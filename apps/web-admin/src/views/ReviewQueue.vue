@@ -164,10 +164,16 @@ async function runCountryExtract() {
   loading.value = true
   try {
     const res = await api.post<{
+      status: string
+      reason?: string
       nodes_total: number
       edges_total: number
       clauses_translated: number
-    }>(`/admin/knowledge/extract?country_code=${cc}&translate_sample_per_doc=6`)
+    }>(`/admin/knowledge/extract?country_code=${cc}`)
+    if (res.status !== 'completed') {
+      ElMessage.warning(`图谱未替换，保留旧结果：${res.reason || res.status}`)
+      return
+    }
     ElMessage.success(
       `${cc} 抽取与受控翻译完成：新增译文 ${res.clauses_translated} 条，图谱节点 ${res.nodes_total} 个、语义边 ${res.edges_total} 条`,
     )
@@ -318,10 +324,10 @@ onMounted(loadAll)
         <el-popover trigger="click" placement="bottom-end" :width="310"
           ><template #reference><el-button>批量处理</el-button></template>
           <div class="secondary-actions">
-            <p class="page-description">对当前国家执行受控翻译与图谱抽取，此操作会调用模型。</p>
-            <el-button :loading="loading" @click="runCountryExtract"
-              >运行本国翻译与图谱抽取</el-button
-            >
+            <p class="page-description">
+              对当前国家执行全量图谱抽取，此操作会调用模型；批量翻译单独执行。
+            </p>
+            <el-button :loading="loading" @click="runCountryExtract">运行本国图谱抽取</el-button>
           </div></el-popover
         >
         <el-button @click="loadAll">刷新</el-button>

@@ -21,7 +21,6 @@
 from __future__ import annotations
 
 import asyncio
-import difflib
 import json
 import logging
 import re
@@ -372,8 +371,9 @@ class ClauseExtractionPayload(BaseModel):
 
 
 class SemanticJudgeVerdict(BaseModel):
-    supports: Literal["yes", "no", "partial"]
+    supports: Literal["yes", "no", "partial", "unavailable"]
     reason: str
+    model_name: str | None = None
 
 
 class CandidateEvaluationResult(BaseModel):
@@ -383,6 +383,7 @@ class CandidateEvaluationResult(BaseModel):
     confidence: float = 0.0
     judge_verdict: str = "no"
     judge_reason: str = ""
+    judge_model: str | None = None
     review_status: str = GraphReviewStatus.PENDING_REVIEW.value
 
 
@@ -555,7 +556,8 @@ async def _call_llm_doc_relevance(
             resp = await client.post(url, headers=headers, json=payload)
             if resp.status_code != 200:
                 return None
-            raw = resp.json()["choices"][0]["message"]["content"]
+            response_payload = resp.json()
+            raw = response_payload["choices"][0]["message"]["content"]
             data = _parse_json_object(raw)
             rel = data.get("relevance", "relevant")
             if rel not in ("relevant", "related", "out_of_scope"):
@@ -636,13 +638,10 @@ async def classify_document_relevance(
         doc.relevance_source = "llm"
         return rel, reason
 
-    rel, reason = hint or (
-        "relevant",
-        f"{doc.country_code} 官方法规文件,未能调用大模型,保守视为核心文件",
-    )
-    doc.relevance, doc.relevance_note = rel, reason
+    doc.relevance = "needs_review"
+    doc.relevance_note = "大模型相关性判定不可用，保留原文与已有图谱，等待重试或人工确认"
     doc.relevance_source = "rule"
-    return rel, reason
+    return doc.relevance, doc.relevance_note
 
 
 def align_verbatim_quote(original_text: str, candidate_quote: str) -> str | None:
@@ -679,23 +678,6 @@ def align_verbatim_quote(original_text: str, candidate_quote: str) -> str | None
                     return sliced
         except re.error:
             pass
-
-    # 4. 如果候选片段中包含省略号(... 或 …),取最长的一段在原文中对齐
-    if "..." in cand or "…" in cand:
-        parts = [p.strip() for p in re.split(r"(?:\.\.\.|…)+", cand) if len(p.strip()) >= 16]
-        parts.sort(key=len, reverse=True)
-        for p in parts:
-            aligned_part = align_verbatim_quote(orig, p)
-            if aligned_part and aligned_part in orig:
-                return aligned_part
-
-    # 5. 最长连续公共子串对齐(要求至少覆盖候选片段 85% 且不少于 20 个字符)
-    matcher = difflib.SequenceMatcher(None, orig, cand)
-    match = matcher.find_longest_match(0, len(orig), 0, len(cand))
-    if match.size >= max(20, int(len(cand) * 0.85)):
-        sliced = orig[match.a : match.a + match.size].strip()
-        if len(sliced) >= 12 and sliced in orig:
-            return sliced
 
     return None
 
@@ -945,14 +927,16 @@ async def _call_llm_judge(
             resp = await client.post(url, headers=headers, json=payload)
             if resp.status_code != 200:
                 return None
-            raw = resp.json()["choices"][0]["message"]["content"]
+            response_payload = resp.json()
+            raw = response_payload["choices"][0]["message"]["content"]
             data = _parse_json_object(raw)
             sup = str(data.get("supports", "no")).lower().strip()
-            if sup not in ("yes", "no", "partial"):
-                sup = "no"
+            if sup not in ("yes", "no", "partial") or not str(data.get("reason") or "").strip():
+                return None
             return SemanticJudgeVerdict(
                 supports=sup,  # type: ignore[arg-type]
                 reason=str(data.get("reason") or ""),
+                model_name=str(response_payload.get("model") or settings.llm_model),
             )
     except Exception as exc:
         logger.warning("LLM semantic judge failed: %s", exc)
@@ -994,6 +978,9 @@ async def judge_extracted_relation(
         )
         if llm_v is not None:
             return llm_v
+        return SemanticJudgeVerdict(
+            supports="unavailable", reason="独立语义裁判不可用；确定性关键词检查不能替代语义裁判"
+        )
 
     return det
 
@@ -1071,14 +1058,17 @@ async def evaluate_kg_candidate(
         document_title=document_title,
         use_llm=use_llm_judge,
     )
-    if verdict.supports == "no":
+    if verdict.supports in ("no", "unavailable"):
         return CandidateEvaluationResult(
             admitted=False,
-            stage="semantic_judge",
+            stage="semantic_judge_unavailable"
+            if verdict.supports == "unavailable"
+            else "semantic_judge",
             aligned_quote=aligned,
             confidence=0.0,
-            judge_verdict="no",
+            judge_verdict=verdict.supports,
             judge_reason=verdict.reason,
+            judge_model=verdict.model_name,
             review_status=GraphReviewStatus.REJECTED.value,
         )
 
@@ -1091,6 +1081,7 @@ async def evaluate_kg_candidate(
             confidence=downgraded,
             judge_verdict="partial",
             judge_reason=verdict.reason,
+            judge_model=verdict.model_name,
             review_status=GraphReviewStatus.REJECTED.value,
         )
 
@@ -1098,9 +1089,10 @@ async def evaluate_kg_candidate(
         admitted=True,
         stage="passed",
         aligned_quote=aligned,
-        confidence=round(max(0.65, min(1.0, confidence)), 2),
+        confidence=round(max(0.0, min(1.0, confidence)), 2),
         judge_verdict="yes",
         judge_reason=verdict.reason,
+        judge_model=verdict.model_name,
         review_status=GraphReviewStatus.PENDING_REVIEW.value,
     )
 
@@ -1263,7 +1255,7 @@ async def _call_llm_extract_clause(
         f"发布机构(REGULATOR): {publisher_name}\n"
         f"所属法规文件标题(INSTRUMENT): {document_title}\n"
         f"条号: {clause_number or '-'}\n"
-        f"条款原文:\n{clause_text[:2600]}"
+        f"条款原文:\n{clause_text}"
     )
 
     payload: dict[str, Any] = {
@@ -1290,26 +1282,17 @@ async def _call_llm_extract_clause(
                 if resp.status_code != 200:
                     await asyncio.sleep(0.8 * (attempt + 1))
                     continue
-                raw = resp.json()["choices"][0]["message"]["content"]
+                response_payload = resp.json()
+                raw = response_payload["choices"][0]["message"]["content"]
                 data = _parse_json_object(raw)
-                valid_entities: list[ExtractedEntity] = []
-                for ent_raw in data.get("entities") or []:
-                    if not isinstance(ent_raw, dict):
-                        continue
-                    try:
-                        valid_entities.append(ExtractedEntity.model_validate(ent_raw))
-                    except ValidationError:
-                        continue
-                valid_relations: list[ExtractedRelation] = []
-                for rel_raw in data.get("relations") or []:
-                    if not isinstance(rel_raw, dict):
-                        continue
-                    try:
-                        valid_relations.append(ExtractedRelation.model_validate(rel_raw))
-                    except ValidationError:
-                        continue
-                parsed = ClauseExtractionPayload(entities=valid_entities, relations=valid_relations)
-                return parsed, settings.llm_model
+                if not isinstance(data.get("entities"), list) or not isinstance(
+                    data.get("relations"), list
+                ):
+                    raise ValueError(
+                        "Extraction payload requires explicit entity and relation arrays"
+                    )
+                parsed = ClauseExtractionPayload.model_validate(data)
+                return parsed, str(response_payload.get("model") or settings.llm_model)
         except (
             ValidationError,
             ValueError,
@@ -1492,14 +1475,11 @@ async def _upsert_node(
             await propose(session, node, proposed)
             return node
         snapshot(session, node, "before_machine_revision")
-        node.name_zh = name_zh[:255]
-        if name_orig:
-            node.name_orig = name_orig[:255]
-        if summary:
-            node.summary = summary
-        if document_id:
-            node.document_id = document_id
-        if evidence_clause_id:
+        if name_zh[:255] != node.name_zh or (summary and summary != node.summary):
+            await propose(
+                session, node, dict(name_zh=name_zh[:255], name_orig=name_orig, summary=summary)
+            )
+        if evidence_clause_id and node.evidence_clause_id is None:
             node.evidence_clause_id = evidence_clause_id
         if node.review_status == GraphReviewStatus.SUPERSEDED.value:
             node.review_status = review_status
@@ -1541,13 +1521,18 @@ async def _upsert_edge(
 
     edge = (
         await session.execute(
-            select(KgEdge).where(
+            select(KgEdge)
+            .where(
                 KgEdge.source_node_id == source_node.id,
                 KgEdge.target_node_id == target_node.id,
                 KgEdge.relation_type == relation_type.value,
                 KgEdge.evidence_clause_id == evidence_clause.id,
                 KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
             )
+            .order_by(
+                (KgEdge.review_status == "approved").desc(), KgEdge.created_at.desc(), KgEdge.id
+            )
+            .limit(1)
         )
     ).scalar_one_or_none()
     if edge is None:
@@ -1582,13 +1567,22 @@ async def _upsert_edge(
             if any(getattr(edge, key) != value for key, value in proposed.items()):
                 await propose(session, edge, proposed)
             return edge
+        if all(getattr(edge, key) == value for key, value in proposed.items()):
+            return edge
         snapshot(session, edge, "before_machine_revision")
-        edge.evidence_quote = aligned
-        edge.extractor_model = extractor_model
-        edge.confidence = confidence
-        edge.judge_verdict = judge_verdict
-        edge.judge_reason = judge_reason
-        edge.is_structural = is_structural
+        edge.review_status = "superseded"
+        edge = KgEdge(
+            country_code=country_code,
+            source_node_id=source_node.id,
+            target_node_id=target_node.id,
+            relation_type=relation_type.value,
+            evidence_clause_id=evidence_clause.id,
+            review_status=review_status,
+            **proposed,
+        )
+        session.add(edge)
+        await session.flush()
+
     return edge
 
 
@@ -1698,18 +1692,16 @@ def _resolve_instrument_target(
     exclude_id: uuid.UUID | None = None,
     min_ratio: float = 0.88,
 ) -> KgNode | None:
-    """按标题相似度在本国已入库法规节点中查找被修订/废止的目标法规,匹配不到返回 None。"""
+    """Only unique normalized exact titles resolve; similar years/Amendments are not identity."""
     norm = _normalize_instrument_title(name)
     if not norm:
         return None
-    best: tuple[float, KgNode | None] = (0.0, None)
-    for cand_norm, node, _doc in index:
-        if exclude_id is not None and node.id == exclude_id:
-            continue
-        ratio = difflib.SequenceMatcher(None, norm, cand_norm).ratio()
-        if ratio > best[0]:
-            best = (ratio, node)
-    return best[1] if best[0] >= min_ratio else None
+    matches = [
+        node
+        for cand_norm, node, _doc in index
+        if norm == cand_norm and (exclude_id is None or node.id != exclude_id)
+    ]
+    return matches[0] if len(matches) == 1 else None
 
 
 def _amendment_base_key(leaf: str) -> str:
@@ -1809,26 +1801,100 @@ async def supersede_legacy_rule_edges(
     session: AsyncSession, country_code: str | None = None
 ) -> int:
     """将旧 kg-rule-extractor-v1 规则引擎产出的边标记为 superseded(保留历史行,不物理删除)。"""
-    stmt = (
-        update(KgEdge)
-        .where(
-            KgEdge.extractor_model == LEGACY_RULE_EXTRACTOR_MODEL,
-            KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
-        )
-        .values(review_status=GraphReviewStatus.SUPERSEDED.value)
+    from app.knowledge.history import propose, snapshot
+
+    stmt = select(KgEdge).where(
+        KgEdge.extractor_model == LEGACY_RULE_EXTRACTOR_MODEL, KgEdge.review_status != "superseded"
     )
     if country_code:
         stmt = stmt.where(KgEdge.country_code == country_code.upper())
-    res = await session.execute(stmt)
+    rows = (await session.scalars(stmt)).all()
+    changed = 0
+    for edge in rows:
+        if edge.review_status in ("approved", "rejected"):
+            await propose(
+                session,
+                edge,
+                {
+                    "action": "quarantine_legacy_rule_edge",
+                    "reason": "legacy rules are not independent semantic verification",
+                },
+            )
+        else:
+            snapshot(session, edge, "before_legacy_quarantine")
+            edge.review_status = "superseded"
+            changed += 1
     await session.flush()
-    return int(res.rowcount or 0)
+    return changed
 
 
 async def extract_knowledge_for_country(
     session: AsyncSession,
     country_code: str,
+    translate_sample_per_doc: int = 0,
+    max_clauses_per_doc: int | None = None,
+    concurrency: int = 8,
+) -> dict:
+    """Stage a replacement atomically. No failed/partial model batch can retire the old graph."""
+    from sqlalchemy import text
+
+    from app.knowledge.history import payload_hash
+    from app.knowledge.models import KnowledgeAuditRecord
+
+    await seed_glossary_and_review_points(session)
+    cc = country_code.upper()
+    lock_key = int.from_bytes(cc.encode(), "big")
+    acquired = await session.scalar(
+        text("SELECT pg_try_advisory_xact_lock(:key)"), {"key": lock_key}
+    )
+    if not acquired:
+        return {"status": "busy", "reason": "country_extraction_already_running"}
+    transaction = await session.begin_nested()
+    try:
+        result = await _extract_knowledge_for_country_impl(
+            session, cc, translate_sample_per_doc, max_clauses_per_doc, concurrency
+        )
+        if result.get("status") == "failed":
+            await transaction.rollback()
+        else:
+            await transaction.commit()
+    except Exception as exc:
+        await transaction.rollback()
+        result = {
+            "status": "failed",
+            "reason": type(exc).__name__,
+            "previous_graph_preserved": True,
+            "semantic_edges_added": 0,
+        }
+    for record in result.pop("_candidate_evaluations", []):
+        session.add(
+            KnowledgeAuditRecord(
+                target_type="clauses",
+                target_id=uuid.UUID(record["clause_id"]),
+                action="kg_candidate_evaluation",
+                payload=record,
+                content_hash=payload_hash(record),
+            )
+        )
+    result["batch_id"] = str(uuid.uuid4())
+    session.add(
+        KnowledgeAuditRecord(
+            target_type="kg_country",
+            target_id=uuid.uuid5(uuid.NAMESPACE_URL, "cyshuhe:kg:" + cc),
+            action="graph_rebuild_result",
+            payload={"country_code": cc, **result},
+            content_hash=payload_hash({"country_code": cc, **result}),
+        )
+    )
+    await session.commit()
+    return result
+
+
+async def _extract_knowledge_for_country_impl(
+    session: AsyncSession,
+    country_code: str,
     translate_sample_per_doc: int = 6,
-    max_clauses_per_doc: int = 16,
+    max_clauses_per_doc: int | None = None,
     concurrency: int = 8,
 ) -> dict[str, int]:
     """对指定国家已解析的官方法规执行 S2 六要素+十二关系知识图谱抽取:
@@ -1838,9 +1904,10 @@ async def extract_knowledge_for_country(
     4. 对条款调用大模型抽取六要素实体与十二类关系,经类型约束 + 逐字校验 + 语义裁判后入图谱。
     """
     cc = country_code.upper()
-    await seed_glossary_and_review_points(session)
     superseded_count = await supersede_legacy_rule_edges(session, cc)
-    superseded_unreviewed = await supersede_unreviewed_graph_edges(session, cc)
+    superseded_unreviewed = (
+        0  # retire only successfully processed evidence, after all calls complete
+    )
 
     country_zh, country_orig = COUNTRY_NAMES.get(cc, (cc, cc))
     country_node = await _upsert_node(
@@ -1913,6 +1980,14 @@ async def extract_knowledge_for_country(
             continue
 
         rel_status, rel_note = await classify_document_relevance(doc, clauses[:3])
+        if rel_status == "needs_review":
+            return {
+                "status": "failed",
+                "reason": "document_relevance_unavailable",
+                "document_id": str(doc.id),
+                "previous_graph_preserved": True,
+                "semantic_edges_added": 0,
+            }
         in_extraction_scope = rel_status in ("relevant", "related")
         doc_counts[rel_status] = doc_counts.get(rel_status, 0) + 1
         if not in_extraction_scope:
@@ -1923,8 +1998,7 @@ async def extract_knowledge_for_country(
                 .where(
                     KgEdge.evidence_clause_id.in_(clause_ids_of_doc),
                     KgEdge.is_structural.is_(False),
-                    KgEdge.review_status != GraphReviewStatus.APPROVED.value,
-                    KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
+                    KgEdge.review_status == GraphReviewStatus.PENDING_REVIEW.value,
                 )
                 .values(review_status=GraphReviewStatus.SUPERSEDED.value)
             )
@@ -2027,12 +2101,17 @@ async def extract_knowledge_for_country(
     # 并发调用大模型抽取各相关文档的候选条款并执行语义裁判(核心文件预算大,相关文件预算小)
     sem = asyncio.Semaphore(max(1, concurrency))
     extraction_tasks: list[tuple[Document, Clause, KgNode, KgNode, str]] = []
-    related_budget = max(6, max_clauses_per_doc // 3)
     for doc, _ver, clauses, reg_node, inst_node, pub_name in relevant_docs_info:
-        budget = max_clauses_per_doc if doc_tier.get(doc.id) == "relevant" else related_budget
-        cand_clauses = _select_candidate_clauses(clauses, max_clauses=budget)
+        cand_clauses = (
+            clauses
+            if max_clauses_per_doc is None
+            else _select_candidate_clauses(clauses, max_clauses=max_clauses_per_doc)
+        )
         for c in cand_clauses:
             extraction_tasks.append((doc, c, reg_node, inst_node, pub_name))
+
+    evaluation_records = []
+    failure_records = []
 
     async def _extract_and_judge_one(
         doc: Document, clause: Clause, reg_node: KgNode, inst_node: KgNode, pub_name: str
@@ -2060,16 +2139,33 @@ async def extract_knowledge_for_country(
         | None
     ):
         async with sem:
-            res = await _call_llm_extract_clause(
-                clause_text=clause.original_text,
-                clause_number=clause.clause_number,
-                document_title=doc.title,
-                publisher_name=pub_name,
-                country_code=cc,
-            )
-            if res is None:
-                return None
-            payload, model_name = res
+            from app.knowledge.translator import split_clause_into_chunks
+
+            # Long source clauses stay intact. Every chunk is evaluated against its real source ID.
+            entities, relations, models = [], [], []
+            for chunk in split_clause_into_chunks(clause.original_text, max_chars=2400):
+                res = await _call_llm_extract_clause(
+                    clause_text=chunk,
+                    clause_number=clause.clause_number,
+                    document_title=doc.title,
+                    publisher_name=pub_name,
+                    country_code=cc,
+                )
+                if res is None:
+                    failure_records.append(
+                        {
+                            "clause_id": str(clause.id),
+                            "step": "extraction",
+                            "reason": "model_unavailable_or_invalid_schema",
+                        }
+                    )
+                    return None
+                chunk_payload, chunk_model = res
+                entities.extend(chunk_payload.entities)
+                relations.extend(chunk_payload.relations)
+                models.append(chunk_model)
+            payload = ClauseExtractionPayload(entities=entities, relations=relations)
+            model_name = ",".join(dict.fromkeys(models))[:128]
 
             # 建立本条款局部实体索引
             entity_lookup: dict[str, ExtractedEntity] = {}
@@ -2091,24 +2187,23 @@ async def extract_knowledge_for_country(
                 ]
             ] = []
 
-            top_rels = sorted(payload.relations, key=lambda r: r.confidence, reverse=True)[:5]
+            top_rels = sorted(payload.relations, key=lambda r: r.confidence, reverse=True)
             for rel in top_rels:
                 src_raw = rel.source.strip()
                 dst_raw = rel.target.strip()
 
                 # 解析源节点类型与名称
                 src_ent = entity_lookup.get(src_raw.lower())
-                if (
-                    src_raw.lower() == doc.title.lower().strip()
-                    or src_raw in ("本法", "本法规", "本条例", "本指南")
-                    or (src_ent and src_ent.type == NodeType.INSTRUMENT)
+                if src_raw.lower() == doc.title.lower().strip() or src_raw in (
+                    "本法",
+                    "本法规",
+                    "本条例",
+                    "本指南",
                 ):
                     src_type = NodeType.INSTRUMENT
                     src_zh = doc.title
                     src_orig = doc.title
-                elif src_raw.lower() == pub_name.lower().strip() or (
-                    src_ent and src_ent.type == NodeType.REGULATOR
-                ):
+                elif src_raw.lower() == pub_name.lower().strip():
                     src_type = NodeType.REGULATOR
                     src_zh = pub_name
                     src_orig = pub_name
@@ -2117,9 +2212,7 @@ async def extract_knowledge_for_country(
                     src_zh = src_ent.name_zh
                     src_orig = src_ent.name_orig or src_ent.name_zh
                 else:
-                    src_type = NodeType.INSTRUMENT
-                    src_zh = doc.title
-                    src_orig = doc.title
+                    continue  # An unresolved source cannot be guessed to mean this law.
 
                 # 解析目标节点类型与名称
                 dst_ent = entity_lookup.get(dst_raw.lower())
@@ -2156,6 +2249,27 @@ async def extract_knowledge_for_country(
                     confidence=rel.confidence,
                     use_llm_judge=True,
                 )
+                evaluation_records.append(
+                    {
+                        "clause_id": str(clause.id),
+                        "source_hash": clause.text_hash,
+                        "model": model_name,
+                        "relation": rel.type.value,
+                        "source_name": src_zh,
+                        "target_name": dst_zh,
+                        "evidence_quote": rel.evidence_quote,
+                        "evaluation": eval_res.model_dump(),
+                    }
+                )
+                if eval_res.stage == "semantic_judge_unavailable":
+                    failure_records.append(
+                        {
+                            "clause_id": str(clause.id),
+                            "step": "semantic_judge",
+                            "reason": "independent_judge_unavailable",
+                        }
+                    )
+                    return None
                 if eval_res.admitted and eval_res.aligned_quote:
                     validated_rels.append(
                         (rel, eval_res, src_type, src_zh, src_orig, dst_type, dst_zh, dst_orig)
@@ -2167,6 +2281,41 @@ async def extract_knowledge_for_country(
         *[_extract_and_judge_one(d, c, rn, in_n, pn) for d, c, rn, in_n, pn in extraction_tasks]
     )
 
+    if any(item is None for item in batch_results):
+        return {
+            "status": "failed",
+            "reason": "extractor_or_judge_unavailable",
+            "failures": failure_records,
+            "_candidate_evaluations": evaluation_records,
+            "attempted_clauses": len(extraction_tasks),
+            "failed_clauses": sum(item is None for item in batch_results),
+            "previous_graph_preserved": True,
+            "semantic_edges_added": 0,
+        }
+
+    # All requested extraction/judge calls completed. Retire only pending edges in this scope.
+    processed_ids = [clause.id for _doc, clause, _reg, _inst, _pub in extraction_tasks]
+    prior = (
+        (
+            await session.scalars(
+                select(KgEdge).where(
+                    KgEdge.country_code == cc,
+                    KgEdge.evidence_clause_id.in_(processed_ids),
+                    KgEdge.review_status == "pending_review",
+                    KgEdge.is_structural.is_(False),
+                )
+            )
+        ).all()
+        if processed_ids
+        else []
+    )
+    from app.knowledge.history import snapshot
+
+    for edge in prior:
+        snapshot(session, edge, "before_successful_graph_replacement")
+        edge.review_status = "superseded"
+    superseded_unreviewed = len(prior)
+
     semantic_edges_added = 0
     for item in batch_results:
         if item is None:
@@ -2177,7 +2326,11 @@ async def extract_knowledge_for_country(
 
         # 仅写入与通过校验的语义边关联的实体节点(避免产生孤立垃圾节点)
         local_nodes: dict[tuple[NodeType, str], KgNode] = {}
+        used_entities = {(st, sz.lower()) for _, _, st, sz, _, _, _, _ in validated_rels}
+        used_entities |= {(dt, dz.lower()) for _, _, _, _, _, dt, dz, _ in validated_rels}
         for ent in payload.entities:
+            if (ent.type, ent.name_zh.strip().lower()) not in used_entities:
+                continue
             if ent.type in (NodeType.DATA_CATEGORY, NodeType.OBLIGATION, NodeType.PENALTY):
                 nkey, czh, corig = normalize_entity_node_key(ent.type, ent.name_zh, ent.name_orig)
                 node_obj = await _upsert_node(
@@ -2187,7 +2340,11 @@ async def extract_knowledge_for_country(
                     node_key=nkey,
                     name_zh=czh,
                     name_orig=corig,
-                    summary=ent.definition,
+                    summary="机器抽取实体，待人工核对；请对照关联条款证据。",
+                    attributes={
+                        "model_definition_proposal": ent.definition,
+                        "definition_status": "pending_review",
+                    },
                     evidence_clause_id=clause.id,
                     review_status=GraphReviewStatus.PENDING_REVIEW.value,
                 )
@@ -2196,8 +2353,16 @@ async def extract_knowledge_for_country(
         for rel, eval_res, src_type, src_zh, src_orig, dst_type, dst_zh, dst_orig in validated_rels:
             # 确定 source KgNode
             if src_type == NodeType.INSTRUMENT:
-                src_node = inst_node
-            elif src_type == NodeType.REGULATOR:
+                src_node = inst_by_title.get(
+                    src_orig.lower().strip()
+                ) or _resolve_instrument_target(src_orig, inst_title_index)
+                if src_node is None:
+                    continue
+            elif (
+                src_type == NodeType.REGULATOR
+                and src_orig.lower().strip()
+                == (reg_node.name_orig or reg_node.name_zh).lower().strip()
+            ):
                 src_node = reg_node
             else:
                 src_node = local_nodes.get((src_type, src_zh.strip().lower()))
@@ -2225,7 +2390,17 @@ async def extract_knowledge_for_country(
                 if dst_node is None or dst_node.id == src_node.id:
                     continue
             elif dst_type == NodeType.REGULATOR:
-                dst_node = reg_node
+                key, name_zh, name_orig = normalize_entity_node_key(dst_type, dst_zh, dst_orig)
+                dst_node = await _upsert_node(
+                    session,
+                    country_code=cc,
+                    node_type=dst_type,
+                    node_key=key,
+                    name_zh=name_zh,
+                    name_orig=name_orig,
+                    evidence_clause_id=clause.id,
+                    review_status="pending_review",
+                )
             elif dst_type == NodeType.COUNTRY:
                 dst_node = country_node
             else:
@@ -2295,10 +2470,15 @@ async def extract_knowledge_for_country(
         .all()
     )
     for n in all_country_nodes:
-        if n.id not in connected_ids and n.node_type != NodeType.COUNTRY.value:
+        if (
+            n.id not in connected_ids
+            and n.node_type != NodeType.COUNTRY.value
+            and n.review_status == "pending_review"
+        ):
+            snapshot(session, n, "before_isolated_node_retirement")
             n.review_status = GraphReviewStatus.SUPERSEDED.value
 
-    await session.commit()
+    await session.flush()
 
     active_nodes_after = len(
         (
@@ -2314,6 +2494,11 @@ async def extract_knowledge_for_country(
     )
     active_edges_after = len(active_edges)
     return {
+        "status": "completed",
+        "_candidate_evaluations": evaluation_records,
+        "sampled": max_clauses_per_doc is not None,
+        "attempted_clauses": len(extraction_tasks),
+        "failed_clauses": 0,
         "nodes_total": active_nodes_after,
         "edges_total": active_edges_after,
         "semantic_edges_added": semantic_edges_added,

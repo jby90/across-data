@@ -573,8 +573,8 @@ async def test_s2_relevance_tiers_manual_override_and_title_inference(monkeypatc
     )
 
 
-async def test_s2_kg_gold_benchmark_60_samples(monkeypatch):
-    """S2 金标集验证:
+async def test_s2_synthetic_rule_contracts_60_samples(monkeypatch):
+    """离线规则夹具验证（未经人工确认，不能作为 S2 法律金标验收）:
     读取 backend/tests/fixtures/kg_gold.json (≥ 60 条,覆盖全部 12 类语义关系),
     要求:
     - 错误样例(expected_valid=False)被拒绝率 ≥ 90%;
@@ -594,7 +594,7 @@ async def test_s2_kg_gold_benchmark_60_samples(monkeypatch):
     relations_covered = {item["relation_type"] for item in samples}
     assert relations_covered == {r.value for r in RelationType}
 
-    # 使用确定性+规则裁判评估金标集(不依赖外网)
+    # 只检验离线规则实现，不宣称是独立模型或人工法律准确率。
     monkeypatch.setattr(extractor, "_call_llm_judge", lambda *a, **kw: None)
 
     pos_total = 0
@@ -823,6 +823,11 @@ async def test_knowledge_extraction_glossary_review_points_and_version_linkage(
     monkeypatch.setattr(translator, "_call_llm_translate", _fake_llm_translate)
     monkeypatch.setattr(extractor, "_call_llm_extract_clause", _fake_llm_extract)
     monkeypatch.setattr(extractor, "_call_llm_judge", _fake_llm_judge)
+
+    async def _fake_doc_relevance(**kwargs):
+        return extractor.DocumentRelevanceVerdict(relevance="relevant", reason="fixture scope")
+
+    monkeypatch.setattr(extractor, "_call_llm_doc_relevance", _fake_doc_relevance)
     admin_hdr = bearer(await login(client, "admin", "admin@example.com"))
     reviewer_hdr = bearer(await login(client, "admin", "reviewer@example.com"))
     member_hdr = bearer(await login(client, "user", "a-member@example.com"))

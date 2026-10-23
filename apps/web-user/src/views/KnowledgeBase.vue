@@ -909,7 +909,15 @@ onMounted(loadData)
           <el-table-column label="状态" width="160">
             <template #default="{ row }">
               <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
-                {{ row.usable_as_legal_basis ? '已复核(可作依据)' : '待核对(大模型抽取)' }}
+                {{
+                  row.judge_verdict === 'title_inferred'
+                    ? '标题推断，待核对'
+                    : row.is_structural
+                      ? '结构登记（非法律审批）'
+                      : row.usable_as_legal_basis
+                        ? '已复核(可作依据)'
+                        : '待核对(大模型抽取)'
+                }}
               </el-tag>
             </template>
           </el-table-column>

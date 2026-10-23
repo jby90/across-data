@@ -1,0 +1,110 @@
+[
+  {
+    "kind": "existing_candidate",
+    "edge_id": "00f86495-e953-4b8d-8ebc-cf1cce600012",
+    "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+    "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+    "target": "卫星运营商遵守NTRA技术决定与规则义务",
+    "evaluation": {
+      "admitted": true,
+      "stage": "passed",
+      "aligned_quote": "يلتزم مشغل القمر الصناعي بما يصدره الجهاز من قرارات وقواعد فنية وتنظيمية فيما يتعلق بإنشاء وتشغيل شبكات\nانترنت االشياء وكيفية اتاحتها لمقدمى الخدمة.",
+      "confidence": 0.85,
+      "judge_verdict": "yes",
+      "judge_reason": "摘录明确规定卫星运营商须遵守“该机构”（即NTRA）就物联网网络建设运营及向服务商提供方式发布的技术与监管决定和规则，直接确立了NTRA对卫星运营商的合规要求关系。",
+      "judge_model": "deepseek-flash",
+      "review_status": "pending_review"
+    },
+    "human_review": "pending"
+  },
+  {
+    "kind": "constructed_wrong_target",
+    "edge_id": "00f86495-e953-4b8d-8ebc-cf1cce600012",
+    "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+    "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+    "target": "Destroy all personal data within 30 days",
+    "evaluation": {
+      "admitted": false,
+      "stage": "semantic_judge",
+      "aligned_quote": "يلتزم مشغل القمر الصناعي بما يصدره الجهاز من قرارات وقواعد فنية وتنظيمية فيما يتعلق بإنشاء وتشغيل شبكات\nانترنت االشياء وكيفية اتاحتها لمقدمى الخدمة.",
+      "confidence": 0.0,
+      "judge_verdict": "no",
+      "judge_reason": "证据摘录仅要求卫星运营商遵守NTRA关于物联网网络建设运营的技术监管决定，完全没有提及个人数据销毁义务或30天期限，未确立所声称的REQUIRES关系。",
+      "judge_model": "deepseek-flash",
+      "review_status": "rejected"
+    },
+    "human_review": "pending"
+  },
+  {
+    "kind": "existing_candidate",
+    "edge_id": "04eec73d-cae5-4734-b67f-16fcb77771bb",
+    "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+    "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+    "target": "向用户无歧视提供许可服务义务",
+    "evaluation": {
+      "admitted": true,
+      "stage": "passed",
+      "aligned_quote": "يلتزم مقدم خدمات انترنت األشياء بتقديم الخدمات محل الترخيص للمستخدمين دون تمييز ألي سبب من األسباب",
+      "confidence": 0.85,
+      "judge_verdict": "yes",
+      "judge_reason": "摘录明确规定物联网服务提供商须向用户无歧视地提供许可服务，直接确立了该义务，与声称关系相符。",
+      "judge_model": "deepseek-flash",
+      "review_status": "pending_review"
+    },
+    "human_review": "pending"
+  },
+  {
+    "kind": "constructed_wrong_target",
+    "edge_id": "04eec73d-cae5-4734-b67f-16fcb77771bb",
+    "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+    "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+    "target": "Destroy all personal data within 30 days",
+    "evaluation": {
+      "admitted": false,
+      "stage": "semantic_judge",
+      "aligned_quote": "يلتزم مقدم خدمات انترنت األشياء بتقديم الخدمات محل الترخيص للمستخدمين دون تمييز ألي سبب من األسباب",
+      "confidence": 0.0,
+      "judge_verdict": "no",
+      "judge_reason": "证据摘录仅规定物联网服务提供商须无歧视地向用户提供服务，未提及销毁个人数据或30天期限，与目标义务无关。",
+      "judge_model": "deepseek-flash",
+      "review_status": "rejected"
+    },
+    "human_review": "pending"
+  },
+  {
+    "kind": "existing_candidate",
+    "edge_id": "087900cf-0ed3-4f4c-9929-4d62102f1a4d",
+    "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+    "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+    "target": "每月提交网络数据库义务",
+    "evaluation": {
+      "admitted": true,
+      "stage": "passed",
+      "aligned_quote": "تلتزم الشركة الحاصلة على الترخيص بموافاة الجهاز بقاعدة بيانات شهرية لشبكته تتضمن البيانات المحددة بالمرفق",
+      "confidence": 0.85,
+      "judge_verdict": "yes",
+      "judge_reason": "法规原文明确要求持牌公司每月向主管机构提交包含附件指定数据的网络数据库，直接确立了该月度提交义务。",
+      "judge_model": "deepseek-flash",
+      "review_status": "pending_review"
+    },
+    "human_review": "pending"
+  },
+  {
+    "kind": "constructed_wrong_target",
+    "edge_id": "087900cf-0ed3-4f4c-9929-4d62102f1a4d",
+    "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+    "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+    "target": "Destroy all personal data within 30 days",
+    "evaluation": {
+      "admitted": false,
+      "stage": "semantic_judge",
+      "aligned_quote": "تلتزم الشركة الحاصلة على الترخيص بموافاة الجهاز بقاعدة بيانات شهرية لشبكته تتضمن البيانات المحددة بالمرفق",
+      "confidence": 0.0,
+      "judge_verdict": "no",
+      "judge_reason": "证据摘录仅要求持牌公司每月向主管机构提供网络数据库，未提及任何关于30天内销毁个人数据的义务，与声称的REQUIRES关系无关。",
+      "judge_model": "deepseek-flash",
+      "review_status": "rejected"
+    },
+    "human_review": "pending"
+  }
+]

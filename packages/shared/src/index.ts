@@ -42,6 +42,15 @@ export type Side = 'user' | 'admin'
 
 function detailToMessage(detail: unknown, fallback: string): string {
   if (typeof detail === 'string') return detail
+  if (detail && typeof detail === 'object' && 'message' in detail) {
+    const data = detail as { message?: unknown; issues?: unknown }
+    if (typeof data.message === 'string') {
+      const issues = Array.isArray(data.issues)
+        ? data.issues.filter((x): x is string => typeof x === 'string')
+        : []
+      return [data.message, ...issues.slice(0, 5)].join('；')
+    }
+  }
   if (Array.isArray(detail) && detail.length > 0) {
     // FastAPI 校验错误:取第一条的 msg
     const first = detail[0] as { msg?: string }

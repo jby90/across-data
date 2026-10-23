@@ -3,7 +3,7 @@ import uuid
 from datetime import UTC, date, datetime
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -414,6 +414,32 @@ async def _version_or_404(session: AsyncSession, version_id: uuid.UUID) -> Docum
     if v is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "版本不存在")
     return v
+
+
+@router.get("/versions/{version_id}/original", summary="下载经完整性核验的归档原文")
+async def download_original(
+    version_id: uuid.UUID,
+    _: Principal = Depends(require_admin_side),
+    session: AsyncSession = Depends(get_session),
+):
+    version = await _version_or_404(session, version_id)
+    try:
+        archive = ArchiveStore(get_settings().archive_dir)
+        raw = archive.read(version.archive_path)
+    except (OSError, ArchiveIntegrityError):
+        raise HTTPException(409, "归档原文不存在或完整性异常，已拒绝下载") from None
+    if archive.sha256(raw) != version.content_hash or len(raw) != version.size_bytes:
+        raise HTTPException(409, "归档与登记的内容哈希或长度不一致，已拒绝下载")
+    extension = ".pdf" if version.mime_type == "application/pdf" else ".bin"
+    return Response(
+        raw,
+        media_type="application/octet-stream",
+        headers={
+            "Content-Disposition": f'attachment; filename="{version.id}{extension}"',
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "no-store",
+        },
+    )
 
 
 @router.get("/versions/{version_id}/clauses", response_model=list[ClauseOut], summary="版本条款")

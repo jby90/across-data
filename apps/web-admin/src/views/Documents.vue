@@ -83,6 +83,24 @@ const versionId = ref<string>('')
 const clauses = ref<ClauseOut[]>([])
 const events = ref<EventOut[]>([])
 const translatingDocId = ref<string>('')
+
+async function downloadOriginal() {
+  if (!versionId.value) return
+  try {
+    const response = await fetch(`/api/admin/versions/${versionId.value}/original`, {
+      headers: { Authorization: `Bearer ${api.token()}` },
+    })
+    if (!response.ok) throw new Error('归档下载失败，请检查原文完整性及登录状态')
+    const url = URL.createObjectURL(await response.blob())
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = `${versionId.value}.pdf`
+    anchor.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  } catch (error) {
+    ElMessage.error((error as Error).message)
+  }
+}
 const provenance = ref<{
   versions: {
     version_id: string
@@ -422,6 +440,7 @@ onMounted(load)
           <el-button size="small" type="primary" plain @click="openUploadDialog(detail)"
             >上传新版本原文</el-button
           >
+          <el-button :disabled="!versionId" @click="downloadOriginal">下载归档原文</el-button>
         </div>
         <el-radio-group
           :model-value="versionId"

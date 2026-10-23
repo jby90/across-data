@@ -349,7 +349,7 @@ async def batch_translate(
 
 async def batch_extract_kg(
     country: str | None = None,
-    max_clauses_per_doc: int = 24,
+    max_clauses_per_doc: int | None = None,
     concurrency: int = 8,
     sf=None,
 ) -> dict[str, dict[str, int]]:
@@ -365,7 +365,7 @@ async def batch_extract_kg(
             res = await extract_knowledge_for_country(
                 session,
                 cc,
-                translate_sample_per_doc=2,
+                translate_sample_per_doc=0,
                 max_clauses_per_doc=max_clauses_per_doc,
                 concurrency=concurrency,
             )
@@ -454,8 +454,8 @@ def main() -> int:
     kg.add_argument(
         "--max-clauses",
         type=int,
-        default=24,
-        help="每份核心文档最多抽取的条款数(相关文档约为其 1/3)",
+        default=None,
+        help="显式抽样时每份文档条款上限；不传则抽取全部范围内条款",
     )
     kg.add_argument("--concurrency", type=int, default=8, help="并发请求数(默认 8)")
     args = parser.parse_args()

@@ -317,9 +317,16 @@ async function loadGraph() {
 async function runExtract() {
   loading.value = true
   try {
-    const res = await api.post<{ nodes_total: number; edges_total: number }>(
-      `/admin/knowledge/extract?country_code=${countryCode.value}&translate_sample_per_doc=6`,
-    )
+    const res = await api.post<{
+      status: string
+      reason?: string
+      nodes_total: number
+      edges_total: number
+    }>(`/admin/knowledge/extract?country_code=${countryCode.value}`)
+    if (res.status !== 'completed') {
+      ElMessage.warning(`图谱未替换，保留旧结果：${res.reason || res.status}`)
+      return
+    }
     ElMessage.success(
       `已重跑 ${countryCode.value} 知识图谱抽取：共 ${res.nodes_total} 个节点、${res.edges_total} 条语义边`,
     )
@@ -505,8 +512,11 @@ onMounted(loadGraph)
                 </div>
                 <div class="quote-box">{{ row.evidence_quote }}</div>
                 <div v-if="row.judge_reason" class="sub" style="margin-top: 3px; color: #0f766e">
-                  语义裁判 ({{ row.judge_verdict || 'yes' }} · 置信度
-                  {{ ((row.confidence ?? 0.85) * 100).toFixed(0) }}% · {{ row.extractor_model }}):
+                  {{ row.is_structural ? '结构来源登记' : '语义裁判' }} ({{
+                    row.judge_verdict || '未裁判'
+                  }}
+                  · 置信度 {{ ((row.confidence ?? 0.85) * 100).toFixed(0) }}% ·
+                  {{ row.extractor_model }}):
                   {{ row.judge_reason }}
                 </div>
               </template>
@@ -514,7 +524,13 @@ onMounted(loadGraph)
             <el-table-column label="复核状态" width="150">
               <template #default="{ row }">
                 <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
-                  {{ row.usable_as_legal_basis ? '已复核(可作依据)' : '待核对(大模型抽取)' }}
+                  {{
+                    row.is_structural
+                      ? '结构登记（非法律审批）'
+                      : row.usable_as_legal_basis
+                        ? '已复核(可作依据)'
+                        : '待核对(大模型抽取)'
+                  }}
                 </el-tag>
                 <div class="sub" style="margin-top: 2px">
                   {{ row.is_structural ? '结构边' : '语义边' }}

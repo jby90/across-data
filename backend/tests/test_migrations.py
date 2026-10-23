@@ -7,7 +7,7 @@ import pytest
 from alembic.autogenerate import compare_metadata
 from alembic.migration import MigrationContext
 from sqlalchemy import text
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.core.db import Base
@@ -43,6 +43,23 @@ async def test_migrations_apply_and_match_models(pg_url, engine):
                 )
             )
         assert diff == [], f"模型与迁移不一致: {diff}"
+        async with mig_engine.begin() as conn:
+            await conn.execute(
+                text("""INSERT INTO knowledge_audit_records
+                (id,target_type,target_id,action,payload,content_hash)
+                VALUES ('00000000-0000-0000-0000-000000000001','test',
+                '00000000-0000-0000-0000-000000000002','original','{}','hash')""")
+            )
+            for statement in (
+                "UPDATE knowledge_audit_records SET action='changed'",
+                "DELETE FROM knowledge_audit_records",
+            ):
+                with pytest.raises(DBAPIError, match="append-only"):
+                    async with conn.begin_nested():
+                        await conn.execute(text(statement))
+            assert (
+                await conn.scalar(text("SELECT action FROM knowledge_audit_records")) == "original"
+            )
     finally:
         await mig_engine.dispose()
 

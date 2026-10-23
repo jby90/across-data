@@ -17,6 +17,7 @@ from app.knowledge.extractor import (
     extract_knowledge_for_country,
     seed_glossary_and_review_points,
 )
+from app.knowledge.graph_evidence import active_edge_filters, evidence_attributes
 from app.knowledge.models import (
     ClauseTranslation,
     GlossaryTerm,
@@ -144,140 +145,23 @@ def _compute_eight_attributes(
     data_names: list[str] | None = None,
     obl_names: list[str] | None = None,
 ) -> dict[str, str]:
-    """按《需求文档 1.3.3》生成 8 类核心法规/要素结构化属性画像。"""
-    cc = country_code.upper()
-    t_low = (title or "").lower()
-    rels = rel_types or set()
-    is_av = (
-        "autonomous" in t_low
-        or "road traffic" in t_low
-        or "trial" in t_low
-        or "REQUIRES_ADMISSION" in rels
-    )
-    is_iot = "iot" in t_low or "انترنت" in t_low
+    """No country/title templates: unknown dimensions must remain explicitly unknown.
 
-    if is_av:
-        industry = "智能网联汽车 / 自动驾驶公共道路测试与准入 (L3-L5)"
-    elif is_iot:
-        industry = "车联网远程信息处理 (Telematics) / 车载 eSIM 与物联网终端"
-    else:
-        industry = "汽车出海与跨行业通用（覆盖车主、驾乘人员及车联网用户个人数据）"
-
-    scope_str = (
-        "、".join(sorted(set(data_names)))
-        if data_names
-        else (
-            "自动驾驶传感器与车载黑匣子记录数据、个人数据(含车主与驾乘识别数据)"
-            if is_av
-            else "个人数据(含车主身份、VIN关联轨迹、座舱生物识别及受托处理车联网数据)"
-        )
-    )
-
-    if cc == "SG":
-        transfer_cond = (
-            "须满足 PDPA 第 26 条同等保护标准 (Comparable Protection)：签署具法律约束力的跨境合同"
-            "/BCR/认证，并履行出境告知同意；自动驾驶测试数据需遵守 LTA 路测许可附加条件"
-        )
-        retention = (
-            "自动驾驶黑匣子(Data Recorder)数据法定至少留存 3 年 (AV Rules r9)；"
-            "一般个人数据在收集目的达成且无商业/法律必要时须立即停止留存或匿名化 (PDPA s25)"
-        )
-        auth_req = (
-            "收集/使用/披露前须履行通知并取得个人同意 (PDPA s13-20)；"
-            "开展自动驾驶公共道路试验须事先取得 LTA 书面批准 (Trial Approval)"
-            if is_av
-            else (
-                "收集/使用/披露及出境前须履行目的告知并取得有效同意 (PDPA s13-20)，"
-                "受托处理须签书面合约"
-            )
-        )
-        penalty_amt = (
-            "PDPC 行政罚款最高 100 万新元或新加坡年营业额 10%（以较高者为准，PDPA s48J）；"
-            "违反自动驾驶路测规定可处最高 1 万新元罚款或监禁及吊销路测许可"
-        )
-        violation_lvl = "高风险（行政高额罚款 / 强制停止数据传输令 / 吊销自动驾驶路测准入许可）"
-        admission_list = (
-            "1. LTA 自动驾驶车辆道路测试申请表 "
-            "(Application for Trial of Autonomous Motor Vehicles)；"
-            "2. 车辆安全技术评估与测试区域方案；3. 安全员(Safety Operator)培训资质证明；"
-            "4. 车载数据记录器(黑匣子)技术规范与 3 年留存承诺；5. 第三方责任保险证明；"
-            "6. 跨境数据传输保护协议 (DPA/TIA)"
-        )
-    elif cc == "EG":
-        transfer_cond = (
-            "须取得埃及个人数据保护中心 (PDPC) 跨境传输许可证/授权"
-            "（埃及第 151/2020 号法第 14 条），"
-            "且接收国须具备不低于埃及的保护水平；车联网 IoT 平台须符合 NTRA 本地化连接要求"
-        )
-        retention = "仅在法定收集目的存续期间留存，期满或撤回同意后须销毁并登记台账"
-        auth_req = (
-            "处理与跨境传输须取得数据主体明示同意，并向埃及监管机构申请处理/出境许可及指定 DPO"
-        )
-        penalty_amt = (
-            "违反第 151/2020 号法可处 10 万至 500 万埃及镑罚金，情节严重并处监禁及吊销许可证"
-        )
-        violation_lvl = "高风险（刑事罚金 + 行政吊销许可 + NTRA 车联网入网限制）"
-        admission_list = (
-            "1. 埃及 NTRA 车载通信终端与 eSIM 型号核准申请；"
-            "2. 埃及 PDPC 个人数据处理及跨境传输许可证申请表；"
-            "3. 数据保护官 (DPO) 备案材料；4. 车联网数据安全与架构说明"
-        )
-    elif cc == "TN":
-        transfer_cond = (
-            "跨境传输须事先获得突尼斯国家个人数据保护局 (INPDP) 授权"
-            "（2004-63 号组织法第 50-52 条），并确保目的国提供充分保护"
-        )
-        retention = "数据处理目的实现后须销毁或归档匿名化，不得超期保留车主与行程记录"
-        auth_req = "须向 INPDP 提交事前申报或申请授权，并取得数据主体书面/明确同意"
-        penalty_amt = (
-            "未经授权跨境传输或违规处理可处 1,000 至 50,000 突尼斯第纳尔罚金及 1 至 5 年监禁"
-        )
-        violation_lvl = "中高风险（INPDP 事前审批否决 / 刑事罚金与监禁）"
-        admission_list = (
-            "1. 突尼斯 INPDP 个人数据处理事前申报单；2. 个人数据跨境传输专项授权申请表；"
-            "3. 境外接收方数据保护保障协议"
-        )
-    elif cc == "MA":
-        transfer_cond = (
-            "向境外传输个人数据须事先向摩洛哥国家数据保护委员会 (CNDP) 履行申报或获取授权"
-            "（第 09-08 号法律第 43-44 条）"
-        )
-        retention = "须按向 CNDP 申报的留存期限执行，到期自动清除或匿名化"
-        auth_req = "数据处理须向 CNDP 提交事前申报/授权申请，并取得数据主体明确同意"
-        penalty_amt = (
-            "违规处理或未经授权出境可处 10,000 至 300,000 摩洛哥迪拉姆罚金及 3 个月至 2 年监禁"
-        )
-        violation_lvl = "中高风险（CNDP 行政查处 / 撤销授权 / 刑事罚金）"
-        admission_list = (
-            "1. 摩洛哥 CNDP 数据处理申报/授权表 (Formulaire de déclaration/autorisation)；"
-            "2. 跨境数据传输申报附件 (Transfert de données à l'étranger)；"
-            "3. 车联网隐私告知文本(法/阿双语)"
-        )
-    else:
-        transfer_cond = (
-            "须符合黎巴嫩第 81/2018 号《电子交易与个人数据法》告知、同意及经济贸易部备案要求"
-        )
-        retention = "仅限合法收集目的所需期限，须提供车主查阅、更正与删除渠道"
-        auth_req = "收集处理前须明确告知处理目的、接收方及权利，并向黎巴嫩主管机关履行登记/许可手续"
-        penalty_amt = "违反第 81/2018 号法可处法定罚金及最高 3 年监禁"
-        violation_lvl = "中风险（行政处罚与司法追责）"
-        admission_list = (
-            "1. 黎巴嫩第 81/2018 号法项下数据处理登记/许可申报材料；2. 车载数据隐私告知与同意书；"
-            "3. 跨境传输安全保障说明"
-        )
-
-    if obl_names:
-        auth_req = f"{auth_req}（关联义务：{'、'.join(sorted(set(obl_names))[:3])}）"
-
+    Data/obligation names alone do not establish industry, retention, penalties or admission rules.
+    Evidence-backed attributes are assembled from actual current graph edges by the caller.
+    """
     return {
-        "applicable_industry": industry,
-        "data_scope": scope_str,
-        "cross_border_condition": transfer_cond,
-        "retention_period": retention,
-        "authorization_requirement": auth_req,
-        "penalty_amount": penalty_amt,
-        "violation_level": violation_lvl,
-        "admission_checklist": admission_list,
+        key: "待核查（尚无经核验的条款依据）"
+        for key in (
+            "applicable_industry",
+            "data_scope",
+            "cross_border_condition",
+            "retention_period",
+            "authorization_requirement",
+            "penalty_amount",
+            "violation_level",
+            "admission_checklist",
+        )
     }
 
 
@@ -307,7 +191,7 @@ async def _build_graph_payload(
         select(KgEdge)
         .where(
             KgEdge.country_code == cc,
-            KgEdge.review_status != "superseded",
+            *active_edge_filters(),
         )
         .order_by(KgEdge.relation_type)
     )
@@ -331,17 +215,31 @@ async def _build_graph_payload(
 
     clause_ids = {e.evidence_clause_id for e in edges}
     clause_map: dict[uuid.UUID, tuple[str | None, str | None, str]] = {}
+    clause_provenance: dict[uuid.UUID, dict] = {}
     if clause_ids:
         c_rows = (
             await session.execute(
-                select(Clause.id, Clause.clause_number, Document.title, Clause.original_text)
+                select(
+                    Clause.id,
+                    Clause.clause_number,
+                    Document.title,
+                    Clause.original_text,
+                    DocumentVersion.id,
+                    DocumentVersion.content_hash,
+                    Document.source_url,
+                )
                 .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
                 .join(Document, Document.id == DocumentVersion.document_id)
                 .where(Clause.id.in_(clause_ids))
             )
         ).all()
-        for cid, cnum, dtitle, orig_txt in c_rows:
+        for cid, cnum, dtitle, orig_txt, version_id, content_hash, source_url in c_rows:
             clause_map[cid] = (cnum, dtitle, orig_txt or "")
+            clause_provenance[cid] = {
+                "evidence_version_id": version_id,
+                "evidence_content_hash": content_hash,
+                "official_source_url": source_url,
+            }
 
     node_counts = {t.value: 0 for t in NodeType}
     for n in nodes:
@@ -375,6 +273,7 @@ async def _build_graph_payload(
             quote_mismatch_count += 1
         edge_outs.append(
             KgEdgeOut(
+                **clause_provenance.get(e.evidence_clause_id, {}),
                 id=e.id,
                 country_code=e.country_code,
                 source_node_id=e.source_node_id,
@@ -394,7 +293,11 @@ async def _build_graph_payload(
                 judge_reason=getattr(e, "judge_reason", None),
                 is_structural=bool(getattr(e, "is_structural", False)),
                 review_status=e.review_status,
-                usable_as_legal_basis=(e.review_status == "approved"),
+                usable_as_legal_basis=(
+                    e.review_status == "approved"
+                    and not e.is_structural
+                    and e.judge_verdict == "yes"
+                ),
             )
         )
 
@@ -435,7 +338,7 @@ async def _build_graph_payload(
     structural_edges = sum(1 for e in edge_outs if e.is_structural)
     semantic_edges = sum(1 for e in edge_outs if not e.is_structural)
     semantic_unjudged = sum(
-        1 for e in edge_outs if not e.is_structural and e.judge_verdict not in ("yes", "partial")
+        1 for e in edge_outs if not e.is_structural and e.judge_verdict != "yes"
     )
     low_confidence = sum(
         1
@@ -452,7 +355,13 @@ async def _build_graph_payload(
             data_names=node_data_names.get(n.id),
             obl_names=node_obl_names.get(n.id),
         )
-        merged_attrs = {**(n.attributes or {}), **eight_attrs}
+        actual, provenance = evidence_attributes(edges, node_by_id, clause_map, node_id=n.id)
+        merged_attrs = {
+            **(n.attributes or {}),
+            **eight_attrs,
+            **actual,
+            "attribute_evidence": provenance,
+        }
         nout = KgNodeOut.model_validate(n)
         nout.attributes = merged_attrs
         node_outs.append(nout)
@@ -508,11 +417,15 @@ async def trigger_country_extraction(
     _: AdminOrReviewerDep,
     session: SessionDep,
     country_code: str = Query(default="SG", min_length=2, max_length=2),
-    translate_sample_per_doc: int = Query(default=6, ge=1, le=50),
+    translate_sample_per_doc: int = Query(default=0, ge=0, le=50),
+    max_clauses_per_doc: int | None = Query(default=None, ge=1, le=500),
 ) -> dict:
     """一键初始化术语库/解读要点,并对指定国家执行六要素+十二关系知识图谱抽取与核心条款翻译。"""
     return await extract_knowledge_for_country(
-        session, country_code.upper(), translate_sample_per_doc=translate_sample_per_doc
+        session,
+        country_code.upper(),
+        translate_sample_per_doc=translate_sample_per_doc,
+        max_clauses_per_doc=max_clauses_per_doc,
     )
 
 
@@ -610,7 +523,7 @@ async def list_translations(
         stmt = stmt.where(Document.country_code == country_code.upper())
     if review_status:
         stmt = stmt.where(ClauseTranslation.review_status == review_status)
-    else:
+    elif not include_history:
         stmt = stmt.where(
             ClauseTranslation.review_status != TranslationReviewStatus.SUPERSEDED.value
         )
@@ -914,6 +827,23 @@ async def knowledge_history(
     }
 
 
+@admin_router.get("/graph-runs")
+async def graph_runs(_: AdminOrReviewerDep, session: SessionDep,
+                     country_code: str = Query(default="SG", min_length=2, max_length=2),
+                     offset: int = Query(default=0, ge=0),
+                     limit: int = Query(default=20, ge=1, le=100)) -> list[dict]:
+    from app.knowledge.history import record_payload
+    from app.knowledge.models import KnowledgeAuditRecord
+
+    country_id = uuid.uuid5(uuid.NAMESPACE_URL, "cyshuhe:kg:" + country_code.upper())
+    rows = (await session.scalars(select(KnowledgeAuditRecord).where(
+        KnowledgeAuditRecord.target_id == country_id,
+        KnowledgeAuditRecord.action == "graph_rebuild_result",
+    ).order_by(KnowledgeAuditRecord.created_at.desc(), KnowledgeAuditRecord.id)
+        .offset(offset).limit(limit))).all()
+    return [record_payload(row) for row in rows]
+
+
 @admin_router.post("/edges/{edge_id}/review", response_model=KgEdgeOut)
 async def review_knowledge_edge(
     edge_id: uuid.UUID,
@@ -926,6 +856,17 @@ async def review_knowledge_edge(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="图谱关系边不存在")
     from app.knowledge.history import snapshot
 
+    clause = await session.get(Clause, edge.evidence_clause_id)
+    if body.decision == "approved" and (
+        edge.review_status in ("superseded", "stale")
+        or edge.extractor_model == "kg-rule-extractor-v1"
+        or not clause
+        or not edge.evidence_quote
+        or edge.evidence_quote not in clause.original_text
+        or (not edge.is_structural and edge.judge_verdict != "yes")
+        or (edge.is_structural and edge.judge_verdict != "structural")
+    ):
+        raise HTTPException(status_code=409, detail="关系证据/裁判未通过或已失效；请先建立有效修订")
     snapshot(session, edge, "before_human_review", user.user_id)
     edge.review_status = body.decision
     edge.reviewed_by = user.user_id
@@ -955,7 +896,11 @@ async def review_knowledge_edge(
         judge_reason=getattr(edge, "judge_reason", None),
         is_structural=bool(getattr(edge, "is_structural", False)),
         review_status=edge.review_status,
-        usable_as_legal_basis=(edge.review_status == "approved"),
+        usable_as_legal_basis=(
+            edge.review_status == "approved"
+            and not edge.is_structural
+            and edge.judge_verdict == "yes"
+        ),
     )
 
 
@@ -1181,7 +1126,7 @@ async def _build_regulation_summary(
             (
                 await session.execute(
                     select(KgEdge).where(
-                        KgEdge.review_status != "superseded",
+                        *active_edge_filters(),
                         or_(
                             KgEdge.source_node_id == inst_node.id,
                             KgEdge.target_node_id == inst_node.id,
@@ -1215,6 +1160,25 @@ async def _build_regulation_summary(
         data_names=data_names,
         obl_names=obl_names,
     )
+    if inst_node is not None and linked_edges:
+        source_rows = (
+            await session.execute(
+                select(Clause.id, Clause.clause_number, Clause.original_text).where(
+                    Clause.id.in_([e.evidence_clause_id for e in linked_edges])
+                )
+            )
+        ).all()
+        node_ids = {e.source_node_id for e in linked_edges} | {
+            e.target_node_id for e in linked_edges
+        }
+        all_nodes = (await session.scalars(select(KgNode).where(KgNode.id.in_(node_ids)))).all()
+        actual, _ = evidence_attributes(
+            linked_edges,
+            {n.id: n for n in all_nodes},
+            {cid: (number, doc.title, original) for cid, number, original in source_rows},
+            node_id=inst_node.id,
+        )
+        eight_attrs.update(actual)
     summary = RegulationSummaryOut(
         id=doc.id,
         country_code=doc.country_code,
@@ -1289,7 +1253,7 @@ async def get_user_regulation_detail(
             "content_hash": v.content_hash,
             "text_source": v.text_source,
             "note": (
-                "现行有效归档版本"
+                "当前归档版本（法律有效状态另行核验）"
                 if v.version_no == (latest.version_no if latest else 1)
                 else "历史版本（支持版本差异对比）"
             ),
@@ -1338,7 +1302,7 @@ async def get_user_regulation_detail(
                     await session.execute(
                         select(KgEdge).where(
                             KgEdge.evidence_clause_id.in_(c_ids),
-                            KgEdge.review_status != "superseded",
+                            *active_edge_filters(),
                         )
                     )
                 )

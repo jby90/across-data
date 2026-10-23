@@ -15,6 +15,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ingestion.models import Clause, Document, DocumentVersion
+from app.knowledge.graph_evidence import active_edge_filters
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
 
 # 每个维度的多语种检索关键词(英/法/阿)。仅用于检索候选条款,不代表结论。
@@ -343,7 +344,17 @@ class ToolBox:
             list(
                 (
                     await self.session.execute(
-                        select(KgEdge).where(KgEdge.evidence_clause_id.in_(ids)).limit(50)
+                        select(KgEdge)
+                        .where(
+                            KgEdge.evidence_clause_id.in_(ids),
+                            KgEdge.country_code == self.country_code,
+                            *active_edge_filters(),
+                            KgEdge.review_status.in_(("approved", "pending_review")),
+                            KgEdge.is_structural.is_(False),
+                            KgEdge.judge_verdict == "yes",
+                            KgEdge.extractor_model != "kg-rule-extractor-v1",
+                        )
+                        .limit(50)
                     )
                 )
                 .scalars()
@@ -372,6 +383,10 @@ class ToolBox:
                 "review_status": e.review_status,
             }
             for e in edges
+            if e.source_node_id in nodes
+            and e.target_node_id in nodes
+            and nodes[e.source_node_id].review_status in ("approved", "pending_review")
+            and nodes[e.target_node_id].review_status in ("approved", "pending_review")
         ]
         self._record(
             "query_kg_obligations",

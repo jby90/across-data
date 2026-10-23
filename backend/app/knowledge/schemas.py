@@ -134,6 +134,9 @@ class KgNodeOut(BaseModel):
 
 
 class KgEdgeOut(BaseModel):
+    evidence_version_id: uuid.UUID | None = None
+    evidence_content_hash: str | None = None
+    official_source_url: str | None = None
     id: uuid.UUID
     country_code: str
     source_node_id: uuid.UUID

@@ -63,6 +63,7 @@ from app.iam.deps import (
 )
 from app.iam.models import Organization, User
 from app.ingestion.models import Clause, Document, DocumentVersion
+from app.knowledge.graph_evidence import active_edge_filters
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
 from app.knowledge.router import _compute_eight_attributes
 from app.knowledge.schemas import GraphPayloadOut, KgEdgeOut, KgNodeOut
@@ -962,7 +963,11 @@ async def get_clause_citation_card(
     ).scalar_one_or_none()
 
     edges = list(
-        (await session.execute(select(KgEdge).where(KgEdge.evidence_clause_id == clause.id)))
+        (
+            await session.execute(
+                select(KgEdge).where(KgEdge.evidence_clause_id == clause.id, *active_edge_filters())
+            )
+        )
         .scalars()
         .all()
     )
@@ -1039,7 +1044,9 @@ async def get_clause_citation_card(
             document_title=doc.title,
             extractor_model=e.extractor_model,
             review_status=e.review_status,
-            usable_as_legal_basis=(e.review_status == "approved"),
+            usable_as_legal_basis=(
+                e.review_status == "approved" and not e.is_structural and e.judge_verdict == "yes"
+            ),
         )
         for e in edges
         if e.source_node_id in node_map and e.target_node_id in node_map
