@@ -32,11 +32,21 @@ interface KgEdge {
   clause_number: string | null
   document_title: string | null
   extractor_model: string
+  confidence?: number
+  judge_verdict?: string
+  judge_reason?: string | null
+  is_structural?: boolean
   review_status: string
   usable_as_legal_basis: boolean
 }
 
 interface QualitySummary {
+  structural_edges?: number
+  semantic_edges?: number
+  semantic_unjudged?: number
+  low_confidence?: number
+  quote_mismatch?: number
+  superseded_edges_count?: number
   isolated_nodes_count?: number
   isolated_node_ids?: string[]
   total_clauses_count?: number
@@ -365,7 +375,7 @@ onMounted(loadGraph)
       </div>
     </div>
 
-    <!-- 图谱与数据质量体检视图（06 补充要求 页面 3 质量视图） -->
+    <!-- 图谱与数据质量体检视图（S2 结构边与语义边分层统计 + 语义裁判核验） -->
     <div class="quality-bar" data-testid="kg-quality-bar">
       <span class="sub" style="font-weight: 700; color: #1e293b">图谱质量体检视图：</span>
       <el-tag
@@ -374,7 +384,13 @@ onMounted(loadGraph)
         data-testid="kg-quality-all"
         @click="qualityFilter = 'all'"
       >
-        全部语义边 ({{ graph.edges.length }})
+        活跃总边 ({{ graph.edges.length }})
+      </el-tag>
+      <el-tag type="primary" effect="plain">
+        条款语义边: {{ graph.quality_summary?.semantic_edges ?? 0 }} 条
+      </el-tag>
+      <el-tag type="info" effect="plain">
+        结构边(发布/监管): {{ graph.quality_summary?.structural_edges ?? 0 }} 条
       </el-tag>
       <el-tag
         :type="qualityFilter === 'pending_review' ? 'warning' : 'info'"
@@ -382,7 +398,7 @@ onMounted(loadGraph)
         data-testid="kg-quality-pending"
         @click="qualityFilter = qualityFilter === 'pending_review' ? 'all' : 'pending_review'"
       >
-        待核对关系 ({{ graph.quality_summary?.pending_review_edges_count ?? 0 }})
+        待核对 ({{ graph.quality_summary?.pending_review_edges_count ?? 0 }})
       </el-tag>
       <el-tag
         :type="qualityFilter === 'approved' ? 'success' : 'info'"
@@ -390,24 +406,27 @@ onMounted(loadGraph)
         data-testid="kg-quality-approved"
         @click="qualityFilter = qualityFilter === 'approved' ? 'all' : 'approved'"
       >
-        已核对关系 ({{ graph.quality_summary?.approved_edges_count ?? 0 }})
+        已复核 ({{ graph.quality_summary?.approved_edges_count ?? 0 }})
       </el-tag>
       <el-tag type="success" effect="plain">
-        依据片段子串校验失配: {{ graph.quality_summary?.quote_mismatch_edges_count ?? 0 }} 条 (100% 原文可回溯)
+        子串校验失配: {{ graph.quality_summary?.quote_mismatch ?? graph.quality_summary?.quote_mismatch_edges_count ?? 0 }} 条 (100% 逐字匹配)
+      </el-tag>
+      <el-tag type="success" effect="plain">
+        未裁判语义边: {{ graph.quality_summary?.semantic_unjudged ?? 0 }} 条 | 低置信度: {{ graph.quality_summary?.low_confidence ?? 0 }} 条
+      </el-tag>
+      <el-tag
+        v-if="(graph.quality_summary?.superseded_edges_count ?? 0) > 0"
+        type="info"
+        effect="plain"
+      >
+        已隐藏旧规则边(superseded): {{ graph.quality_summary?.superseded_edges_count }} 条
       </el-tag>
       <el-tag type="info" effect="plain">
         孤立节点: {{ graph.quality_summary?.isolated_nodes_count ?? 0 }} 个
       </el-tag>
       <el-tag type="info" effect="plain">
-        未挂接义务的一般条款: {{ graph.quality_summary?.unlinked_clauses_count ?? 0 }} /
+        未挂图谱条款: {{ graph.quality_summary?.unlinked_clauses_count ?? 0 }} /
         {{ graph.quality_summary?.total_clauses_count ?? 0 }} 条
-      </el-tag>
-      <el-tag
-        v-if="(graph.quality_summary?.ocr_or_rtl_clauses_count ?? 0) > 0"
-        type="warning"
-        effect="plain"
-      >
-        扫描件OCR/阿语需人工核对条款: {{ graph.quality_summary?.ocr_or_rtl_clauses_count }} 条
       </el-tag>
     </div>
 
@@ -566,13 +585,19 @@ onMounted(loadGraph)
             {{ row.document_title || '官方法规文本' }} · 条号 {{ row.clause_number || '-' }}
           </div>
           <div class="quote-box">{{ row.evidence_quote }}</div>
+          <div v-if="row.judge_reason" class="sub" style="margin-top: 3px; color: #0f766e">
+            语义裁判 ({{ row.judge_verdict || 'yes' }} · 置信度 {{ ((row.confidence ?? 0.85) * 100).toFixed(0) }}% · {{ row.extractor_model }}): {{ row.judge_reason }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="复核状态" width="150">
         <template #default="{ row }">
           <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
-            {{ row.usable_as_legal_basis ? '已复核(可作依据)' : '待律所复核' }}
+            {{ row.usable_as_legal_basis ? '已复核(可作依据)' : '待核对(大模型抽取)' }}
           </el-tag>
+          <div class="sub" style="margin-top: 2px">
+            {{ row.is_structural ? '结构边' : '语义边' }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="140" fixed="right">

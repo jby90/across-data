@@ -38,7 +38,7 @@ class Document(Base):
     __table_args__ = (
         UniqueConstraint("site_id", "source_url", name="uq_documents_site_url"),
         CheckConstraint(
-            "relevance IN ('relevant','irrelevant','needs_review')",
+            "relevance IN ('relevant','irrelevant','out_of_scope','needs_review')",
             name="ck_documents_relevance",
         ),
     )

@@ -266,11 +266,272 @@ async def test_s1_llm_translation_pass_retry_fail_and_unavailable(session_factor
         assert "第 1 款" in tr_long.translated_text and "第 2 款" in tr_long.translated_text
 
 
+async def test_s2_kg_type_constraints_verbatim_judge_and_out_of_scope(session_factory, monkeypatch):
+    """S2 单元测试:
+    1. 类型约束矩阵(validate_relation_type_constraints): 拒绝非法源/目标节点类型组合及纯生效日期通知;
+    2. 证据逐字子串校验(align_verbatim_quote): 拒绝捏造/改写句子,对齐空白换行差异并保证为原文真实子串;
+    3. 独立语义裁判(evaluate_kg_candidate): no 丢弃, partial 置信度降级并不入活跃图谱, yes 入图谱(pending_review);
+    4. 文件级相关性(classify_document_relevance): Courts Reform Act 等标记为 out_of_scope 且不进入语义抽取;
+    5. 旧 kg-rule-extractor-v1 边标记为 superseded。
+    """
+    import hashlib
+
+    from sqlalchemy import select
+
+    from app.ingestion.models import Clause, Document, DocumentVersion
+    from app.knowledge import extractor, translator
+    from app.knowledge.extractor import (
+        ClauseExtractionPayload,
+        SemanticJudgeVerdict,
+        align_verbatim_quote,
+        classify_document_relevance,
+        evaluate_kg_candidate,
+        validate_relation_type_constraints,
+    )
+    from app.knowledge.models import KgEdge, NodeType, RelationType
+    from app.sources.models import SourceSite
+
+    # 1. 类型约束矩阵检查
+    ok, _ = validate_relation_type_constraints(
+        RelationType.PROHIBITS,
+        NodeType.INSTRUMENT,
+        NodeType.DATA_CATEGORY,
+        "An organisation must not transfer personal data outside Singapore.",
+    )
+    assert ok is True
+
+    bad_type, msg_type = validate_relation_type_constraints(
+        RelationType.PROHIBITS,
+        NodeType.INSTRUMENT,
+        NodeType.PENALTY,
+        "An organisation must not transfer personal data outside Singapore.",
+    )
+    assert bad_type is False and "违反类型约束矩阵" in msg_type
+
+    bad_amend, msg_amend = validate_relation_type_constraints(
+        RelationType.AMENDS,
+        NodeType.INSTRUMENT,
+        NodeType.INSTRUMENT,
+        "The Minister appoints 1 February 2021 as the date on which the Act comes into operation.",
+        source_name="Commencement Notification 2021",
+        target_name="Personal Data Protection Act 2012",
+    )
+    assert bad_amend is False and "Commencement" in msg_amend
+
+    # 2. 原文逐字子串检查
+    orig_text = (
+        "Section 26(1): An organisation must not transfer any personal data\n"
+        "to a country or territory outside Singapore except in accordance with prescribed requirements."
+    )
+    aligned = align_verbatim_quote(
+        orig_text,
+        "An organisation must not transfer any personal data to a country or territory outside Singapore",
+    )
+    assert aligned is not None and aligned in orig_text
+    assert align_verbatim_quote(orig_text, "Fabricated quote not in clause at all.") is None
+
+    # 3. 语义裁判: no 丢弃 / partial 置信度降级且不入图谱 / yes 入图谱(pending_review)
+    async def _judge_no(*args, **kwargs):
+        return SemanticJudgeVerdict(supports="no", reason="证据片段与关系不匹配")
+
+    monkeypatch.setattr(extractor, "_call_llm_judge", _judge_no)
+    res_no = await evaluate_kg_candidate(
+        relation_type=RelationType.RESTRICTS_CROSS_BORDER,
+        source_type=NodeType.INSTRUMENT,
+        source_name="Personal Data Protection Act 2012",
+        target_type=NodeType.DATA_CATEGORY,
+        target_name="个人数据",
+        evidence_quote="An organisation must not transfer any personal data to a country or territory outside Singapore",
+        clause_original_text=orig_text,
+        document_title="Personal Data Protection Act 2012",
+        confidence=0.9,
+    )
+    assert res_no.admitted is False and res_no.judge_verdict == "no"
+
+    async def _judge_partial(*args, **kwargs):
+        return SemanticJudgeVerdict(supports="partial", reason="仅间接提及")
+
+    monkeypatch.setattr(extractor, "_call_llm_judge", _judge_partial)
+    res_partial = await evaluate_kg_candidate(
+        relation_type=RelationType.RESTRICTS_CROSS_BORDER,
+        source_type=NodeType.INSTRUMENT,
+        source_name="Personal Data Protection Act 2012",
+        target_type=NodeType.DATA_CATEGORY,
+        target_name="个人数据",
+        evidence_quote="An organisation must not transfer any personal data to a country or territory outside Singapore",
+        clause_original_text=orig_text,
+        document_title="Personal Data Protection Act 2012",
+        confidence=0.9,
+    )
+    assert res_partial.admitted is False
+    assert res_partial.judge_verdict == "partial"
+    assert res_partial.confidence <= 0.55
+
+    async def _judge_yes(*args, **kwargs):
+        return SemanticJudgeVerdict(supports="yes", reason="直接明确支撑")
+
+    monkeypatch.setattr(extractor, "_call_llm_judge", _judge_yes)
+    res_yes = await evaluate_kg_candidate(
+        relation_type=RelationType.RESTRICTS_CROSS_BORDER,
+        source_type=NodeType.INSTRUMENT,
+        source_name="Personal Data Protection Act 2012",
+        target_type=NodeType.DATA_CATEGORY,
+        target_name="个人数据",
+        evidence_quote="An organisation must not transfer any personal data to a country or territory outside Singapore",
+        clause_original_text=orig_text,
+        document_title="Personal Data Protection Act 2012",
+        confidence=0.9,
+    )
+    assert res_yes.admitted is True
+    assert res_yes.judge_verdict == "yes"
+    assert res_yes.review_status == "pending_review"
+
+    # 4. out_of_scope 文档不抽取 & 旧 kg-rule-extractor-v1 边标为 superseded
+    async with session_factory() as s:
+        site = SourceSite(
+            country_code="SG",
+            publisher="AGC",
+            language="en",
+            document_type="LAW",
+            entry_url="https://sso.agc.gov.sg",
+            strategy="DIRECT",
+            terms_status="pending",
+            enabled=False,
+        )
+        s.add(site)
+        await s.flush()
+
+        doc_bad = Document(
+            site_id=site.id,
+            country_code="SG",
+            title="Courts (Civil and Criminal Justice) Reform Act 2021",
+            document_type="LAW",
+            language="en",
+            source_url="https://sso.agc.gov.sg/Act/CCJRA2021",
+        )
+        s.add(doc_bad)
+        await s.flush()
+
+        ver_bad = DocumentVersion(
+            document_id=doc_bad.id,
+            version_no=1,
+            content_hash="b" * 64,
+            archive_path="SG/courts.pdf",
+            mime_type="application/pdf",
+            size_bytes=512,
+            final_url="https://sso.agc.gov.sg/Act/CCJRA2021",
+            state="parsed",
+        )
+        s.add(ver_bad)
+        await s.flush()
+
+        c_bad_txt = "The High Court may order civil proceedings to be transferred from the State Courts."
+        c_bad = Clause(
+            version_id=ver_bad.id,
+            ordinal=1,
+            clause_number="10",
+            language="en",
+            original_text=c_bad_txt,
+            text_hash=hashlib.sha256(c_bad_txt.encode()).hexdigest(),
+        )
+        s.add(c_bad)
+        await s.commit()
+
+        rel_status, rel_reason = await classify_document_relevance(doc_bad, [c_bad])
+        assert rel_status == "out_of_scope"
+        assert "诉讼" in rel_reason or "Courts" in rel_reason or "无关" in rel_reason
+
+        extract_called_for_bad = False
+
+        async def _spy_extract(clause_text, clause_number, document_title, publisher_name, country_code):
+            nonlocal extract_called_for_bad
+            if "Courts" in document_title:
+                extract_called_for_bad = True
+            return (ClauseExtractionPayload(entities=[], relations=[]), "deepseek-flash")
+
+        async def _noop_tr(*args, **kwargs):
+            return ("中文译文：法院可将民事诉讼移送。", "deepseek-flash", 50, 20, 100)
+
+        monkeypatch.setattr(extractor, "_call_llm_extract_clause", _spy_extract)
+        monkeypatch.setattr(translator, "_call_llm_translate", _noop_tr)
+        await extractor.extract_knowledge_for_country(s, "SG")
+        assert extract_called_for_bad is False
+        edges_bad = (
+            await s.execute(select(KgEdge).where(KgEdge.evidence_clause_id == c_bad.id))
+        ).scalars().all()
+        assert edges_bad == []
+
+
+async def test_s2_kg_gold_benchmark_60_samples(monkeypatch):
+    """S2 金标集验证:
+    读取 backend/tests/fixtures/kg_gold.json (≥ 60 条,覆盖全部 12 类语义关系),
+    要求:
+    - 错误样例(expected_valid=False)被拒绝率 ≥ 90%;
+    - 正确样例(expected_valid=True)通过率 ≥ 80%。
+    """
+    import json
+    from pathlib import Path
+
+    from app.knowledge import extractor
+    from app.knowledge.extractor import evaluate_kg_candidate
+    from app.knowledge.models import RelationType
+
+    gold_path = Path(__file__).parent / "fixtures" / "kg_gold.json"
+    samples = json.loads(gold_path.read_text(encoding="utf-8"))
+    assert len(samples) >= 60
+
+    relations_covered = {item["relation_type"] for item in samples}
+    assert relations_covered == {r.value for r in RelationType}
+
+    # 使用确定性+规则裁判评估金标集(不依赖外网)
+    monkeypatch.setattr(extractor, "_call_llm_judge", lambda *a, **kw: None)
+
+    pos_total = 0
+    pos_passed = 0
+    neg_total = 0
+    neg_rejected = 0
+
+    for item in samples:
+        res = await evaluate_kg_candidate(
+            relation_type=item["relation_type"],
+            source_type=item["source_type"],
+            source_name=item["source_name"],
+            target_type=item["target_type"],
+            target_name=item["target_name"],
+            evidence_quote=item["evidence_quote"],
+            clause_original_text=item["clause_original_text"],
+            document_title=item["document_title"],
+            confidence=0.9,
+            use_llm_judge=False,
+        )
+        if item["expected_valid"]:
+            pos_total += 1
+            if res.admitted:
+                pos_passed += 1
+        else:
+            neg_total += 1
+            if not res.admitted:
+                neg_rejected += 1
+
+    assert pos_total >= 30 and neg_total >= 24
+    pos_rate = pos_passed / pos_total
+    neg_rejection_rate = neg_rejected / neg_total
+    assert neg_rejection_rate >= 0.90, f"错误样例拒绝率不足 90%: {neg_rejection_rate:.2%}"
+    assert pos_rate >= 0.80, f"正确样例通过率不足 80%: {pos_rate:.2%}"
+
+
 async def test_knowledge_extraction_glossary_review_points_and_version_linkage(
     client, seed, tmp_path, monkeypatch
 ):
     from app.core.config import get_settings
-    from app.knowledge import translator
+    from app.knowledge import extractor, translator
+    from app.knowledge.extractor import (
+        ClauseExtractionPayload,
+        ExtractedEntity,
+        ExtractedRelation,
+        SemanticJudgeVerdict,
+    )
+    from app.knowledge.models import NodeType, RelationType
 
     monkeypatch.setenv("CYSH_ARCHIVE_DIR", str(tmp_path / "archive"))
     get_settings.cache_clear()
@@ -285,7 +546,160 @@ async def test_knowledge_extraction_glossary_review_points_and_version_linkage(
         )
         return zh, "deepseek-flash", 110, 45, 220
 
+    async def _fake_llm_extract(clause_text, clause_number, document_title, publisher_name, country_code):
+        low = clause_text.lower()
+        entities: list[ExtractedEntity] = []
+        relations: list[ExtractedRelation] = []
+        if "data intermediary" in low:
+            entities.extend(
+                [
+                    ExtractedEntity(
+                        type=NodeType.DATA_CATEGORY,
+                        name_zh="受托处理的个人数据",
+                        name_orig="personal data",
+                    ),
+                    ExtractedEntity(
+                        type=NodeType.OBLIGATION,
+                        name_zh="数据中介机构受托处理豁免与保护义务",
+                        name_orig="data intermediary obligation",
+                    ),
+                ]
+            )
+            relations.append(
+                ExtractedRelation(
+                    type=RelationType.EXEMPTS,
+                    source=document_title,
+                    target="数据中介机构受托处理豁免与保护义务",
+                    evidence_quote="a data intermediary processes personal data on behalf of another organisation.",
+                    confidence=0.91,
+                )
+            )
+        if "transfer any personal data outside singapore" in low:
+            entities.extend(
+                [
+                    ExtractedEntity(
+                        type=NodeType.DATA_CATEGORY,
+                        name_zh="个人数据(Personal Data)",
+                        name_orig="personal data",
+                    ),
+                    ExtractedEntity(
+                        type=NodeType.OBLIGATION,
+                        name_zh="数据出境同等保护与告知同意义务",
+                        name_orig="comparable protection and consent obligation",
+                    ),
+                ]
+            )
+            relations.extend(
+                [
+                    ExtractedRelation(
+                        type=RelationType.RESTRICTS_CROSS_BORDER,
+                        source=document_title,
+                        target="个人数据(Personal Data)",
+                        evidence_quote="An organisation must not transfer any personal data outside Singapore except in accordance with prescribed requirements to ensure comparable protection",
+                        confidence=0.95,
+                    ),
+                    ExtractedRelation(
+                        type=RelationType.REQUIRES,
+                        source=document_title,
+                        target="数据出境同等保护与告知同意义务",
+                        evidence_quote="An organisation must not transfer any personal data outside Singapore except in accordance with prescribed requirements to ensure comparable protection, after obtaining consent of the individual.",
+                        confidence=0.93,
+                    ),
+                ]
+            )
+        if "autonomous motor vehicle" in low:
+            entities.extend(
+                [
+                    ExtractedEntity(
+                        type=NodeType.DATA_CATEGORY,
+                        name_zh="自动驾驶车载黑匣子与远程信息处理数据",
+                        name_orig="black box telematics data recorder",
+                    ),
+                    ExtractedEntity(
+                        type=NodeType.OBLIGATION,
+                        name_zh="自动驾驶公共道路测试事前批准与黑匣子配备义务",
+                        name_orig="prior approval and black box data recorder",
+                    ),
+                ]
+            )
+            relations.extend(
+                [
+                    ExtractedRelation(
+                        type=RelationType.REQUIRES_ADMISSION,
+                        source=document_title,
+                        target="自动驾驶公共道路测试事前批准与黑匣子配备义务",
+                        evidence_quote="No person shall undertake any trial of an autonomous motor vehicle with an autonomous system on any road without prior approval and a black box telematics data recorder.",
+                        confidence=0.94,
+                    ),
+                    ExtractedRelation(
+                        type=RelationType.PROHIBITS,
+                        source=document_title,
+                        target="自动驾驶公共道路测试事前批准与黑匣子配备义务",
+                        evidence_quote="No person shall undertake any trial of an autonomous motor vehicle with an autonomous system on any road without prior approval",
+                        confidence=0.92,
+                    ),
+                ]
+            )
+        if "notifiable data breach" in low:
+            entities.extend(
+                [
+                    ExtractedEntity(
+                        type=NodeType.OBLIGATION,
+                        name_zh="数据泄露3个日历日内强制通报义务",
+                        name_orig="notify the Commission within 3 calendar days",
+                    ),
+                    ExtractedEntity(
+                        type=NodeType.PENALTY,
+                        name_zh="违反通报义务最高处$1,000,000法定罚款",
+                        name_orig="liable on conviction to a fine of $1,000,000",
+                    ),
+                ]
+            )
+            relations.extend(
+                [
+                    ExtractedRelation(
+                        type=RelationType.REQUIRES,
+                        source=document_title,
+                        target="数据泄露3个日历日内强制通报义务",
+                        evidence_quote="Where a notifiable data breach occurs, the organisation must notify the Commission within 3 calendar days",
+                        confidence=0.95,
+                    ),
+                    ExtractedRelation(
+                        type=RelationType.PENALIZES,
+                        source=document_title,
+                        target="违反通报义务最高处$1,000,000法定罚款",
+                        evidence_quote="failing which it is liable on conviction to a fine of $1,000,000.",
+                        confidence=0.94,
+                    ),
+                ]
+            )
+        if "amends the personal data protection act 2012" in low:
+            relations.extend(
+                [
+                    ExtractedRelation(
+                        type=RelationType.AMENDS,
+                        source=document_title,
+                        target="Personal Data Protection Act 2012",
+                        evidence_quote="This Amendment Act amends the Personal Data Protection Act 2012 and repeals outdated transitional exemptions.",
+                        confidence=0.96,
+                    ),
+                    ExtractedRelation(
+                        type=RelationType.REPEALS,
+                        source=document_title,
+                        target="Personal Data Protection Act 2012",
+                        evidence_quote="This Amendment Act amends the Personal Data Protection Act 2012 and repeals outdated transitional exemptions.",
+                        confidence=0.91,
+                    ),
+                ]
+            )
+        return ClauseExtractionPayload(entities=entities, relations=relations), "deepseek-flash"
+
+    async def _fake_llm_judge(*args, **kwargs):
+        return SemanticJudgeVerdict(supports="yes", reason="证据片段直接明确支撑该关系")
+
     monkeypatch.setattr(translator, "_call_llm_translate", _fake_llm_translate)
+    monkeypatch.setattr(extractor, "_call_llm_extract_clause", _fake_llm_extract)
+    monkeypatch.setattr(extractor, "_call_llm_judge", _fake_llm_judge)
     admin_hdr = bearer(await login(client, "admin", "admin@example.com"))
     reviewer_hdr = bearer(await login(client, "admin", "reviewer@example.com"))
     member_hdr = bearer(await login(client, "user", "a-member@example.com"))

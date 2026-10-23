@@ -507,6 +507,33 @@ async def batch_translate(
     return stats
 
 
+async def batch_extract_kg(
+    country: str | None = None,
+    max_clauses_per_doc: int = 16,
+    concurrency: int = 8,
+    sf=None,
+) -> dict[str, dict[str, int]]:
+    """批量执行 S2 大模型知识图谱抽取(相关性过滤 + 条款抽取 + 类型约束 + 逐字校验 + 语义裁判)。"""
+    from app.knowledge.extractor import COUNTRY_NAMES, extract_knowledge_for_country
+
+    sf = sf or get_sessionmaker()
+    countries = [country.upper()] if country else list(COUNTRY_NAMES.keys())
+    results: dict[str, dict[str, int]] = {}
+    for cc in countries:
+        print(f"[S2-KG] 正在抽取国家 {cc} ...", flush=True)
+        async with sf() as session:
+            res = await extract_knowledge_for_country(
+                session,
+                cc,
+                translate_sample_per_doc=2,
+                max_clauses_per_doc=max_clauses_per_doc,
+                concurrency=concurrency,
+            )
+            results[cc] = res
+            print(f"[S2-KG] {cc} 完成: {json.dumps(res, ensure_ascii=False)}", flush=True)
+    return results
+
+
 async def reparse(state: str, country: str | None, sf=None) -> dict[str, int]:
     """对已有版本重新解析(例如装好 OCR 后,处理之前标为"需要 OCR"的扫描件)。"""
     from sqlalchemy import select
@@ -580,6 +607,10 @@ def main() -> int:
         help="仅翻译缺少合格 LLM 译文的条款",
     )
     t.add_argument("--concurrency", type=int, default=4, help="并发请求数(默认 4)")
+    kg = sub.add_parser("extract-kg", help="批量执行 S2 知识图谱结构化抽取与语义裁判")
+    kg.add_argument("--country", help="指定国家代码(如 SG/EG/TN/MA/LB),不传则抽取全部五国")
+    kg.add_argument("--max-clauses", type=int, default=16, help="每份相关文档最多抽取的核心条款数")
+    kg.add_argument("--concurrency", type=int, default=8, help="并发请求数(默认 8)")
     args = parser.parse_args()
 
     _ensure_dev_env()
@@ -614,6 +645,15 @@ def main() -> int:
             )
         )
         print("批量翻译结果:", json.dumps(res, ensure_ascii=False))
+    elif args.command == "extract-kg":
+        res = asyncio.run(
+            batch_extract_kg(
+                country=args.country,
+                max_clauses_per_doc=args.max_clauses,
+                concurrency=args.concurrency,
+            )
+        )
+        print("批量知识图谱抽取结果:", json.dumps(res, ensure_ascii=False))
     return 0
 
 

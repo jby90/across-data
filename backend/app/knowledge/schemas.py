@@ -147,6 +147,10 @@ class KgEdgeOut(BaseModel):
     clause_number: str | None
     document_title: str | None
     extractor_model: str
+    confidence: float = 0.85
+    judge_verdict: str = "yes"
+    judge_reason: str | None = None
+    is_structural: bool = False
     review_status: str
     usable_as_legal_basis: bool
 

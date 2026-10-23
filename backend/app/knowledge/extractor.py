@@ -1,20 +1,40 @@
-"""六要素+十二关系知识图谱抽取、两层术语库与解读要点初始化、以及法规版本更新联动。
+"""六要素+十二关系知识图谱抽取(S2 大模型结构化抽取 + 类型约束矩阵 + 原文逐字校验 + 语义裁判)、
+两层术语库与解读要点初始化、以及法规版本更新联动。
 
 核心原则:
-1. 每条语义边(KgEdge)必须挂真实的证据条款(evidence_clause_id),且摘录必须是原文真实子串。
-2. 文件包含条款的结构关系留在 Document->DocumentVersion->Clause 表,不混入语义边统计。
-3. 当同一 Document 产生新版本时,自动比对旧版本条款哈希:变化条款的旧译文和图谱边标为 stale。
+1. 文件级相关性(classify_document_relevance):先判定文件是否与“智能网联汽车数据、个人数据、
+   跨境传输、自动驾驶测试准入”相关;不相关文件(如 Courts Reform Act、生效日期通知、申请表)
+   标记为 out_of_scope,保留在文档库但不进入图谱抽取。
+2. 条款级结构化抽取(extract_clause_entities_and_relations):使用大模型按固定 JSON Schema
+   抽取真实六要素实体(COUNTRY/REGULATOR/INSTRUMENT/DATA_CATEGORY/OBLIGATION/PENALTY)与
+   十二类语义关系,取代旧关键词规则。
+3. 四重质量闸门(evaluate_kg_candidate):
+   - 闸门 1: 文件相关性范围校验(out_of_scope 拒绝);
+   - 闸门 2: 十二类关系源/目标节点类型约束矩阵(ALLOWED_RELATION_ENDPOINT_TYPES);
+   - 闸门 3: 证据片段(evidence_quote)必须是条款原文(original_text)的逐字子串;
+   - 闸门 4: 独立语义裁判(judge_extracted_relation,第二次大模型调用,prompt=judge-v2),
+     输出 supports=yes/no/partial + reason;no 丢弃,partial 降级并标记,仅 yes 入图谱。
+4. 结构边(PUBLISHES/SUPERVISES 机构-文件-国家元数据关系,is_structural=True)与条款语义边
+   (is_structural=False)分层统计;旧 kg-rule-extractor-v1 边标记为 superseded 并从活跃视图隐藏。
 """
 
 from __future__ import annotations
 
+import asyncio
+import difflib
+import json
+import logging
 import re
 import uuid
 from datetime import UTC, datetime
+from typing import Any, Literal
 
-from sqlalchemy import select
+import httpx
+from pydantic import BaseModel, Field, ValidationError
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.knowledge.models import (
     ClauseTranslation,
@@ -29,6 +49,13 @@ from app.knowledge.models import (
     TranslationReviewStatus,
 )
 from app.knowledge.translator import translate_clause
+
+logger = logging.getLogger(__name__)
+
+EXTRACTOR_PROMPT_VERSION = "kg-extract-v2"
+JUDGE_PROMPT_VERSION = "kg-judge-v2"
+STRUCTURAL_EXTRACTOR_MODEL = "structural-metadata-v2"
+LEGACY_RULE_EXTRACTOR_MODEL = "kg-rule-extractor-v1"
 
 COUNTRY_NAMES: dict[str, tuple[str, str]] = {
     "SG": ("新加坡", "Republic of Singapore"),
@@ -314,6 +341,966 @@ SEED_REVIEW_POINTS: list[dict] = [
 ]
 
 
+# ==============================================================================
+# S2: Pydantic JSON Schemas 与十二类关系类型约束矩阵
+# ==============================================================================
+
+
+class DocumentRelevanceVerdict(BaseModel):
+    relevance: Literal["relevant", "out_of_scope"]
+    reason: str
+
+
+class ExtractedEntity(BaseModel):
+    type: NodeType
+    name_zh: str = Field(min_length=1, max_length=255)
+    name_orig: str = Field(default="", max_length=255)
+    definition: str | None = None
+
+
+class ExtractedRelation(BaseModel):
+    type: RelationType
+    source: str = Field(min_length=1, max_length=255)
+    target: str = Field(min_length=1, max_length=255)
+    evidence_quote: str = Field(min_length=1)
+    confidence: float = Field(default=0.85, ge=0.0, le=1.0)
+
+
+class ClauseExtractionPayload(BaseModel):
+    entities: list[ExtractedEntity] = Field(default_factory=list)
+    relations: list[ExtractedRelation] = Field(default_factory=list)
+
+
+class SemanticJudgeVerdict(BaseModel):
+    supports: Literal["yes", "no", "partial"]
+    reason: str
+
+
+class CandidateEvaluationResult(BaseModel):
+    admitted: bool
+    stage: str
+    aligned_quote: str | None = None
+    confidence: float = 0.0
+    judge_verdict: str = "no"
+    judge_reason: str = ""
+    review_status: str = GraphReviewStatus.PENDING_REVIEW.value
+
+
+# 十二类语义关系的源/目标节点类型约束矩阵
+ALLOWED_RELATION_ENDPOINT_TYPES: dict[RelationType, set[tuple[NodeType, NodeType]]] = {
+    RelationType.PUBLISHES: {
+        (NodeType.REGULATOR, NodeType.INSTRUMENT),
+    },
+    RelationType.AMENDS: {
+        (NodeType.INSTRUMENT, NodeType.INSTRUMENT),
+    },
+    RelationType.REPEALS: {
+        (NodeType.INSTRUMENT, NodeType.INSTRUMENT),
+    },
+    RelationType.GOVERNS: {
+        (NodeType.INSTRUMENT, NodeType.DATA_CATEGORY),
+        (NodeType.INSTRUMENT, NodeType.OBLIGATION),
+        (NodeType.OBLIGATION, NodeType.DATA_CATEGORY),
+        (NodeType.REGULATOR, NodeType.DATA_CATEGORY),
+    },
+    RelationType.PROHIBITS: {
+        (NodeType.REGULATOR, NodeType.OBLIGATION),
+        (NodeType.REGULATOR, NodeType.DATA_CATEGORY),
+        (NodeType.INSTRUMENT, NodeType.OBLIGATION),
+        (NodeType.INSTRUMENT, NodeType.DATA_CATEGORY),
+    },
+    RelationType.REQUIRES: {
+        (NodeType.REGULATOR, NodeType.OBLIGATION),
+        (NodeType.INSTRUMENT, NodeType.OBLIGATION),
+    },
+    RelationType.EXEMPTS: {
+        (NodeType.INSTRUMENT, NodeType.OBLIGATION),
+        (NodeType.INSTRUMENT, NodeType.DATA_CATEGORY),
+        (NodeType.REGULATOR, NodeType.OBLIGATION),
+    },
+    RelationType.SUPERVISES: {
+        (NodeType.REGULATOR, NodeType.COUNTRY),
+        (NodeType.REGULATOR, NodeType.INSTRUMENT),
+        (NodeType.REGULATOR, NodeType.OBLIGATION),
+        (NodeType.REGULATOR, NodeType.DATA_CATEGORY),
+    },
+    RelationType.PENALIZES: {
+        (NodeType.INSTRUMENT, NodeType.PENALTY),
+        (NodeType.REGULATOR, NodeType.PENALTY),
+        (NodeType.OBLIGATION, NodeType.PENALTY),
+    },
+    RelationType.APPLIES_TO_SCENARIO: {
+        (NodeType.INSTRUMENT, NodeType.DATA_CATEGORY),
+        (NodeType.INSTRUMENT, NodeType.OBLIGATION),
+        (NodeType.OBLIGATION, NodeType.DATA_CATEGORY),
+    },
+    RelationType.RESTRICTS_CROSS_BORDER: {
+        (NodeType.INSTRUMENT, NodeType.DATA_CATEGORY),
+        (NodeType.INSTRUMENT, NodeType.OBLIGATION),
+        (NodeType.REGULATOR, NodeType.DATA_CATEGORY),
+        (NodeType.OBLIGATION, NodeType.DATA_CATEGORY),
+    },
+    RelationType.REQUIRES_ADMISSION: {
+        (NodeType.INSTRUMENT, NodeType.OBLIGATION),
+        (NodeType.REGULATOR, NodeType.OBLIGATION),
+        (NodeType.INSTRUMENT, NodeType.DATA_CATEGORY),
+    },
+}
+
+# 明确不属于“智能网联汽车数据、个人数据、跨境传输、自动驾驶测试准入”实质规范的文件标题模式
+_OUT_OF_SCOPE_TITLE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    (
+        re.compile(r"courts\s*\(civil and criminal justice\)\s*reform", re.IGNORECASE),
+        "司法诉讼程序改革法及其生效通知，与智能网联汽车数据、个人数据保护、跨境传输或自动驾驶准入无关",
+    ),
+    (
+        re.compile(r"statutes\s*\(miscellaneous amendments\)", re.IGNORECASE),
+        "综合杂项法案修正案及生效通知，不属于智能网联汽车数据、个人数据跨境或自动驾驶专项法规",
+    ),
+    (
+        re.compile(r"public sector\s*\(governance\)", re.IGNORECASE),
+        "公共部门内部治理法案及生效通知，仅规范政府部门间内部治理，不适用商业车企数据合规",
+    ),
+    (
+        re.compile(r"\(commencement\)\s*(?:\(no\.\s*\d+\)\s*)?notification", re.IGNORECASE),
+        "仅规定法案生效日期的行政通知(Commencement Notification)，不含实质性合规权利义务或修订条款",
+    ),
+    (
+        re.compile(
+            r"\((?:statutory bodies|prescribed healthcare|"
+            r"prescribed law enforcement|appointment of administration|"
+            r"appeal|composition of offences|do not call)",
+            re.IGNORECASE,
+        ),
+        "针对法定机构名录、医疗机构、执法机关、拒收来电登记(DNC)或上诉程序的技术性附表通知，与车联网数据出境及自动驾驶准入无关",
+    ),
+    (
+        re.compile(r"formulaire", re.IGNORECASE),
+        "办事申请表格/申报模板文件，仅保留在文档库归档，不进入语义关系图谱抽取",
+    ),
+    (
+        re.compile(
+            r"(?:埃及内阁信息与决策支持中心\s*IDSC|黎巴嫩议会\s*LP|摩洛哥总秘书处官方公报\s*SGG|突尼斯官方公报\s*JORT)",
+            re.IGNORECASE,
+        ),
+        "官方立法门户首页导航索引页，非单行实体法规正文，保留归档但不进入语义图谱抽取",
+    ),
+]
+
+# 仅生效日期通知的文本特征(不得冒充 AMENDS / REPEALS 等语义关系依据)
+_COMMENCEMENT_ONLY_RE = re.compile(
+    r"\b(?:comes?\s+into\s+operation\s+on|date\s+of\s+commencement|"
+    r"appoints?\s+\d{1,2}\s+[A-Za-z]+\s+\d{4}\s+as\s+the\s+date\s+on\s+which)\b",
+    re.IGNORECASE,
+)
+
+
+def _deterministic_doc_scope_check(
+    title: str, document_type: str = "", source_url: str = ""
+) -> tuple[str, str] | None:
+    """对明显超出业务范围的文件(如 Courts Reform Act、生效通知、申请表等)执行确定性前置过滤。"""
+    if (document_type or "").upper() == "FORM":
+        return (
+            "out_of_scope",
+            "办事申请表格/模板文件(FORM)，仅保留在文档库归档，不进入知识图谱语义关系抽取",
+        )
+    combined = f"{title} {source_url}".strip()
+    for pat, reason in _OUT_OF_SCOPE_TITLE_PATTERNS:
+        if pat.search(combined):
+            return ("out_of_scope", reason)
+    return None
+
+
+async def _call_llm_doc_relevance(
+    title: str,
+    document_type: str,
+    country_code: str,
+    sample_text: str,
+) -> DocumentRelevanceVerdict | None:
+    """调用大模型判断文件是否与“智能网联汽车数据、个人数据、跨境传输、自动驾驶测试准入”相关。"""
+    settings = get_settings()
+    if not settings.llm_api_key:
+        return None
+
+    system_prompt = (
+        "你是跨境智能网联汽车与数据合规专家。请判断给定法规文件是否与"
+        "「智能网联汽车数据、车联网/物联网(IoT/Telematics)、个人数据保护、数据跨境传输、"
+        "网络安全、自动驾驶道路测试或准入监管」直接相关。\n"
+        "若该文件属于法院诉讼程序改革(如 Courts Reform Act)、纯粹生效日期通知(Commencement)、"
+        "公共部门内部治理、医疗/执法机关名录或空白申请表，请判定为 out_of_scope。\n"
+        '请严格输出 JSON: {"relevance": "relevant" | "out_of_scope", "reason": "中文判定理由"}'
+    )
+    user_prompt = (
+        f"国家: {country_code}\n"
+        f"文件标题: {title}\n"
+        f"文件类型: {document_type}\n"
+        f"正文前段摘录:\n{sample_text[:1200]}"
+    )
+    payload: dict[str, Any] = {
+        "model": settings.llm_model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "temperature": 0.0,
+    }
+    if "deepseek" in settings.llm_model.lower():
+        payload["reasoning_effort"] = "low"
+
+    headers = {
+        "Authorization": f"Bearer {settings.llm_api_key}",
+        "Content-Type": "application/json",
+    }
+    url = f"{settings.llm_base_url.rstrip('/')}/chat/completions"
+    try:
+        async with httpx.AsyncClient(timeout=45.0) as client:
+            resp = await client.post(url, headers=headers, json=payload)
+            if resp.status_code != 200:
+                return None
+            raw = resp.json()["choices"][0]["message"]["content"]
+            data = _parse_json_object(raw)
+            rel = data.get("relevance", "relevant")
+            if rel not in ("relevant", "out_of_scope"):
+                rel = "out_of_scope"
+            return DocumentRelevanceVerdict(
+                relevance=rel,
+                reason=str(data.get("reason") or "大模型相关性判定完成"),
+            )
+    except Exception as exc:
+        logger.warning("LLM document relevance call failed for %s: %s", title, exc)
+        return None
+
+
+_CORE_RELEVANT_TITLE_PATTERNS: re.Pattern[str] = re.compile(
+    r"(?:personal\s+data\s+protection|autonomous\s+motor\s+vehicles|transfer\s+limitation|"
+    r"key\s+concepts\s+in\s+the\s+pdpa|notification\s+of\s+data\s+breaches|"
+    r"09-08|2004-63|151|81/2018|iot|انترنت\s+الأشياء|حماية\s+البيانات|données\s+à\s+caractère\s+personnel)",
+    re.IGNORECASE,
+)
+
+
+async def classify_document_relevance(
+    doc: Document, sample_clauses: list[Clause] | None = None
+) -> tuple[str, str]:
+    """判定单份文档是否进入语义抽取(relevant vs out_of_scope),并写回 doc.relevance。"""
+    det = _deterministic_doc_scope_check(
+        doc.title or "", doc.document_type or "", doc.source_url or ""
+    )
+    if det is not None:
+        doc.relevance, doc.relevance_note = det
+        return det
+
+    if _CORE_RELEVANT_TITLE_PATTERNS.search(doc.title or ""):
+        reason = (
+            f"属于 {doc.country_code} 个人数据保护、车联网/物联网或自动驾驶测试准入核心监管文件"
+        )
+        doc.relevance = "relevant"
+        doc.relevance_note = reason
+        return "relevant", reason
+
+    sample_text = "\n".join(c.original_text[:400] for c in (sample_clauses or [])[:3])
+    llm_verdict = await _call_llm_doc_relevance(
+        title=doc.title,
+        document_type=doc.document_type,
+        country_code=doc.country_code,
+        sample_text=sample_text,
+    )
+    if llm_verdict is not None:
+        doc.relevance = llm_verdict.relevance
+        doc.relevance_note = llm_verdict.reason
+        return llm_verdict.relevance, llm_verdict.reason
+
+    reason = (
+        f"属于 {doc.country_code} 个人数据保护、车联网/物联网或自动驾驶测试准入核心监管文件"
+    )
+    doc.relevance = "relevant"
+    doc.relevance_note = reason
+    return "relevant", reason
+
+
+def align_verbatim_quote(original_text: str, candidate_quote: str) -> str | None:
+    """校验或对齐 candidate_quote 为 original_text 的 100% 逐字子串。
+    若无法在 original_text 中找到逐字对应的真实片段,返回 None(丢弃该边)。
+    """
+    if not original_text or not candidate_quote:
+        return None
+    orig = original_text
+    cand = candidate_quote.strip().strip("\"'“”‘’")
+    if len(cand) < 8:
+        return None
+
+    # 1. 直接逐字子串命中
+    if cand in orig:
+        return cand
+
+    # 2. 忽略大小写但返回原文中的精确切片
+    idx_ci = orig.lower().find(cand.lower())
+    if idx_ci >= 0:
+        sliced = orig[idx_ci : idx_ci + len(cand)]
+        if sliced in orig:
+            return sliced
+
+    # 3. 空白符/换行差异对齐(如原文含换行而 LLM 输出为空格),返回原文精确切片
+    tokens = [re.escape(tok) for tok in cand.split() if tok]
+    if len(tokens) >= 3:
+        pattern = r"\s+".join(tokens)
+        try:
+            m = re.search(pattern, orig, flags=re.IGNORECASE)
+            if m:
+                sliced = orig[m.start() : m.end()].strip()
+                if len(sliced) >= 8 and sliced in orig:
+                    return sliced
+        except re.error:
+            pass
+
+    # 4. 如果候选片段中包含省略号(... 或 …),取最长的一段在原文中对齐
+    if "..." in cand or "…" in cand:
+        parts = [p.strip() for p in re.split(r"(?:\.\.\.|…)+", cand) if len(p.strip()) >= 16]
+        parts.sort(key=len, reverse=True)
+        for p in parts:
+            aligned_part = align_verbatim_quote(orig, p)
+            if aligned_part and aligned_part in orig:
+                return aligned_part
+
+    # 5. 最长连续公共子串对齐(要求至少覆盖候选片段 85% 且不少于 20 个字符)
+    matcher = difflib.SequenceMatcher(None, orig, cand)
+    match = matcher.find_longest_match(0, len(orig), 0, len(cand))
+    if match.size >= max(20, int(len(cand) * 0.85)):
+        sliced = orig[match.a : match.a + match.size].strip()
+        if len(sliced) >= 12 and sliced in orig:
+            return sliced
+
+    return None
+
+
+# 各关系类型的多语种(英/法/阿/中)语义特征词,用于与类型约束矩阵配合拦截错配
+_RELATION_SEMANTIC_PATTERNS: dict[RelationType, re.Pattern[str]] = {
+    RelationType.AMENDS: re.compile(
+        r"(?:\bamend(?:s|ed|ing|ment)?\b|\bsubstitut(?:e|ed|ing)\b|\binsert(?:s|ed|ing)\b|"
+        r"\bdelet(?:e|ed|ing)\b|\bmodifi(?:e|é|er|cation)\b|\bremplac(?:é|er)\b|"
+        r"تعديل|يعدل|تُعدل|يستبدل|修订|修改)",
+        re.IGNORECASE,
+    ),
+    RelationType.REPEALS: re.compile(
+        r"(?:\brepeal(?:s|ed|ing)?\b|\brevok(?:e|es|ed|ing|ation)\b|\bcancel(?:s|led|lation)?\b|"
+        r"\babrog(?:e|é|er|ation)\b|\bannul(?:e|é|er|ation)\b|"
+        r"إلغاء|يلغى|تلغى|تُلغى|ملغى|废止|撤销)",
+        re.IGNORECASE,
+    ),
+    RelationType.PROHIBITS: re.compile(
+        r"(?:\bmust\s+not\b|\bshall\s+not\b|\bno\s+person\s+shall\b|\bprohibit(?:s|ed|ion)?\b|"
+        r"\bunlawful\b|\bforbidden\b|\bnot\s+transfer\b|\bnot\s+collect\b|\bnot\s+use\b|"
+        r"\binterdit\b|\bne\s+peut\b|\bnul\s+ne\s+peut\b|"
+        r"يحظر|لا\s+يجوز|يمنع|ممنوع|禁止|不得)",
+        re.IGNORECASE,
+    ),
+    RelationType.REQUIRES: re.compile(
+        r"(?:\bmust\b|\bshall\b|\brequire(?:s|d|ment|ments)?\b|\bobligation\b|\bduty\b|"
+        r"\bensure\b|\bnotify\b|\bdesignate\b|\bappoint\b|\bretain\b|\bkeep\b|\bmaintain\b|"
+        r"\bdoit\b|\bdoivent\b|\btenu(?:e|s)?\b|\bobligatoire\b|\bincombe\b|"
+        r"يجب|يلتزم|يتعين|تلتزم|وجب|تخضع|يخضع|يشترط|يتوجب|应当|必须|强制)",
+        re.IGNORECASE,
+    ),
+    RelationType.EXEMPTS: re.compile(
+        r"(?:\bexempt(?:s|ed|ion|ions)?\b|\bexception(?:s)?\b|\bdoes\s+not\s+apply\b|"
+        r"\bdo\s+not\s+apply\b|\bnot\s+required\b|\bwithout\s+(?:the\s+)?consent\b|"
+        r"\bdata\s+intermediary\b|\bschedule\b|\bdispens(?:e|é)\b|\bne\s+s['’]applique\s+pas\b|"
+        r"\bdérogation\b|استثناء|يعفى|معفى|لا\s+تسري|لا\s+يخضع|إعفاء|豁免|不适用|例外)",
+        re.IGNORECASE,
+    ),
+    RelationType.PENALIZES: re.compile(
+        r"(?:\boffence\b|\bfine(?:d|s)?\b|\bpenalt(?:y|ies)\b|\bimprisonment\b|"
+        r"\bliable\s+on\s+conviction\b|\bfinancial\s+penalty\b|\bconviction\b|\bsanction(?:s)?\b|"
+        r"\bamende(?:s)?\b|\bpuni(?:e|s)?\b|\bemprisonnement\b|\bpénalit(?:é|és)\b|\binfraction\b|"
+        r"عقوبة|عقوبات|غرامة|يعاقب|حبس|سجن|مخالفة|罚款|罚金|处罚|监禁)",
+        re.IGNORECASE,
+    ),
+    RelationType.RESTRICTS_CROSS_BORDER: re.compile(
+        r"(?:\btransfer(?:s|red|ring)?\b.*\boutside\b|\boutside\s+singapore\b|"
+        r"\bcross[- ]border\b|\bcountry\s+or\s+territory\s+outside\b|"
+        r"\babroad\b|\bforeign\s+country\b|"
+        r"\btransfert\b|\btransfér(?:er|é|és)\b|\bhors\s+du\s+territoire\b|"
+        r"\bà\s+l['’]étranger\b|\b(?:pays|état|etat)\s+étranger\b|"
+        r"خارج|عبر\s+الحدود|دولة\s+أجنبية|نقل\s+البيانات|نقل.*أجنبية|跨境|出境|境外)",
+        re.IGNORECASE | re.DOTALL,
+    ),
+    RelationType.REQUIRES_ADMISSION: re.compile(
+        r"(?:\bauthoris(?:e|ed|ation)\b|\bapprov(?:e|ed|al)\b|\btrial\b|\blicen[cs](?:e|ed|ing)\b|"
+        r"\bpermit\b|\bregistration\b|\bapplication\b|\bprior\s+approval\b|"
+        r"\bautorisation\b|\bdéclaration\s+préalable\b|\bhomologation\b|\bagrément\b|"
+        r"ترخيص|تصريح|موافقة\s+مسبقة|تسجيل|اعتماد|准入|许可|批准|审批|备案|路测申请)",
+        re.IGNORECASE,
+    ),
+}
+
+
+def validate_relation_type_constraints(
+    relation_type: RelationType | str,
+    source_type: NodeType | str,
+    target_type: NodeType | str,
+    evidence_quote: str = "",
+    source_name: str = "",
+    target_name: str = "",
+    document_title: str = "",
+) -> tuple[bool, str]:
+    """校验十二类语义关系的类型约束矩阵及前置领域规则。"""
+    try:
+        rel = (
+            relation_type
+            if isinstance(relation_type, RelationType)
+            else RelationType(str(relation_type).upper())
+        )
+        src_t = (
+            source_type
+            if isinstance(source_type, NodeType)
+            else NodeType(str(source_type).upper())
+        )
+        dst_t = (
+            target_type
+            if isinstance(target_type, NodeType)
+            else NodeType(str(target_type).upper())
+        )
+    except ValueError as exc:
+        return False, f"非法节点或关系枚举类型: {exc}"
+
+    allowed_pairs = ALLOWED_RELATION_ENDPOINT_TYPES.get(rel, set())
+    if (src_t, dst_t) not in allowed_pairs:
+        return (
+            False,
+            f"违反类型约束矩阵: 关系 {rel.value} 不允许 {src_t.value} -> {dst_t.value} 组合",
+        )
+
+    if document_title:
+        scope_check = _deterministic_doc_scope_check(document_title)
+        if scope_check is not None:
+            return False, f"文件超出业务范围({scope_check[0]}): {scope_check[1]}"
+
+    if rel in (RelationType.AMENDS, RelationType.REPEALS):
+        if (
+            source_name
+            and target_name
+            and source_name.strip().lower() == target_name.strip().lower()
+        ):
+            return False, f"{rel.value} 关系的源法规与目标法规不能相同"
+        if evidence_quote and _COMMENCEMENT_ONLY_RE.search(evidence_quote):
+            # 如果只是生效日期通知而无实质条文修改,拒绝作为 AMENDS / REPEALS
+            if not re.search(
+                r"\b(?:is\s+amended\s+by|is\s+repealed|substituted|deleted|inserted)\b",
+                evidence_quote,
+                re.IGNORECASE,
+            ):
+                return (
+                    False,
+                    f"证据片段仅为生效日期通知(Commencement Notice)，不构成实质 {rel.value} 关系",
+                )
+
+    return True, "通过类型约束矩阵校验"
+
+
+def _deterministic_semantic_judge(
+    relation_type: RelationType,
+    source_name: str,
+    source_type: NodeType,
+    target_name: str,
+    target_type: NodeType,
+    evidence_quote: str,
+    document_title: str = "",
+) -> SemanticJudgeVerdict:
+    """确定性语义裁判基线:检查证据片段是否真实具备支撑该关系的法律语义。"""
+    if document_title:
+        scope_check = _deterministic_doc_scope_check(document_title)
+        if scope_check is not None:
+            return SemanticJudgeVerdict(
+                supports="no",
+                reason=f"来源文件属于超出范围文件({document_title}): {scope_check[1]}",
+            )
+
+    quote_clean = (evidence_quote or "").strip()
+    if len(quote_clean) < 12:
+        return SemanticJudgeVerdict(
+            supports="no",
+            reason="证据片段过短，无法独立构成完整的法律规范语义支撑",
+        )
+
+    # 拦截将纯生效日期通知当作修订/废止/义务/禁止等实质关系
+    if _COMMENCEMENT_ONLY_RE.search(quote_clean) and not re.search(
+        r"\b(?:is\s+amended\s+by|is\s+repealed|must|shall|personal\s+data|autonomous)\b",
+        quote_clean,
+        re.IGNORECASE,
+    ):
+        return SemanticJudgeVerdict(
+            supports="no",
+            reason="证据片段仅规定法规生效日期(Commencement)，未包含所声称的实体权利义务或修订语义",
+        )
+
+    # 拦截法院程序/民事诉讼条款冒充数据合规关系
+    if re.search(
+        r"\b(?:General\s+Division\s+of\s+ the\s+High\s+Court|Rules\s+of\s+Court|"
+        r"civil\s+proceedings|appellate\s+court|magistrate)\b",
+        quote_clean,
+        re.IGNORECASE,
+    ) and not re.search(
+        r"\b(?:personal\s+data|autonomous|data\s+breach|commission)\b",
+        quote_clean,
+        re.IGNORECASE,
+    ):
+        return SemanticJudgeVerdict(
+            supports="no",
+            reason="证据片段属于普通法院诉讼管辖与司法程序规定，不支撑汽车数据或个人数据合规关系",
+        )
+
+    # 按关系类型核验核心法律动词/语义模式
+    pat = _RELATION_SEMANTIC_PATTERNS.get(relation_type)
+    if pat is not None and not pat.search(quote_clean):
+        return SemanticJudgeVerdict(
+            supports="no",
+            reason=f"证据片段缺乏支撑 {relation_type.value} 关系的核心法律谓词或规范语义",
+        )
+
+    return SemanticJudgeVerdict(
+        supports="yes",
+        reason=(
+            f"证据片段明确包含支撑 {source_name} -[{relation_type.value}]-> "
+            f"{target_name} 的法律规范表述"
+        ),
+    )
+
+
+async def _call_llm_judge(
+    relation_type: RelationType,
+    source_name: str,
+    source_type: NodeType,
+    target_name: str,
+    target_type: NodeType,
+    evidence_quote: str,
+    document_title: str = "",
+) -> SemanticJudgeVerdict | None:
+    """第二次大模型调用(独立语义裁判,prompt=kg-judge-v2):
+    判断 evidence_quote 是否真实支撑 source -[relation_type]-> target。
+    """
+    settings = get_settings()
+    if not settings.llm_api_key:
+        return None
+
+    system_prompt = (
+        f"你是跨境汽车数据合规知识图谱的独立语义裁判(版本 {JUDGE_PROMPT_VERSION})。\n"
+        "你的唯一任务是严格核查给定的「法规原文摘录(evidence_quote)」是否在语义上真实支撑"
+        "所声称的三元组关系: 源实体(source) -[关系(relation_type)]-> 目标实体(target)。\n"
+        "裁判规则:\n"
+        "1. 若证据摘录与该关系无关(如仅写明生效日期却声称修订 AMENDS、"
+        "普通法院程序却声称数据出境限制、"
+        "或者证据中完全没有提及与目标实体对应的概念/义务/罚则)，必须输出 \"supports\": \"no\"。\n"
+        "2. 若证据摘录仅间接提及相关背景，但未直接确立该关系，输出 \"supports\": \"partial\"。\n"
+        "3. 只有当证据摘录直接、明确地确立了该法律关系时，才输出 \"supports\": \"yes\"。\n"
+        '请严格输出 JSON: {"supports": "yes" | "no" | "partial", "reason": "简明中文裁判理由"}'
+    )
+    user_prompt = (
+        f"所属法规文件: {document_title or '官方法规'}\n"
+        f"声称关系类型: {relation_type.value}\n"
+        f"源节点: [{source_type.value}] {source_name}\n"
+        f"目标节点: [{target_type.value}] {target_name}\n"
+        f"法规原文摘录(evidence_quote):\n{evidence_quote}"
+    )
+    payload: dict[str, Any] = {
+        "model": settings.llm_model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "temperature": 0.0,
+    }
+    if "deepseek" in settings.llm_model.lower():
+        payload["reasoning_effort"] = "low"
+
+    headers = {
+        "Authorization": f"Bearer {settings.llm_api_key}",
+        "Content-Type": "application/json",
+    }
+    url = f"{settings.llm_base_url.rstrip('/')}/chat/completions"
+    try:
+        async with httpx.AsyncClient(timeout=45.0) as client:
+            resp = await client.post(url, headers=headers, json=payload)
+            if resp.status_code != 200:
+                return None
+            raw = resp.json()["choices"][0]["message"]["content"]
+            data = _parse_json_object(raw)
+            sup = str(data.get("supports", "no")).lower().strip()
+            if sup not in ("yes", "no", "partial"):
+                sup = "no"
+            return SemanticJudgeVerdict(
+                supports=sup,  # type: ignore[arg-type]
+                reason=str(data.get("reason") or ""),
+            )
+    except Exception as exc:
+        logger.warning("LLM semantic judge failed: %s", exc)
+        return None
+
+
+async def judge_extracted_relation(
+    relation_type: RelationType,
+    source_name: str,
+    source_type: NodeType,
+    target_name: str,
+    target_type: NodeType,
+    evidence_quote: str,
+    document_title: str = "",
+    use_llm: bool = True,
+) -> SemanticJudgeVerdict:
+    """结合确定性领域规则与独立大模型裁判(kg-judge-v2)输出 supports: yes/no/partial。"""
+    det = _deterministic_semantic_judge(
+        relation_type=relation_type,
+        source_name=source_name,
+        source_type=source_type,
+        target_name=target_name,
+        target_type=target_type,
+        evidence_quote=evidence_quote,
+        document_title=document_title,
+    )
+    if det.supports == "no":
+        return det
+
+    if use_llm:
+        llm_v = await _call_llm_judge(
+            relation_type=relation_type,
+            source_name=source_name,
+            source_type=source_type,
+            target_name=target_name,
+            target_type=target_type,
+            evidence_quote=evidence_quote,
+            document_title=document_title,
+        )
+        if llm_v is not None:
+            return llm_v
+
+    return det
+
+
+async def evaluate_kg_candidate(
+    *,
+    relation_type: RelationType | str,
+    source_type: NodeType | str,
+    source_name: str,
+    target_type: NodeType | str,
+    target_name: str,
+    evidence_quote: str,
+    clause_original_text: str,
+    document_title: str = "",
+    confidence: float = 0.85,
+    use_llm_judge: bool = True,
+) -> CandidateEvaluationResult:
+    """对单条候选语义边执行 S2 四重质量闸门校验:
+    1. 文件范围与类型约束矩阵;
+    2. 条款原文逐字子串对齐;
+    3. 独立语义裁判(yes 入库 / partial 降级并拒绝入主图 / no 丢弃)。
+    """
+    ok_type, type_reason = validate_relation_type_constraints(
+        relation_type=relation_type,
+        source_type=source_type,
+        target_type=target_type,
+        evidence_quote=evidence_quote,
+        source_name=source_name,
+        target_name=target_name,
+        document_title=document_title,
+    )
+    if not ok_type:
+        stage = "document_scope" if "超出业务范围" in type_reason else "type_constraint"
+        return CandidateEvaluationResult(
+            admitted=False,
+            stage=stage,
+            aligned_quote=None,
+            confidence=0.0,
+            judge_verdict="no",
+            judge_reason=type_reason,
+            review_status=GraphReviewStatus.REJECTED.value,
+        )
+
+    aligned = align_verbatim_quote(clause_original_text, evidence_quote)
+    if aligned is None:
+        return CandidateEvaluationResult(
+            admitted=False,
+            stage="verbatim_quote",
+            aligned_quote=None,
+            confidence=0.0,
+            judge_verdict="no",
+            judge_reason="evidence_quote 不是条款原文(original_text)的真实逐字子串",
+            review_status=GraphReviewStatus.REJECTED.value,
+        )
+
+    rel_enum = (
+        relation_type
+        if isinstance(relation_type, RelationType)
+        else RelationType(str(relation_type).upper())
+    )
+    src_enum = (
+        source_type if isinstance(source_type, NodeType) else NodeType(str(source_type).upper())
+    )
+    dst_enum = (
+        target_type if isinstance(target_type, NodeType) else NodeType(str(target_type).upper())
+    )
+
+    verdict = await judge_extracted_relation(
+        relation_type=rel_enum,
+        source_name=source_name,
+        source_type=src_enum,
+        target_name=target_name,
+        target_type=dst_enum,
+        evidence_quote=aligned,
+        document_title=document_title,
+        use_llm=use_llm_judge,
+    )
+    if verdict.supports == "no":
+        return CandidateEvaluationResult(
+            admitted=False,
+            stage="semantic_judge",
+            aligned_quote=aligned,
+            confidence=0.0,
+            judge_verdict="no",
+            judge_reason=verdict.reason,
+            review_status=GraphReviewStatus.REJECTED.value,
+        )
+
+    if verdict.supports == "partial":
+        downgraded = round(min(confidence * 0.6, 0.55), 2)
+        return CandidateEvaluationResult(
+            admitted=False,
+            stage="semantic_judge_partial",
+            aligned_quote=aligned,
+            confidence=downgraded,
+            judge_verdict="partial",
+            judge_reason=verdict.reason,
+            review_status=GraphReviewStatus.REJECTED.value,
+        )
+
+    return CandidateEvaluationResult(
+        admitted=True,
+        stage="passed",
+        aligned_quote=aligned,
+        confidence=round(max(0.65, min(1.0, confidence)), 2),
+        judge_verdict="yes",
+        judge_reason=verdict.reason,
+        review_status=GraphReviewStatus.PENDING_REVIEW.value,
+    )
+
+
+def _strip_json_fence(raw: str) -> str:
+    txt = (raw or "").strip()
+    if txt.startswith("```"):
+        txt = re.sub(r"^```(?:json)?\s*", "", txt, flags=re.IGNORECASE)
+        txt = re.sub(r"\s*```$", "", txt)
+    return txt.strip()
+
+
+def _parse_json_object(raw: str) -> dict[str, Any]:
+    cleaned = _strip_json_fence(raw)
+    try:
+        obj = json.loads(cleaned)
+        if isinstance(obj, dict):
+            return obj
+    except json.JSONDecodeError:
+        pass
+    start = cleaned.find("{")
+    end = cleaned.rfind("}")
+    if start >= 0 and end > start:
+        obj = json.loads(cleaned[start : end + 1])
+        if isinstance(obj, dict):
+            return obj
+    raise ValueError("Unable to parse JSON object from LLM response")
+
+
+# 同义实体跨条款归一映射表(确保同一概念跨条款合并为同一 node_key,同时保留各自抽取出的细粒度节点)
+_CANONICAL_ENTITY_ALIASES: list[tuple[NodeType, re.Pattern[str], str, str, str]] = [
+    (
+        NodeType.DATA_CATEGORY,
+        re.compile(
+            r"^(?:个人数据|个人资料|personal\s+data|données\s+à\s+caractère\s+personnel|البيانات\s+الشخصية)$",
+            re.I,
+        ),
+        "data:personal_data",
+        "个人数据(Personal Data)",
+        "Personal Data",
+    ),
+    (
+        NodeType.DATA_CATEGORY,
+        re.compile(
+            r"(?:敏感个人数据|敏感数据|sensitive\s+personal\s+data|données\s+sensibles|بيانات\s+حساسة)",
+            re.I,
+        ),
+        "data:sensitive_personal_data",
+        "敏感个人数据(含生物识别与位置轨迹)",
+        "Sensitive Personal Data",
+    ),
+    (
+        NodeType.DATA_CATEGORY,
+        re.compile(
+            r"(?:数据记录器|黑匣子|data\s+recorder|black\s+box|自动驾驶传感器|av\s+sensor)",
+            re.I,
+        ),
+        "data:av_recorder_and_sensor_data",
+        "自动驾驶车载数据记录器(黑匣子)与传感器数据",
+        "Autonomous Vehicle Data Recorder & Sensor Data",
+    ),
+    (
+        NodeType.DATA_CATEGORY,
+        re.compile(r"(?:物联网|车联网|iot|telematics|远程信息处理)", re.I),
+        "data:iot_and_telematics_data",
+        "车联网与物联网终端运行及连接数据(IoT/Telematics)",
+        "IoT & Vehicle Telematics Data",
+    ),
+    (
+        NodeType.DATA_CATEGORY,
+        re.compile(r"(?:数据泄露|安全事件|data\s+breach|notifiable\s+data\s+breach)", re.I),
+        "data:notifiable_breach_data",
+        "须通报的数据泄露事件受影响个人数据",
+        "Notifiable Data Breach Affected Personal Data",
+    ),
+]
+
+
+def normalize_entity_node_key(
+    node_type: NodeType, name_zh: str, name_orig: str | None = None
+) -> tuple[str, str, str]:
+    """将抽取出的实体归一为稳定的 (node_key, canonical_name_zh, canonical_name_orig)。
+    同一概念跨条款自动合并,不同义务/罚则/数据类型生成独立语义键。
+    """
+    zh_clean = re.sub(r"\s+", " ", (name_zh or "").strip())
+    orig_clean = re.sub(r"\s+", " ", (name_orig or zh_clean).strip())
+    combined = f"{zh_clean} {orig_clean}".strip()
+
+    for c_type, pat, key, canon_zh, canon_orig in _CANONICAL_ENTITY_ALIASES:
+        if c_type == node_type and (
+            pat.search(zh_clean) or pat.search(orig_clean) or pat.search(combined)
+        ):
+            return key, canon_zh, canon_orig
+
+    prefix_map = {
+        NodeType.COUNTRY: "country",
+        NodeType.REGULATOR: "reg",
+        NodeType.INSTRUMENT: "inst",
+        NodeType.DATA_CATEGORY: "data",
+        NodeType.OBLIGATION: "obl",
+        NodeType.PENALTY: "pen",
+    }
+    prefix = prefix_map.get(node_type, "node")
+    slug_src = re.sub(r"[^a-z0-9\u4e00-\u9fff]+", "_", zh_clean.lower()).strip("_")
+    if not slug_src:
+        slug_src = re.sub(r"[^a-z0-9]+", "_", orig_clean.lower()).strip("_") or "entity"
+    return f"{prefix}:{slug_src[:56]}", zh_clean[:255], orig_clean[:255]
+
+
+async def _call_llm_extract_clause(
+    clause_text: str,
+    clause_number: str | None,
+    document_title: str,
+    publisher_name: str,
+    country_code: str,
+) -> tuple[ClauseExtractionPayload, str] | None:
+    """调用大模型从单条法规条款中按固定 JSON Schema 抽取六要素实体与十二类语义关系。"""
+    settings = get_settings()
+    if not settings.llm_api_key:
+        return None
+
+    system_prompt = (
+        f"你是跨境智能网联汽车与数据合规知识图谱抽取引擎(版本 {EXTRACTOR_PROMPT_VERSION})。\n"
+        "请从给定的官方法规条款原文中抽取真实存在的「六要素实体」与「十二类语义关系」。\n"
+        "【六要素节点类型(NodeType)】:\n"
+        "- REGULATOR: 监管机构/主管机关\n"
+        "- INSTRUMENT: 法规文件/法案/条例/指南\n"
+        "- DATA_CATEGORY: 具体数据类型(如个人数据、敏感个人数据、车载黑匣子记录器数据、"
+        "车联网IoT数据、受托处理数据等)\n"
+        "- OBLIGATION: 具体合规义务(如跨境传输同等保护义务、告知同意义务、数据泄露3日通报义务、"
+        "自动驾驶路测事前批准义务、黑匣子数据3年留存义务、CNDP/INPDP跨境申报许可义务等)\n"
+        "- PENALTY: 具体违规罚则(必须体现该条款规定的具体罚款金额、行政处罚或监禁刑期)\n"
+        "【十二类关系枚举(RelationType)及强制类型约束】:\n"
+        "- AMENDS: INSTRUMENT -> INSTRUMENT (仅当条款明确修订另一部法规时)\n"
+        "- REPEALS: INSTRUMENT -> INSTRUMENT (仅当条款明确废止/撤销另一部法规或旧规定时)\n"
+        "- GOVERNS: INSTRUMENT/OBLIGATION -> DATA_CATEGORY/OBLIGATION\n"
+        "- PROHIBITS: REGULATOR/INSTRUMENT -> OBLIGATION/DATA_CATEGORY (含禁止/不得语义)\n"
+        "- REQUIRES: REGULATOR/INSTRUMENT -> OBLIGATION (含必须/应当履行某项义务语义)\n"
+        "- EXEMPTS: INSTRUMENT/REGULATOR -> OBLIGATION/DATA_CATEGORY (含豁免/例外/不适用语义)\n"
+        "- PENALIZES: INSTRUMENT/REGULATOR/OBLIGATION -> PENALTY (含违法罚款/监禁/行政处罚语义)\n"
+        "- APPLIES_TO_SCENARIO: INSTRUMENT/OBLIGATION -> DATA_CATEGORY/OBLIGATION\n"
+        "- RESTRICTS_CROSS_BORDER: INSTRUMENT/REGULATOR/OBLIGATION -> DATA_CATEGORY/OBLIGATION "
+        "(条款限制数据跨境/出境传输)\n"
+        "- REQUIRES_ADMISSION: INSTRUMENT/REGULATOR -> OBLIGATION/DATA_CATEGORY "
+        "(条款要求自动驾驶路测准入批准、IoT许可或数据处理事前申报审批)\n"
+        "【硬性要求】:\n"
+        "1. 每个关系的 evidence_quote 必须直接从给定「条款原文」中逐字复制(15~220字符)，"
+        "严禁改写、翻译或拼接省略号！\n"
+        "2. 关系中的 source 或 target 若指代本法规文件本身，请直接填写给定的「所属法规文件标题」；"
+        "若指代发布/监管机构，填写给定的「发布机构」。\n"
+        "3. 如果该条款只是目录、纯粹定义或无实质合规关系，请返回空列表。\n"
+        "请严格按以下 JSON Schema 输出:\n"
+        '{"entities": [{"type": "DATA_CATEGORY|OBLIGATION|PENALTY|INSTRUMENT|REGULATOR", '
+        '"name_zh": "精炼中文名称", "name_orig": "原文对应术语", "definition": "简要说明"}], '
+        '"relations": [{"type": "REQUIRES|...", "source": "源实体名或本法规标题", '
+        '"target": "目标实体中文名", "evidence_quote": "逐字复制的原文子串", "confidence": 0.9}]}'
+    )
+    user_prompt = (
+        f"国家: {country_code}\n"
+        f"发布机构(REGULATOR): {publisher_name}\n"
+        f"所属法规文件标题(INSTRUMENT): {document_title}\n"
+        f"条号: {clause_number or '-'}\n"
+        f"条款原文:\n{clause_text[:2600]}"
+    )
+
+    payload: dict[str, Any] = {
+        "model": settings.llm_model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "temperature": 0.1,
+    }
+    if "deepseek" in settings.llm_model.lower():
+        payload["reasoning_effort"] = "low"
+
+    headers = {
+        "Authorization": f"Bearer {settings.llm_api_key}",
+        "Content-Type": "application/json",
+    }
+    url = f"{settings.llm_base_url.rstrip('/')}/chat/completions"
+
+    for attempt in range(2):
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                resp = await client.post(url, headers=headers, json=payload)
+                if resp.status_code != 200:
+                    await asyncio.sleep(0.8 * (attempt + 1))
+                    continue
+                raw = resp.json()["choices"][0]["message"]["content"]
+                data = _parse_json_object(raw)
+                valid_entities: list[ExtractedEntity] = []
+                for ent_raw in data.get("entities") or []:
+                    if not isinstance(ent_raw, dict):
+                        continue
+                    try:
+                        valid_entities.append(ExtractedEntity.model_validate(ent_raw))
+                    except ValidationError:
+                        continue
+                valid_relations: list[ExtractedRelation] = []
+                for rel_raw in data.get("relations") or []:
+                    if not isinstance(rel_raw, dict):
+                        continue
+                    try:
+                        valid_relations.append(ExtractedRelation.model_validate(rel_raw))
+                    except ValidationError:
+                        continue
+                parsed = ClauseExtractionPayload(
+                    entities=valid_entities, relations=valid_relations
+                )
+                return parsed, settings.llm_model
+        except (
+            ValidationError,
+            ValueError,
+            json.JSONDecodeError,
+            httpx.HTTPError,
+            KeyError,
+        ) as exc:
+            logger.debug("Clause extraction attempt %d failed: %s", attempt + 1, exc)
+            await asyncio.sleep(0.6 * (attempt + 1))
+    return None
+
+
 async def _find_matching_clause(
     session: AsyncSession, country_code: str, keywords: list[str]
 ) -> Clause | None:
@@ -453,6 +1440,9 @@ async def _upsert_node(
         )
     ).scalar_one_or_none()
     if node is None:
+        attrs = dict(attributes or {})
+        if evidence_clause_id:
+            attrs["evidence_clause_ids"] = [str(evidence_clause_id)]
         node = KgNode(
             country_code=country_code,
             node_type=node_type.value,
@@ -460,7 +1450,7 @@ async def _upsert_node(
             name_zh=name_zh[:255],
             name_orig=(name_orig or "")[:255] or None,
             summary=summary,
-            attributes=attributes or {},
+            attributes=attrs,
             document_id=document_id,
             evidence_clause_id=evidence_clause_id,
             review_status=review_status,
@@ -477,6 +1467,18 @@ async def _upsert_node(
             node.document_id = document_id
         if evidence_clause_id:
             node.evidence_clause_id = evidence_clause_id
+        if node.review_status == GraphReviewStatus.SUPERSEDED.value:
+            node.review_status = review_status
+        merged_attrs = dict(node.attributes or {})
+        if attributes:
+            merged_attrs.update(attributes)
+        if evidence_clause_id:
+            ev_list = list(merged_attrs.get("evidence_clause_ids") or [])
+            cid_str = str(evidence_clause_id)
+            if cid_str not in ev_list:
+                ev_list.append(cid_str)
+            merged_attrs["evidence_clause_ids"] = ev_list
+        node.attributes = merged_attrs
     return node
 
 
@@ -488,14 +1490,20 @@ async def _upsert_edge(
     target_node: KgNode,
     relation_type: RelationType,
     evidence_clause: Clause,
-    evidence_quote: str | None = None,
-    extractor_model: str = "kg-rule-extractor-v1",
+    evidence_quote: str,
+    extractor_model: str,
+    confidence: float = 0.85,
+    judge_verdict: str = "yes",
+    judge_reason: str | None = None,
+    is_structural: bool = False,
     review_status: str = GraphReviewStatus.PENDING_REVIEW.value,
-) -> KgEdge:
-    quote = (evidence_quote or evidence_clause.original_text[:280]).strip()
-    # 保证引用片段是条款原文的真实子串
-    if quote not in evidence_clause.original_text:
-        quote = evidence_clause.original_text[:280].strip()
+) -> KgEdge | None:
+    aligned = align_verbatim_quote(evidence_clause.original_text, evidence_quote)
+    if aligned is None:
+        if is_structural:
+            aligned = evidence_clause.original_text[:200].strip()
+        else:
+            return None
 
     edge = (
         await session.execute(
@@ -504,6 +1512,7 @@ async def _upsert_edge(
                 KgEdge.target_node_id == target_node.id,
                 KgEdge.relation_type == relation_type.value,
                 KgEdge.evidence_clause_id == evidence_clause.id,
+                KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
             )
         )
     ).scalar_one_or_none()
@@ -514,141 +1523,125 @@ async def _upsert_edge(
             target_node_id=target_node.id,
             relation_type=relation_type.value,
             evidence_clause_id=evidence_clause.id,
-            evidence_quote=quote,
+            evidence_quote=aligned,
             extractor_model=extractor_model,
+            confidence=confidence,
+            judge_verdict=judge_verdict,
+            judge_reason=judge_reason,
+            is_structural=is_structural,
             review_status=review_status,
         )
         session.add(edge)
         await session.flush()
+    else:
+        edge.evidence_quote = aligned
+        edge.extractor_model = extractor_model
+        edge.confidence = confidence
+        edge.judge_verdict = judge_verdict
+        edge.judge_reason = judge_reason
+        edge.is_structural = is_structural
     return edge
 
 
-def _extract_snippet(text: str, keyword: str, radius: int = 120) -> str:
-    idx = text.lower().find(keyword.lower())
-    if idx < 0:
-        return text[:240].strip()
-    start = max(0, idx - 40)
-    end = min(len(text), idx + len(keyword) + radius)
-    return text[start:end].strip()
+def _score_clause_for_extraction(clause: Clause) -> int:
+    """对条款所含合规要素信号打分,优先抽取包含实质权利义务、出境、准入、豁免、修订、罚则的条款。"""
+    txt = (clause.original_text or "").strip()
+    if len(txt) < 40:
+        return -1
+    score = 0
+    for pat in _RELATION_SEMANTIC_PATTERNS.values():
+        if pat.search(txt):
+            score += 3
+    if re.search(
+        r"(?:personal\s+data|autonomous|data\s+intermediary|data\s+breach|transfer|iot|"
+        r"données\s+à\s+caractère\s+personnel|حماية\s+البيانات|انترنت\s+الأشياء)",
+        txt,
+        re.IGNORECASE,
+    ):
+        score += 2
+    return score
 
 
-# 针对条款原文的六要素与十二关系规则模式(覆盖英/法/阿多语种法规正文)
-_EXTRACTION_RULES: list[dict] = [
-    {
-        "keywords": ["transfer", "outside singapore", "hors du territoire", "خارج"],
-        "data_node": ("data:personal_data", "个人数据(含车主与驾乘识别数据)", "Personal Data"),
-        "obligation_node": (
-            "obl:cross_border_comparable_protection",
-            "数据出境同等保护与合规传输义务",
-            "Cross-border Transfer Comparable Protection Obligation",
-        ),
-        "relations": [
-            (RelationType.RESTRICTS_CROSS_BORDER, "instrument", "data"),
-            (RelationType.REQUIRES, "instrument", "obligation"),
-            (RelationType.GOVERNS, "obligation", "data"),
-        ],
-    },
-    {
-        "keywords": ["consent", "consentement", "موافقة"],
-        "data_node": ("data:personal_data", "个人数据(含车主与驾乘识别数据)", "Personal Data"),
-        "obligation_node": (
-            "obl:notice_and_consent",
-            "个人数据处理告知与同意义务",
-            "Notification and Consent Obligation",
-        ),
-        "relations": [
-            (RelationType.REQUIRES, "instrument", "obligation"),
-            (RelationType.GOVERNS, "instrument", "data"),
-        ],
-    },
-    {
-        "keywords": ["data breach", "notifiable", "3 calendar days", "violation de données"],
-        "data_node": (
-            "data:breach_incident_data",
-            "数据安全事件与受影响个人数据",
-            "Breach Incident Data",
-        ),
-        "obligation_node": (
-            "obl:data_breach_notification",
-            "数据泄露事件强制通报义务(3个日历日内)",
-            "Mandatory Data Breach Notification Obligation",
-        ),
-        "relations": [
-            (RelationType.REQUIRES, "instrument", "obligation"),
-            (RelationType.APPLIES_TO_SCENARIO, "obligation", "data"),
-        ],
-    },
-    {
-        "keywords": ["data intermediary", "on behalf of another organisation", "sous-traitant"],
-        "data_node": (
-            "data:entrusted_processing_data",
-            "受托处理的个人与车联网数据",
-            "Entrusted Personal Data",
-        ),
-        "obligation_node": (
-            "obl:data_intermediary_exemptions",
-            "数据中介机构(受托处理者)义务豁免与安全留存边界",
-            "Data Intermediary Partial Exemption & Protection Duty",
-        ),
-        "relations": [
-            (RelationType.EXEMPTS, "instrument", "obligation"),
-            (RelationType.GOVERNS, "obligation", "data"),
-        ],
-    },
-    {
-        "keywords": [
-            "autonomous motor vehicle",
-            "autonomous system",
-            "trial",
-            "authorisation",
-            "approval",
-        ],
-        "data_node": (
-            "data:av_sensor_and_recorder_data",
-            "自动驾驶传感器与车载黑匣子记录数据",
-            "AV Sensor & Data Recorder Data",
-        ),
-        "obligation_node": (
-            "obl:av_trial_authorisation_and_recorder",
-            "自动驾驶公共道路测试准入许可与黑匣子数据留存义务",
-            "AV Road Trial Authorisation & Data Recorder Retention",
-        ),
-        "relations": [
-            (RelationType.REQUIRES_ADMISSION, "instrument", "obligation"),
-            (RelationType.APPLIES_TO_SCENARIO, "obligation", "data"),
-            (RelationType.PROHIBITS, "instrument", "data"),
-        ],
-    },
-    {
-        "keywords": [
-            "penalty",
-            "fine",
-            "offence",
-            "liable on conviction",
-            "imprisonment",
-            "amende",
-            "puni",
-            "عقوبة",
-            "غرامة",
-        ],
-        "penalty_node": (
-            "pen:statutory_fine_and_liability",
-            "法定行政罚款与刑事/行政处罚责任",
-            "Statutory Financial Penalty & Offence Liability",
-        ),
-        "relations": [
-            (RelationType.PENALIZES, "instrument", "penalty"),
-        ],
-    },
-]
+def _select_candidate_clauses(clauses: list[Clause], max_clauses: int = 18) -> list[Clause]:
+    """从一份相关法规中选出最具实质规范价值的条款送入大模型抽取(兼顾罚则、跨境、准入、豁免、修订等多样性)。"""
+    scored: list[tuple[int, int, Clause]] = []
+    for idx, c in enumerate(clauses):
+        sc = _score_clause_for_extraction(c)
+        if sc >= 0:
+            scored.append((sc, -idx, c))
+    scored.sort(reverse=True)
+
+    selected_ids: set[uuid.UUID] = set()
+    selected: list[Clause] = []
+
+    priority_rels = [
+        RelationType.PENALIZES,
+        RelationType.RESTRICTS_CROSS_BORDER,
+        RelationType.REQUIRES_ADMISSION,
+        RelationType.EXEMPTS,
+        RelationType.AMENDS,
+        RelationType.REPEALS,
+        RelationType.PROHIBITS,
+        RelationType.REQUIRES,
+    ]
+    for rtype in priority_rels:
+        if len(selected) >= max_clauses:
+            break
+        pat = _RELATION_SEMANTIC_PATTERNS.get(rtype)
+        if pat is None:
+            continue
+        for _sc, _neg_idx, c in scored:
+            if c.id not in selected_ids and pat.search(c.original_text or ""):
+                selected.append(c)
+                selected_ids.add(c.id)
+                break
+
+    for _sc, _neg_idx, c in scored:
+        if len(selected) >= max_clauses:
+            break
+        if c.id not in selected_ids:
+            selected.append(c)
+            selected_ids.add(c.id)
+
+    selected.sort(key=lambda x: x.ordinal)
+    return selected
+
+
+async def supersede_legacy_rule_edges(
+    session: AsyncSession, country_code: str | None = None
+) -> int:
+    """将旧 kg-rule-extractor-v1 规则引擎产出的边标记为 superseded(保留历史行,不物理删除)。"""
+    stmt = (
+        update(KgEdge)
+        .where(
+            KgEdge.extractor_model == LEGACY_RULE_EXTRACTOR_MODEL,
+            KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
+        )
+        .values(review_status=GraphReviewStatus.SUPERSEDED.value)
+    )
+    if country_code:
+        stmt = stmt.where(KgEdge.country_code == country_code.upper())
+    res = await session.execute(stmt)
+    await session.flush()
+    return int(res.rowcount or 0)
 
 
 async def extract_knowledge_for_country(
-    session: AsyncSession, country_code: str, translate_sample_per_doc: int = 8
+    session: AsyncSession,
+    country_code: str,
+    translate_sample_per_doc: int = 6,
+    max_clauses_per_doc: int = 16,
+    concurrency: int = 8,
 ) -> dict[str, int]:
-    """对指定国家已解析的官方法规执行六要素+十二关系知识图谱抽取,并对核心条款执行术语受控翻译。"""
+    """对指定国家已解析的官方法规执行 S2 六要素+十二关系知识图谱抽取:
+    1. 旧 kg-rule-extractor-v1 边全部标为 superseded;
+    2. 对每份文档执行相关性判定(classify_document_relevance),out_of_scope 文件跳过图谱抽取;
+    3. 对 relevant 文件建立结构边(REGULATOR->INSTRUMENT, REGULATOR->COUNTRY);
+    4. 对条款调用大模型抽取六要素实体与十二类关系,经类型约束 + 逐字校验 + 语义裁判后入图谱。
+    """
     cc = country_code.upper()
     await seed_glossary_and_review_points(session)
+    superseded_count = await supersede_legacy_rule_edges(session, cc)
 
     country_zh, country_orig = COUNTRY_NAMES.get(cc, (cc, cc))
     country_node = await _upsert_node(
@@ -672,14 +1665,6 @@ async def extract_knowledge_for_country(
         .all()
     )
 
-    nodes_before = len(
-        (await session.execute(select(KgNode.id).where(KgNode.country_code == cc))).scalars().all()
-    )
-    edges_before = len(
-        (await session.execute(select(KgEdge.id).where(KgEdge.country_code == cc))).scalars().all()
-    )
-    translated_count = 0
-
     terms = list(
         (
             await session.execute(
@@ -692,9 +1677,14 @@ async def extract_knowledge_for_country(
         .all()
     )
 
-    # 先按发布机构登记 REGULATOR 节点,记录各文档对应的主法规节点以便建立 AMENDS/REPEALS 关系
-    doc_nodes: dict[uuid.UUID, tuple[KgNode, Clause]] = {}
+    from app.sources.models import SourceSite
+
+    translated_count = 0
+    relevant_docs_info: list[
+        tuple[Document, DocumentVersion, list[Clause], KgNode, KgNode, str]
+    ] = []
     base_act_nodes: dict[str, KgNode] = {}
+    inst_by_title: dict[str, KgNode] = {}
 
     for doc in docs:
         ver = (
@@ -720,13 +1710,28 @@ async def extract_knowledge_for_country(
         if not clauses:
             continue
 
-        first_clause = clauses[0]
-        # 1. 监管机构/发布机构节点 (REGULATOR)
-        from app.sources.models import SourceSite
+        rel_status, _ = await classify_document_relevance(doc, clauses[:3])
+        if rel_status != "relevant":
+            # 若该 out_of_scope 文档此前曾生成过 INSTRUMENT 节点或边,将其标记为 superseded
+            old_inst = (
+                await session.execute(select(KgNode).where(KgNode.document_id == doc.id))
+            ).scalars().all()
+            for onode in old_inst:
+                onode.review_status = GraphReviewStatus.SUPERSEDED.value
+                await session.execute(
+                    update(KgEdge)
+                    .where(
+                        (KgEdge.source_node_id == onode.id) | (KgEdge.target_node_id == onode.id)
+                    )
+                    .values(review_status=GraphReviewStatus.SUPERSEDED.value)
+                )
+            continue
 
+        first_clause = clauses[0]
         site = await session.get(SourceSite, doc.site_id)
         publisher_name = site.publisher if site else f"{country_zh}官方发布机构"
-        reg_key = f"reg:{re.sub(r'[^a-z0-9]+', '_', publisher_name.lower()).strip('_')[:48]}"
+        reg_slug = re.sub(r"[^a-z0-9\u4e00-\u9fff]+", "_", publisher_name.lower()).strip("_")[:48]
+        reg_key = f"reg:{reg_slug}"
         reg_node = await _upsert_node(
             session,
             country_code=cc,
@@ -739,7 +1744,6 @@ async def extract_knowledge_for_country(
             review_status=GraphReviewStatus.APPROVED.value,
         )
 
-        # 2. 法规文件节点 (INSTRUMENT)
         inst_key = f"inst:{str(doc.id)[:12]}"
         inst_node = await _upsert_node(
             session,
@@ -759,17 +1763,33 @@ async def extract_knowledge_for_country(
             evidence_clause_id=first_clause.id,
             review_status=GraphReviewStatus.APPROVED.value,
         )
-        doc_nodes[doc.id] = (inst_node, first_clause)
+        inst_by_title[doc.title.lower().strip()] = inst_node
 
-        title_lower = doc.title.lower()
-        if "personal data protection act" in title_lower and "amendment" not in title_lower:
+        title_lower = doc.title.lower().strip()
+        if title_lower in (
+            "personal data protection act 2012",
+            "personal data protection act 2012 (2020 revised edition)",
+        ):
             base_act_nodes["pdpa"] = inst_node
-        elif "road traffic act" in title_lower and "amendment" not in title_lower:
-            base_act_nodes["rta"] = inst_node
-        elif "cybersecurity act" in title_lower and "amendment" not in title_lower:
-            base_act_nodes["csa"] = inst_node
+        elif (
+            "personal data protection regulations 2014" in title_lower
+            or "personal data protection regulations 2021" in title_lower
+        ):
+            base_act_nodes["pdpa_regs"] = inst_node
+        elif (
+            "road traffic" in title_lower
+            and "autonomous motor vehicles" in title_lower
+            and "amendment" not in title_lower
+        ):
+            base_act_nodes["rta_amv"] = inst_node
+        elif "notification of data breaches" in title_lower and "amendment" not in title_lower:
+            base_act_nodes["pdpa_breach"] = inst_node
+        elif (
+            "loi n° 09-08" in title_lower or "09-08" in title_lower
+        ) and "décret" not in title_lower:
+            base_act_nodes["ma_0908"] = inst_node
 
-        # 关系 1: 监管机构 PUBLISHES 法规文件
+        # 结构边 1: 监管机构 PUBLISHES 法规文件 (is_structural=True)
         await _upsert_edge(
             session,
             country_code=cc,
@@ -777,9 +1797,15 @@ async def extract_knowledge_for_country(
             target_node=inst_node,
             relation_type=RelationType.PUBLISHES,
             evidence_clause=first_clause,
+            evidence_quote=first_clause.original_text[:200].strip(),
+            extractor_model=STRUCTURAL_EXTRACTOR_MODEL,
+            confidence=1.0,
+            judge_verdict="structural",
+            judge_reason="基于官方站点与法规元数据确立的机构发布结构关系",
+            is_structural=True,
             review_status=GraphReviewStatus.APPROVED.value,
         )
-        # 关系 8: 监管机构 SUPERVISES 司法辖区合规运行
+        # 结构边 2: 监管机构 SUPERVISES 国家司法辖区 (is_structural=True)
         await _upsert_edge(
             session,
             country_code=cc,
@@ -787,10 +1813,16 @@ async def extract_knowledge_for_country(
             target_node=country_node,
             relation_type=RelationType.SUPERVISES,
             evidence_clause=first_clause,
+            evidence_quote=first_clause.original_text[:200].strip(),
+            extractor_model=STRUCTURAL_EXTRACTOR_MODEL,
+            confidence=1.0,
+            judge_verdict="structural",
+            judge_reason="基于官方站点与司法辖区确立的监管结构关系",
+            is_structural=True,
             review_status=GraphReviewStatus.APPROVED.value,
         )
 
-        # 对每份文档的前 N 条核心条款执行受术语约束机器翻译
+        # 对前 N 条核心条款补齐受控翻译
         for c in clauses[:translate_sample_per_doc]:
             existing_tr = (
                 await session.execute(
@@ -805,121 +1837,308 @@ async def extract_knowledge_for_country(
                 await translate_clause(session, c, cc, terms)
                 translated_count += 1
 
-        # 扫描条款抽取 DATA_CATEGORY, OBLIGATION, PENALTY 及语义关系边
-        for c in clauses[:60]:
-            low = c.original_text.lower()
-            # 检测修订(AMENDS)与废止(REPEALS)关系
-            if ("amend" in low or "amendment" in title_lower) and base_act_nodes:
-                target_base = (
-                    base_act_nodes.get("pdpa")
-                    if "personal data" in low or "personal data" in title_lower
-                    else base_act_nodes.get("rta")
-                    if "road traffic" in low or "road traffic" in title_lower
-                    else next(iter(base_act_nodes.values()), None)
+        relevant_docs_info.append((doc, ver, clauses, reg_node, inst_node, publisher_name))
+
+    # 并发调用大模型抽取各相关文档的候选条款并执行语义裁判
+    sem = asyncio.Semaphore(max(1, concurrency))
+    extraction_tasks: list[tuple[Document, Clause, KgNode, KgNode, str]] = []
+    for doc, _ver, clauses, reg_node, inst_node, pub_name in relevant_docs_info:
+        cand_clauses = _select_candidate_clauses(clauses, max_clauses=max_clauses_per_doc)
+        for c in cand_clauses:
+            extraction_tasks.append((doc, c, reg_node, inst_node, pub_name))
+
+    async def _extract_and_judge_one(
+        doc: Document, clause: Clause, reg_node: KgNode, inst_node: KgNode, pub_name: str
+    ) -> tuple[
+        Document,
+        Clause,
+        KgNode,
+        KgNode,
+        str,
+        ClauseExtractionPayload,
+        list[
+            tuple[
+                ExtractedRelation,
+                CandidateEvaluationResult,
+                NodeType,
+                str,
+                str,
+                NodeType,
+                str,
+                str,
+            ]
+        ],
+    ] | None:
+        async with sem:
+            res = await _call_llm_extract_clause(
+                clause_text=clause.original_text,
+                clause_number=clause.clause_number,
+                document_title=doc.title,
+                publisher_name=pub_name,
+                country_code=cc,
+            )
+            if res is None:
+                return None
+            payload, model_name = res
+
+            # 建立本条款局部实体索引
+            entity_lookup: dict[str, ExtractedEntity] = {}
+            for ent in payload.entities:
+                entity_lookup[ent.name_zh.strip().lower()] = ent
+                if ent.name_orig:
+                    entity_lookup[ent.name_orig.strip().lower()] = ent
+
+            validated_rels: list[
+                tuple[
+                    ExtractedRelation,
+                    CandidateEvaluationResult,
+                    NodeType,
+                    str,
+                    str,
+                    NodeType,
+                    str,
+                    str,
+                ]
+            ] = []
+
+            top_rels = sorted(
+                payload.relations, key=lambda r: r.confidence, reverse=True
+            )[:3]
+            for rel in top_rels:
+                src_raw = rel.source.strip()
+                dst_raw = rel.target.strip()
+
+                # 解析源节点类型与名称
+                src_ent = entity_lookup.get(src_raw.lower())
+                if (
+                    src_raw.lower() == doc.title.lower().strip()
+                    or src_raw in ("本法", "本法规", "本条例", "本指南")
+                    or (src_ent and src_ent.type == NodeType.INSTRUMENT)
+                ):
+                    src_type = NodeType.INSTRUMENT
+                    src_zh = doc.title
+                    src_orig = doc.title
+                elif src_raw.lower() == pub_name.lower().strip() or (
+                    src_ent and src_ent.type == NodeType.REGULATOR
+                ):
+                    src_type = NodeType.REGULATOR
+                    src_zh = pub_name
+                    src_orig = pub_name
+                elif src_ent is not None:
+                    src_type = src_ent.type
+                    src_zh = src_ent.name_zh
+                    src_orig = src_ent.name_orig or src_ent.name_zh
+                else:
+                    src_type = NodeType.INSTRUMENT
+                    src_zh = doc.title
+                    src_orig = doc.title
+
+                # 解析目标节点类型与名称
+                dst_ent = entity_lookup.get(dst_raw.lower())
+                if dst_ent is not None:
+                    dst_type = dst_ent.type
+                    dst_zh = dst_ent.name_zh
+                    dst_orig = dst_ent.name_orig or dst_ent.name_zh
+                elif rel.type in (RelationType.AMENDS, RelationType.REPEALS):
+                    dst_type = NodeType.INSTRUMENT
+                    dst_zh = dst_raw
+                    dst_orig = dst_raw
+                elif rel.type == RelationType.PENALIZES:
+                    dst_type = NodeType.PENALTY
+                    dst_zh = dst_raw
+                    dst_orig = dst_raw
+                elif rel.type in (RelationType.REQUIRES, RelationType.REQUIRES_ADMISSION):
+                    dst_type = NodeType.OBLIGATION
+                    dst_zh = dst_raw
+                    dst_orig = dst_raw
+                else:
+                    dst_type = NodeType.DATA_CATEGORY
+                    dst_zh = dst_raw
+                    dst_orig = dst_raw
+
+                eval_res = await evaluate_kg_candidate(
+                    relation_type=rel.type,
+                    source_type=src_type,
+                    source_name=src_zh,
+                    target_type=dst_type,
+                    target_name=dst_zh,
+                    evidence_quote=rel.evidence_quote,
+                    clause_original_text=clause.original_text,
+                    document_title=doc.title,
+                    confidence=rel.confidence,
+                    use_llm_judge=True,
                 )
-                if target_base and target_base.id != inst_node.id:
-                    await _upsert_edge(
-                        session,
-                        country_code=cc,
-                        source_node=inst_node,
-                        target_node=target_base,
-                        relation_type=RelationType.AMENDS,
-                        evidence_clause=c,
-                        evidence_quote=_extract_snippet(c.original_text, "amend"),
-                    )
-            if ("repeal" in low or "revoke" in low or "abrog" in low) and base_act_nodes:
-                target_base = next(iter(base_act_nodes.values()), None)
-                if target_base and target_base.id != inst_node.id:
-                    await _upsert_edge(
-                        session,
-                        country_code=cc,
-                        source_node=inst_node,
-                        target_node=target_base,
-                        relation_type=RelationType.REPEALS,
-                        evidence_clause=c,
-                        evidence_quote=_extract_snippet(c.original_text, "repeal"),
+                if eval_res.admitted and eval_res.aligned_quote:
+                    validated_rels.append(
+                        (rel, eval_res, src_type, src_zh, src_orig, dst_type, dst_zh, dst_orig)
                     )
 
-            for rule in _EXTRACTION_RULES:
-                matched_kw = next((kw for kw in rule["keywords"] if kw in low), None)
-                if not matched_kw:
-                    continue
+            return (doc, clause, reg_node, inst_node, model_name, payload, validated_rels)
 
-                snippet = _extract_snippet(c.original_text, matched_kw)
-                node_map: dict[str, KgNode] = {"instrument": inst_node}
+    batch_results = await asyncio.gather(
+        *[_extract_and_judge_one(d, c, rn, in_n, pn) for d, c, rn, in_n, pn in extraction_tasks]
+    )
 
-                if "data_node" in rule:
-                    dk, dzh, dorig = rule["data_node"]
-                    node_map["data"] = await _upsert_node(
+    semantic_edges_added = 0
+    for item in batch_results:
+        if item is None:
+            continue
+        doc, clause, reg_node, inst_node, model_name, payload, validated_rels = item
+        if not validated_rels:
+            continue
+
+        # 仅写入与通过校验的语义边关联的实体节点(避免产生孤立垃圾节点)
+        local_nodes: dict[tuple[NodeType, str], KgNode] = {}
+        for ent in payload.entities:
+            if ent.type in (NodeType.DATA_CATEGORY, NodeType.OBLIGATION, NodeType.PENALTY):
+                nkey, czh, corig = normalize_entity_node_key(ent.type, ent.name_zh, ent.name_orig)
+                node_obj = await _upsert_node(
+                    session,
+                    country_code=cc,
+                    node_type=ent.type,
+                    node_key=nkey,
+                    name_zh=czh,
+                    name_orig=corig,
+                    summary=ent.definition,
+                    evidence_clause_id=clause.id,
+                    review_status=GraphReviewStatus.PENDING_REVIEW.value,
+                )
+                local_nodes[(ent.type, ent.name_zh.strip().lower())] = node_obj
+
+        for rel, eval_res, src_type, src_zh, src_orig, dst_type, dst_zh, dst_orig in validated_rels:
+            # 确定 source KgNode
+            if src_type == NodeType.INSTRUMENT:
+                src_node = inst_node
+            elif src_type == NodeType.REGULATOR:
+                src_node = reg_node
+            else:
+                src_node = local_nodes.get((src_type, src_zh.strip().lower()))
+                if src_node is None:
+                    nkey, czh, corig = normalize_entity_node_key(src_type, src_zh, src_orig)
+                    src_node = await _upsert_node(
                         session,
                         country_code=cc,
-                        node_type=NodeType.DATA_CATEGORY,
-                        node_key=dk,
-                        name_zh=dzh,
-                        name_orig=dorig,
-                        evidence_clause_id=c.id,
-                    )
-                if "obligation_node" in rule:
-                    ok, ozh, oorig = rule["obligation_node"]
-                    node_map["obligation"] = await _upsert_node(
-                        session,
-                        country_code=cc,
-                        node_type=NodeType.OBLIGATION,
-                        node_key=ok,
-                        name_zh=ozh,
-                        name_orig=oorig,
-                        evidence_clause_id=c.id,
-                    )
-                if "penalty_node" in rule:
-                    pk, pzh, porig = rule["penalty_node"]
-                    node_map["penalty"] = await _upsert_node(
-                        session,
-                        country_code=cc,
-                        node_type=NodeType.PENALTY,
-                        node_key=pk,
-                        name_zh=pzh,
-                        name_orig=porig,
-                        evidence_clause_id=c.id,
+                        node_type=src_type,
+                        node_key=nkey,
+                        name_zh=czh,
+                        name_orig=corig,
+                        evidence_clause_id=clause.id,
+                        review_status=GraphReviewStatus.PENDING_REVIEW.value,
                     )
 
-                for rel_type, src_role, dst_role in rule["relations"]:
-                    if src_role in node_map and dst_role in node_map:
-                        await _upsert_edge(
-                            session,
-                            country_code=cc,
-                            source_node=node_map[src_role],
-                            target_node=node_map[dst_role],
-                            relation_type=rel_type,
-                            evidence_clause=c,
-                            evidence_quote=snippet,
+            # 确定 target KgNode
+            if dst_type == NodeType.INSTRUMENT:
+                # 优先关联本国已入库的被修订/被废止主法规节点
+                dst_lower = dst_zh.lower()
+                dst_node = inst_by_title.get(dst_lower)
+                if dst_node is None:
+                    if "regulations" in dst_lower and "personal data protection" in dst_lower:
+                        dst_node = base_act_nodes.get("pdpa_regs") or base_act_nodes.get("pdpa")
+                    elif "personal data protection act" in dst_lower or "pdpa" in dst_lower:
+                        dst_node = base_act_nodes.get("pdpa")
+                    elif "autonomous motor vehicles" in dst_lower or "road traffic" in dst_lower:
+                        dst_node = base_act_nodes.get("rta_amv")
+                    elif "notification of data breaches" in dst_lower:
+                        dst_node = base_act_nodes.get("pdpa_breach")
+                    elif "09-08" in dst_lower:
+                        dst_node = base_act_nodes.get("ma_0908")
+                if dst_node is None or dst_node.id == src_node.id:
+                    if base_act_nodes:
+                        candidate_base = next(
+                            (b for b in base_act_nodes.values() if b.id != src_node.id), None
                         )
-                        # 同时确保该证据条款已有受控翻译
-                        has_tr = (
-                            await session.execute(
-                                select(ClauseTranslation.id).where(
-                                    ClauseTranslation.clause_id == c.id,
-                                    ClauseTranslation.review_status
-                                    != TranslationReviewStatus.SUPERSEDED.value,
-                                    ClauseTranslation.engine == "llm",
-                                )
-                            )
-                        ).first()
-                        if not has_tr:
-                            await translate_clause(session, c, cc, terms)
-                            translated_count += 1
+                        dst_node = candidate_base
+                if dst_node is None or dst_node.id == src_node.id:
+                    continue
+            elif dst_type == NodeType.REGULATOR:
+                dst_node = reg_node
+            elif dst_type == NodeType.COUNTRY:
+                dst_node = country_node
+            else:
+                dst_node = local_nodes.get((dst_type, dst_zh.strip().lower()))
+                if dst_node is None:
+                    nkey, czh, corig = normalize_entity_node_key(dst_type, dst_zh, dst_orig)
+                    dst_node = await _upsert_node(
+                        session,
+                        country_code=cc,
+                        node_type=dst_type,
+                        node_key=nkey,
+                        name_zh=czh,
+                        name_orig=corig,
+                        evidence_clause_id=clause.id,
+                        review_status=GraphReviewStatus.PENDING_REVIEW.value,
+                    )
+
+            edge_obj = await _upsert_edge(
+                session,
+                country_code=cc,
+                source_node=src_node,
+                target_node=dst_node,
+                relation_type=rel.type,
+                evidence_clause=clause,
+                evidence_quote=eval_res.aligned_quote or rel.evidence_quote,
+                extractor_model=model_name,
+                confidence=eval_res.confidence,
+                judge_verdict=eval_res.judge_verdict,
+                judge_reason=eval_res.judge_reason,
+                is_structural=False,
+                review_status=GraphReviewStatus.PENDING_REVIEW.value,
+            )
+            if edge_obj is not None:
+                semantic_edges_added += 1
+
+    # 将没有任何活跃边连接的旧孤立节点标记为 superseded,确保活跃图谱干净
+    active_edges = list(
+        (
+            await session.execute(
+                select(KgEdge).where(
+                    KgEdge.country_code == cc,
+                    KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    connected_ids = {e.source_node_id for e in active_edges} | {
+        e.target_node_id for e in active_edges
+    }
+    all_country_nodes = list(
+        (
+            await session.execute(
+                select(KgNode).where(
+                    KgNode.country_code == cc,
+                    KgNode.review_status != GraphReviewStatus.SUPERSEDED.value,
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    for n in all_country_nodes:
+        if n.id not in connected_ids and n.node_type != NodeType.COUNTRY.value:
+            n.review_status = GraphReviewStatus.SUPERSEDED.value
 
     await session.commit()
-    nodes_after = len(
-        (await session.execute(select(KgNode.id).where(KgNode.country_code == cc))).scalars().all()
+
+    active_nodes_after = len(
+        (
+            await session.execute(
+                select(KgNode.id).where(
+                    KgNode.country_code == cc,
+                    KgNode.review_status != GraphReviewStatus.SUPERSEDED.value,
+                )
+            )
+        )
+        .scalars()
+        .all()
     )
-    edges_after = len(
-        (await session.execute(select(KgEdge.id).where(KgEdge.country_code == cc))).scalars().all()
-    )
+    active_edges_after = len(active_edges)
     return {
-        "nodes_total": nodes_after,
-        "edges_total": edges_after,
-        "nodes_new": max(0, nodes_after - nodes_before),
-        "edges_new": max(0, edges_after - edges_before),
+        "nodes_total": active_nodes_after,
+        "edges_total": active_edges_after,
+        "semantic_edges_added": semantic_edges_added,
+        "superseded_legacy_edges": superseded_count,
         "clauses_translated": translated_count,
     }
 
@@ -987,13 +2206,19 @@ async def handle_new_version_linkage(
             )
         ).scalar_one_or_none()
         edges = list(
-            (await session.execute(select(KgEdge).where(KgEdge.evidence_clause_id == old_c.id)))
+            (
+                await session.execute(
+                    select(KgEdge).where(
+                        KgEdge.evidence_clause_id == old_c.id,
+                        KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
+                    )
+                )
+            )
             .scalars()
             .all()
         )
         matched_new = new_by_hash.get(old_c.text_hash)
         if matched_new is not None:
-            # 条款原文完全未变:如果旧条款有译文且新条款尚未创建译文,直接迁移继承(保留已复核状态)
             if tr is not None:
                 exists_new_tr = (
                     await session.execute(
@@ -1028,7 +2253,6 @@ async def handle_new_version_linkage(
                     )
                     reused_tr += 1
         else:
-            # 条款原文已修改或删除:将旧译文和挂在该条款上的语义边标记为 stale
             if tr is not None and tr.review_status != TranslationReviewStatus.STALE.value:
                 tr.review_status = TranslationReviewStatus.STALE.value
                 stale_tr += 1

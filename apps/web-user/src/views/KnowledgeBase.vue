@@ -69,6 +69,12 @@ interface KgEdge {
   evidence_quote: string
   clause_number: string | null
   document_title: string | null
+  extractor_model?: string
+  confidence?: number
+  judge_verdict?: string
+  judge_reason?: string | null
+  is_structural?: boolean
+  review_status?: string
   usable_as_legal_basis: boolean
 }
 
@@ -260,7 +266,10 @@ function showAllNodeTypes() {
 const typeFilteredEdges = computed(() => {
   const vis = new Set(visibleNodeTypes.value)
   return graph.value.edges.filter(
-    (e) => vis.has(e.source_node_type) && vis.has(e.target_node_type),
+    (e) =>
+      vis.has(e.source_node_type) &&
+      vis.has(e.target_node_type) &&
+      (!e.review_status || e.review_status === 'approved' || e.review_status === 'pending_review'),
   )
 })
 
@@ -787,7 +796,9 @@ onMounted(loadData)
         <div class="graph-canvas">
           <div class="sub" style="padding: 4px 8px">
             合规地图展示 {{ fgNodes.length }} 个节点 / {{ fgEdges.length }} 条关系（合并自
-            {{ filteredEdges.length }} 条可见证据边，已启用 {{ visibleNodeTypes.length }}/6 类节点）；滚轮缩放、拖拽节点、点击节点可筛选下方证据明细。
+            {{ filteredEdges.length }} 条可见证据边，仅展示「已复核」与明确标注「待核对」的合规边；结构边
+            {{ graph.quality_summary?.structural_edges ?? 0 }} 条，大模型语义边
+            {{ graph.quality_summary?.semantic_edges ?? 0 }} 条）；点击节点可筛选下方逐字证据明细。
           </div>
           <KgForceGraph
             v-if="activeTab === 'graph'"
@@ -812,11 +823,18 @@ onMounted(loadData)
             </template>
           </el-table-column>
           <el-table-column prop="target_name_zh" label="目标要素" min-width="180" />
-          <el-table-column prop="evidence_quote" label="证据条款原文摘录" min-width="280" />
-          <el-table-column label="状态" width="150">
+          <el-table-column label="证据条款与逐字原文摘录" min-width="280">
+            <template #default="{ row }">
+              <div class="sub" style="font-weight: 600">
+                {{ row.document_title || '官方法规' }} · 条号 {{ row.clause_number || '-' }}
+              </div>
+              <div>{{ row.evidence_quote }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" width="160">
             <template #default="{ row }">
               <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
-                {{ row.usable_as_legal_basis ? '已复核(可作依据)' : '待律所核对' }}
+                {{ row.usable_as_legal_basis ? '已复核(可作依据)' : '待核对(大模型抽取)' }}
               </el-tag>
             </template>
           </el-table-column>

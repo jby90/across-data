@@ -8,12 +8,14 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     DateTime,
+    Float,
     ForeignKey,
     Integer,
     String,
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
@@ -65,6 +67,7 @@ class GraphReviewStatus(enum.StrEnum):
     APPROVED = "approved"
     REJECTED = "rejected"
     STALE = "stale"
+    SUPERSEDED = "superseded"
 
 
 class ReviewPointStatus(enum.StrEnum):
@@ -207,7 +210,7 @@ class KgNode(Base):
             name="ck_kg_nodes_type",
         ),
         CheckConstraint(
-            "review_status IN ('pending_review','approved','rejected','stale')",
+            "review_status IN ('pending_review','approved','rejected','stale','superseded')",
             name="ck_kg_nodes_review_status",
         ),
     )
@@ -240,13 +243,6 @@ class KgEdge(Base):
 
     __tablename__ = "kg_edges"
     __table_args__ = (
-        UniqueConstraint(
-            "source_node_id",
-            "target_node_id",
-            "relation_type",
-            "evidence_clause_id",
-            name="uq_kg_edges_triple_clause",
-        ),
         CheckConstraint(
             "relation_type IN ("
             "'PUBLISHES','AMENDS','REPEALS','GOVERNS','PROHIBITS','REQUIRES',"
@@ -256,7 +252,7 @@ class KgEdge(Base):
             name="ck_kg_edges_relation",
         ),
         CheckConstraint(
-            "review_status IN ('pending_review','approved','rejected','stale')",
+            "review_status IN ('pending_review','approved','rejected','stale','superseded')",
             name="ck_kg_edges_review_status",
         ),
     )
@@ -275,6 +271,12 @@ class KgEdge(Base):
     )
     evidence_quote: Mapped[str] = mapped_column(Text)
     extractor_model: Mapped[str] = mapped_column(String(128))
+    confidence: Mapped[float] = mapped_column(Float, default=0.85, server_default="0.85")
+    judge_verdict: Mapped[str] = mapped_column(String(16), default="yes", server_default="yes")
+    judge_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_structural: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
     review_status: Mapped[str] = mapped_column(
         String(24), default=GraphReviewStatus.PENDING_REVIEW.value, server_default="pending_review"
     )

@@ -280,19 +280,52 @@ def _compute_eight_attributes(
 
 
 async def _build_graph_payload(
-    session: AsyncSession, country_code: str, only_approved: bool = False
+    session: AsyncSession,
+    country_code: str,
+    only_approved: bool = False,
+    user_view: bool = False,
 ) -> GraphPayloadOut:
     cc = country_code.upper()
-    node_stmt = select(KgNode).where(KgNode.country_code == cc).order_by(KgNode.node_type)
+    node_stmt = (
+        select(KgNode)
+        .where(
+            KgNode.country_code == cc,
+            KgNode.review_status != "superseded",
+        )
+        .order_by(KgNode.node_type)
+    )
     if only_approved:
         node_stmt = node_stmt.where(KgNode.review_status == "approved")
+    elif user_view:
+        node_stmt = node_stmt.where(KgNode.review_status.in_(("approved", "pending_review")))
     nodes = list((await session.execute(node_stmt)).scalars().all())
     node_by_id = {n.id: n for n in nodes}
 
-    edge_stmt = select(KgEdge).where(KgEdge.country_code == cc).order_by(KgEdge.relation_type)
+    edge_stmt = (
+        select(KgEdge)
+        .where(
+            KgEdge.country_code == cc,
+            KgEdge.review_status != "superseded",
+        )
+        .order_by(KgEdge.relation_type)
+    )
     if only_approved:
         edge_stmt = edge_stmt.where(KgEdge.review_status == "approved")
+    elif user_view:
+        edge_stmt = edge_stmt.where(KgEdge.review_status.in_(("approved", "pending_review")))
     edges = list((await session.execute(edge_stmt)).scalars().all())
+
+    superseded_edges_count = int(
+        (
+            await session.execute(
+                select(func.count(KgEdge.id)).where(
+                    KgEdge.country_code == cc,
+                    KgEdge.review_status == "superseded",
+                )
+            )
+        ).scalar_one()
+        or 0
+    )
 
     clause_ids = {e.evidence_clause_id for e in edges}
     clause_map: dict[uuid.UUID, tuple[str | None, str | None, str]] = {}
@@ -354,6 +387,10 @@ async def _build_graph_payload(
                 clause_number=cnum,
                 document_title=dtitle,
                 extractor_model=e.extractor_model,
+                confidence=float(getattr(e, "confidence", 0.85)),
+                judge_verdict=str(getattr(e, "judge_verdict", "yes")),
+                judge_reason=getattr(e, "judge_reason", None),
+                is_structural=bool(getattr(e, "is_structural", False)),
                 review_status=e.review_status,
                 usable_as_legal_basis=(e.review_status == "approved"),
             )
@@ -393,6 +430,18 @@ async def _build_graph_payload(
     pending_edges = sum(1 for e in edge_outs if e.review_status == "pending_review")
     approved_edges = sum(1 for e in edge_outs if e.review_status == "approved")
     stale_or_rejected = sum(1 for e in edge_outs if e.review_status in ("stale", "rejected"))
+    structural_edges = sum(1 for e in edge_outs if e.is_structural)
+    semantic_edges = sum(1 for e in edge_outs if not e.is_structural)
+    semantic_unjudged = sum(
+        1
+        for e in edge_outs
+        if not e.is_structural and e.judge_verdict not in ("yes", "partial")
+    )
+    low_confidence = sum(
+        1
+        for e in edge_outs
+        if not e.is_structural and (e.confidence < 0.75 or e.judge_verdict == "partial")
+    )
 
     node_outs: list[KgNodeOut] = []
     for n in nodes:
@@ -413,6 +462,12 @@ async def _build_graph_payload(
         node_counts_by_type=node_counts,
         edge_counts_by_relation=edge_counts,
         quality_summary={
+            "structural_edges": structural_edges,
+            "semantic_edges": semantic_edges,
+            "semantic_unjudged": semantic_unjudged,
+            "low_confidence": low_confidence,
+            "quote_mismatch": quote_mismatch_count,
+            "superseded_edges_count": superseded_edges_count,
             "isolated_nodes_count": len(isolated_ids),
             "isolated_node_ids": isolated_ids,
             "total_clauses_count": total_clauses,
@@ -793,6 +848,10 @@ async def review_knowledge_edge(
         clause_number=clause.clause_number if clause else None,
         document_title=None,
         extractor_model=edge.extractor_model,
+        confidence=float(getattr(edge, "confidence", 0.85)),
+        judge_verdict=str(getattr(edge, "judge_verdict", "yes")),
+        judge_reason=getattr(edge, "judge_reason", None),
+        is_structural=bool(getattr(edge, "is_structural", False)),
         review_status=edge.review_status,
         usable_as_legal_basis=(edge.review_status == "approved"),
     )
@@ -849,10 +908,20 @@ async def get_knowledge_overview(
             )
         ).scalar_one()
         nodes_count = (
-            await session.execute(select(func.count(KgNode.id)).where(KgNode.country_code == cc))
+            await session.execute(
+                select(func.count(KgNode.id)).where(
+                    KgNode.country_code == cc,
+                    KgNode.review_status != "superseded",
+                )
+            )
         ).scalar_one()
         edges_count = (
-            await session.execute(select(func.count(KgEdge.id)).where(KgEdge.country_code == cc))
+            await session.execute(
+                select(func.count(KgEdge.id)).where(
+                    KgEdge.country_code == cc,
+                    KgEdge.review_status != "superseded",
+                )
+            )
         ).scalar_one()
         results.append(
             {
@@ -916,7 +985,9 @@ async def get_user_knowledge_graph(
     country_code: str = Query(default="SG", min_length=2, max_length=2),
     only_approved: bool = False,
 ) -> GraphPayloadOut:
-    return await _build_graph_payload(session, country_code, only_approved=only_approved)
+    return await _build_graph_payload(
+        session, country_code, only_approved=only_approved, user_view=True
+    )
 
 
 @user_router.get("/glossary", response_model=list[GlossaryTermOut])
@@ -988,17 +1059,22 @@ async def _build_regulation_summary(
         )
 
     inst_node = (
-        await session.execute(select(KgNode).where(KgNode.document_id == doc.id).limit(1))
+        await session.execute(
+            select(KgNode)
+            .where(KgNode.document_id == doc.id, KgNode.review_status != "superseded")
+            .limit(1)
+        )
     ).scalar_one_or_none()
     if inst_node is not None:
         linked_edges = list(
             (
                 await session.execute(
                     select(KgEdge).where(
+                        KgEdge.review_status != "superseded",
                         or_(
                             KgEdge.source_node_id == inst_node.id,
                             KgEdge.target_node_id == inst_node.id,
-                        )
+                        ),
                     )
                 )
             )
@@ -1146,7 +1222,14 @@ async def get_user_regulation_detail(
                 tr_map[tr.clause_id] = tr
 
             edges = list(
-                (await session.execute(select(KgEdge).where(KgEdge.evidence_clause_id.in_(c_ids))))
+                (
+                    await session.execute(
+                        select(KgEdge).where(
+                            KgEdge.evidence_clause_id.in_(c_ids),
+                            KgEdge.review_status != "superseded",
+                        )
+                    )
+                )
                 .scalars()
                 .all()
             )
