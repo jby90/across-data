@@ -10,6 +10,23 @@ from .review_s1_s2_contracts import make_document
 
 
 @pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("Made on 29 March 2018", set()),
+        ("55\nMade on 21 January 2015", set()),
+        ("MAD 500", {("MAD", "500")}),
+        ("500 MAD", {("MAD", "500")}),
+        ("费用为500摩洛哥迪拉姆，应当缴纳。", {("MAD", "500")}),
+        ("USDOLLAR 500", set()),
+    ],
+)
+def test_currency_markers_do_not_match_inside_ordinary_words(text, expected):
+    from app.knowledge.numeric_integrity import amounts
+
+    assert amounts(text) == expected
+
+
+@pytest.mark.parametrize(
     "original,zh,expected",
     [
         ("A maximum of 10% applies.", "最高适用百分之10，应当依法计算并执行。", True),

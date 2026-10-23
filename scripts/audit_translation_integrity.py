@@ -54,7 +54,8 @@ def audit(base_url):
                 if len(page) < 500:
                     break
                 offset += 500
-    current = [row for row in rows if row["is_current"] and row["clause_id"] in clause_ids]
+    current = [row for row in rows if row["is_current"] and row["clause_id"] in clause_ids
+               and row["review_status"] not in ("superseded", "stale", "rejected")]
     qualified, invalid = [], []
     for row in current:
         passed, issues, _ = verify_translation(row["original_text"], row["translated_text"], row["glossary_hits"])

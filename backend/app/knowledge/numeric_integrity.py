@@ -46,6 +46,9 @@ def amounts(text: str) -> set[tuple[str, str]]:
     text = normalize(text)
     found = set()
     for currency, marker in CURRENCIES.items():
+        # Codes and English currency names must be whole tokens: "Made" is not MAD.
+        # ASCII-only boundaries allow a Chinese unit directly next to Chinese prose.
+        marker = rf"(?<![A-Za-z])(?:{marker})(?![A-Za-z])"
         # Explicit codes/symbols before or immediately after the same numeric amount.
         pattern = re.compile(
             rf"(?:{marker})\s*({NUMBER})(?!\d)|"
