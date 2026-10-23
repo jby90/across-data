@@ -17,9 +17,11 @@ import asyncpg
 import pgserver
 
 
-async def backup(home: Path, output: Path):
+async def backup(home: Path, output: Path, database="postgres", archive_root=None):
+    if database != "postgres" and not database.startswith("remediation_"):
+        raise ValueError("only the development database or an isolated remediation copy is allowed")
     port = int((home / "pg" / "postmaster.pid").read_text().splitlines()[3])
-    uri = f"postgresql://postgres@127.0.0.1:{port}/postgres"
+    uri = f"postgresql://postgres@127.0.0.1:{port}/{database}"
     bindir = Path(pgserver.__file__).parent / "pginstall" / "bin"
     output.mkdir(parents=True, exist_ok=False)
     conn = await asyncpg.connect(uri)
@@ -38,7 +40,7 @@ async def backup(home: Path, output: Path):
                 raise RuntimeError("pg_dump failed; backup incomplete")
             versions = await conn.fetch("SELECT id, content_hash, archive_path FROM document_versions")
             archives = []
-            root = (home / "archive").resolve()
+            root = Path(archive_root or home / "archive").resolve()
             for version in versions:
                 relative = Path(version["archive_path"])
                 source = (root / relative).resolve()
@@ -69,6 +71,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--home", type=Path, default=Path.home() / ".cyshuhe-dev")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--database", default="postgres")
+    parser.add_argument("--archive-root", type=Path)
     args = parser.parse_args()
     output = args.output or args.home / "backups" / datetime.now().strftime("%Y%m%d-%H%M%S-S0")
-    asyncio.run(backup(args.home, output))
+    asyncio.run(backup(args.home, output, args.database, args.archive_root))

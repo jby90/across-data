@@ -1,0 +1,19 @@
+{
+  "audit_id": "79d02696-c8d0-45a9-9492-a16cc742a805",
+  "held_document_id": "24d1b591-0369-41a4-b47f-3c9ca870b153",
+  "canonical_document_id": "dd517907-47bb-43ca-892f-538fe0153c70",
+  "canonical_version_id": "26aee7c0-25af-4887-90f5-4d82b9de0fc0",
+  "official_source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+  "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+  "content_hash": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+  "size_bytes": 396898,
+  "pages": 125,
+  "cover_evidence": "THE STATUTES OF THE REPUBLIC OF SINGAPORE\nPERSONAL DATA PROTECTION\nACT 2012\n2020 REVISED EDITION\nThis revised edition incorporates all amendments up to and\nincluding 1 December 2021 and comes into operation on 31 December 2021.\nPrepared and Published by\nTHE LAW REVISION COMMISSION\nUNDER THE AUTHORITY OF\nTHE REVISED EDITION OF THE LAWS ACT 1983",
+  "expected_identity": "PERSONAL DATA PROTECTION ACT 2012",
+  "expected_edition": "2020 REVISED EDITION",
+  "acquisition_note": "Existing independent official-URL archive; cover and SHA verified. Observed official HTTP 200 matches archive. Initial refetch exposed a legacy robots-403 permission bug; fixed policy blocks further automated downloads. This is not a compliant-crawl or current-law approval; human review pending.",
+  "review_status": "pending_review",
+  "old_binding_remains_held": true,
+  "legal_status": "unknown",
+  "human_approval_inherited": false
+}

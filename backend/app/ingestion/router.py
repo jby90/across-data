@@ -381,7 +381,10 @@ async def document_provenance(
                 "events": [EventOut.model_validate(event).model_dump() for event in events],
             }
         )
+    from app.ingestion.bindings import binding_resolutions
+
     return {
+        "binding_resolutions": await binding_resolutions(session, doc.id),
         "source_integrity_holds": list((await holds_for_documents(session, [doc.id])).values()),
         "document_id": str(doc.id),
         "title": doc.title,

@@ -65,12 +65,26 @@ async def test_robots_404_means_allowed():
     assert (await f.get("https://example.org/a.pdf")).content == b"x"
 
 
-@pytest.mark.parametrize("robots", [500, None])
+@pytest.mark.parametrize("robots", [401, 403, 429, 500, None])
 async def test_robots_5xx_or_network_error_blocks_conservatively(robots):
     routes = {"/a.pdf": httpx.Response(200, content=b"x")}
     f = make_fetcher(site_handler(routes, robots=robots))
     with pytest.raises(BlockedError):
         await f.get("https://example.org/a.pdf")
+
+
+async def test_html_challenge_at_robots_is_not_permission_to_fetch():
+    hits = []
+
+    def handler(request):
+        hits.append(request.url.path)
+        return httpx.Response(
+            200, text="<html>access challenge</html>", headers={"content-type": "text/html"}
+        )
+
+    with pytest.raises(BlockedError):
+        await make_fetcher(handler).get("https://example.org/law.pdf")
+    assert hits == ["/robots.txt"]
 
 
 @pytest.mark.parametrize(

@@ -107,6 +107,11 @@ async function downloadOriginal() {
 }
 const provenance = ref<{
   source_integrity_holds?: { reason: string }[]
+  binding_resolutions?: {
+    official_source_url: string
+    canonical_document_id: string
+    expected_edition: string
+  }[]
   versions: {
     version_id: string
     acquisition: string
@@ -406,6 +411,11 @@ onMounted(load)
     </el-dialog>
 
     <el-drawer v-model="drawer" :title="detail?.title" size="880px" append-to-body>
+      <el-alert v-for="resolution in provenance?.binding_resolutions" :key="resolution.canonical_document_id"
+        type="info" :closable="false" style="margin-bottom: 12px">
+        已登记正确原文关联（{{ resolution.expected_edition }}，待人工核对）。旧错绑记录继续隔离，审批不继承。
+        官方来源：<a :href="resolution.official_source_url" target="_blank" rel="noopener noreferrer">查看对应版本</a>
+      </el-alert>
       <template v-if="detail">
         <el-alert
           v-for="(hold, index) in provenance?.source_integrity_holds"
