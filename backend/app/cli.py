@@ -214,6 +214,7 @@ async def batch_translate(
     from sqlalchemy import func, or_, select
 
     from app.ingestion.models import Clause, Document, DocumentVersion
+    from app.ingestion.safety import document_available
     from app.knowledge.models import ClauseTranslation, GlossaryTerm
     from app.knowledge.translator import (
         set_translation_concurrency,
@@ -245,6 +246,7 @@ async def batch_translate(
                     & (latest.c.version_no == DocumentVersion.version_no),
                 )
                 .where(Document.country_code.in_(target_countries))
+                .where(document_available())
                 .order_by(Document.country_code, Document.id, Clause.ordinal, Clause.id)
             )
         ).all()

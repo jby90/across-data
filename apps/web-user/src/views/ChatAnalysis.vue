@@ -79,6 +79,7 @@ interface StaleImpact {
 }
 
 interface ReportVersion {
+  source_integrity_alerts?: string[]
   version_no: number
   status: string
   is_partial_sample: boolean
@@ -444,6 +445,10 @@ async function openDiff() {
 
 async function download(ext: 'docx' | 'pdf') {
   if (!detail.value || !report.value) return
+  if (report.value.source_integrity_alerts?.length) {
+    ElMessage.error('报告引用的原文来源异常，已停止导出，请核实来源后重新分析')
+    return
+  }
   try {
     const ver = report.value.version_no
     const res = await fetch(`/api/analysis/tasks/${detail.value.id}/reports/${ver}/export.${ext}`, {
@@ -627,11 +632,34 @@ onUnmounted(() => {
           <div v-if="hasReport && report" class="card report" data-testid="report-card">
             <div class="card-title">
               <span>八维度合规评估报告 v{{ report.version_no }}</span>
-              <el-tag :type="report.is_partial_sample ? 'warning' : 'success'">
-                {{ report.is_partial_sample ? '部分样稿 · 有维度缺依据' : '全部维度均有核验依据' }}
+              <el-tag
+                :type="
+                  report.source_integrity_alerts?.length
+                    ? 'danger'
+                    : report.is_partial_sample
+                      ? 'warning'
+                      : 'success'
+                "
+              >
+                {{
+                  report.source_integrity_alerts?.length
+                    ? '来源异常 · 暂停导出'
+                    : report.is_partial_sample
+                      ? '部分样稿 · 有维度缺依据'
+                      : '全部维度均有核验依据'
+                }}
               </el-tag>
             </div>
             <p class="summary">{{ report.executive_summary }}</p>
+            <el-alert
+              v-for="alert in report.source_integrity_alerts"
+              :key="alert"
+              type="error"
+              :closable="false"
+              show-icon
+              :title="alert"
+              style="margin-bottom: 10px"
+            />
 
             <el-alert
               v-for="(imp, i) in report.stale_impacts"

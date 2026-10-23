@@ -41,6 +41,7 @@ interface KgEdge {
 }
 
 interface QualitySummary {
+  source_integrity_held_documents?: number
   documents_total?: number
   documents_core?: number
   documents_related?: number
@@ -380,6 +381,14 @@ onMounted(loadGraph)
         >
       </div>
     </header>
+    <el-alert
+      v-if="graph.quality_summary.source_integrity_held_documents"
+      type="error"
+      :closable="false"
+      show-icon
+      :title="`${graph.quality_summary.source_integrity_held_documents} 份资料存在来源绑定异常，已从分析依据隔离。原文与审批仍保留，可在法规文档中核查。`"
+      style="margin-bottom: 16px"
+    />
     <div class="stat-grid" aria-label="按要素类型筛选">
       <button
         v-for="(meta, ntype) in NODE_TYPE_META"

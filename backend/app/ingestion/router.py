@@ -16,6 +16,7 @@ from app.ingestion.fetcher import validate_public_http_url
 from app.ingestion.models import Clause, Document, DocumentVersion, LegalStatus, PipelineEvent
 from app.ingestion.ocr import OcrEngine
 from app.ingestion.pipeline import assess_document_relevance, parse_version
+from app.ingestion.safety import holds_for_documents
 from app.sources.models import SourceSite
 
 router = APIRouter(prefix="/api/admin", tags=["documents"])
@@ -53,6 +54,8 @@ class DocumentOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
+    safety_hold: bool = False
+    safety_note: str | None = None
     site_id: uuid.UUID
     country_code: str
     source_url: str
@@ -155,9 +158,12 @@ async def list_documents(
         stmt = stmt.where(Document.site_id == site_id)
     docs = (await session.execute(stmt.limit(limit).offset(offset))).scalars().all()
     versions = await _versions_by_doc(session, [d.id for d in docs])
+    holds = await holds_for_documents(session, [d.id for d in docs])
     out = []
     for d in docs:
         item = DocumentOut.model_validate(d)
+        item.safety_hold = d.id in holds
+        item.safety_note = holds.get(d.id, {}).get("reason")
         vs = versions.get(d.id)
         item.latest_version = VersionOut.model_validate(vs[0]) if vs else None
         out.append(item)
@@ -376,7 +382,9 @@ async def document_provenance(
             }
         )
     return {
+        "source_integrity_holds": list((await holds_for_documents(session, [doc.id])).values()),
         "document_id": str(doc.id),
+        "title": doc.title,
         "country_code": doc.country_code,
         "source_url": doc.source_url,
         "language": doc.language,

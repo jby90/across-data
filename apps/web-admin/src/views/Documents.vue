@@ -94,7 +94,11 @@ async function downloadOriginal() {
     const url = URL.createObjectURL(await response.blob())
     const anchor = document.createElement('a')
     anchor.href = url
-    anchor.download = `${versionId.value}.pdf`
+    const extension =
+      detail.value?.versions.find((v) => v.id === versionId.value)?.mime_type === 'application/pdf'
+        ? 'pdf'
+        : 'bin'
+    anchor.download = `${versionId.value}.${extension}`
     anchor.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   } catch (error) {
@@ -102,6 +106,7 @@ async function downloadOriginal() {
   }
 }
 const provenance = ref<{
+  source_integrity_holds?: { reason: string }[]
   versions: {
     version_id: string
     acquisition: string
@@ -304,6 +309,7 @@ onMounted(load)
       </el-table-column>
       <el-table-column label="状态" width="180">
         <template #default="{ row }">
+          <el-tag v-if="row.safety_hold" type="danger">来源绑定异常 · 已隔离</el-tag>
           <div v-if="row.latest_version" class="document-status" data-testid="document-status">
             <el-tag
               :type="
@@ -401,6 +407,15 @@ onMounted(load)
 
     <el-drawer v-model="drawer" :title="detail?.title" size="880px">
       <template v-if="detail">
+        <el-alert
+          v-for="(hold, index) in provenance?.source_integrity_holds"
+          :key="index"
+          type="error"
+          :closable="false"
+          show-icon
+          :title="hold.reason"
+          style="margin-bottom: 16px"
+        />
         <el-alert
           v-if="provenance"
           :closable="false"

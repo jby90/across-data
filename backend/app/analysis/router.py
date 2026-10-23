@@ -63,6 +63,7 @@ from app.iam.deps import (
 )
 from app.iam.models import Organization, User
 from app.ingestion.models import Clause, Document, DocumentVersion
+from app.ingestion.safety import report_held_citation_ids
 from app.knowledge.graph_evidence import active_edge_filters
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
 from app.knowledge.router import _compute_eight_attributes
@@ -312,6 +313,10 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
 
     rv_outs = [
         ReportVersionOut(
+            source_integrity_alerts=[
+                f"原文绑定异常，引用 {cid} 已隔离，需重新分析"
+                for cid in await report_held_citation_ids(session, rv)
+            ],
             id=rv.id,
             task_id=rv.task_id,
             version_no=rv.version_no,
@@ -888,6 +893,8 @@ async def export_user_report_docx(
     if rv is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
 
+    if await report_held_citation_ids(session, rv):
+        raise HTTPException(409, "报告引用了来源绑定异常的条款，请核实来源并重新分析后导出")
     docx_bytes = build_report_docx(task, rv)
     filename = f"cyshuhe_{task.country_code}_8dim_report_v{version_no}.docx"
     return Response(
@@ -918,6 +925,8 @@ async def export_user_report_pdf(
     if rv is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
 
+    if await report_held_citation_ids(session, rv):
+        raise HTTPException(409, "报告引用了来源绑定异常的条款，请核实来源并重新分析后导出")
     pdf_bytes = build_report_pdf(task, rv)
     filename = f"cyshuhe_{task.country_code}_8dim_report_v{version_no}.pdf"
     return Response(
@@ -946,6 +955,10 @@ async def get_clause_citation_card(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="引用条款不存在")
 
     clause, ver, doc = row
+    from app.ingestion.safety import document_is_held
+
+    if await document_is_held(session, doc.id):
+        raise HTTPException(409, "此引用的原文绑定异常已隔离，请管理员核实来源后重做分析")
     tr = (
         await session.execute(
             select(ClauseTranslation)

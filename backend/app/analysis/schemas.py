@@ -13,9 +13,7 @@ def format_conversation_code(task_id: uuid.UUID, created_at: datetime | None = N
     return f"CONV-{dt.strftime('%Y%m%d')}-{task_id.hex[:8].upper()}"
 
 
-def compute_active_node(
-    task_status: str, traces: list[Any]
-) -> tuple[str | None, str | None]:
+def compute_active_node(task_status: str, traces: list[Any]) -> tuple[str | None, str | None]:
     """根据当前对话工作流状态和已完成步骤轨迹,计算当前正在运行或等待中的 Agent 节点。"""
     if task_status == "collecting_facts":
         return "node_fact_collector", "信息采集与追问 Agent（对话采集中）"
@@ -226,6 +224,7 @@ class StaleImpactAlertOut(BaseModel):
 
 
 class ReportVersionOut(BaseModel):
+    source_integrity_alerts: list[str] = Field(default_factory=list)
     id: uuid.UUID
     task_id: uuid.UUID
     version_no: int

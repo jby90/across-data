@@ -3,10 +3,22 @@
 from sqlalchemy import func, or_, select
 
 from app.ingestion.models import Clause, Document, DocumentVersion
+from app.ingestion.safety import document_available
 from app.knowledge.models import KgEdge
 
 
 def active_edge_filters():
+    held_source = (
+        select(Clause.id)
+        .join(DocumentVersion, Clause.version_id == DocumentVersion.id)
+        .join(Document, Document.id == DocumentVersion.document_id)
+        .where(
+            Clause.id == KgEdge.evidence_clause_id,
+            ~document_available(),
+        )
+        .correlate(KgEdge)
+        .exists()
+    )
     latest = (
         select(func.max(DocumentVersion.version_no))
         .where(
@@ -34,6 +46,7 @@ def active_edge_filters():
     return (
         KgEdge.review_status.in_(("approved", "pending_review")),
         KgEdge.extractor_model != "kg-rule-extractor-v1",
+        ~held_source,
         or_(KgEdge.is_structural.is_(True), KgEdge.judge_verdict == "yes"),
         or_(KgEdge.is_structural.is_(True), current_source),
     )

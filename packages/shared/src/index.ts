@@ -173,6 +173,8 @@ export interface VersionOut {
 }
 
 export interface DocumentOut {
+  safety_hold?: boolean
+  safety_note?: string | null
   id: string
   site_id: string
   country_code: string

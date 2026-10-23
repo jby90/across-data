@@ -729,6 +729,10 @@ async def translate_document_latest_version(
     doc = await session.get(Document, document_id)
     if doc is None:
         return []
+    from app.ingestion.safety import document_is_held
+
+    if await document_is_held(session, doc.id):
+        return []
     ver = (
         await session.execute(
             select(DocumentVersion)

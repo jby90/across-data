@@ -2,7 +2,7 @@
 
 import argparse
 import json
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import httpx
@@ -26,8 +26,19 @@ def audit(base_url: str):
         sites = [{key: site.get(key) for key in ("id", "country_code", "entry_url", "terms_status",
             "terms_note", "terms_approval_scope", "terms_decided_at")} for site in response.json()]
     versions = [version for result in results for version in result["versions"]]
+    by_hash = defaultdict(list)
+    for result in results:
+        for version in result["versions"]:
+            by_hash[version["content_hash"]].append({"document_id": result["document_id"],
+                "title": result["title"], "source_url": result["source_url"]})
+    collisions = [{"sha256": digest, "documents": documents,
+        "assessment": "requires_source_binding_review"} for digest, documents in by_hash.items()
+        if len({row["title"] for row in documents}) > 1]
     return dict(documents=results, source_decisions=sites,
+        duplicate_hash_different_titles=collisions,
         summary=dict(document_counts=dict(Counter(row["country_code"] for row in results)),
+            held_documents=sum(bool(row.get("source_integrity_holds")) for row in results),
+            duplicate_hash_different_title_groups=len(collisions),
             versions=len(versions), integrity_passed=sum(row["integrity_ok"] for row in versions),
             acquisition=dict(Counter(row["acquisition"] for row in versions)),
             missing_effective_date=sum(not row["effective_date"] for row in versions),

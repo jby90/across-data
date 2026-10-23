@@ -15,6 +15,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ingestion.models import Clause, Document, DocumentVersion
+from app.ingestion.safety import document_available
 from app.knowledge.graph_evidence import active_edge_filters
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
 
@@ -224,6 +225,7 @@ class ToolBox:
                     .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
                     .join(Document, Document.id == DocumentVersion.document_id)
                     .where(Document.country_code == self.country_code)
+                    .where(document_available())
                     .where(DocumentVersion.state == "parsed")
                 )
             ).all()

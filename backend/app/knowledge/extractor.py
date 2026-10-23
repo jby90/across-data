@@ -1904,6 +1904,8 @@ async def _extract_knowledge_for_country_impl(
     4. 对条款调用大模型抽取六要素实体与十二类关系,经类型约束 + 逐字校验 + 语义裁判后入图谱。
     """
     cc = country_code.upper()
+    from app.ingestion.safety import holds_for_documents
+
     superseded_count = await supersede_legacy_rule_edges(session, cc)
     superseded_unreviewed = (
         0  # retire only successfully processed evidence, after all calls complete
@@ -1955,7 +1957,11 @@ async def _extract_knowledge_for_country_impl(
     inst_node_by_doc: dict[uuid.UUID, KgNode] = {}
     inst_by_title: dict[str, KgNode] = {}
 
+    held = await holds_for_documents(session, [doc.id for doc in docs])
     for doc in docs:
+        if doc.id in held:
+            doc_counts["safety_hold"] = doc_counts.get("safety_hold", 0) + 1
+            continue
         ver = (
             await session.execute(
                 select(DocumentVersion)
@@ -2509,6 +2515,7 @@ async def _extract_knowledge_for_country_impl(
         "docs_relevant": doc_counts.get("relevant", 0),
         "docs_related": doc_counts.get("related", 0),
         "docs_out_of_scope": doc_counts.get("out_of_scope", 0),
+        "docs_safety_held": doc_counts.get("safety_hold", 0),
     }
 
 

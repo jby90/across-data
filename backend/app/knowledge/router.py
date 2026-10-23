@@ -12,6 +12,7 @@ from app.core.db import get_session
 from app.iam.deps import Principal, require_admin_side, require_user_side
 from app.iam.models import Role
 from app.ingestion.models import Clause, Document, DocumentVersion
+from app.ingestion.safety import document_available, document_is_held
 from app.knowledge.extractor import (
     COUNTRY_NAMES,
     extract_knowledge_for_country,
@@ -376,6 +377,15 @@ async def _build_graph_payload(
     doc_scope = {str(r): int(c) for r, c in doc_scope_rows}
     docs_total = sum(doc_scope.values())
     docs_out_of_scope = doc_scope.get("out_of_scope", 0) + doc_scope.get("irrelevant", 0)
+    source_held_count = int(
+        await session.scalar(
+            select(func.count(Document.id)).where(
+                Document.country_code == cc,
+                ~document_available(),
+            )
+        )
+        or 0
+    )
 
     return GraphPayloadOut(
         country_code=cc,
@@ -386,7 +396,8 @@ async def _build_graph_payload(
             "documents_core": doc_scope.get("relevant", 0),
             "documents_related": doc_scope.get("related", 0),
             "documents_out_of_scope": docs_out_of_scope,
-            "documents_extracted": docs_total - docs_out_of_scope,
+            "documents_extracted": max(0, docs_total - docs_out_of_scope - source_held_count),
+            "source_integrity_held_documents": source_held_count,
             "structural_edges": structural_edges,
             "semantic_edges": semantic_edges,
             "semantic_unjudged": semantic_unjudged,
@@ -558,6 +569,8 @@ async def trigger_clause_translate(
     if row is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="条款不存在")
     clause, doc = row
+    if await document_is_held(session, doc.id):
+        raise HTTPException(409, "原文绑定异常已隔离，请先核查来源后再翻译")
     tr = await translate_clause(session, clause, doc.country_code)
     await session.commit()
     outs = await _build_translation_outs(session, [(tr, clause, doc)])
@@ -571,6 +584,8 @@ async def trigger_document_translate(
     session: SessionDep,
     limit_clauses: int | None = Query(default=None, ge=1, le=500),
 ) -> dict:
+    if await document_is_held(session, document_id):
+        raise HTTPException(409, "原文绑定异常已隔离，请先核查来源后再翻译")
     trs = await translate_document_latest_version(session, document_id, limit_clauses=limit_clauses)
     return {
         "document_id": str(document_id),
@@ -602,6 +617,8 @@ async def review_clause_translation(
     tr, clause, doc = row
     from app.knowledge.history import snapshot
 
+    if body.decision == "approved" and await document_is_held(session, doc.id):
+        raise HTTPException(409, "来源绑定异常尚未解决，不可审批为法律依据")
     proposed_text = (body.translated_text or tr.translated_text).strip()
     passed, issues, checked_hits = verify_translation(
         clause.original_text, proposed_text, tr.glossary_hits or []
@@ -828,19 +845,29 @@ async def knowledge_history(
 
 
 @admin_router.get("/graph-runs")
-async def graph_runs(_: AdminOrReviewerDep, session: SessionDep,
-                     country_code: str = Query(default="SG", min_length=2, max_length=2),
-                     offset: int = Query(default=0, ge=0),
-                     limit: int = Query(default=20, ge=1, le=100)) -> list[dict]:
+async def graph_runs(
+    _: AdminOrReviewerDep,
+    session: SessionDep,
+    country_code: str = Query(default="SG", min_length=2, max_length=2),
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=100),
+) -> list[dict]:
     from app.knowledge.history import record_payload
     from app.knowledge.models import KnowledgeAuditRecord
 
     country_id = uuid.uuid5(uuid.NAMESPACE_URL, "cyshuhe:kg:" + country_code.upper())
-    rows = (await session.scalars(select(KnowledgeAuditRecord).where(
-        KnowledgeAuditRecord.target_id == country_id,
-        KnowledgeAuditRecord.action == "graph_rebuild_result",
-    ).order_by(KnowledgeAuditRecord.created_at.desc(), KnowledgeAuditRecord.id)
-        .offset(offset).limit(limit))).all()
+    rows = (
+        await session.scalars(
+            select(KnowledgeAuditRecord)
+            .where(
+                KnowledgeAuditRecord.target_id == country_id,
+                KnowledgeAuditRecord.action == "graph_rebuild_result",
+            )
+            .order_by(KnowledgeAuditRecord.created_at.desc(), KnowledgeAuditRecord.id)
+            .offset(offset)
+            .limit(limit)
+        )
+    ).all()
     return [record_payload(row) for row in rows]
 
 
@@ -917,7 +944,9 @@ async def get_knowledge_overview(
     for cc, (name_zh, name_orig) in COUNTRY_NAMES.items():
         docs_count = (
             await session.execute(
-                select(func.count(Document.id)).where(Document.country_code == cc)
+                select(func.count(Document.id)).where(
+                    Document.country_code == cc, document_available()
+                )
             )
         ).scalar_one()
         clauses_count = (
@@ -1004,6 +1033,7 @@ async def search_knowledge_clauses(
         .join(Document, Document.id == DocumentVersion.document_id)
         .where(
             Document.country_code == country_code.upper(),
+            document_available(),
             ClauseTranslation.is_current.is_(True),
             ClauseTranslation.review_status.notin_(
                 ("superseded", "not_translated", "translation_failed", "rejected", "stale")
@@ -1060,6 +1090,8 @@ async def get_user_glossary(
 async def _build_regulation_summary(
     session: AsyncSession, doc: Document
 ) -> tuple[RegulationSummaryOut, DocumentVersion | None]:
+    if await document_is_held(session, doc.id):
+        raise HTTPException(409, "原文绑定异常已隔离，请管理员核实正式来源")
     versions = list(
         (
             await session.execute(
@@ -1210,7 +1242,11 @@ async def list_user_regulations(
 ) -> list[RegulationSummaryOut]:
     """按国家返回法规文件目录（供用户端「国家 → 法律层级/监管机构 → 法规」分级树与列表使用）。"""
     cc = country_code.upper()
-    stmt = select(Document).where(Document.country_code == cc).order_by(Document.title)
+    stmt = (
+        select(Document)
+        .where(Document.country_code == cc, document_available())
+        .order_by(Document.title)
+    )
     if keyword and keyword.strip():
         stmt = stmt.where(Document.title.ilike(f"%{keyword.strip()}%"))
     docs = list((await session.execute(stmt)).scalars().all())
