@@ -4,7 +4,7 @@
 1. 发往外部大模型前先做敏感信息脱敏(邮箱、电话、证件号)。
 2. 译前提取条款中命中的术语(国家覆盖优先于通用概念);保留术语命中统计,不再产出本地假译文。
 3. 分块:长条款按句/款拆分,每块 <= 约 1500 字符,保持顺序合并。
-4. 提示词(translate-v3):法律翻译、逐句忠实、不增不减、保留条号与数字、术语表强制。
+4. 提示词(translate-v4):法律翻译、逐句忠实、不增不减、保留条号与数字、术语表强制。
 5. 调用 OpenAI 兼容接口(沿用 settings.llm_*);并发用 asyncio.Semaphore(默认 4)限流,带指数退避重试。
 6. 译后程序检查(任一失败则重译一次,仍失败标 translation_failed 并记录原因):
    ① CJK 占比 >= 30%(阿语/法语/英文原文都应翻成中文);
@@ -44,7 +44,7 @@ from app.knowledge.numeric_integrity import (
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "translate-v3"
+PROMPT_VERSION = "translate-v4"
 MAX_CHUNK_CHARS = 1500
 DEFAULT_CONCURRENCY = 4
 
@@ -154,6 +154,34 @@ def _redact_with_mapping(text: str) -> tuple[str, dict[str, str]]:
     return out, mapping
 
 
+def _protect_numeric_literals(text: str) -> tuple[str, dict[str, str]]:
+    """Protect exact numbers and explicit prefix currencies in transit, never rewrite source.
+
+    The strict verifier still receives the complete original and restored translation.
+    These placeholders cannot turn a failed translation into a passed one by themselves.
+    """
+    mapping = {}
+
+    def replace(match):
+        number, letters = len(mapping), ""
+        while True:
+            number, remainder = divmod(number, 26)
+            letters = chr(65 + remainder) + letters
+            if not number:
+                break
+        marker = f"__CYSH_LITERAL_{letters}__"
+        mapping[marker] = match.group()
+        return marker
+
+    currency_amount = re.compile(
+        r"(?<![A-Za-z])(?:US\$|S\$|SGD|USD|EUR|GBP|MAD|EGP|TND|LBP|\$|€|£)"
+        r"\s*\d+(?:,\d{3})*(?:\.\d+)?",
+        re.IGNORECASE,
+    )
+    safe = currency_amount.sub(replace, text)
+    return _NUM_TOKEN_RE.sub(replace, safe), mapping
+
+
 def compute_cjk_ratio(text: str) -> float:
     """计算去除空白字符后的中日韩统一表意文字(CJK)占比。"""
     compact = _WS_RE.sub("", text or "")
@@ -232,6 +260,15 @@ def split_clause_into_chunks(text: str, max_chars: int = MAX_CHUNK_CHARS) -> lis
             current = seg
     if current:
         chunks.append(current)
+    # A trailing citation/heading is not a meaningful standalone translation unit.
+    # Move real neighbouring source text into that chunk; never edit a persisted clause.
+    if len(chunks) > 1 and len(chunks[-1]) < 120 and len(chunks[-2]) > 400:
+        previous, tail = chunks[-2:]
+        start = max(1, len(previous) - min(300, max_chars - len(tail) - 1))
+        boundary = previous.find(" ", start)
+        if boundary > 0:
+            chunks[-2] = previous[:boundary]
+            chunks[-1] = previous[boundary:].lstrip() + "\n" + tail
     return chunks or [cleaned[:max_chars]]
 
 
@@ -327,6 +364,8 @@ def verify_translation(
     issues: list[str] = []
     orig_clean = (original_text or "").strip()
     trans_clean = (translated_text or "").strip()
+    if orig_clean and not any(char.isalpha() for char in orig_clean):
+        issues.append("原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文")
 
     # ④ 译文非空且不等于原文
     if not trans_clean:
@@ -408,6 +447,14 @@ def _build_translation_prompts(
         "6. 【币种与单位】：保留原文货币符号/代码，$ 不得自行改成美元、新元或欧元。"
         "不得把金额改写为万元/百万；百分比保留 %，日期月份和引用条号必须精确对应原文。",
         "7. __CYSH_PRIVATE_ 开头的占位符必须原样逐一保留，禁止翻译、改写或猜测其内容。",
+        "8. __CYSH_LITERAL_ 是受保护的原文数字或金额，必须逐一原样输出，"
+        "保留它们在句子、引用及页眉/边栏中的对应位置，不得删除或猜测替代值。"
+        "原文页码、行号、档案编号和页眉页脚也必须保留。",
+        "9. 目录的装饰性连续点线可用制表符替代，但目录项目及对应页码必须完整保留。"
+        "Section 128(1)(a) 应明确译为第128条第(1)款第(a)项，不可遗漏条款层级名称。"
+        "不要为提高中文占比添加原文没有的解释或法律结论。",
+        "10. 文字月份也应规范转为中文年月日格式，如 19 December 2022 应输出2022年12月19日。"
+        "若年份和日是占位符，移动对应占位符到正确位置；月份仍须使用阿拉伯数字，不可留成七月等文字。",
     ]
     if glossary_hits:
         sys_lines.append("\n【强制法律术语表（原词 -> 规定译法 -> 法定定义）】：")
@@ -428,6 +475,12 @@ def _build_translation_prompts(
 
     req_nums = extract_numeric_tokens(safe_text)
     user_parts = [f"源语言: {language}"]
+    protected_markers = re.findall(r"__CYSH_(?:PRIVATE|LITERAL)_[A-Z]+__", safe_text)
+    if protected_markers:
+        user_parts.append(
+            "完整性清单：下列每个标记必须且只能原样输出一次（包括版面行号，禁止省略）：\n"
+            + "\n".join(protected_markers)
+        )
     if req_nums:
         user_parts.append(f"必须在译文中原样保留的数字/金额/百分比/条号: {', '.join(req_nums)}")
     if glossary_hits:
@@ -462,6 +515,8 @@ async def _call_llm_translate(
         return None
 
     safe_text, private_tokens = _redact_with_mapping(original_text)
+    safe_text, numeric_tokens = _protect_numeric_literals(safe_text)
+    protected_tokens = private_tokens | numeric_tokens
     sys_prompt, user_prompt = _build_translation_prompts(
         safe_text, language, glossary_hits, unmatched_terms, retry_issues=retry_issues
     )
@@ -499,10 +554,12 @@ async def _call_llm_translate(
                     resp.raise_for_status()
                     data = resp.json()
                     content = (data["choices"][0]["message"].get("content") or "").strip()
-                    missing_private = [marker for marker in private_tokens if marker not in content]
-                    for marker, original in private_tokens.items():
+                    invalid_markers = [
+                        marker for marker in protected_tokens if content.count(marker) != 1
+                    ]
+                    for marker, original in protected_tokens.items():
                         content = content.replace(marker, original)
-                    if missing_private:
+                    if invalid_markers:
                         content += "\n__CYSH_RESTORE_MISSING__"
                     usage = data.get("usage") or {}
                     tokens_in = int(usage.get("prompt_tokens") or 0)
@@ -629,7 +686,11 @@ async def translate_clause(
     llm_unavailable = False
     chunk_failures: list[str] = []
 
-    if len(chunks) == 1:
+    if clause.original_text.strip() and not any(char.isalpha() for char in clause.original_text):
+        # Do not pay a model to invent Chinese prose for a citation-only parse fragment.
+        translated_text = ""
+        model_name = "not_called"
+    elif len(chunks) == 1:
         # 单块条款:翻译 -> 译后检查 -> 若未通过则携带问题原因重译一次
         first_res = await _invoke_llm_translate(chunks[0], clause.language, hits, unmatched)
         if first_res is None:
@@ -736,7 +797,7 @@ async def translate_clause(
         clause_id=clause.id,
         is_current=make_current,
         translated_text=translated_text,
-        engine="llm",
+        engine="none" if model_name == "not_called" else "llm",
         model_name=model_name,
         prompt_version=(
             PROMPT_VERSION + "-direct"

@@ -1,0 +1,26 @@
+[
+  {
+    "clause_id": "074d0e23-0d0c-4a1a-a109-bdee864c1bd6",
+    "original": "أى وليه الكتابية والصريحة إذا كان في الإحالة تحقيق لمصلحتهم\nالحيوية أو إذا كانت المعطيات ضرورية لإجراء بحوث ودراسات تاريخية\nأو علمية أو ضرورية لتنفيذ اتفاق يكون المعني بالأمر طرفا فيه بشرط\nتعهد المحال إليه بتوفير الضمانات الضرورية لحماية المعطيات\nالشخصية والحقوق المرتبطة بها طبق ما تحدده الهيئة وضمان عدم\nاستعمالها في غير الغرض الذي أحيلت من أجله.\nوإذا كان المعني بالأمر طفلا تطبق أحكام الفصل 28 من هذا\nالقانون.\nالفصل 48 يعرض طلب الترخيص على الهيئة في أجل لا يتجاوز\nالشهر من تاريخ رفض المعني بالامر إحالة معطياته الشخصية إلى الغير.\nوتنظر الهيئة في الطلب في أجل لا يتجاوز الشهر من تاريخ تقديمه.\nوتتولى الهيئة إعلام الطالب بقرارها في أجل خمسة عشر يوما من\nتاريخ صدوره. ‎dis‏ برسالة مضمونة الوصول مع الإعلام بالبلوغ أو بأي\nوسيلة أخرى تترك أثرا كتابيا.\nالفصل 49 يمكن إحالة المعطيات الشخصية التى وقعت معالجتها\nلغايات معينة وذلك لإعادة معالجتها في غايات تاريخية أى علمية بشرط\nصفحة 2088\nالرائد الرسمي للجمهورية التونسية -- 30 جويلية 2004\nالحصول على موافقة المعني بالأمر أو ورثته أو وليه وترخيص الهيئة\nوتقرر الهيئة حذف المعطيات التي تشير إلى هوية المعني بالأمر أو\nالإبقاء عليها حسب الحال. ‎١ ١‏\nوإذا كان المعني بالأمر طفلا تطبق أحكام الفصل 28 من هذا\nالقانون.\nالفصل 50 تحجر فى كل الحالات إحالة المعطيات الشخصية أو\nنقلها إلى بلاد أجنبية إذا كان من ‎GLE‏ ذلك المساس بالأمن العام أو\nبالمصالح الحيوية للبلاد التونسية.\nالفصل 51 لا يمكن نقل المعطيات الشخصية الواقع معالجتها أو",
+    "translation": "",
+    "passed": false,
+    "issues": [
+      "unavailable"
+    ],
+    "model": null,
+    "tokens_in": null,
+    "tokens_out": null,
+    "duration_ms": null
+  },
+  {
+    "clause_id": "f3c9205a-1f12-42ab-808e-ddb73c1bd610",
+    "original": "has a right of action for relief in civil proceedings in a court.\n(2) If the Commission has made a decision under this Act in\n10 respect of a contravention specified in subsection (1), an action\naccruing under subsection (1) may not be brought in respect of\nthat contravention until after the decision has become final as a\nresult of there being no further right of appeal.\n(3) The court may grant to the plaintiff in an action under\n15 subsection (1) all or any of the following:\n(a) relief by way of injunction or declaration;\n(b) damages;\n(c) any other relief as the court thinks fit.",
+    "translation": "在法院的民事诉讼中享有获得救济的诉权。\n(2) 如果委员会已根据本法在 10 就第(1)款所指的违法行为作出决定，则不得就该项违法行为提起根据第(1)款产生的诉讼，直至该决定因不再有进一步上诉权而成为最终决定之后。\n(3) 法院可向根据 15 第(1)款提起的诉讼中的原告授予下列全部或任何救济：\n(a) 以禁令或宣告方式提供的救济；\n(b) 损害赔偿；\n(c) 法院认为适当的任何其他救济。",
+    "passed": true,
+    "issues": [],
+    "model": "deepseek-flash",
+    "tokens_in": 868,
+    "tokens_out": 1997,
+    "duration_ms": 12100
+  }
+]

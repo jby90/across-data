@@ -123,11 +123,14 @@ async def test_direct_translation_sends_explicit_mode_and_tracks_real_usage(monk
         body = json.loads(request.content)
         assert body["thinking"] == {"type": "disabled"}
         assert "reasoning_effort" not in body
+        assert "__CYSH_LITERAL_A__" in body["messages"][1]["content"]
         return httpx.Response(
             200,
             json={
                 "model": "actual-response-model",
-                "choices": [{"message": {"content": "最高比例为10%，应依法履行规定。"}}],
+                "choices": [
+                    {"message": {"content": "最高比例为__CYSH_LITERAL_A__，应依法履行规定。"}}
+                ],
                 "usage": {"prompt_tokens": 123, "completion_tokens": 45},
             },
         )
@@ -139,6 +142,24 @@ async def test_direct_translation_sends_explicit_mode_and_tracks_real_usage(monk
     )
     result = await translator._call_llm_translate("The maximum percentage is 10%.", "en", [], [])
     assert result[1:4] == ("actual-response-model", 123, 45)
+    assert result[0] == "最高比例为10%，应依法履行规定。"
+
+
+def test_numeric_protection_is_lossless_and_does_not_weaken_currency_gate():
+    source = "Section 128(1)(a): $200,000 and SGD 500, maximum 10%. Made on 19 December 2022."
+    safe, mapping = translator._protect_numeric_literals(source)
+    assert "$200,000" not in safe and "SGD 500" not in safe and "10%" not in safe
+    for marker, value in mapping.items():
+        safe = safe.replace(marker, value)
+    assert safe == source
+    assert not translator.verify_translation(
+        "A fee of $500 applies.", "费用为500欧元，应当按规定缴纳。", []
+    )[0]
+
+
+def test_bare_citation_remains_a_failed_translation_without_padding():
+    assert not translator.verify_translation("[40/2020]", "[40/2020]", [])[0]
+    assert not translator.verify_translation("[40/2020]", "原文所引用的相关法规编号标记为：[40/2020]", [])[0]
 
 
 def test_privacy_placeholders_preserve_legal_reference_without_sending_original():

@@ -22,6 +22,7 @@ interface UnmatchedTerm {
 }
 
 interface ClauseTranslation {
+  source_context_revision?: { id: string; review_status: string; quality_check_passed: boolean } | null
   id: string
   clause_id: string
   document_id: string
@@ -450,6 +451,8 @@ onMounted(loadAll)
                       >按文档批量翻译</el-dropdown-item
                     ><el-dropdown-item @click="showHistory(row.id)"
                       >历史与审批记录</el-dropdown-item
+                    ><el-dropdown-item v-if="row.source_context_revision" @click="showHistory(row.clause_id)"
+                      >原文上下文修订（待核对）</el-dropdown-item
                     ></el-dropdown-menu
                   ></template
                 ></el-dropdown

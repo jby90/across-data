@@ -82,12 +82,36 @@ async def _build_translation_outs(
     session: AsyncSession,
     rows: list[tuple[ClauseTranslation, Clause, Document]],
 ) -> list[ClauseTranslationOut]:
+    from app.knowledge.models import KnowledgeAuditRecord
+
+    contexts = {}
+    if rows:
+        for record in (
+            await session.scalars(
+                select(KnowledgeAuditRecord)
+                .where(
+                    KnowledgeAuditRecord.target_id.in_([clause.id for _, clause, _ in rows]),
+                    KnowledgeAuditRecord.action == "translation_context_revision",
+                )
+                .order_by(KnowledgeAuditRecord.created_at.desc())
+            )
+        ).all():
+            contexts.setdefault(
+                record.target_id,
+                dict(
+                    id=str(record.id),
+                    quality_check_passed=record.payload["quality_check_passed"],
+                    review_status=record.payload["review_status"],
+                    standalone_translation=False,
+                ),
+            )
     out: list[ClauseTranslationOut] = []
     for tr, clause, doc in rows:
         usable, badge = _status_badge(tr.review_status)
         usable = usable and tr.is_current and tr.quality_check_passed
         out.append(
             ClauseTranslationOut(
+                source_context_revision=contexts.get(clause.id),
                 is_current=tr.is_current,
                 id=tr.id,
                 clause_id=clause.id,

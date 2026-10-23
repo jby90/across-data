@@ -163,7 +163,7 @@ async def test_s1_llm_translation_pass_retry_fail_and_unavailable(session_factor
         assert tr_ok.status == "machine_translated"
         assert tr_ok.quality_check_passed is True
         assert tr_ok.engine == "llm"
-        assert tr_ok.prompt_version == "translate-v3"
+        assert tr_ok.prompt_version == "translate-v4"
         assert tr_ok.tokens_in == 120 and tr_ok.tokens_out == 48 and tr_ok.duration_ms == 350
 
         all_rows = (
