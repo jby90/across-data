@@ -76,6 +76,38 @@ class ReviewPointStatus(enum.StrEnum):
     NEEDS_DISCUSSION = "needs_discussion"
 
 
+class KnowledgeAuditRecord(Base):
+    """Immutable snapshots survive target replacement/deletion; contain no credentials."""
+
+    __tablename__ = "knowledge_audit_records"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    target_type: Mapped[str] = mapped_column(String(64), index=True)
+    target_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), index=True)
+    action: Mapped[str] = mapped_column(String(64))
+    payload: Mapped[dict] = mapped_column(JSONB)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    actor_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class KnowledgeChangeProposal(Base):
+    """Changed machine output for a protected approved/rejected record; never auto-applied."""
+
+    __tablename__ = "knowledge_change_proposals"
+    __table_args__ = (
+        UniqueConstraint("target_type", "target_id", "content_hash", name="uq_knowledge_proposal"),
+    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    target_type: Mapped[str] = mapped_column(String(64), index=True)
+    target_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), index=True)
+    payload: Mapped[dict] = mapped_column(JSONB)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(
+        String(24), default="pending_review", server_default="pending_review"
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
 class GlossaryTerm(Base):
     """两层法律术语库(通用概念 + 国家覆盖),带四级来源优先级与依据条款。"""
 

@@ -12,7 +12,6 @@
 import argparse
 import asyncio
 import getpass
-import hashlib
 import json
 import os
 import sys
@@ -191,82 +190,12 @@ def _ocr_engine():
 async def _split_oversized_clauses_for_country(
     session, country_code: str | None = None, max_clause_chars: int = 2400
 ) -> int:
-    """将历史遗留的超长未切分条款按句/款切分为标准条款,并保持 KgEdge 引用完整性。"""
-    from sqlalchemy import func, select
+    """Compatibility entry point: translation chunks must never modify source clauses.
 
-    from app.ingestion.models import Clause, Document, DocumentVersion
-    from app.knowledge.models import KgEdge
-    from app.knowledge.translator import split_clause_into_chunks
-
-    stmt = (
-        select(Clause, DocumentVersion, Document)
-        .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
-        .join(Document, Document.id == DocumentVersion.document_id)
-        .where(func.length(Clause.original_text) > max_clause_chars)
-    )
-    if country_code:
-        stmt = stmt.where(Document.country_code == country_code.upper())
-
-    rows = list((await session.execute(stmt)).all())
-    split_count = 0
-    for clause, ver, _doc in rows:
-        chunks = split_clause_into_chunks(clause.original_text, max_chars=1400)
-        if len(chunks) <= 1:
-            continue
-        max_ord = (
-            await session.execute(
-                select(func.max(Clause.ordinal)).where(Clause.version_id == ver.id)
-            )
-        ).scalar_one() or 0
-
-        edges = list(
-            (await session.execute(select(KgEdge).where(KgEdge.evidence_clause_id == clause.id)))
-            .scalars()
-            .all()
-        )
-        clause.original_text = chunks[0]
-        clause.text_hash = hashlib.sha256(chunks[0].encode("utf-8")).hexdigest()
-
-        created_clauses: list[Clause] = [clause]
-        for idx, ch_text in enumerate(chunks[1:], start=1):
-            new_c = Clause(
-                version_id=ver.id,
-                ordinal=max_ord + idx,
-                clause_number=f"{clause.clause_number or clause.ordinal}.{idx}",
-                heading=clause.heading,
-                section_path=clause.section_path,
-                language=clause.language,
-                original_text=ch_text,
-                text_hash=hashlib.sha256(ch_text.encode("utf-8")).hexdigest(),
-                page_start=clause.page_start,
-                page_end=clause.page_end,
-                ocr_required=clause.ocr_required,
-                needs_review=clause.needs_review,
-            )
-            session.add(new_c)
-            created_clauses.append(new_c)
-        await session.flush()
-
-        for edge in edges:
-            if edge.evidence_quote and edge.evidence_quote in clause.original_text:
-                continue
-            matched_c = next(
-                (
-                    nc
-                    for nc in created_clauses
-                    if edge.evidence_quote and edge.evidence_quote in nc.original_text
-                ),
-                clause,
-            )
-            if matched_c.id != clause.id:
-                edge.evidence_clause_id = matched_c.id
-            elif edge.evidence_quote not in clause.original_text:
-                edge.evidence_quote = clause.original_text[:240].strip()
-
-        split_count += 1
-    if split_count:
-        await session.commit()
-    return split_count
+    Chunking happens in translator.split_clause_into_chunks in memory only.
+    Historical repairs require separate reviewed parse revisions.
+    """
+    return 0
 
 
 async def batch_translate(

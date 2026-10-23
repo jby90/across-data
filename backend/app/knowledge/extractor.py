@@ -644,6 +644,7 @@ async def classify_document_relevance(
     doc.relevance_source = "rule"
     return rel, reason
 
+
 def align_verbatim_quote(original_text: str, candidate_quote: str) -> str | None:
     """校验或对齐 candidate_quote 为 original_text 的 100% 逐字子串。
     若无法在 original_text 中找到逐字对应的真实片段,返回 None(丢弃该边)。
@@ -777,14 +778,10 @@ def validate_relation_type_constraints(
             else RelationType(str(relation_type).upper())
         )
         src_t = (
-            source_type
-            if isinstance(source_type, NodeType)
-            else NodeType(str(source_type).upper())
+            source_type if isinstance(source_type, NodeType) else NodeType(str(source_type).upper())
         )
         dst_t = (
-            target_type
-            if isinstance(target_type, NodeType)
-            else NodeType(str(target_type).upper())
+            target_type if isinstance(target_type, NodeType) else NodeType(str(target_type).upper())
         )
     except ValueError as exc:
         return False, f"非法节点或关系枚举类型: {exc}"
@@ -915,9 +912,9 @@ async def _call_llm_judge(
         "裁判规则:\n"
         "1. 若证据摘录与该关系无关(如仅写明生效日期却声称修订 AMENDS、"
         "普通法院程序却声称数据出境限制、"
-        "或者证据中完全没有提及与目标实体对应的概念/义务/罚则)，必须输出 \"supports\": \"no\"。\n"
-        "2. 若证据摘录仅间接提及相关背景，但未直接确立该关系，输出 \"supports\": \"partial\"。\n"
-        "3. 只有当证据摘录直接、明确地确立了该法律关系时，才输出 \"supports\": \"yes\"。\n"
+        '或者证据中完全没有提及与目标实体对应的概念/义务/罚则)，必须输出 "supports": "no"。\n'
+        '2. 若证据摘录仅间接提及相关背景，但未直接确立该关系，输出 "supports": "partial"。\n'
+        '3. 只有当证据摘录直接、明确地确立了该法律关系时，才输出 "supports": "yes"。\n'
         '请严格输出 JSON: {"supports": "yes" | "no" | "partial", "reason": "简明中文裁判理由"}'
     )
     user_prompt = (
@@ -1311,9 +1308,7 @@ async def _call_llm_extract_clause(
                         valid_relations.append(ExtractedRelation.model_validate(rel_raw))
                     except ValidationError:
                         continue
-                parsed = ClauseExtractionPayload(
-                    entities=valid_entities, relations=valid_relations
-                )
+                parsed = ClauseExtractionPayload(entities=valid_entities, relations=valid_relations)
                 return parsed, settings.llm_model
         except (
             ValidationError,
@@ -1484,6 +1479,19 @@ async def _upsert_node(
         session.add(node)
         await session.flush()
     else:
+        from app.knowledge.history import propose, snapshot
+
+        if node.review_status in ("approved", "rejected"):
+            proposed = dict(
+                name_zh=name_zh[:255],
+                name_orig=name_orig,
+                summary=summary,
+                attributes=attributes,
+                evidence_clause_id=str(evidence_clause_id) if evidence_clause_id else None,
+            )
+            await propose(session, node, proposed)
+            return node
+        snapshot(session, node, "before_machine_revision")
         node.name_zh = name_zh[:255]
         if name_orig:
             node.name_orig = name_orig[:255]
@@ -1560,6 +1568,21 @@ async def _upsert_edge(
         session.add(edge)
         await session.flush()
     else:
+        from app.knowledge.history import propose, snapshot
+
+        proposed = dict(
+            evidence_quote=aligned,
+            extractor_model=extractor_model,
+            confidence=confidence,
+            judge_verdict=judge_verdict,
+            judge_reason=judge_reason,
+            is_structural=is_structural,
+        )
+        if edge.review_status in ("approved", "rejected"):
+            if any(getattr(edge, key) != value for key, value in proposed.items()):
+                await propose(session, edge, proposed)
+            return edge
+        snapshot(session, edge, "before_machine_revision")
         edge.evidence_quote = aligned
         edge.extractor_model = extractor_model
         edge.confidence = confidence
@@ -1661,7 +1684,7 @@ _NON_SUBSTANTIVE_LEAF_RE = re.compile(
 
 
 def _title_leaf(title: str) -> str:
-    """"主法 - 子法规" 形式标题取子法规部分。"""
+    """ "主法 - 子法规" 形式标题取子法规部分。"""
     return (title or "").split(" - ")[-1].strip()
 
 
@@ -2013,26 +2036,29 @@ async def extract_knowledge_for_country(
 
     async def _extract_and_judge_one(
         doc: Document, clause: Clause, reg_node: KgNode, inst_node: KgNode, pub_name: str
-    ) -> tuple[
-        Document,
-        Clause,
-        KgNode,
-        KgNode,
-        str,
-        ClauseExtractionPayload,
-        list[
-            tuple[
-                ExtractedRelation,
-                CandidateEvaluationResult,
-                NodeType,
-                str,
-                str,
-                NodeType,
-                str,
-                str,
-            ]
-        ],
-    ] | None:
+    ) -> (
+        tuple[
+            Document,
+            Clause,
+            KgNode,
+            KgNode,
+            str,
+            ClauseExtractionPayload,
+            list[
+                tuple[
+                    ExtractedRelation,
+                    CandidateEvaluationResult,
+                    NodeType,
+                    str,
+                    str,
+                    NodeType,
+                    str,
+                    str,
+                ]
+            ],
+        ]
+        | None
+    ):
         async with sem:
             res = await _call_llm_extract_clause(
                 clause_text=clause.original_text,
@@ -2065,9 +2091,7 @@ async def extract_knowledge_for_country(
                 ]
             ] = []
 
-            top_rels = sorted(
-                payload.relations, key=lambda r: r.confidence, reverse=True
-            )[:5]
+            top_rels = sorted(payload.relations, key=lambda r: r.confidence, reverse=True)[:5]
             for rel in top_rels:
                 src_raw = rel.source.strip()
                 dst_raw = rel.target.strip()

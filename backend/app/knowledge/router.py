@@ -433,9 +433,7 @@ async def _build_graph_payload(
     structural_edges = sum(1 for e in edge_outs if e.is_structural)
     semantic_edges = sum(1 for e in edge_outs if not e.is_structural)
     semantic_unjudged = sum(
-        1
-        for e in edge_outs
-        if not e.is_structural and e.judge_verdict not in ("yes", "partial")
+        1 for e in edge_outs if not e.is_structural and e.judge_verdict not in ("yes", "partial")
     )
     low_confidence = sum(
         1
@@ -671,6 +669,9 @@ async def review_clause_translation(
     if row is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="翻译记录不存在")
     tr, clause, doc = row
+    from app.knowledge.history import snapshot
+
+    snapshot(session, tr, "before_human_review", user.user_id)
     if body.translated_text:
         tr.translated_text = body.translated_text.strip()
         passed, issues, checked_hits = verify_translation(
@@ -684,6 +685,7 @@ async def review_clause_translation(
     tr.reviewer_note = body.reviewer_note
     tr.reviewed_at = datetime.now(UTC)
     tr.updated_at = datetime.now(UTC)
+    snapshot(session, tr, "after_human_review", user.user_id)
     await session.commit()
     outs = await _build_translation_outs(session, [(tr, clause, doc)])
     return outs[0]
@@ -832,6 +834,43 @@ async def get_admin_knowledge_graph(
     return await _build_graph_payload(session, country_code, only_approved=only_approved)
 
 
+@admin_router.get("/history/{target_id}")
+async def knowledge_history(
+    target_id: uuid.UUID,
+    _: AdminOrReviewerDep,
+    session: SessionDep,
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict:
+    from app.knowledge.history import record_payload
+    from app.knowledge.models import KnowledgeAuditRecord, KnowledgeChangeProposal
+
+    records = (
+        await session.scalars(
+            select(KnowledgeAuditRecord)
+            .where(KnowledgeAuditRecord.target_id == target_id)
+            .order_by(KnowledgeAuditRecord.created_at.desc(), KnowledgeAuditRecord.id)
+            .offset(offset)
+            .limit(limit)
+        )
+    ).all()
+    proposals = (
+        await session.scalars(
+            select(KnowledgeChangeProposal)
+            .where(KnowledgeChangeProposal.target_id == target_id)
+            .order_by(KnowledgeChangeProposal.created_at.desc(), KnowledgeChangeProposal.id)
+            .offset(offset)
+            .limit(limit)
+        )
+    ).all()
+    return {
+        "history": [record_payload(row) for row in records],
+        "proposals": [record_payload(row) for row in proposals],
+        "offset": offset,
+        "limit": limit,
+    }
+
+
 @admin_router.post("/edges/{edge_id}/review", response_model=KgEdgeOut)
 async def review_knowledge_edge(
     edge_id: uuid.UUID,
@@ -842,9 +881,13 @@ async def review_knowledge_edge(
     edge = await session.get(KgEdge, edge_id)
     if edge is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="图谱关系边不存在")
+    from app.knowledge.history import snapshot
+
+    snapshot(session, edge, "before_human_review", user.user_id)
     edge.review_status = body.decision
     edge.reviewed_by = user.user_id
     edge.reviewed_at = datetime.now(UTC)
+    snapshot(session, edge, "after_human_review", user.user_id)
     await session.commit()
     src = await session.get(KgNode, edge.source_node_id)
     dst = await session.get(KgNode, edge.target_node_id)

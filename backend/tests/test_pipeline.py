@@ -344,7 +344,7 @@ async def test_keywords_and_pagination(session_factory, tmp_path):
         assert r.pages_read == 2 and r.links_found == 1  # 关键词只保留 Data Act
 
 
-async def test_reparse_replaces_clauses_and_detects_tampered_archive(session_factory, tmp_path):
+async def test_reparse_preserves_clauses_and_detects_tampered_archive(session_factory, tmp_path):
     state = Site()
     site_id = await add_site(
         session_factory, strategy="DIRECT", entry="https://example.org/laws/act.pdf", config={}
@@ -370,7 +370,7 @@ async def test_reparse_replaces_clauses_and_detects_tampered_archive(session_fac
             await s.execute(
                 select(func.count()).select_from(Clause).where(Clause.version_id == v.id)
             )
-        ).scalar() == 0
+        ).scalar() == 2  # 完整性失败隔离该版本，但保留历史条款和审批引用
 
 
 async def test_unsupported_file_type_fails_parse_but_keeps_original(session_factory, tmp_path):

@@ -8,7 +8,7 @@ _TEST_ARCHIVE_DIR = tempfile.mkdtemp(prefix="cyshuhe-archive-")
 atexit.register(shutil.rmtree, _TEST_ARCHIVE_DIR, True)
 os.environ.setdefault("CYSH_JWT_SECRET", "test-secret-only-for-pytest-" + "x" * 16)
 os.environ.setdefault("CYSH_ENV", "dev")
-os.environ.setdefault("CYSH_ARCHIVE_DIR", _TEST_ARCHIVE_DIR)
+os.environ["CYSH_ARCHIVE_DIR"] = _TEST_ARCHIVE_DIR
 
 import pgserver  # noqa: E402
 import pytest  # noqa: E402

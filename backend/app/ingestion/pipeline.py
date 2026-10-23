@@ -13,7 +13,7 @@ from datetime import UTC, datetime
 from posixpath import basename
 from urllib.parse import unquote, urlsplit
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.ingestion.archive import ArchiveStore
@@ -96,9 +96,7 @@ _IRRELEVANT_HINTS = (
 )
 
 
-def assess_document_relevance(
-    title: str, source_url: str, document_type: str
-) -> tuple[str, str]:
+def assess_document_relevance(title: str, source_url: str, document_type: str) -> tuple[str, str]:
     """文件级相关性初判(S3 采集阶段记录,不删除文档,供 S2 过滤)。"""
     doc_type = (document_type or "").upper()
     haystack = f"{title or ''} {source_url or ''}".lower()
@@ -181,8 +179,36 @@ async def parse_version(
     language: str,
     ocr: OcrEngine | None = None,
 ) -> None:
-    """解析某个版本并写入条款。可重复调用(会先清掉该版本旧条款)。不负责 commit。"""
-    await session.execute(delete(Clause).where(Clause.version_id == version.id))
+    """解析尚未条款化的版本。已有条款不可原位重建，避免历史证据失效。"""
+    existing = await session.scalar(
+        select(Clause.id).where(Clause.version_id == version.id).limit(1)
+    )
+    if existing is not None:
+        try:
+            archive.read(version.archive_path)
+        except Exception as exc:
+            version.state = VersionState.FAILED.value
+            version.error = str(exc)
+            session.add(
+                PipelineEvent(
+                    version_id=version.id,
+                    step="parse",
+                    status="error",
+                    message="原文完整性检查失败，已有条款与引用保留: " + str(exc),
+                )
+            )
+            return
+        session.add(
+            PipelineEvent(
+                version_id=version.id,
+                step="parse",
+                status="ok",
+                message=(
+                    "preserved_existing_clauses: 已有条款保留；重新解析须建立独立解析修订并审核差异"
+                ),
+            )
+        )
+        return
     try:
         content = archive.read(version.archive_path)
         parsed = await asyncio.to_thread(parse_document, content, version.mime_type)
