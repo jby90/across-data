@@ -178,6 +178,10 @@ async def _build_graph_payload(
         .where(
             KgNode.country_code == cc,
             KgNode.review_status != "superseded",
+            or_(
+                KgNode.document_id.is_(None),
+                KgNode.document_id.in_(select(Document.id).where(document_available())),
+            ),
         )
         .order_by(KgNode.node_type)
     )
@@ -884,6 +888,10 @@ async def review_knowledge_edge(
     from app.knowledge.history import snapshot
 
     clause = await session.get(Clause, edge.evidence_clause_id)
+    from app.ingestion.safety import held_citation_ids
+
+    if body.decision == "approved" and await held_citation_ids(session, [edge.evidence_clause_id]):
+        raise HTTPException(409, "原文绑定异常已隔离，不能批准为法律依据")
     if body.decision == "approved" and (
         edge.review_status in ("superseded", "stale")
         or edge.extractor_model == "kg-rule-extractor-v1"
@@ -954,7 +962,7 @@ async def get_knowledge_overview(
                 select(func.count(Clause.id))
                 .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
                 .join(Document, Document.id == DocumentVersion.document_id)
-                .where(Document.country_code == cc)
+                .where(Document.country_code == cc, document_available())
             )
         ).scalar_one()
         tr_total = (
@@ -965,6 +973,7 @@ async def get_knowledge_overview(
                 .join(Document, Document.id == DocumentVersion.document_id)
                 .where(
                     Document.country_code == cc,
+                    document_available(),
                     ClauseTranslation.is_current.is_(True),
                     ClauseTranslation.review_status.notin_(
                         ("superseded", "not_translated", "translation_failed", "rejected", "stale")
@@ -980,6 +989,8 @@ async def get_knowledge_overview(
                 .join(Document, Document.id == DocumentVersion.document_id)
                 .where(
                     Document.country_code == cc,
+                    document_available(),
+                    ClauseTranslation.is_current.is_(True),
                     ClauseTranslation.review_status == "approved",
                 )
             )
@@ -989,6 +1000,10 @@ async def get_knowledge_overview(
                 select(func.count(KgNode.id)).where(
                     KgNode.country_code == cc,
                     KgNode.review_status != "superseded",
+                    or_(
+                        KgNode.document_id.is_(None),
+                        KgNode.document_id.in_(select(Document.id).where(document_available())),
+                    ),
                 )
             )
         ).scalar_one()
@@ -996,7 +1011,7 @@ async def get_knowledge_overview(
             await session.execute(
                 select(func.count(KgEdge.id)).where(
                     KgEdge.country_code == cc,
-                    KgEdge.review_status != "superseded",
+                    *active_edge_filters(),
                 )
             )
         ).scalar_one()

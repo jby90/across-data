@@ -54,11 +54,21 @@ async def test_held_source_is_visible_to_admin_but_not_public_knowledge(
 ):
     async with session_factory() as session:
         doc, _, clauses = await make_document(session)
-        await make_edge(session, clauses[0], "approved")
+        edge, source, _ = await make_edge(session, clauses[0], "approved")
+        source.document_id = doc.id
+        session.add(
+            ClauseTranslation(
+                clause_id=clauses[0].id,
+                translated_text="组织应保护个人数据。",
+                engine="llm",
+                model_name="test",
+                review_status="approved",
+            )
+        )
         await session.commit()
         await propose(session, doc, {"safety_hold": True, "reason": "wrong archive binding"})
         await session.commit()
-        doc_id, clause_id = str(doc.id), str(clauses[0].id)
+        doc_id, clause_id, edge_id = str(doc.id), str(clauses[0].id), str(edge.id)
     admin = bearer(await login(client, "admin", "admin@example.com"))
     user = bearer(await login(client, "user", "a-member@example.com"))
     docs = (await client.get("/api/admin/documents", headers=admin)).json()
@@ -72,6 +82,19 @@ async def test_held_source_is_visible_to_admin_but_not_public_knowledge(
     ).status_code == 409
     assert (
         await client.get(f"/api/analysis/clauses/{clause_id}/citation-card", headers=user)
+    ).status_code == 409
+    overview = (await client.get("/api/knowledge/overview", headers=user)).json()
+    country = next(row for row in overview if row["country_code"] == "SG")
+    assert country["clauses_count"] == country["translations_count"] == 0
+    assert country["approved_translations_count"] == country["kg_edges_count"] == 0
+    graph = (await client.get("/api/knowledge/graph?country_code=SG", headers=user)).json()
+    assert not any(node["document_id"] == doc_id for node in graph["nodes"])
+    assert (
+        await client.post(
+            f"/api/admin/knowledge/edges/{edge_id}/review",
+            headers=admin,
+            json={"decision": "approved"},
+        )
     ).status_code == 409
 
 
