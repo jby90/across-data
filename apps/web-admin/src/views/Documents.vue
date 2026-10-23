@@ -276,7 +276,7 @@ onMounted(load)
       </el-table-column>
       <el-table-column label="状态" width="180">
         <template #default="{ row }">
-          <template v-if="row.latest_version">
+          <div v-if="row.latest_version" class="document-status" data-testid="document-status">
             <el-tag
               :type="
                 row.latest_version.state === 'parsed'
@@ -289,18 +289,13 @@ onMounted(load)
             >
               {{ VERSION_STATE_LABEL[row.latest_version.state] }}
             </el-tag>
-            <el-tag
-              v-if="row.latest_version.ocr_required"
-              type="warning"
-              size="small"
-              style="margin-left: 4px"
-            >
+            <el-tag v-if="row.latest_version.ocr_required" type="warning" size="small">
               OCR
             </el-tag>
-            <el-tag type="info" size="small" style="margin-left: 4px">
+            <el-tag type="info" size="small">
               {{ row.latest_version.review_status === 'approved' ? '已复核' : '待复核' }}
             </el-tag>
-          </template>
+          </div>
           <el-tag v-else type="info">未取得原文</el-tag>
         </template>
       </el-table-column>
@@ -511,6 +506,19 @@ onMounted(load)
 </template>
 
 <style scoped>
+.document-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+}
+.document-status :deep(.el-tag) {
+  flex: 0 0 auto;
+  margin: 0;
+  height: 24px;
+  line-height: 22px;
+}
 .document-title {
   font-weight: 550;
   color: #263c4b;

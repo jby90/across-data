@@ -1,7 +1,17 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { api } from '../api'
+import { useAuth } from '../auth'
+import {
+  boundedPosition,
+  dragPosition,
+  readPositions,
+  spacedLayout,
+  NODE_WIDTH,
+  NODE_HEIGHT,
+  type NodePosition,
+} from '../components/workflowLayout'
 
 interface McpToolSchema {
   tool_name: string
@@ -282,6 +292,189 @@ const inspectorOpen = ref(false)
 const selectedNodeId = ref<string>('node_dimension_analyst')
 const inspectorTab = ref<'config' | 'tools' | 'trace'>('config')
 const canvasScale = ref<number>(0.72)
+const auth = useAuth()
+const canvasScroll = ref<HTMLDivElement | null>(null)
+const customPositions = ref<Record<string, NodePosition>>({})
+const nodeHeights = ref<Record<string, number>>({})
+const nodeElements = new Map<string, HTMLElement>()
+let nodeObserver: ResizeObserver | undefined
+const draggingNodeId = ref('')
+let drag: {
+  id: string
+  pointerId: number
+  target: HTMLElement
+  startX: number
+  startY: number
+  scrollX: number
+  scrollY: number
+  origin: NodePosition
+  previous?: NodePosition
+  moved: boolean
+} | null = null
+let suppressClickUntil = 0
+const layoutKey = computed(() =>
+  workflow.value && auth.user
+    ? `cysh:studio-layout:v1:${auth.user.id}:${workflow.value.id}:${workflow.value.version_no}`
+    : '',
+)
+const defaultPositions = computed(() =>
+  spacedLayout(workflow.value?.nodes || [], nodeHeights.value),
+)
+function positionOf(node: WorkflowNode): NodePosition {
+  return (
+    customPositions.value[node.node_id] || defaultPositions.value[node.node_id] || { x: 60, y: 60 }
+  )
+}
+function heightOf(node: WorkflowNode) {
+  return nodeHeights.value[node.node_id] || NODE_HEIGHT
+}
+const stageSize = computed(() => ({
+  width: Math.max(
+    1000,
+    ...(workflow.value?.nodes || []).map((n) => positionOf(n).x + NODE_WIDTH + 80),
+  ),
+  height: Math.max(
+    640,
+    ...(workflow.value?.nodes || []).map((n) => positionOf(n).y + heightOf(n) + 80),
+  ),
+}))
+watch(layoutKey, () => {
+  cancelDrag()
+  try {
+    customPositions.value = readPositions(
+      localStorage.getItem(layoutKey.value),
+      workflow.value?.nodes || [],
+    )
+  } catch {
+    customPositions.value = {}
+  }
+})
+function saveLayout() {
+  if (!layoutKey.value) return
+  try {
+    localStorage.setItem(
+      layoutKey.value,
+      JSON.stringify({ version: 1, positions: customPositions.value }),
+    )
+  } catch {
+    ElMessage.warning('布局已调整，但当前浏览器无法保存，刷新后将恢复默认布局。')
+  }
+}
+function registerNode(id: string, element: unknown) {
+  if (!(element instanceof HTMLElement) || nodeElements.get(id) === element) return
+  const old = nodeElements.get(id)
+  if (old) nodeObserver?.unobserve(old)
+  nodeElements.set(id, element)
+  nodeObserver?.observe(element)
+}
+function startNodeDrag(event: PointerEvent, node: WorkflowNode) {
+  if (event.button !== 0 || !event.isPrimary || drag) return
+  const target = event.currentTarget as HTMLElement
+  drag = {
+    id: node.node_id,
+    pointerId: event.pointerId,
+    target,
+    startX: event.clientX,
+    startY: event.clientY,
+    scrollX: canvasScroll.value?.scrollLeft || 0,
+    scrollY: canvasScroll.value?.scrollTop || 0,
+    origin: { ...positionOf(node) },
+    previous: customPositions.value[node.node_id],
+    moved: false,
+  }
+  target.setPointerCapture(event.pointerId)
+  target.focus({ preventScroll: true })
+}
+function moveNodeDrag(event: PointerEvent) {
+  if (!drag || drag.pointerId !== event.pointerId) return
+  const dx = event.clientX - drag.startX + (canvasScroll.value?.scrollLeft || 0) - drag.scrollX
+  const dy = event.clientY - drag.startY + (canvasScroll.value?.scrollTop || 0) - drag.scrollY
+  if (!drag.moved && Math.hypot(dx, dy) < 4) return
+  drag.moved = true
+  draggingNodeId.value = drag.id
+  customPositions.value = {
+    ...customPositions.value,
+    [drag.id]: dragPosition(drag.origin, dx, dy, canvasScale.value),
+  }
+}
+function finishNodeDrag(event: PointerEvent) {
+  if (!drag || drag.pointerId !== event.pointerId) return
+  const active = drag
+  drag = null
+  draggingNodeId.value = ''
+  if (active.target.hasPointerCapture(active.pointerId))
+    active.target.releasePointerCapture(active.pointerId)
+  if (active.moved) {
+    suppressClickUntil = Date.now() + 350
+    saveLayout()
+  }
+}
+function cancelDrag() {
+  if (!drag) return
+  const active = drag
+  drag = null
+  draggingNodeId.value = ''
+  const positions = { ...customPositions.value }
+  if (active.previous) positions[active.id] = active.previous
+  else delete positions[active.id]
+  customPositions.value = positions
+  if (active.target.hasPointerCapture(active.pointerId))
+    active.target.releasePointerCapture(active.pointerId)
+  if (active.moved) suppressClickUntil = Date.now() + 350
+}
+function clickNode(nodeId: string) {
+  if (Date.now() < suppressClickUntil) return
+  selectNode(nodeId)
+}
+function moveNodeWithKeyboard(event: KeyboardEvent, node: WorkflowNode) {
+  if (event.key === 'Escape') {
+    cancelDrag()
+    return
+  }
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    selectNode(node.node_id)
+    return
+  }
+  const direction: Record<string, [number, number]> = {
+    ArrowLeft: [-1, 0],
+    ArrowRight: [1, 0],
+    ArrowUp: [0, -1],
+    ArrowDown: [0, 1],
+  }
+  const delta = direction[event.key]
+  if (!delta || drag) return
+  event.preventDefault()
+  const position = positionOf(node)
+  const step = event.shiftKey ? 32 : 8
+  customPositions.value = {
+    ...customPositions.value,
+    [node.node_id]: boundedPosition(position.x + delta[0] * step, position.y + delta[1] * step),
+  }
+  saveLayout()
+}
+async function fitCanvas() {
+  await nextTick()
+  const viewport = canvasScroll.value
+  if (!viewport) return
+  canvasScale.value = Math.min(
+    1,
+    Math.max(
+      0.25,
+      Math.min(
+        (viewport.clientWidth - 32) / stageSize.value.width,
+        (viewport.clientHeight - 32) / stageSize.value.height,
+      ),
+    ),
+  )
+  viewport.scrollTo({ left: 0, top: 0 })
+}
+async function resetLayout() {
+  cancelDrag()
+  customPositions.value = {}
+  saveLayout()
+  await fitCanvas()
+}
 
 // 实时轮询与对话工作流历史管理状态
 const autoPollEnabled = ref(true)
@@ -330,9 +523,6 @@ const filteredHistoryTasks = computed(() => {
     return true
   })
 })
-
-const NODE_WIDTH = 240
-const NODE_HEIGHT = 148
 
 const nodeMap = computed(() => {
   const m = new Map<string, WorkflowNode>()
@@ -400,13 +590,15 @@ const computedSvgEdges = computed(() => {
       const src = nodeMap.value.get(e.source_node_id)
       const dst = nodeMap.value.get(e.target_node_id)
       if (!src || !dst) return null
+      const sourcePosition = positionOf(src)
+      const targetPosition = positionOf(dst)
 
       if (e.edge_type === 'backtrack') {
         // 质检退回分析补证边：从 verifier 左侧或顶部连回 analyst 底部
-        const x1 = src.position_x + NODE_WIDTH / 2
-        const y1 = src.position_y
-        const x2 = dst.position_x + NODE_WIDTH / 2
-        const y2 = dst.position_y + NODE_HEIGHT
+        const x1 = sourcePosition.x + NODE_WIDTH / 2
+        const y1 = sourcePosition.y
+        const x2 = targetPosition.x + NODE_WIDTH / 2
+        const y2 = targetPosition.y + heightOf(dst)
         const path = `M ${x1} ${y1} C ${x1 - 90} ${y1 - 40}, ${x2 - 90} ${y2 + 40}, ${x2} ${y2}`
         return {
           ...e,
@@ -416,10 +608,10 @@ const computedSvgEdges = computed(() => {
         }
       }
 
-      const x1 = src.position_x + NODE_WIDTH
-      const y1 = src.position_y + NODE_HEIGHT / 2
-      const x2 = dst.position_x
-      const y2 = dst.position_y + NODE_HEIGHT / 2
+      const x1 = sourcePosition.x + NODE_WIDTH
+      const y1 = sourcePosition.y + heightOf(src) / 2
+      const x2 = targetPosition.x
+      const y2 = targetPosition.y + heightOf(dst) / 2
       const dx = Math.max(Math.abs(x2 - x1) * 0.45, 50)
       const path = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`
       return {
@@ -734,11 +926,28 @@ function selectNode(nodeId: string) {
 }
 
 onMounted(() => {
+  nodeObserver = new ResizeObserver((entries) => {
+    const heights = { ...nodeHeights.value }
+    let changed = false
+    for (const entry of entries) {
+      const element = entry.target as HTMLElement
+      const id = element.dataset.nodeId
+      if (id && element.offsetHeight && heights[id] !== element.offsetHeight) {
+        heights[id] = element.offsetHeight
+        changed = true
+      }
+    }
+    if (changed) nodeHeights.value = heights
+  })
+  for (const element of nodeElements.values()) nodeObserver.observe(element)
   loadStudioData()
   pollTimer = window.setInterval(pollLiveWorkflows, 2000)
 })
 
 onUnmounted(() => {
+  cancelDrag()
+  nodeObserver?.disconnect()
+  nodeElements.clear()
   if (pollTimer !== undefined) window.clearInterval(pollTimer)
 })
 </script>
@@ -753,7 +962,7 @@ onUnmounted(() => {
           <h2 class="workflow-title">智能体工作台</h2>
           <div class="workflow-meta">
             <el-tag type="info" effect="plain" size="small" data-testid="agent-readonly-lock-badge">
-              只读查看 · 工作流与节点配置
+              配置只读 · 布局可拖动
             </el-tag>
             <el-tag type="info" size="small"> DSL: {{ workflow?.dsl_version }} </el-tag>
           </div>
@@ -959,10 +1168,17 @@ onUnmounted(() => {
             </div></el-popover
           >
           <div class="zoom-controls">
+            <el-button size="small" @click="resetLayout" data-testid="btn-reset-layout"
+              >恢复布局</el-button
+            >
+            <el-button size="small" @click="fitCanvas" data-testid="btn-fit-canvas"
+              >适应画布</el-button
+            >
             <el-button
               size="small"
               circle
-              @click="canvasScale = Math.max(0.4, +(canvasScale - 0.1).toFixed(2))"
+              aria-label="缩小画布"
+              @click="canvasScale = Math.max(0.25, +(canvasScale - 0.1).toFixed(2))"
             >
               -
             </el-button>
@@ -970,201 +1186,229 @@ onUnmounted(() => {
             <el-button
               size="small"
               circle
+              aria-label="放大画布"
               @click="canvasScale = Math.min(1.25, +(canvasScale + 0.1).toFixed(2))"
             >
               +
             </el-button>
-            <el-button size="small" @click="canvasScale = 0.72">重置</el-button>
           </div>
         </div>
 
-        <div class="canvas-scroll-area">
+        <div class="layout-hint" id="workflow-layout-hint">
+          拖动卡片自由排布 · 方向键微调，Shift 加快 · 布局仅保存在当前浏览器
+        </div>
+        <div class="canvas-scroll-area" ref="canvasScroll">
           <div
-            class="canvas-stage"
+            class="canvas-extent"
             :style="{
-              transform: `scale(${canvasScale})`,
-              transformOrigin: '0 0',
+              width: `${stageSize.width * canvasScale}px`,
+              height: `${stageSize.height * canvasScale}px`,
             }"
           >
-            <!-- SVG 连线层 -->
-            <svg class="edges-svg" width="1600" height="560">
-              <defs>
-                <marker
-                  id="arrow-forward"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6" />
-                </marker>
-                <marker
-                  id="arrow-backtrack"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c" />
-                </marker>
-                <marker
-                  id="arrow-event"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#ca8a04" />
-                </marker>
-              </defs>
-
-              <g v-for="edge in computedSvgEdges" :key="edge.edge_id">
-                <path
-                  :d="edge.path"
-                  fill="none"
-                  :stroke="
-                    edge.edge_type === 'backtrack'
-                      ? '#ea580c'
-                      : edge.edge_type === 'event_trigger'
-                        ? '#ca8a04'
-                        : '#3b82f6'
-                  "
-                  :stroke-width="edge.edge_type === 'backtrack' ? 2.6 : 2.2"
-                  :stroke-dasharray="edge.edge_type === 'backtrack' ? '6,4' : undefined"
-                  :marker-end="
-                    edge.edge_type === 'backtrack'
-                      ? 'url(#arrow-backtrack)'
-                      : edge.edge_type === 'event_trigger'
-                        ? 'url(#arrow-event)'
-                        : 'url(#arrow-forward)'
-                  "
-                />
-                <g :transform="`translate(${edge.labelX}, ${edge.labelY})`">
-                  <rect
-                    x="-78"
-                    y="-11"
-                    width="156"
-                    height="20"
-                    rx="10"
-                    :fill="edge.edge_type === 'backtrack' ? '#fff7ed' : '#f8fafc'"
-                    :stroke="edge.edge_type === 'backtrack' ? '#fdba74' : '#cbd5e1'"
-                  />
-                  <text
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    font-size="11"
-                    :fill="edge.edge_type === 'backtrack' ? '#c2410c' : '#334155'"
-                    font-weight="600"
-                  >
-                    {{ edge.label }}
-                  </text>
-                </g>
-              </g>
-            </svg>
-
-            <!-- Dify 风格节点卡片层 -->
             <div
-              v-for="node in workflow?.nodes || []"
-              :key="node.node_id"
-              class="dify-node-card"
-              :class="{
-                active: selectedNode?.node_id === node.node_id,
-                'has-backtrack': nodeTraceStatsMap.get(node.node_id)?.hasBacktrack,
-                'is-live-running':
-                  selectedTaskDetail?.status === 'running' &&
-                  selectedTaskDetail?.current_active_node_id === node.node_id,
-                'is-collecting':
-                  selectedTaskDetail?.status === 'collecting_facts' &&
-                  selectedTaskDetail?.current_active_node_id === node.node_id,
-              }"
+              class="canvas-stage"
               :style="{
-                left: `${node.position_x}px`,
-                top: `${node.position_y}px`,
-                width: `${NODE_WIDTH}px`,
+                width: `${stageSize.width}px`,
+                height: `${stageSize.height}px`,
+                transform: `scale(${canvasScale})`,
+                transformOrigin: '0 0',
               }"
-              data-testid="dify-node-card"
-              :data-node-id="node.node_id"
-              @click="selectNode(node.node_id)"
             >
-              <!-- 左侧输入端口圆点 -->
-              <span
-                v-if="node.node_type !== 'trigger'"
-                class="port-dot port-in"
-                :style="{ borderColor: node.color }"
-              />
-              <!-- 右侧输出端口圆点 -->
-              <span class="port-dot port-out" :style="{ borderColor: node.color }" />
+              <!-- SVG 连线层 -->
+              <svg class="edges-svg" :width="stageSize.width" :height="stageSize.height">
+                <defs>
+                  <marker
+                    id="arrow-forward"
+                    viewBox="0 0 10 10"
+                    refX="8"
+                    refY="5"
+                    markerWidth="6"
+                    markerHeight="6"
+                    orient="auto-start-reverse"
+                  >
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6" />
+                  </marker>
+                  <marker
+                    id="arrow-backtrack"
+                    viewBox="0 0 10 10"
+                    refX="8"
+                    refY="5"
+                    markerWidth="6"
+                    markerHeight="6"
+                    orient="auto-start-reverse"
+                  >
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c" />
+                  </marker>
+                  <marker
+                    id="arrow-event"
+                    viewBox="0 0 10 10"
+                    refX="8"
+                    refY="5"
+                    markerWidth="6"
+                    markerHeight="6"
+                    orient="auto-start-reverse"
+                  >
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#ca8a04" />
+                  </marker>
+                </defs>
 
-              <div class="node-card-header" :style="{ borderTop: `3px solid ${node.color}` }">
+                <g v-for="edge in computedSvgEdges" :key="edge.edge_id">
+                  <path
+                    :d="edge.path"
+                    fill="none"
+                    :stroke="
+                      edge.edge_type === 'backtrack'
+                        ? '#ea580c'
+                        : edge.edge_type === 'event_trigger'
+                          ? '#ca8a04'
+                          : '#3b82f6'
+                    "
+                    :stroke-width="edge.edge_type === 'backtrack' ? 2.6 : 2.2"
+                    :stroke-dasharray="edge.edge_type === 'backtrack' ? '6,4' : undefined"
+                    :marker-end="
+                      edge.edge_type === 'backtrack'
+                        ? 'url(#arrow-backtrack)'
+                        : edge.edge_type === 'event_trigger'
+                          ? 'url(#arrow-event)'
+                          : 'url(#arrow-forward)'
+                    "
+                  />
+                  <g :transform="`translate(${edge.labelX}, ${edge.labelY})`">
+                    <rect
+                      x="-78"
+                      y="-11"
+                      width="156"
+                      height="20"
+                      rx="10"
+                      :fill="edge.edge_type === 'backtrack' ? '#fff7ed' : '#f8fafc'"
+                      :stroke="edge.edge_type === 'backtrack' ? '#fdba74' : '#cbd5e1'"
+                    />
+                    <text
+                      text-anchor="middle"
+                      dominant-baseline="middle"
+                      font-size="11"
+                      :fill="edge.edge_type === 'backtrack' ? '#c2410c' : '#334155'"
+                      font-weight="600"
+                    >
+                      {{ edge.label }}
+                    </text>
+                  </g>
+                </g>
+              </svg>
+
+              <!-- Dify 风格节点卡片层 -->
+              <div
+                v-for="node in workflow?.nodes || []"
+                :key="node.node_id"
+                :ref="(el) => registerNode(node.node_id, el)"
+                class="dify-node-card"
+                :class="{
+                  active: selectedNode?.node_id === node.node_id,
+                  'is-dragging': draggingNodeId === node.node_id,
+                  'has-backtrack': nodeTraceStatsMap.get(node.node_id)?.hasBacktrack,
+                  'is-live-running':
+                    selectedTaskDetail?.status === 'running' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id,
+                  'is-collecting':
+                    selectedTaskDetail?.status === 'collecting_facts' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id,
+                }"
+                :style="{
+                  left: `${positionOf(node).x}px`,
+                  top: `${positionOf(node).y}px`,
+                  width: `${NODE_WIDTH}px`,
+                  minHeight: `${NODE_HEIGHT}px`,
+                }"
+                data-testid="dify-node-card"
+                :data-node-id="node.node_id"
+                role="button"
+                tabindex="0"
+                :aria-label="`${node.title}，可拖动或使用方向键调整位置，按回车查看详情`"
+                aria-describedby="workflow-layout-hint"
+                @pointerdown="startNodeDrag($event, node)"
+                @pointermove="moveNodeDrag"
+                @pointerup="finishNodeDrag"
+                @pointercancel="cancelDrag"
+                @lostpointercapture="finishNodeDrag"
+                @keydown="moveNodeWithKeyboard($event, node)"
+                @click="clickNode(node.node_id)"
+              >
+                <!-- 左侧输入端口圆点 -->
                 <span
-                  class="node-type-pill"
-                  :style="{
-                    backgroundColor: `${node.color}18`,
-                    color: node.color,
-                  }"
-                >
-                  {{ node.category_label }}
-                </span>
-                <span class="node-lock-tag" title="生产锁定只读">🔒 只读</span>
-              </div>
+                  v-if="node.node_type !== 'trigger'"
+                  class="port-dot port-in"
+                  :style="{ borderColor: node.color }"
+                />
+                <!-- 右侧输出端口圆点 -->
+                <span class="port-dot port-out" :style="{ borderColor: node.color }" />
 
-              <div class="node-card-title">{{ node.title }}</div>
-              <div class="node-card-subtitle">{{ node.subtitle }}</div>
-
-              <div class="node-card-meta">
-                <div class="meta-row">
-                  <span class="meta-key">模型:</span>
-                  <span class="meta-val">{{ node.model_name }}</span>
+                <div class="node-card-header" :style="{ borderTop: `3px solid ${node.color}` }">
+                  <span
+                    class="node-type-pill"
+                    :style="{
+                      backgroundColor: `${node.color}18`,
+                      color: node.color,
+                    }"
+                  >
+                    {{ node.category_label }}
+                  </span>
+                  <span class="node-lock-tag" title="生产锁定只读">🔒 只读</span>
                 </div>
-                <div class="meta-row">
-                  <span class="meta-key">MCP工具:</span>
-                  <span class="meta-val">{{ node.mcp_tools.length }} 个绑定工具</span>
+
+                <div class="node-card-title">{{ node.title }}</div>
+                <div class="node-card-subtitle">{{ node.subtitle }}</div>
+
+                <div class="node-card-meta">
+                  <div class="meta-row">
+                    <span class="meta-key">模型:</span>
+                    <span class="meta-val">{{ node.model_name }}</span>
+                  </div>
+                  <div class="meta-row">
+                    <span class="meta-key">MCP工具:</span>
+                    <span class="meta-val">{{ node.mcp_tools.length }} 个绑定工具</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 实时运行中指示条 -->
-              <div
-                v-if="
-                  selectedTaskDetail?.status === 'running' &&
-                  selectedTaskDetail?.current_active_node_id === node.node_id
-                "
-                class="node-live-running-banner"
-                data-testid="node-live-running-badge"
-              >
-                实时运行中...
-              </div>
-              <div
-                v-else-if="
-                  selectedTaskDetail?.status === 'collecting_facts' &&
-                  selectedTaskDetail?.current_active_node_id === node.node_id
-                "
-                class="node-collecting-banner"
-              >
-                💬 对话采集中 ({{ selectedTaskDetail.sufficiency_score }}%)
-              </div>
-
-              <!-- 叠加任务运行耗时与退回状态条 -->
-              <div v-if="nodeTraceStatsMap.get(node.node_id)" class="node-trace-footer">
-                <el-tag
-                  size="small"
-                  :type="nodeTraceStatsMap.get(node.node_id)?.hasBacktrack ? 'warning' : 'success'"
+                <!-- 实时运行中指示条 -->
+                <div
+                  v-if="
+                    selectedTaskDetail?.status === 'running' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id
+                  "
+                  class="node-live-running-banner"
+                  data-testid="node-live-running-badge"
                 >
-                  {{
-                    nodeTraceStatsMap.get(node.node_id)?.hasBacktrack
-                      ? `执行 ${nodeTraceStatsMap.get(node.node_id)?.runs} 次 (含补证)`
-                      : '执行通过'
-                  }}
-                </el-tag>
-                <span class="trace-ms">
-                  {{ nodeTraceStatsMap.get(node.node_id)?.duration_ms }}ms ·
-                  {{ nodeTraceStatsMap.get(node.node_id)?.tokens }} tok
-                </span>
+                  实时运行中...
+                </div>
+                <div
+                  v-else-if="
+                    selectedTaskDetail?.status === 'collecting_facts' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id
+                  "
+                  class="node-collecting-banner"
+                >
+                  💬 对话采集中 ({{ selectedTaskDetail.sufficiency_score }}%)
+                </div>
+
+                <!-- 叠加任务运行耗时与退回状态条 -->
+                <div v-if="nodeTraceStatsMap.get(node.node_id)" class="node-trace-footer">
+                  <el-tag
+                    size="small"
+                    :type="
+                      nodeTraceStatsMap.get(node.node_id)?.hasBacktrack ? 'warning' : 'success'
+                    "
+                  >
+                    {{
+                      nodeTraceStatsMap.get(node.node_id)?.hasBacktrack
+                        ? `执行 ${nodeTraceStatsMap.get(node.node_id)?.runs} 次 (含补证)`
+                        : '执行通过'
+                    }}
+                  </el-tag>
+                  <span class="trace-ms">
+                    {{ nodeTraceStatsMap.get(node.node_id)?.duration_ms }}ms ·
+                    {{ nodeTraceStatsMap.get(node.node_id)?.tokens }} tok
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -3018,5 +3262,47 @@ onUnmounted(() => {
 .task-metrics-list {
   display: grid;
   gap: 10px;
+}
+.layout-hint {
+  padding: 9px 16px;
+  color: #667b8b;
+  font-size: 12px;
+  border-bottom: 1px solid #e7edf3;
+  background: #ffffffa8;
+}
+.canvas-extent {
+  position: relative;
+}
+.canvas-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.canvas-scroll-area {
+  min-height: 360px;
+}
+.dify-node-card {
+  cursor: grab;
+  touch-action: none;
+}
+.dify-node-card:hover {
+  transform: none;
+}
+.dify-node-card.is-dragging {
+  cursor: grabbing;
+  z-index: 4;
+  transition: none;
+  box-shadow: 0 10px 30px #263e552b;
+}
+.dify-node-card.active {
+  border-width: 1px;
+}
+.port-dot {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.node-trace-footer {
+  flex-wrap: wrap;
+  gap: 6px;
 }
 </style>
