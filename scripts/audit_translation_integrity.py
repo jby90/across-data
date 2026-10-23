@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -62,8 +63,13 @@ def audit(base_url):
         if passed and row["engine"] == "llm" and row["review_status"] in ("machine_translated", "pending_review", "approved"):
             qualified.append(row)
         else:
+            doc = next(item for item in docs if item["id"] == row["document_id"])
             invalid.append({"translation_id": row["id"], "clause_id": row["clause_id"], "issues": issues,
-                            "status": row["review_status"]})
+                "status": row["review_status"], "country_code": row["country_code"],
+                "document_title": doc["title"], "source_url": doc["source_url"],
+                "original": row["original_text"], "translated": row["translated_text"],
+                "gap_kind": "numeric_or_citation_fragment" if not re.search(
+                    r"[^\W\d_]", row["original_text"], re.UNICODE) else "translation_quality_failure"})
     doc_by_id = {doc["id"]: doc for doc in docs}
     samples = []
     for country in ("SG", "EG", "TN", "MA", "LB"):
@@ -80,6 +86,8 @@ def audit(base_url):
     return dict(summary=dict(total_latest_clauses=len(clause_ids | held_clause_ids),
         eligible_latest_clauses=len(clause_ids), source_held_clauses=len(held_clause_ids), current=len(current),
         missing_qualified_clauses=len(clause_ids - qualified_ids),
+        qualified_coverage_percent=round(100 * len(qualified_ids) / len(clause_ids), 3) if clause_ids else None,
+        gap_kinds=dict(Counter(row["gap_kind"] for row in invalid)),
         identical_to_original=sum(row["original_text"].strip() == row["translated_text"].strip() for row in qualified),
         current_engines=dict(Counter(row["engine"] for row in current)),
         attempt_statuses=dict(Counter(row["review_status"] for row in rows)),
