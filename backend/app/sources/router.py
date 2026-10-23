@@ -10,6 +10,7 @@ from app.core.db import get_session
 from app.iam.deps import Principal, require_platform_admin
 from app.ingestion.models import Document
 from app.sources.models import CrawlRun, SourceSite, TermsStatus
+from app.sources.permissions import terms_permit_crawl
 from app.sources.schemas import RunOut, SiteCreate, SiteOut, SitePatch, TermsDecision
 
 router = APIRouter(prefix="/api/admin/sites", tags=["sources"])
@@ -109,7 +110,7 @@ async def patch_site(
 ):
     site = await _get_site(session, site_id)
     data = body.model_dump(exclude_unset=True)
-    if data.get("enabled") and site.terms_status != TermsStatus.APPROVED.value:
+    if data.get("enabled") and not terms_permit_crawl(site):
         raise HTTPException(status.HTTP_409_CONFLICT, "来源使用条款未确认,不能启用")
     if "config" in data and body.config is not None:
         site.config = body.config.model_dump()
@@ -132,10 +133,15 @@ async def decide_terms(
     session: AsyncSession = Depends(get_session),
 ):
     site = await _get_site(session, site_id)
+    from app.knowledge.history import snapshot
+
+    snapshot(session, site, "before_source_terms_decision", p.user_id)
     site.terms_status = body.status
+    site.terms_approval_scope = body.approval_scope
     site.terms_note = body.note.strip()
     site.terms_decided_by = p.user_id
     site.terms_decided_at = datetime.now(UTC)
+    snapshot(session, site, "after_source_terms_decision", p.user_id)
     if body.status != TermsStatus.APPROVED.value:
         site.enabled = False  # 条款被否决:立即停用
     await session.commit()
@@ -149,7 +155,7 @@ async def run_now(
     session: AsyncSession = Depends(get_session),
 ):
     site = await _get_site(session, site_id)
-    if site.terms_status != TermsStatus.APPROVED.value:
+    if not terms_permit_crawl(site):
         raise HTTPException(status.HTTP_409_CONFLICT, "来源使用条款未确认,不能抓取")
     if not site.enabled:
         raise HTTPException(status.HTTP_409_CONFLICT, "站点已停用")

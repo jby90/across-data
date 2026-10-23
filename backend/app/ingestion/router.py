@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.iam.deps import Principal, require_admin_side, require_platform_admin
-from app.ingestion.archive import ArchiveStore
+from app.ingestion.archive import ArchiveIntegrityError, ArchiveStore
 from app.ingestion.fetcher import validate_public_http_url
 from app.ingestion.models import Clause, Document, DocumentVersion, LegalStatus, PipelineEvent
 from app.ingestion.ocr import OcrEngine
@@ -212,9 +212,7 @@ async def upload_document_version(
         ).scalar_one_or_none()
         if doc is None:
             title_val = (body.title or clean_url).strip()[:500]
-            rel_val, rel_note = assess_document_relevance(
-                title_val, clean_url, site.document_type
-            )
+            rel_val, rel_note = assess_document_relevance(title_val, clean_url, site.document_type)
             doc = Document(
                 site_id=site.id,
                 country_code=site.country_code,
@@ -316,6 +314,77 @@ async def get_document(
         latest_version=version_out[0] if version_out else None,
         versions=version_out,
     )
+
+
+@router.get("/documents/{document_id}/provenance", summary="只读来源与归档完整性核验")
+async def document_provenance(
+    document_id: uuid.UUID,
+    _: Principal = Depends(require_admin_side),
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    doc = await session.get(Document, document_id)
+    if doc is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "文档不存在")
+    site = await session.get(SourceSite, doc.site_id)
+    archive = ArchiveStore(get_settings().archive_dir)
+    rows = []
+    versions = (await _versions_by_doc(session, [doc.id])).get(doc.id, [])
+    for version in versions:
+        error = None
+        try:
+            raw = archive.read(version.archive_path)
+            integrity_ok = (
+                archive.sha256(raw) == version.content_hash and len(raw) == version.size_bytes
+            )
+            if not integrity_ok:
+                error = "归档与登记的哈希或长度不一致"
+        except (OSError, ArchiveIntegrityError) as exc:
+            integrity_ok = False
+            error = type(exc).__name__ + ": 归档不可读或完整性检查未通过"
+        events = (
+            await session.scalars(
+                select(PipelineEvent)
+                .where(PipelineEvent.version_id == version.id)
+                .order_by(PipelineEvent.created_at, PipelineEvent.id)
+            )
+        ).all()
+        steps = {event.step for event in events}
+        # A URL and a matching hash prove provenance/integrity, not legal authenticity.
+        acquisition = (
+            "manual_upload"
+            if "upload" in steps
+            else ("pipeline_fetch" if "download" in steps else "legacy_or_unrecorded")
+        )
+        rows.append(
+            {
+                "version_id": str(version.id),
+                "version_no": version.version_no,
+                "content_hash": version.content_hash,
+                "fetched_at": version.fetched_at,
+                "final_url": version.final_url,
+                "metadata_source": version.metadata_source,
+                "acquisition": acquisition,
+                "pipeline_refetch_verified": "refetch" in steps,
+                "integrity_ok": integrity_ok,
+                "integrity_error": error,
+                "review_status": version.review_status,
+                "legal_status": version.legal_status,
+                "effective_date": version.effective_date,
+                "ocr_required": version.ocr_required,
+                "official_authenticity": "pending_human_review",
+                "events": [EventOut.model_validate(event).model_dump() for event in events],
+            }
+        )
+    return {
+        "document_id": str(doc.id),
+        "country_code": doc.country_code,
+        "source_url": doc.source_url,
+        "language": doc.language,
+        "publisher": site.publisher if site else None,
+        "terms_status": site.terms_status if site else None,
+        "terms_approval_scope": site.terms_approval_scope if site else None,
+        "versions": rows,
+    }
 
 
 @router.patch(

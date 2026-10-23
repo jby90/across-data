@@ -233,6 +233,15 @@ onMounted(load)
           >
             {{ TERMS_LABEL[row.terms_status] }}
           </el-tag>
+          <div class="muted" style="font-size: 12px; margin-top: 4px">
+            {{
+              row.terms_approval_scope === 'production'
+                ? '生产范围确认'
+                : row.terms_approval_scope === 'development'
+                  ? '仅开发环境'
+                  : '历史确认 · 生产须复核'
+            }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="定期抓取" width="90" align="center">

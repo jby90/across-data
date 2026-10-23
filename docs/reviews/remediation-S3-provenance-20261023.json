@@ -1,0 +1,3810 @@
+{
+  "documents": [
+    {
+      "document_id": "a88346a3-b2e9-4669-bd09-452d4b06183e",
+      "country_code": "MA",
+      "source_url": "https://www.sgg.gov.ma/BO/bo_fr/2009/bo_5714_fr.pdf",
+      "language": "fr",
+      "publisher": "摩洛哥总秘书处官方公报 SGG",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "2b402a42-2c0d-4b66-a2bc-6880ddf3fdbf",
+          "version_no": 1,
+          "content_hash": "b03db6369837037f15edbfba0ce137d2b21cc2585a77c57f7abcbd11c02bde4a",
+          "fetched_at": "2026-10-22T15:28:01.329889Z",
+          "final_url": "https://www.sgg.gov.ma/BO/bo_fr/2009/bo_5714_fr.pdf",
+          "metadata_source": null,
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": true,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "9393658 字节,sha256=b03db6369837",
+              "created_at": "2026-10-22T15:28:01.329889Z"
+            },
+            {
+              "step": "ocr",
+              "status": "ok",
+              "message": "原因:文字层含大量控制字符(38452 个),疑似字体编码缺失导致的乱码。OCR 40 页,语言 fra+eng,平均置信度 91.8。OCR 文本需人工核对。",
+              "created_at": "2026-10-22T15:28:01.329889Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "38 条,策略 numbered",
+              "created_at": "2026-10-22T15:28:01.329889Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "6fb87a81-904c-4670-ac9e-55c3115725e0",
+      "country_code": "EG",
+      "source_url": "https://idsc.gov.eg/upload/DocumentLibrary/AttachmentA/10387/7.pdf",
+      "language": "ar",
+      "publisher": "埃及内阁信息与决策支持中心 IDSC",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "439ea359-9915-4bef-b8e6-234e29ba16d2",
+          "version_no": 1,
+          "content_hash": "e88076a37faf78473dcef5f67cf7ee7d34bd9960c38dcaf8d3a92e2f80785c06",
+          "fetched_at": "2026-10-22T15:27:50.613427Z",
+          "final_url": "https://idsc.gov.eg/upload/DocumentLibrary/AttachmentA/10387/7.pdf",
+          "metadata_source": null,
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "10974327 字节,sha256=e88076a37faf",
+              "created_at": "2026-10-22T15:27:50.613427Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: #",
+              "created_at": "2026-10-22T15:27:50.613427Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "36 条,策略 page",
+              "created_at": "2026-10-22T15:27:50.613427Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "e1fe3389-6fec-4842-b92c-ac6f42fd73b9",
+      "country_code": "TN",
+      "source_url": "https://legislation-securite.tn/wp-content/uploads/sites/5/2023/11/Decret-n%C2%B02007-3003-du-27-novembre-2007fr.pdf",
+      "language": "fr",
+      "publisher": "突尼斯官方公报 JORT / 立法门户",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "0572621e-ca51-4b8d-9187-c380f8097460",
+          "version_no": 1,
+          "content_hash": "3df2d0562ab8aee0e84dae526ebc28750b6925885d55b1df0326e9d879d47a29",
+          "fetched_at": "2026-10-22T15:25:50.312221Z",
+          "final_url": "https://legislation-securite.tn/wp-content/uploads/sites/5/2023/11/Decret-n%C2%B02007-3003-du-27-novembre-2007fr.pdf",
+          "metadata_source": null,
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "401141 字节,sha256=3df2d0562ab8",
+              "created_at": "2026-10-22T15:25:50.312221Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: Page # sur #",
+              "created_at": "2026-10-22T15:25:50.312221Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "16 条,策略 numbered",
+              "created_at": "2026-10-22T15:25:50.312221Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+      "country_code": "EG",
+      "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+      "language": "ar",
+      "publisher": "埃及通信与信息技术部 MCIT",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "version_no": 1,
+          "content_hash": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "fetched_at": "2026-10-22T15:16:43.274515Z",
+          "final_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "metadata_source": "manual_upload",
+          "acquisition": "manual_upload",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": true,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "upload",
+              "status": "ok",
+              "message": "管理员手动上传官方原文,4105075 字节,sha256=9b809f6d15e3",
+              "created_at": "2026-10-22T15:16:43.256592Z"
+            },
+            {
+              "step": "ocr",
+              "status": "ok",
+              "message": "原因:没有文字层,疑似扫描件。OCR 31 页,语言 ara+eng,平均置信度 75.1。OCR 文本需人工核对。",
+              "created_at": "2026-10-22T15:16:43.256592Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "13 条,策略 numbered",
+              "created_at": "2026-10-22T15:16:43.256592Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "6df51de3-b2dc-4eaf-8a91-c658e98dfaf1",
+      "country_code": "LB",
+      "source_url": "https://lp.gov.lb/backoffice/uploads/files/Laws%20whose%20implementation%20decrees%20have%20not%20been%20issued%20-%20update%20September%202%2C%202021.pdf",
+      "language": "ar",
+      "publisher": "黎巴嫩议会 LP(官方托管)",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "671c9ebf-b0f9-49f1-ae40-df3383b78d27",
+          "version_no": 1,
+          "content_hash": "6898d1ad28e5f48f9df3fc946082476d448c8d86617288a8002b99e6f7107623",
+          "fetched_at": "2026-10-22T15:15:23.858141Z",
+          "final_url": "https://lp.gov.lb/backoffice/uploads/files/Laws%20whose%20implementation%20decrees%20have%20not%20been%20issued%20-%20update%20September%202%2C%202021.pdf",
+          "metadata_source": null,
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "1878268 字节,sha256=6898d1ad28e5",
+              "created_at": "2026-10-22T15:15:23.858141Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # | S.Mouawad",
+              "created_at": "2026-10-22T15:15:23.858141Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "177 条,策略 numbered",
+              "created_at": "2026-10-22T15:15:23.858141Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "5a92e1af-14e7-4022-a558-6a42dbffbf4b",
+      "country_code": "LB",
+      "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "language": "ar",
+      "publisher": "黎巴嫩中央银行 BDL(官方托管)",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "ee99bccb-9fc2-4afa-a223-65a43c00891e",
+          "version_no": 1,
+          "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "fetched_at": "2026-10-22T08:38:21.332783Z",
+          "final_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": true,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=7c13a15bbbde,原文件已校验",
+              "created_at": "2026-10-22T08:38:21.327062Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # | ق/ س/ ت -# -# /#",
+              "created_at": "2026-10-22T08:38:21.327062Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "127 条,策略 numbered",
+              "created_at": "2026-10-22T08:38:21.327062Z"
+            },
+            {
+              "step": "refetch",
+              "status": "ok",
+              "message": "真实重新下载与已有归档一致，sha256=7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af；final_url=https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+              "created_at": "2026-10-23T08:09:48.449058Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "801558cb-6c33-4e11-8728-ddf5ed71f681",
+      "country_code": "MA",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/CDAI-FORMULAIRE-DAI-Template-FRANCAIS.pdf",
+      "language": "fr",
+      "publisher": "摩洛哥国家个人数据保护委员会 CNDP",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "e531a3c3-1bfd-4aed-bb5f-8ed6b9a76208",
+          "version_no": 1,
+          "content_hash": "37710bb33ae3a3f450dfcb85e80f4998bffaa9909ab9aa8be4e48ee78e8ad58c",
+          "fetched_at": "2026-10-22T08:38:21.298512Z",
+          "final_url": "https://www.cndp.ma/wp-content/uploads/2023/11/CDAI-FORMULAIRE-DAI-Template-FRANCAIS.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=37710bb33ae3,原文件已校验",
+              "created_at": "2026-10-22T08:38:21.290793Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "2 条,策略 page",
+              "created_at": "2026-10-22T08:38:21.290793Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "82a511b3-3ba9-480b-858d-ed593bafbcd0",
+      "country_code": "MA",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+      "language": "fr",
+      "publisher": "摩洛哥国家个人数据保护委员会 CNDP",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "0e326db8-2429-4006-8ddb-0b12e0f63688",
+          "version_no": 1,
+          "content_hash": "0a930a84d692c5b7e82a328970c52f10c52ee55ba75bb974918f0694a901365b",
+          "fetched_at": "2026-10-22T08:37:57.175713Z",
+          "final_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": true,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=0a930a84d692,原文件已校验",
+              "created_at": "2026-10-22T08:37:57.171981Z"
+            },
+            {
+              "step": "ocr",
+              "status": "ok",
+              "message": "原因:没有文字层,疑似扫描件。OCR 5 页,语言 fra+eng,平均置信度 92.9。OCR 文本需人工核对。",
+              "created_at": "2026-10-22T08:37:57.171981Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: N° # — # joumada II # (#-#-#)",
+              "created_at": "2026-10-22T08:37:57.171981Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "13 条,策略 numbered",
+              "created_at": "2026-10-22T08:37:57.171981Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "5f80b3d1-44e0-407e-8a1d-641a0152c480",
+      "country_code": "MA",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+      "language": "fr",
+      "publisher": "摩洛哥国家个人数据保护委员会 CNDP",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "0e3251b7-8576-481c-b5d0-07954f45e53b",
+          "version_no": 1,
+          "content_hash": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "fetched_at": "2026-10-22T08:37:57.093934Z",
+          "final_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=4b5e91054533,原文件已校验",
+              "created_at": "2026-10-22T08:37:57.089808Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: -#-",
+              "created_at": "2026-10-22T08:37:57.089808Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "68 条,策略 numbered",
+              "created_at": "2026-10-22T08:37:57.089808Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "ff6ef1a3-bb48-49a8-86a4-fc03168c907c",
+      "country_code": "TN",
+      "source_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "language": "ar",
+      "publisher": "突尼斯司法部",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "ef435dee-6930-496b-8d22-23b4819a7999",
+          "version_no": 1,
+          "content_hash": "7b12a8ddddba535f4afb61ab95f9f9be411fdecc31cda1e9242145853edf2735",
+          "fetched_at": "2026-10-22T08:37:21.184310Z",
+          "final_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": true,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": true,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=7b12a8ddddba,原文件已校验",
+              "created_at": "2026-10-22T08:37:21.178624Z"
+            },
+            {
+              "step": "ocr",
+              "status": "ok",
+              "message": "原因:文字层含大量控制字符(5772 个),疑似字体编码缺失导致的乱码。OCR 9 页,语言 ara+eng,平均置信度 90.4。OCR 文本需人工核对。",
+              "created_at": "2026-10-22T08:37:21.178624Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: صفحة # | عدد #",
+              "created_at": "2026-10-22T08:37:21.178624Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "9 条,策略 page",
+              "created_at": "2026-10-22T08:37:21.178624Z"
+            },
+            {
+              "step": "refetch",
+              "status": "ok",
+              "message": "真实重新下载与已有归档一致，sha256=7b12a8ddddba535f4afb61ab95f9f9be411fdecc31cda1e9242145853edf2735；final_url=https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+              "created_at": "2026-10-23T08:10:12.997215Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "08fe4d23-a30d-4024-81cb-bb135ee2418e",
+      "country_code": "TN",
+      "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+      "language": "fr",
+      "publisher": "突尼斯国家统计局 INS",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "4c96e765-6d50-4106-89b9-e247f76daba3",
+          "version_no": 1,
+          "content_hash": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "fetched_at": "2026-10-22T08:37:21.125901Z",
+          "final_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": true,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=398b4b3499ff,原文件已校验",
+              "created_at": "2026-10-22T08:37:21.120991Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: #",
+              "created_at": "2026-10-22T08:37:21.120991Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "105 条,策略 numbered",
+              "created_at": "2026-10-22T08:37:21.120991Z"
+            },
+            {
+              "step": "refetch",
+              "status": "ok",
+              "message": "真实重新下载与已有归档一致，sha256=398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77；final_url=https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+              "created_at": "2026-10-23T08:10:16.695292Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "d8069d4b-7495-44d6-b296-597c094974c4",
+      "country_code": "EG",
+      "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+      "language": "ar",
+      "publisher": "埃及国家电信监管局 NTRA",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "1329d254-3b6b-42b9-9698-49bfb143f1d1",
+          "version_no": 1,
+          "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+          "fetched_at": "2026-10-22T08:37:20.994664Z",
+          "final_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=11566a8620fa,原文件已校验",
+              "created_at": "2026-10-22T08:37:20.976199Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # iot@tra.gov.eg",
+              "created_at": "2026-10-22T08:37:20.976199Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "20 条,策略 chunk",
+              "created_at": "2026-10-22T08:37:20.976199Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "688a4d99-bfed-4d5c-af0a-7c88487ab49c",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/699.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "0285adcc-c7d5-4726-a309-b10774050578",
+          "version_no": 1,
+          "content_hash": "0a171cc91c3e4d2bbf5c3842b5c38bb2d1ce79ebbf283ee43f05a73a4a93fb27",
+          "fetched_at": "2026-10-22T07:48:03.389975Z",
+          "final_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/699.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "133044 字节,sha256=0a171cc91c3e",
+              "created_at": "2026-10-22T07:48:03.389975Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:48:03.389975Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "36abfdc3-e5c0-4936-bca6-77b38e7a50a9",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/700.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "9312ee2b-1bc0-42df-9f4e-49a3fca34650",
+          "version_no": 1,
+          "content_hash": "858d06aa8af763326e1cb6f50abd789b3b9f8a16c56aa56bc5d261e4c65af44b",
+          "fetched_at": "2026-10-22T07:48:02.404731Z",
+          "final_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/700.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "136837 字节,sha256=858d06aa8af7",
+              "created_at": "2026-10-22T07:48:02.404731Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:48:02.404731Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "5ee94747-2bb1-4e72-9f39-1de916ab97c5",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/149.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "9a3af4d9-2e2e-4870-a6de-6d93033ef349",
+          "version_no": 1,
+          "content_hash": "539c9f51b351ae28d3cd58c2a96c09d57c0177c4153754c6874c3b4c25cdb298",
+          "fetched_at": "2026-10-22T07:48:01.494025Z",
+          "final_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/149.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "206699 字节,sha256=539c9f51b351",
+              "created_at": "2026-10-22T07:48:01.494025Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | Statutory body Act under which established or constituted | THE SCHEDULE –– continued",
+              "created_at": "2026-10-22T07:48:01.494025Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "40 条,策略 numbered",
+              "created_at": "2026-10-22T07:48:01.494025Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "97fd86b9-86bc-4aa3-9a47-a48d71683980",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/708.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "60b67ece-e346-4bcb-a12b-238dc58cd6e6",
+          "version_no": 1,
+          "content_hash": "c1144f0f06c9551cd31e68d576daacebfab0b3394c5fe8aa2159ffb3035b3232",
+          "fetched_at": "2026-10-22T07:48:00.500004Z",
+          "final_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/708.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "149072 字节,sha256=c1144f0f06c9",
+              "created_at": "2026-10-22T07:48:00.500004Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T07:48:00.500004Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "cd7bc01b-dd1b-4142-ac90-d9bcf8f910e8",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "21c34f19-bee3-46f4-8a78-f89dd2a7eb65",
+          "version_no": 1,
+          "content_hash": "ac1b9cd1914d7c00df391323f3d0952e0381974dab951e7782b4f4b895b8f75f",
+          "fetched_at": "2026-10-22T07:47:59.323894Z",
+          "final_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "249881 字节,sha256=ac1b9cd1914d",
+              "created_at": "2026-10-22T07:47:59.323894Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | S #/# #",
+              "created_at": "2026-10-22T07:47:59.323894Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "47 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:59.323894Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "63ce9df6-40a9-44e4-8ec4-1854fb6ef56b",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/759.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "2e3f45f1-5148-4567-abb5-71a58c25566a",
+          "version_no": 1,
+          "content_hash": "d913bdb796177ed709ba22171b7dabca14992493b72d2df1fc1829ab7eadb972",
+          "fetched_at": "2026-10-22T07:47:58.345508Z",
+          "final_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/759.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "151725 字节,sha256=d913bdb79617",
+              "created_at": "2026-10-22T07:47:58.345508Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:58.345508Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "39641e0e-73e6-43ed-b050-360221f10223",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/817.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "b3918f68-a960-4f63-8b8e-4a566c6b0a91",
+          "version_no": 1,
+          "content_hash": "6d850a7e608ee09613337d5a5f3d08ba05e2b87d70e45c9609346ea5c7b41979",
+          "fetched_at": "2026-10-22T07:47:57.432409Z",
+          "final_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/817.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "160583 字节,sha256=6d850a7e608e",
+              "created_at": "2026-10-22T07:47:57.432409Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "5 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:57.432409Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "2ab167bb-bf4f-4d67-8bd0-652825eb0567",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/361.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "9b215c3f-362f-4fc6-be1b-76bae1faed83",
+          "version_no": 1,
+          "content_hash": "309d8175baf7f63d7f79389bf3f9b95b1248d8e22e59518a8700fc1f40e74dc5",
+          "fetched_at": "2026-10-22T07:47:56.484505Z",
+          "final_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/361.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "153295 字节,sha256=309d8175baf7",
+              "created_at": "2026-10-22T07:47:56.484505Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:56.484505Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "76c437fc-cdec-4010-9c0d-b34621050365",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/362.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "8cf4bd24-ba12-4a26-896a-2505d224a65f",
+          "version_no": 1,
+          "content_hash": "0a6374f4182ca5a1e59805a589296956c7b9451f3cff45070327b86f9c2be13f",
+          "fetched_at": "2026-10-22T07:47:55.329939Z",
+          "final_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/362.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "401742 字节,sha256=0a6374f4182c",
+              "created_at": "2026-10-22T07:47:55.329939Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | S #/# #",
+              "created_at": "2026-10-22T07:47:55.329939Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "19 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:55.329939Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "9868a85f-e713-4649-b277-2518d8ddb63a",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/368.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "897dc4ca-b005-4250-aae3-cac102adb815",
+          "version_no": 1,
+          "content_hash": "17910d1d4feb09278ecda06580409544b08d6d860eb3ac3533e611e083f2a8d2",
+          "fetched_at": "2026-10-22T07:47:54.612079Z",
+          "final_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/368.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "159465 字节,sha256=17910d1d4feb",
+              "created_at": "2026-10-22T07:47:54.612079Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "10 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:54.612079Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "03347b28-2713-400b-99fc-843f13fe5e2f",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/455.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "c67ab79d-fe33-4a36-b363-1f9becfad809",
+          "version_no": 1,
+          "content_hash": "223c6b8ff2fcd9507c8675951b4b777260bc40951d8ed0b68a1f26515966f2ac",
+          "fetched_at": "2026-10-22T07:47:53.373368Z",
+          "final_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/455.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "254628 字节,sha256=223c6b8ff2fc",
+              "created_at": "2026-10-22T07:47:53.373368Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | S #/# #",
+              "created_at": "2026-10-22T07:47:53.373368Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "30 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:53.373368Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "d4d9b7b1-e703-44a1-b124-592c59a4d711",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/458.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "58122a76-11e1-44cf-b263-7640e2b47c7f",
+          "version_no": 1,
+          "content_hash": "fb843143d05ed52bd7f6f28382737f9b8e91707ed5ea79933b6f7db5ffe9ac51",
+          "fetched_at": "2026-10-22T07:47:52.362332Z",
+          "final_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/458.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "145995 字节,sha256=fb843143d05e",
+              "created_at": "2026-10-22T07:47:52.362332Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "1 条,策略 paragraph",
+              "created_at": "2026-10-22T07:47:52.362332Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "d6a0eede-b05c-4e40-9fba-b8fb60c410c9",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/543.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "322cb7c9-28bf-4d4c-ab0c-b7ba061c0b2b",
+          "version_no": 1,
+          "content_hash": "29f318906f367be9687e9c7c581af66f00ecd134a9dcd3477e7b27da5c3adf31",
+          "fetched_at": "2026-10-22T07:47:51.369969Z",
+          "final_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/543.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "159544 字节,sha256=29f318906f36",
+              "created_at": "2026-10-22T07:47:51.369969Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:51.369969Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "3c44a07d-c9f5-46bb-b8fc-50b1edb8d43a",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2015/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/019.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "bff20b57-7aa3-4d48-ae8d-444aedc401ff",
+          "version_no": 1,
+          "content_hash": "485fae5a011fd1374220461b0737211726409a0ca2c091dfca6e2f8741edc29c",
+          "fetched_at": "2026-10-22T07:47:50.660847Z",
+          "final_url": "https://assets.egazette.gov.sg/2015/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/019.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "185139 字节,sha256=485fae5a011f",
+              "created_at": "2026-10-22T07:47:50.660847Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "8 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:50.660847Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "5edd6f11-9742-4567-8d24-2a4ef0b14734",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2015/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/020.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "aebf7379-fe9f-4f54-b9f6-b1acd8148a76",
+          "version_no": 1,
+          "content_hash": "514518de8ebac2fb58e96e2c9f1cd08efb83e4849094036289c6f429cbc6ff8d",
+          "fetched_at": "2026-10-22T07:47:49.351101Z",
+          "final_url": "https://assets.egazette.gov.sg/2015/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/020.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "271543 字节,sha256=514518de8eba",
+              "created_at": "2026-10-22T07:47:49.351101Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | S #/# #",
+              "created_at": "2026-10-22T07:47:49.351101Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "34 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:49.351101Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "f9a04c04-4c3e-4804-b501-531e0dbf701c",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2015/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/090.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "813dafa3-7611-4eb6-a0f9-be2ef334933c",
+          "version_no": 1,
+          "content_hash": "d80d025b5b607e7c2a1c86b9a3d67478b23a609d87a24615e48dca171006e074",
+          "fetched_at": "2026-10-22T07:47:48.241846Z",
+          "final_url": "https://assets.egazette.gov.sg/2015/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/090.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "167553 字节,sha256=d80d025b5b60",
+              "created_at": "2026-10-22T07:47:48.241846Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "11 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:48.241846Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "8f6de105-553b-4960-afbe-ef079bd81f79",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2015/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/331.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "4bc91617-d716-4f15-a262-a64acf5f8793",
+          "version_no": 1,
+          "content_hash": "ab34c3277b6b935e105eff576d2cfb707477f00f8cf8ed0fff0240507face0c4",
+          "fetched_at": "2026-10-22T07:47:47.253316Z",
+          "final_url": "https://assets.egazette.gov.sg/2015/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/331.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "163465 字节,sha256=ab34c3277b6b",
+              "created_at": "2026-10-22T07:47:47.253316Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:47.253316Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "d32623df-6850-4086-bce3-c48e157e9d5d",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2016/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/256.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "2ffa985b-f43d-45d6-b4c2-584e832a4ca3",
+          "version_no": 1,
+          "content_hash": "1d39b19b7cac567afefdf379f764a6dd9154e3253e2e73519e4a323c87c7d6a2",
+          "fetched_at": "2026-10-22T07:47:46.252990Z",
+          "final_url": "https://assets.egazette.gov.sg/2016/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/256.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "167361 字节,sha256=1d39b19b7cac",
+              "created_at": "2026-10-22T07:47:46.252990Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:46.252990Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "17d6545e-57e5-4d8e-acb0-f0531861c249",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2016/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/460.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "8295a85b-f9e2-411c-a164-0407a991368c",
+          "version_no": 1,
+          "content_hash": "9f1c355a5cab5e5fc1062e21a762696291216a70a571c83e1f5df223515029c0",
+          "fetched_at": "2026-10-22T07:47:45.595075Z",
+          "final_url": "https://assets.egazette.gov.sg/2016/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/460.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "164988 字节,sha256=9f1c355a5cab",
+              "created_at": "2026-10-22T07:47:45.595075Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:45.595075Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "327e4adc-7c7c-4e7d-8f92-dbe2146bc648",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2016/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/464.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "341cd91e-2aa9-4d6d-bee4-904fa4225a16",
+          "version_no": 1,
+          "content_hash": "aa45eb80805062ee92d29d144cf4ad66ff97f4f1c118780472ab94ec1945381f",
+          "fetched_at": "2026-10-22T07:47:44.100627Z",
+          "final_url": "https://assets.egazette.gov.sg/2016/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/464.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "169324 字节,sha256=aa45eb808050",
+              "created_at": "2026-10-22T07:47:44.100627Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:44.100627Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "7dfefd2b-1e09-41f7-aa7b-90ce90303ab0",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2018/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/188.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "761155f0-ffdb-4194-bb6a-9fe1326a5688",
+          "version_no": 1,
+          "content_hash": "ed86cb960cc59ba761d32bf7120647fec840cb28adbe985472e5c94f95c3a3e3",
+          "fetched_at": "2026-10-22T07:47:43.077329Z",
+          "final_url": "https://assets.egazette.gov.sg/2018/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/188.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "39766 字节,sha256=ed86cb960cc5",
+              "created_at": "2026-10-22T07:47:43.077329Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:43.077329Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "1c529c27-d606-4c09-9127-67e05eb9b299",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2019/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/402.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "edb298af-2c4d-4e9f-99b5-b830ca6a9b21",
+          "version_no": 1,
+          "content_hash": "9ba737cd08c009c531ea287885b6d6d8fcfb7d64ba9f4c3927b98522bd6924f2",
+          "fetched_at": "2026-10-22T07:47:42.085740Z",
+          "final_url": "https://assets.egazette.gov.sg/2019/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/402.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "34482 字节,sha256=9ba737cd08c0",
+              "created_at": "2026-10-22T07:47:42.085740Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:42.085740Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "23cb4c33-eb2a-4620-8e5a-bf1f02728e79",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2019/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/739.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "0c16c3e2-30f1-4240-8f16-e1a08184cdd3",
+          "version_no": 1,
+          "content_hash": "64fa1661b1d5f44ff95862ebd59da7951844afdb4609bf7075d5db322f2210c4",
+          "fetched_at": "2026-10-22T07:47:41.087148Z",
+          "final_url": "https://assets.egazette.gov.sg/2019/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/739.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "34656 字节,sha256=64fa1661b1d5",
+              "created_at": "2026-10-22T07:47:41.087148Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:41.087148Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "f238ed65-cfd7-4d37-b110-f8558a36f67b",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2020/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/272.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "bc53057e-92f5-4508-81f8-198a28086145",
+          "version_no": 1,
+          "content_hash": "7a36596fa09515436f7b6d524148dbc85903be5fd854403db581880cbd03010e",
+          "fetched_at": "2026-10-22T07:47:40.074071Z",
+          "final_url": "https://assets.egazette.gov.sg/2020/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/272.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "33347 字节,sha256=7a36596fa095",
+              "created_at": "2026-10-22T07:47:40.074071Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:40.074071Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "40099014-4315-47ce-b8a0-da9f7f3ddaff",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2020/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/398.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "b8ced523-4188-4526-a540-4fb849b8990c",
+          "version_no": 1,
+          "content_hash": "299414a16d17e6825eee424b9236a8910b21be10c56975bc302a38970a401be5",
+          "fetched_at": "2026-10-22T07:47:39.076497Z",
+          "final_url": "https://assets.egazette.gov.sg/2020/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/398.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "34527 字节,sha256=299414a16d17",
+              "created_at": "2026-10-22T07:47:39.076497Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:39.076497Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "5209c004-e156-4bf6-b2ea-73e9c1add39e",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/061.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "c36c0475-e511-4896-9bbc-9c72237ac36b",
+          "version_no": 1,
+          "content_hash": "e961412e6922dc35e8c00abd5ff9b609e828dc370164c22778be87cc4099de7d",
+          "fetched_at": "2026-10-22T07:47:35.963599Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/061.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "32058 字节,sha256=e961412e6922",
+              "created_at": "2026-10-22T07:47:35.963599Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:35.963599Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "804aa22e-511d-4fde-9fdd-a12463722e0c",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/065.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "bf708123-9ad4-46e7-abc7-502f1e588809",
+          "version_no": 1,
+          "content_hash": "e55dea1c9de137dac55094dd420f05822458dbd308c22c30a37acda56e184d68",
+          "fetched_at": "2026-10-22T07:47:32.048708Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/065.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "102695 字节,sha256=e55dea1c9de1",
+              "created_at": "2026-10-22T07:47:32.048708Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | S #/# #",
+              "created_at": "2026-10-22T07:47:32.048708Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "38 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:32.048708Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "c82d1160-35f7-4518-a6e1-22b4f0276476",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/066.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "d0cce3b8-cbcc-4dc7-8b2f-446988339976",
+          "version_no": 1,
+          "content_hash": "11439f9b04eb9c678b3a05c3f3c25ec7115bd89faed2d33216c57b2ee63c61c0",
+          "fetched_at": "2026-10-22T07:47:31.036695Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/066.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "40605 字节,sha256=11439f9b04eb",
+              "created_at": "2026-10-22T07:47:31.036695Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "11 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:31.036695Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "7f136287-5a0b-41bc-a8b9-f2c41f527b0c",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/067.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "c28d5192-9f00-430a-9c5b-5c93277a02d0",
+          "version_no": 1,
+          "content_hash": "d943ade1fe92f176ae70dd9fef76f0c8c7d23ebefcccf46183462fffed1efc17",
+          "fetched_at": "2026-10-22T07:47:30.039470Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/067.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "40478 字节,sha256=d943ade1fe92",
+              "created_at": "2026-10-22T07:47:30.039470Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "8 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:30.039470Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "492773b5-81e6-4852-a7d3-c5ecef0014bd",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/068.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "87f02a05-0251-4e72-a437-8c0ac9252e2b",
+          "version_no": 1,
+          "content_hash": "59d231cfe63e821257e6df4a546e9111fa9b224da34748d62cf3bf1871eb3832",
+          "fetched_at": "2026-10-22T07:47:29.013380Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/068.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "32918 字节,sha256=59d231cfe63e",
+              "created_at": "2026-10-22T07:47:29.013380Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:29.013380Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "dc8443ca-b143-4aa5-80d4-62f5a45ae7f2",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/069.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "e5d57f5b-af83-4fc1-8499-a4f527bbc740",
+          "version_no": 1,
+          "content_hash": "28140182902809c0b36f690a6a339acc25840abc085c1a09c5eb438a178c3981",
+          "fetched_at": "2026-10-22T07:47:28.156702Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/069.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "33497 字节,sha256=281401829028",
+              "created_at": "2026-10-22T07:47:28.156702Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:28.156702Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "cdbc81e6-333b-4f9d-9d79-01e39113ae9d",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/070.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "786397f0-f80d-4e40-a0db-9718f32c9098",
+          "version_no": 1,
+          "content_hash": "a97585bc58b75d14d5bda8fa552f996deb7b22c6720666747f8e4eb91e7a845f",
+          "fetched_at": "2026-10-22T07:47:27.052819Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/070.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "34139 字节,sha256=a97585bc58b7",
+              "created_at": "2026-10-22T07:47:27.052819Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "5 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:27.052819Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "c1aa0917-27f0-4625-8f57-757ea959a8b3",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/083.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "1e5668c4-0871-4141-bd6e-239199586e97",
+          "version_no": 1,
+          "content_hash": "7043afea087c79cb64c81b7e8d5c370b31b0991a90691d7ea9d98044e3755bbb",
+          "fetched_at": "2026-10-22T07:47:26.545671Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/083.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "33402 字节,sha256=7043afea087c",
+              "created_at": "2026-10-22T07:47:26.545671Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:26.545671Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "a24a6be3-0b1b-440c-afbe-10638aa50a65",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/735.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "f42adec0-18d6-490b-907b-2ab5eac24314",
+          "version_no": 1,
+          "content_hash": "ec16028ad078b4c1dc91e82b02dfeb455f5718284609310f3496e8f211357674",
+          "fetched_at": "2026-10-22T15:16:43.092258Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/735.pdf",
+          "metadata_source": "manual_upload",
+          "acquisition": "manual_upload",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "upload",
+              "status": "ok",
+              "message": "管理员手动上传官方原文,37435 字节,sha256=ec16028ad078",
+              "created_at": "2026-10-22T15:16:43.085259Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T15:16:43.085259Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "bc5f7749-0c93-40db-9a5f-751b79a72272",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/576.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "7bfd4401-ed34-4a5a-ade2-d0b171beb9ff",
+          "version_no": 1,
+          "content_hash": "65c0198bf4027a287dc34d12a791ec6dc2b72c19c8b481b4a0be7ffd5c51412b",
+          "fetched_at": "2026-10-22T07:47:15.725740Z",
+          "final_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/576.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "81019 字节,sha256=65c0198bf402",
+              "created_at": "2026-10-22T07:47:15.725740Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:15.725740Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "68d76d59-b2e9-4358-81e0-165581c8d340",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/800.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "58a95d42-2607-439f-8e89-a901a122e018",
+          "version_no": 1,
+          "content_hash": "33be2da2d7f03d44426ec031a7fed166da8af8f9d2673191aea9bc41e710052e",
+          "fetched_at": "2026-10-22T07:47:14.726133Z",
+          "final_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/800.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "84719 字节,sha256=33be2da2d7f0",
+              "created_at": "2026-10-22T07:47:14.726133Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:14.726133Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "6351df67-cb67-484d-add1-732d7e9d4527",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2025/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/217.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "d87444aa-585d-4aed-a265-7ba053a82248",
+          "version_no": 1,
+          "content_hash": "080043fe62c9166d42adb329daad552e65843cbd7733bdc61c0261bec40d0d73",
+          "fetched_at": "2026-10-22T07:47:13.481085Z",
+          "final_url": "https://assets.egazette.gov.sg/2025/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/217.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "89740 字节,sha256=080043fe62c9",
+              "created_at": "2026-10-22T07:47:13.481085Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:13.481085Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "80bfe48d-2e0e-4df2-ae3a-10172c8a288e",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/422.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "018a40c9-c236-4ef8-9687-e0ac65f93b04",
+          "version_no": 1,
+          "content_hash": "d625fba0543fb3190c98eccae071938141df84e50f60012b73319735e53d3fda",
+          "fetched_at": "2026-10-22T07:47:11.614680Z",
+          "final_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/422.pdf",
+          "metadata_source": "official_index",
+          "acquisition": "pipeline_fetch",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "download",
+              "status": "ok",
+              "message": "88276 字节,sha256=d625fba0543f",
+              "created_at": "2026-10-22T07:47:11.614680Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:47:11.614680Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "24d1b591-0369-41a4-b47f-3c9ca870b153",
+      "country_code": "SG",
+      "source_url": "https://sso.agc.gov.sg/Act/PDPA2012/",
+      "language": "en",
+      "publisher": "新加坡法规库 Singapore Statutes Online",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "0080a599-7d5b-42e1-a1e5-38e8927a8833",
+          "version_no": 1,
+          "content_hash": "da6e324753dd171a50827692fcb733ea02dc22e2a3953034544c1aca4f6f5e52",
+          "fetched_at": "2026-10-22T15:16:43.123139Z",
+          "final_url": "https://sso.agc.gov.sg/Act/PDPA2012/",
+          "metadata_source": "manual_upload",
+          "acquisition": "manual_upload",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "upload",
+              "status": "ok",
+              "message": "管理员手动上传官方原文,570470 字节,sha256=da6e324753dd",
+              "created_at": "2026-10-22T15:16:43.119395Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # Jan # Page # of # | Form AV#",
+              "created_at": "2026-10-22T15:16:43.119395Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "73 条,策略 numbered",
+              "created_at": "2026-10-22T15:16:43.119395Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "2c16ff6f-6214-4205-ada9-a70f62b00bcb",
+      "country_code": "SG",
+      "source_url": "https://www.pdpc.gov.sg/-/media/Files/PDPC/PDF-Files/Advisory-Guidelines/the-transfer-limitation-obligation---ch-19-%28270717%29.pdf",
+      "language": "en",
+      "publisher": "新加坡个人数据保护委员会 PDPC",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "23a377c0-37df-4c59-9748-4c86a1422305",
+          "version_no": 1,
+          "content_hash": "7886ce233b559b4fd321603c651bdd63b566b4a36cec7f5ee03c0c5be458de51",
+          "fetched_at": "2026-10-19T02:45:54Z",
+          "final_url": "https://www.pdpc.gov.sg/-/media/Files/PDPC/PDF-Files/Advisory-Guidelines/the-transfer-limitation-obligation---ch-19-%28270717%29.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=7886ce233b55,原文件已校验",
+              "created_at": "2026-10-22T07:21:38.442481Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # | ADVISORY GUIDELINES ON KEY CONCEPTS IN THE PDPA (revised # July #)",
+              "created_at": "2026-10-22T07:21:38.442481Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "8 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:38.442481Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "51097004-9d0d-466e-b611-9be2526c3f48",
+      "country_code": "SG",
+      "source_url": "https://www.pdpc.gov.sg/-/media/files/pdpc/pdf-files/advisory-guidelines/ag-on-key-concepts/advisory-guidelines-on-key-concepts-in-the-pdpa-17-may-2022.pdf",
+      "language": "en",
+      "publisher": "新加坡个人数据保护委员会 PDPC",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "d5b853df-1027-45a6-ae86-223ccc2822f2",
+          "version_no": 1,
+          "content_hash": "c012a1e0f6c1c0f0f0bc8f39d0d3725f485fed129c2e773781cac529362d9d7c",
+          "fetched_at": "2026-10-19T02:45:52Z",
+          "final_url": "https://www.pdpc.gov.sg/-/media/files/pdpc/pdf-files/advisory-guidelines/ag-on-key-concepts/advisory-guidelines-on-key-concepts-in-the-pdpa-17-may-2022.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=c012a1e0f6c1,原文件已校验",
+              "created_at": "2026-10-22T07:21:38.105034Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # | ADVISORY GUIDELINES ON KEY CONCEPTS IN THE PDPA (Revised # April #)",
+              "created_at": "2026-10-22T07:21:38.105034Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "181 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:38.105034Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "d774e0c8-7ded-4166-b242-fd8bd9388664",
+      "country_code": "SG",
+      "source_url": "https://www.lta.gov.sg/content/dam/ltagov/industry_innovations/Technologies/PDF/av_application_20250114.pdf",
+      "language": "en",
+      "publisher": "新加坡陆路交通管理局 LTA",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "e086fb6d-ba36-4783-a99e-94616160c8a9",
+          "version_no": 1,
+          "content_hash": "da6e324753dd171a50827692fcb733ea02dc22e2a3953034544c1aca4f6f5e52",
+          "fetched_at": "2026-10-19T07:29:16Z",
+          "final_url": "https://www.lta.gov.sg/content/dam/ltagov/industry_innovations/Technologies/PDF/av_application_20250114.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=da6e324753dd,原文件已校验",
+              "created_at": "2026-10-22T07:21:38.023099Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # Jan # Page # of # | Form AV#",
+              "created_at": "2026-10-22T07:21:38.023099Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "73 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:38.023099Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "07113793-c8a3-4113-84af-2858086c2558",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/972.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "862ff92c-10c2-4980-8a8e-3d705988dc1e",
+          "version_no": 1,
+          "content_hash": "3707293884dde9cc15d43e54a557131ff1ab8774d78ef3489960703e536ad153",
+          "fetched_at": "2026-10-19T10:08:05Z",
+          "final_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/972.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2022-12-19",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=3707293884dd,原文件已校验",
+              "created_at": "2026-10-22T07:21:38.009586Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:38.009586Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "7252fd4c-654e-462f-bb17-d342a55896ff",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/086.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "4b57a3a7-5a94-4ab3-8e9d-06993ca2ddd6",
+          "version_no": 1,
+          "content_hash": "3b1addab54e39a576f17a2468100c8d6aa50f65497fec9aa5d3df31b3e3b3223",
+          "fetched_at": "2026-10-19T07:29:44Z",
+          "final_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/086.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2026-03-02",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=3b1addab54e3,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.998150Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.998150Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "cdec44a1-03a0-4885-b7f6-61e0ddc612e2",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/064.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "4a23de59-6fd8-4814-84d6-67c8a029daed",
+          "version_no": 1,
+          "content_hash": "9334e5a1cd68228bb8435bffa3b5b2335132aba00bacffb78ea6b4585b9cb435",
+          "fetched_at": "2026-10-19T07:29:24Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/064.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2021-02-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=9334e5a1cd68,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.974960Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | S #/# # | THE SCHEDULE — continued",
+              "created_at": "2026-10-22T07:21:37.974960Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "38 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.974960Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "9869c3b9-98e7-443c-9802-56946843a80d",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Acts%20Supplement/24.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "693581c7-0ca3-4454-b438-cc83c17c8d59",
+          "version_no": 1,
+          "content_hash": "6968a1fe0428f5b9a8c63e51071cd1241ec76f3222c8079deae38062ab996241",
+          "fetched_at": "2026-10-19T08:09:54Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Acts%20Supplement/24.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=6968a1fe0428,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.719844Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # | # NO. # OF # | COURTS (CIVIL AND CRIMINAL JUSTICE) REFORM #",
+              "created_at": "2026-10-22T07:21:37.719844Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除页边行号 6 个",
+              "created_at": "2026-10-22T07:21:37.719844Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "59 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.719844Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "cc8432c1-5b2b-4568-b36a-822b3f1b21c8",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2020/Legislative%20Supplements/Acts%20Supplement/41.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "d69a2833-b323-471b-aca2-fe2fd57ead16",
+          "version_no": 1,
+          "content_hash": "b66b0deb0bf7dd02899e45dce6ba3137fc341e4e086edaed980a9ac0b42177e8",
+          "fetched_at": "2026-10-19T07:29:31Z",
+          "final_url": "https://assets.egazette.gov.sg/2020/Legislative%20Supplements/Acts%20Supplement/41.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=b66b0deb0bf7,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.550494Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # | # NO. # OF # | PERSONAL DATA PROTECTION (AMENDMENT) #",
+              "created_at": "2026-10-22T07:21:37.550494Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除页边行号 280 个",
+              "created_at": "2026-10-22T07:21:37.550494Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "58 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.550494Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "f33f3d0a-4b31-47c5-940b-b8ac370dc51f",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/26sls580.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "048843b9-9325-4677-b690-1c3bf72177e5",
+          "version_no": 1,
+          "content_hash": "1b1da01c0958caafa056d494f78513bf76861b32e33ae41ae83a7ef198982c37",
+          "fetched_at": "2026-10-19T07:29:34Z",
+          "final_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/26sls580.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2026-09-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=1b1da01c0958,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.540359Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.540359Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "0a43cd2f-d65e-4519-b880-5d60401ff4ea",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/734.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "8d0aa051-e1d5-47ba-b51d-46a7776d0e9b",
+          "version_no": 1,
+          "content_hash": "b7ff7dee9a7285c9671755bede6b51e0114a1f79679cc97c7525444a4f23d424",
+          "fetched_at": "2026-10-19T07:29:21Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/734.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2021-10-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=b7ff7dee9a72,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.528208Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "6 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.528208Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "a1fc238c-2a34-4558-8a66-2aad1280c6e0",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/063.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "8d9e0ba8-c87a-4305-a240-a27696246ffd",
+          "version_no": 1,
+          "content_hash": "7b19d8a0e437b49fa4952141169746f9cb974ccd1d5e50a91db70169f25c35d9",
+          "fetched_at": "2026-10-19T07:29:46Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/063.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2021-02-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=7b19d8a0e437,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.500207Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | S #/# #",
+              "created_at": "2026-10-22T07:21:37.500207Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "24 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.500207Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "b117ac64-7d3f-4963-b5e2-275a822bd14b",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/008.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "70d192c9-2ca5-4175-869a-ec27e04971c0",
+          "version_no": 1,
+          "content_hash": "4e71e9bc52a183642a3b110216bd72e9c8f18cc4b40e8b40d36b3932eed7928d",
+          "fetched_at": "2026-10-19T10:08:07Z",
+          "final_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/008.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2024-01-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=4e71e9bc52a1,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.488932Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.488932Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "ec35c0eb-0325-49d7-bf63-aaf16e0e4f2a",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Acts%20Supplement/25.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "d0d016b9-ab0d-4682-bfbe-91db025a0584",
+          "version_no": 1,
+          "content_hash": "91384bf730d79ab45debefad2b8c3ec090d12d624f0d255659550da4edc36422",
+          "fetched_at": "2026-10-19T07:29:38Z",
+          "final_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Acts%20Supplement/25.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=91384bf730d7,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.340986Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # | # NO. # OF # | PERSONAL DATA PROTECTION #",
+              "created_at": "2026-10-22T07:21:37.340986Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除页边行号 150 个",
+              "created_at": "2026-10-22T07:21:37.340986Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "99 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.340986Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "ba6f751a-33e0-4d56-9ecb-539f4dc3a776",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/509.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "cff75669-497e-447f-a091-ccbb862cb8ea",
+          "version_no": 1,
+          "content_hash": "4a9d0f5a43074546919aedec17092816a841a461e85fefce9162497d0015ba52",
+          "fetched_at": "2026-10-19T08:10:29Z",
+          "final_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/509.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2022-06-30",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=4a9d0f5a4307,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.331566Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.331566Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "431e2344-b194-49de-871c-92baa284f2e2",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/250.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "8bcd6ea5-6ac2-418b-b3ef-c1c5a0a9abdb",
+          "version_no": 1,
+          "content_hash": "104c755b17bd2dac65a84a35484bbcf575b58932893d36a2234412a6870d2872",
+          "fetched_at": "2026-10-19T08:10:37Z",
+          "final_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/250.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2022-04-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=104c755b17bd,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.320697Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.320697Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "dd517907-47bb-43ca-892f-538fe0153c70",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "26aee7c0-25af-4887-90f5-4d82b9de0fc0",
+          "version_no": 1,
+          "content_hash": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "fetched_at": "2026-10-19T07:29:42Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2021-12-31",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=65398d9136ec,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.178090Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # Act # # Ed. | # Ed. Act # # | #.#.# | Personal Data Protection",
+              "created_at": "2026-10-22T07:21:37.178090Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "161 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.178090Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "18270f6c-7b2a-43c7-ba36-8b6d33fb78b1",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2025/Legislative%20Supplements/Acts%20Supplement/21.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "05db3ccc-440c-49a2-b38d-85e2971c6748",
+          "version_no": 1,
+          "content_hash": "d66faeaaf07485cf89e04b08b17b225354473bd00dfd76c432795f49b35db26d",
+          "fetched_at": "2026-10-19T08:10:08Z",
+          "final_url": "https://assets.egazette.gov.sg/2025/Legislative%20Supplements/Acts%20Supplement/21.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=d66faeaaf074,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.120914Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # | # NO. # OF # | STATUTES (MISCELLANEOUS AMENDMENTS) #",
+              "created_at": "2026-10-22T07:21:37.120914Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除页边行号 102 个",
+              "created_at": "2026-10-22T07:21:37.120914Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "27 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.120914Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "f86cfd55-916e-470f-ba63-29ba7ea09065",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/767.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "d338b6b8-0c65-490f-a011-9fc9ccc4f96a",
+          "version_no": 1,
+          "content_hash": "a4181d4a149cd95bf48826375fb89ce14933c58c7cb0e94f1f6c3415b7da114c",
+          "fetched_at": "2026-10-19T07:29:19Z",
+          "final_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/767.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2022-10-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=a4181d4a149c,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.111592Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.111592Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "719657c5-ef13-4f2b-8f34-77125ae5ed12",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/735.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "33c94d66-4c18-4df9-965c-aed268bc7ad4",
+          "version_no": 1,
+          "content_hash": "87fa23976699de01a28e9a43db340691e11ae2a92a2a17a6c7dc485b38baf94b",
+          "fetched_at": "2026-10-19T08:10:23Z",
+          "final_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/735.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2024-10-15",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=87fa23976699,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.101398Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.101398Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "9bf05359-232d-4436-aa10-0734c336290d",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2017/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/464.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "7f5afc5b-98fb-4d96-ae16-bf01277dea37",
+          "version_no": 1,
+          "content_hash": "b1f3aeffba4e19aa9ab94eb876b571ad8b50ccb4b28f5729b134ac70e8597fa6",
+          "fetched_at": "2026-10-19T10:08:03Z",
+          "final_url": "https://assets.egazette.gov.sg/2017/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/464.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2017-08-24",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=b1f3aeffba4e,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.064334Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | S #/# #",
+              "created_at": "2026-10-22T07:21:37.064334Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "22 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.064334Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "dcdb8194-2253-44e2-a9f5-2cbc138c776c",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/750.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "9f52a5c8-9405-4193-9f77-ee9e56788ba3",
+          "version_no": 1,
+          "content_hash": "61c7facb97b2991945912b2f5c4761b92d01893d6c8f297048ab089f0955dd83",
+          "fetched_at": "2026-10-19T08:09:50Z",
+          "final_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/750.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2022-10-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=61c7facb97b2,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.054736Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.054736Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "a724395b-ea79-4428-9d8f-9e167267dd32",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2025/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/749.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "1d853c60-acf7-4d39-96a2-fa6dc526d095",
+          "version_no": 1,
+          "content_hash": "7b9fdc6c717ee7901b2fda4fae41508b87a71962fbf20b98c067b97898fbcb17",
+          "fetched_at": "2026-10-19T08:10:33Z",
+          "final_url": "https://assets.egazette.gov.sg/2025/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/749.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2025-12-05",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=7b9fdc6c717e,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.045143Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.045143Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "4ceeff6c-1345-47a8-ad93-b075e666bdf4",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Acts%20Supplement/03.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "08e1d79e-220a-4424-aeb7-526e544d5c1b",
+          "version_no": 1,
+          "content_hash": "811ad3674eb1b1245dcdf9976c66b6a1f94214f9a4fd606674a0e0f34080cde8",
+          "fetched_at": "2026-10-19T09:23:36Z",
+          "final_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Acts%20Supplement/03.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": null,
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=811ad3674eb1,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.018291Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # | # NO. # OF # | PUBLIC SECTOR (GOVERNANCE) (AMENDMENT) #",
+              "created_at": "2026-10-22T07:21:37.018291Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除页边行号 31 个",
+              "created_at": "2026-10-22T07:21:37.018291Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "14 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.018291Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "b2eb2bfa-b006-4e39-93a8-475b9b32e6fe",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/768.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "0edc53aa-1f2f-46b4-ad3b-6628f11f82a2",
+          "version_no": 1,
+          "content_hash": "0a8f0ba5ce188f457c4983852b957ec35dfa099390b0a92587c37500080b122d",
+          "fetched_at": "2026-10-19T08:10:20Z",
+          "final_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/768.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2022-10-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=0a8f0ba5ce18,原文件已校验",
+              "created_at": "2026-10-22T07:21:37.007864Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:37.007864Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "02933ed9-a84d-44d2-85ed-945e17cd79d9",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/060.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "6ada977d-4b6f-40de-a653-60e832340859",
+          "version_no": 1,
+          "content_hash": "3e360cf805a4042ace7745eadd67cd02678f9b0d67a113cfb45653bb7cc201a2",
+          "fetched_at": "2026-10-19T07:29:47Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/060.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2021-02-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=3e360cf805a4,原文件已校验",
+              "created_at": "2026-10-22T07:21:36.997692Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "4 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:36.997692Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "e1903363-1fbf-4b42-b026-be20f36d3cab",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/535.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "d71c9069-25ae-4a93-a6bc-9704d9f5af79",
+          "version_no": 1,
+          "content_hash": "d60b63f00ca31e7cac980a093f2ac931df5d3e62c1e45b419829291cca181815",
+          "fetched_at": "2026-10-19T08:10:12Z",
+          "final_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/535.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2022-07-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=d60b63f00ca3,原文件已校验",
+              "created_at": "2026-10-22T07:21:36.987294Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:36.987294Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "2f53dd58-30f8-4b3a-b27c-c4ea912d5537",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/062.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "1ed7f9b2-806b-453f-aa88-99a64a385a61",
+          "version_no": 1,
+          "content_hash": "2bea44b953a542de67301ada908fd2f2ecc29dcbb577c4343725b8d779437bcf",
+          "fetched_at": "2026-10-19T08:10:27Z",
+          "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/062.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2021-02-01",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=2bea44b953a5,原文件已校验",
+              "created_at": "2026-10-22T07:21:36.951851Z"
+            },
+            {
+              "step": "clean",
+              "status": "ok",
+              "message": "移除重复页眉/页脚/页码: # S #/# | S #/# #",
+              "created_at": "2026-10-22T07:21:36.951851Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "34 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:36.951851Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "886a4a94-bec6-4297-9a66-a5c8f4b98b35",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/26sls773.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "13051c7b-9c1f-4d01-9fe9-10eb209cdac8",
+          "version_no": 1,
+          "content_hash": "088c56d0ee1fbc826c87d7a868a3c55ee0963bb88a994ab9f1e98ae7ba04e545",
+          "fetched_at": "2026-10-19T09:23:34Z",
+          "final_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/26sls773.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2026-10-16",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=088c56d0ee1f,原文件已校验",
+              "created_at": "2026-10-22T07:21:36.941998Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:36.941998Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "3638cfbd-cd26-46fa-89d1-7753866f6e12",
+      "country_code": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/089.pdf",
+      "language": "en",
+      "publisher": "Singapore Government Gazette",
+      "terms_status": "approved",
+      "terms_approval_scope": "legacy",
+      "versions": [
+        {
+          "version_id": "02aa959d-1cf1-4648-8ba0-33fce0759e60",
+          "version_no": 1,
+          "content_hash": "902b0595648e4cd9abc0646e794c3647531c554f3a0154cf35f93d54c6014361",
+          "fetched_at": "2026-10-19T10:08:10Z",
+          "final_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/089.pdf",
+          "metadata_source": "phase1_import",
+          "acquisition": "legacy_or_unrecorded",
+          "pipeline_refetch_verified": false,
+          "integrity_ok": true,
+          "integrity_error": null,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "effective_date": "2024-02-14",
+          "ocr_required": false,
+          "official_authenticity": "pending_human_review",
+          "events": [
+            {
+              "step": "import",
+              "status": "ok",
+              "message": "从一期迁移,sha256=902b0595648e,原文件已校验",
+              "created_at": "2026-10-22T07:21:36.914446Z"
+            },
+            {
+              "step": "parse",
+              "status": "ok",
+              "message": "3 条,策略 numbered",
+              "created_at": "2026-10-22T07:21:36.914446Z"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "source_decisions": [
+    {
+      "id": "0f023d94-90c0-46c5-bf6a-6dbdf64e59c9",
+      "country_code": "EG",
+      "entry_url": "https://pdpc.gov.eg/assets/pdf-data/Guidelines/DPOC.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.058495Z"
+    },
+    {
+      "id": "c5da9b1c-5b71-4abc-b5dc-8ef16c1e4c73",
+      "country_code": "EG",
+      "entry_url": "https://pdpc.gov.eg/assets/pdf-data/Guidelines/DSConsent.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.081640Z"
+    },
+    {
+      "id": "e38bd749-53f7-44d9-b3d4-f7ea0dcf55a4",
+      "country_code": "EG",
+      "entry_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.113179Z"
+    },
+    {
+      "id": "fda20fd6-58aa-478a-bd41-71cfc1203e9c",
+      "country_code": "EG",
+      "entry_url": "https://idsc.gov.eg/upload/DocumentLibrary/AttachmentA/10387/7.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.152587Z"
+    },
+    {
+      "id": "b20b387b-610a-4e3c-a934-089ec9bf4c72",
+      "country_code": "EG",
+      "entry_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.184241Z"
+    },
+    {
+      "id": "04ba73b0-bf06-4fdd-a6af-2404a0a5eb74",
+      "country_code": "LB",
+      "entry_url": "https://lp.gov.lb/backoffice/uploads/files/Laws%20whose%20implementation%20decrees%20have%20not%20been%20issued%20-%20update%20September%202%2C%202021.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.207636Z"
+    },
+    {
+      "id": "5c6d75bd-e5dd-4519-b1aa-e54f69b7330d",
+      "country_code": "LB",
+      "entry_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.227882Z"
+    },
+    {
+      "id": "ae2a35b7-e17a-41ca-a6fe-fd02cddc42a3",
+      "country_code": "MA",
+      "entry_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.246122Z"
+    },
+    {
+      "id": "d79eec7f-6041-4515-8cac-c9623e08946e",
+      "country_code": "MA",
+      "entry_url": "https://www.cndp.ma/wp-content/uploads/2023/11/CDAI-FORMULAIRE-DAI-Template-FRANCAIS.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.264078Z"
+    },
+    {
+      "id": "e5e02434-8522-486c-9c80-3e8dae4e7f41",
+      "country_code": "MA",
+      "entry_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.295908Z"
+    },
+    {
+      "id": "1cf352d4-0b34-44c6-a459-ffb0b32802c6",
+      "country_code": "MA",
+      "entry_url": "https://www.sgg.gov.ma/BO/bo_fr/2009/bo_5714_fr.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.318861Z"
+    },
+    {
+      "id": "020050bf-54d7-479f-9cef-5bb78cf334ca",
+      "country_code": "SG",
+      "entry_url": "https://www.egazette.gov.sg/egazette-browse/",
+      "terms_status": "approved",
+      "terms_note": "开发联调验证电子宪报公开目录检索",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T07:45:03.856908Z"
+    },
+    {
+      "id": "6de23b48-3815-46af-ad9c-4601b6027374",
+      "country_code": "SG",
+      "entry_url": "https://sso.agc.gov.sg/Act/PDPA2012/",
+      "terms_status": "approved",
+      "terms_note": "开发阶段:项目负责人(金伯胤)2026-10-22 决定暂不处理法务,先跑通采集链路。正式上线前必须补做条款审查。",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T07:22:10.506699Z"
+    },
+    {
+      "id": "8ccdac2a-06ca-401c-8288-53d61da1a178",
+      "country_code": "SG",
+      "entry_url": "https://www.pdpc.gov.sg/-/media/files/pdpc/pdf-files/advisory-guidelines/ag-on-key-concepts/advisory-guidelines-on-key-concepts-in-the-pdpa-17-may-2022.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发阶段:项目负责人(金伯胤)2026-10-22 决定暂不处理法务,先跑通采集链路。正式上线前必须补做条款审查。",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T07:22:10.518718Z"
+    },
+    {
+      "id": "7dfe92cb-6e68-472a-821d-87f693323092",
+      "country_code": "SG",
+      "entry_url": "https://www.pdpc.gov.sg/-/media/Files/PDPC/PDF-Files/Advisory-Guidelines/the-transfer-limitation-obligation---ch-19-%28270717%29.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发阶段:项目负责人(金伯胤)2026-10-22 决定暂不处理法务,先跑通采集链路。正式上线前必须补做条款审查。",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T07:22:10.528145Z"
+    },
+    {
+      "id": "3e7f8f57-f5a4-47b3-8d1a-22cb1798f749",
+      "country_code": "SG",
+      "entry_url": "https://www.lta.gov.sg/content/dam/ltagov/industry_innovations/Technologies/PDF/av_application_20250114.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发阶段:项目负责人(金伯胤)2026-10-22 决定暂不处理法务,先跑通采集链路。正式上线前必须补做条款审查。",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T07:22:10.537321Z"
+    },
+    {
+      "id": "ffc8ce9d-0f48-4c08-bae7-02ce452b2d19",
+      "country_code": "TN",
+      "entry_url": "https://legislation-securite.tn/wp-content/uploads/sites/5/2023/11/Decret-n%C2%B02007-3003-du-27-novembre-2007fr.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.330243Z"
+    },
+    {
+      "id": "632fa317-6a9e-4eb5-a8c5-0dd88feb7372",
+      "country_code": "TN",
+      "entry_url": "https://www.inpdp.tn/ressources/decret_3003.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.354817Z"
+    },
+    {
+      "id": "2e9044e1-b919-4f18-bbe2-c4a010ea8276",
+      "country_code": "TN",
+      "entry_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.412005Z"
+    },
+    {
+      "id": "24a4ae66-f738-4d50-8fb4-021951aab951",
+      "country_code": "TN",
+      "entry_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "terms_status": "approved",
+      "terms_note": "开发环境临时确认,待法务复核",
+      "terms_approval_scope": "legacy",
+      "terms_decided_at": "2026-10-22T15:14:41.423939Z"
+    }
+  ],
+  "summary": {
+    "document_counts": {
+      "MA": 4,
+      "EG": 3,
+      "TN": 3,
+      "LB": 2,
+      "SG": 68
+    },
+    "versions": 80,
+    "integrity_passed": 80,
+    "acquisition": {
+      "pipeline_fetch": 41,
+      "manual_upload": 3,
+      "legacy_or_unrecorded": 36
+    },
+    "missing_effective_date": 59,
+    "official_authenticity": "pending_human_review"
+  }
+}

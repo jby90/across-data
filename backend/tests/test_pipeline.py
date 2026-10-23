@@ -303,6 +303,7 @@ async def test_index_page_failure_fails_run_and_counts(session_factory, tmp_path
     site_id = await add_site(session_factory)
     r, _ = await run(session_factory, tmp_path, state, site_id)
     assert r.status == "failed"
+    assert r.errors >= 1
     async with session_factory() as s:
         site = await s.get(SourceSite, site_id)
         assert site.last_status == "failed" and site.consecutive_failures == 1

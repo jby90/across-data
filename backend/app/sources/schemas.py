@@ -89,6 +89,7 @@ class SitePatch(BaseModel):
 
 class TermsDecision(BaseModel):
     status: Literal["approved", "rejected"]
+    approval_scope: Literal["development", "production"] = "development"
     note: str = Field(min_length=1, max_length=2000)  # 必须写明依据,留痕
 
 
@@ -112,6 +113,7 @@ class SiteOut(BaseModel):
     terms_status: str
     terms_url: str | None
     terms_note: str | None
+    terms_approval_scope: str = "legacy"
     terms_decided_by: uuid.UUID | None
     terms_decided_at: datetime | None
     document_count: int = 0

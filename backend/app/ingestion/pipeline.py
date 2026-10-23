@@ -42,7 +42,8 @@ from app.ingestion.parsing import (
     strip_running_headers,
     text_layer_garbled,
 )
-from app.sources.models import CrawlRun, RunStatus, SourceSite, Strategy, TermsStatus
+from app.sources.models import CrawlRun, RunStatus, SourceSite, Strategy
+from app.sources.permissions import terms_permit_crawl
 
 log = logging.getLogger(__name__)
 
@@ -416,13 +417,23 @@ async def _process_candidate(
 
         existing = (
             await s.execute(
-                select(DocumentVersion.id).where(
+                select(DocumentVersion).where(
                     DocumentVersion.document_id == doc.id,
                     DocumentVersion.content_hash == ArchiveStore.sha256(res.content),
                 )
             )
-        ).first()
+        ).scalar_one_or_none()
         if existing is not None:  # 内容与某个已有版本完全相同,不产生新版本
+            archive.read(existing.archive_path)
+            s.add(
+                PipelineEvent(
+                    version_id=existing.id,
+                    step="refetch",
+                    status="ok",
+                    message=f"真实重新下载与已有归档一致，sha256={existing.content_hash}；"
+                    f"final_url={res.url}",
+                )
+            )
             await s.commit()
             return
 
@@ -476,10 +487,10 @@ async def ingest_site(
         s.add(run)
         await s.flush()
         run_id = run.id
-        if site_row.terms_status != TermsStatus.APPROVED.value:
+        if not terms_permit_crawl(site_row):
             run.status = RunStatus.SKIPPED.value
             run.finished_at = _now()
-            run.message = "来源使用条款尚未确认,未执行抓取"
+            run.message = "来源使用条款尚未确认或确认范围不适用于当前环境,未执行抓取"
             await s.commit()
             return run_id
         site = SiteSnapshot(
@@ -510,9 +521,11 @@ async def ingest_site(
             message = "未发现任何原文链接,请检查站点配置或页面结构是否变化"
     except (BlockedError, FetchError) as e:
         status = RunStatus.FAILED
+        stats.errors += 1
         message = str(e)[:2000]
     except Exception as e:  # noqa: BLE001
         status = RunStatus.FAILED
+        stats.errors += 1
         message = f"{type(e).__name__}: {e}"[:2000]
         log.exception("站点采集异常 site=%s", site_id)
 

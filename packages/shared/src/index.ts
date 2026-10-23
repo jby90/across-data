@@ -101,6 +101,7 @@ export function createClient(side: Side, onUnauthorized: () => void) {
 // ---------- 采集与文档库(管理端) ----------
 
 export interface SiteOut {
+  terms_approval_scope?: 'legacy' | 'development' | 'production'
   id: string
   country_code: string
   publisher: string

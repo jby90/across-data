@@ -84,6 +84,9 @@ class SourceSite(Base):
     )
     terms_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     terms_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    terms_approval_scope: Mapped[str] = mapped_column(
+        String(16), default="legacy", server_default="legacy"
+    )
     terms_decided_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
     )

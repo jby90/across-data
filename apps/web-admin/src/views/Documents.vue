@@ -83,6 +83,14 @@ const versionId = ref<string>('')
 const clauses = ref<ClauseOut[]>([])
 const events = ref<EventOut[]>([])
 const translatingDocId = ref<string>('')
+const provenance = ref<{
+  versions: {
+    version_id: string
+    acquisition: string
+    integrity_ok: boolean
+    pipeline_refetch_verified: boolean
+  }[]
+} | null>(null)
 
 async function translateDocument(doc: DocumentOut) {
   translatingDocId.value = doc.id
@@ -100,7 +108,9 @@ async function translateDocument(doc: DocumentOut) {
 }
 
 async function open(doc: DocumentOut) {
+  provenance.value = null
   detail.value = await api.get<DocumentDetail>(`/admin/documents/${doc.id}`)
+  provenance.value = await api.get(`/admin/documents/${doc.id}/provenance`)
   drawer.value = true
   if (detail.value.versions.length) await pick(detail.value.versions[0].id)
 }
@@ -373,6 +383,31 @@ onMounted(load)
 
     <el-drawer v-model="drawer" :title="detail?.title" size="880px">
       <template v-if="detail">
+        <el-alert
+          v-if="provenance"
+          :closable="false"
+          type="info"
+          style="margin-bottom: 16px"
+          title="归档完整性检查不等于官方真实性或法律有效性审批；后两项须人工核对。"
+        />
+        <div
+          v-for="p in provenance?.versions.filter((x) => x.version_id === versionId)"
+          :key="p.version_id"
+          style="margin-bottom: 16px"
+        >
+          <el-tag :type="p.integrity_ok ? 'success' : 'danger'">{{
+            p.integrity_ok ? '原文哈希一致' : '原文完整性异常'
+          }}</el-tag>
+          <span style="margin-left: 12px"
+            >来源路径：{{
+              p.acquisition === 'pipeline_fetch'
+                ? '采集流水线下载'
+                : p.acquisition === 'manual_upload'
+                  ? '手工上传'
+                  : '历史迁移 / 记录不足'
+            }}{{ p.pipeline_refetch_verified ? ' · 已重新下载核对' : '' }}</span
+          >
+        </div>
         <div
           style="
             display: flex;
