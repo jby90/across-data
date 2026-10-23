@@ -30,7 +30,7 @@ def audit(base_url):
             if len(page) < 500:
                 break
             offset += 500
-        clause_ids, counts = set(), Counter()
+        clause_ids, held_clause_ids, counts = set(), set(), Counter()
         latest_by_doc = {}
         for doc in docs:
             response = client.get(f"/api/admin/documents/{doc['id']}", headers=headers)
@@ -46,8 +46,11 @@ def audit(base_url):
                     params={"limit": 500, "offset": offset})
                 response.raise_for_status()
                 page = response.json()
-                clause_ids.update(row["id"] for row in page)
-                counts[doc["country_code"]] += len(page)
+                if doc.get("safety_hold"):
+                    held_clause_ids.update(row["id"] for row in page)
+                else:
+                    clause_ids.update(row["id"] for row in page)
+                    counts[doc["country_code"]] += len(page)
                 if len(page) < 500:
                     break
                 offset += 500
@@ -55,7 +58,7 @@ def audit(base_url):
     qualified, invalid = [], []
     for row in current:
         passed, issues, _ = verify_translation(row["original_text"], row["translated_text"], row["glossary_hits"])
-        if passed and row["review_status"] in ("machine_translated", "pending_review", "approved"):
+        if passed and row["engine"] == "llm" and row["review_status"] in ("machine_translated", "pending_review", "approved"):
             qualified.append(row)
         else:
             invalid.append({"translation_id": row["id"], "clause_id": row["clause_id"], "issues": issues,
@@ -72,7 +75,13 @@ def audit(base_url):
                 clause_number=row["clause_number"], source_url=doc["source_url"], document_title=doc["title"],
                 version_id=version["id"], content_hash=version["content_hash"], original=row["original_text"],
                 translated=row["translated_text"], reviewer=None, decision="pending_human_review", comments=None))
-    return dict(summary=dict(total_latest_clauses=len(clause_ids), current=len(current),
+    qualified_ids = {row["clause_id"] for row in qualified}
+    return dict(summary=dict(total_latest_clauses=len(clause_ids | held_clause_ids),
+        eligible_latest_clauses=len(clause_ids), source_held_clauses=len(held_clause_ids), current=len(current),
+        missing_qualified_clauses=len(clause_ids - qualified_ids),
+        identical_to_original=sum(row["original_text"].strip() == row["translated_text"].strip() for row in qualified),
+        current_engines=dict(Counter(row["engine"] for row in current)),
+        attempt_statuses=dict(Counter(row["review_status"] for row in rows)),
         qualified_unique_clauses=len({row["clause_id"] for row in qualified}), invalid_current=len(invalid),
         by_country={cc: dict(clauses=total, qualified=len({row["clause_id"] for row in qualified
             if row["country_code"] == cc})) for cc, total in counts.items()},

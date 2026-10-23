@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Literal
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -37,6 +38,7 @@ class Settings(BaseSettings):
     llm_base_url: str = "https://api.deepseek.com/v1"
     llm_model: str = "deepseek-flash"
     llm_timeout_seconds: float = 30.0
+    llm_translation_thinking: Literal["enabled", "disabled"] = "enabled"
     # 多智能体合规分析单次调用允许更长的生成时间
     llm_analysis_timeout_seconds: float = 150.0
 

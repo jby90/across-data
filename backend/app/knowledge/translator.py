@@ -4,7 +4,7 @@
 1. 发往外部大模型前先做敏感信息脱敏(邮箱、电话、证件号)。
 2. 译前提取条款中命中的术语(国家覆盖优先于通用概念);保留术语命中统计,不再产出本地假译文。
 3. 分块:长条款按句/款拆分,每块 <= 约 1500 字符,保持顺序合并。
-4. 提示词(translate-v2):法律翻译、逐句忠实、不增不减、保留条号与数字、术语表强制。
+4. 提示词(translate-v3):法律翻译、逐句忠实、不增不减、保留条号与数字、术语表强制。
 5. 调用 OpenAI 兼容接口(沿用 settings.llm_*);并发用 asyncio.Semaphore(默认 4)限流,带指数退避重试。
 6. 译后程序检查(任一失败则重译一次,仍失败标 translation_failed 并记录原因):
    ① CJK 占比 >= 30%(阿语/法语/英文原文都应翻成中文);
@@ -44,7 +44,7 @@ from app.knowledge.numeric_integrity import (
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "translate-v2"
+PROMPT_VERSION = "translate-v3"
 MAX_CHUNK_CHARS = 1500
 DEFAULT_CONCURRENCY = 4
 
@@ -128,6 +128,30 @@ def redact_sensitive_text(text: str) -> str:
     out = _SG_NRIC_RE.sub("[REDACTED_ID]", out)
     out = _PHONE_RE.sub("[REDACTED_PHONE]", out)
     return out
+
+
+def _redact_with_mapping(text: str) -> tuple[str, dict[str, str]]:
+    """Only placeholders leave the process; exact original tokens are restored locally.
+
+    Even a legal reference mistaken for a phone number can then be preserved faithfully.
+    """
+    mapping = {}
+
+    def replace(match):
+        number, letters = len(mapping), ""
+        while True:
+            number, remainder = divmod(number, 26)
+            letters = chr(65 + remainder) + letters
+            if not number:
+                break
+        placeholder = f"__CYSH_PRIVATE_{letters}__"
+        mapping[placeholder] = match.group()
+        return placeholder
+
+    out = text or ""
+    for pattern in (_EMAIL_RE, _SG_NRIC_RE, _PHONE_RE):
+        out = pattern.sub(replace, out)
+    return out, mapping
 
 
 def compute_cjk_ratio(text: str) -> float:
@@ -309,6 +333,8 @@ def verify_translation(
         issues.append("译文为空")
     elif trans_clean == orig_clean:
         issues.append("译文与原文完全相同")
+    if "__CYSH_" in trans_clean:
+        issues.append("脱敏占位符丢失或未能安全还原，译文不完整")
 
     # ① CJK 字符占比 >= 30%
     cjk_ratio = compute_cjk_ratio(trans_clean)
@@ -353,9 +379,9 @@ def _build_translation_prompts(
     unmatched_terms: list[dict],
     retry_issues: list[str] | None = None,
 ) -> tuple[str, str]:
-    """构造 translate-v2 系统提示词与用户提示词。"""
+    """构造版本化系统提示词与用户提示词。"""
     sys_lines = [
-        "你是跨境汽车与数据合规领域的专业法律翻译引擎（提示词版本 translate-v2）。",
+        f"你是跨境汽车与数据合规领域的专业法律翻译引擎（提示词版本 {PROMPT_VERSION}）。",
         "任务性质：法律翻译、逐句忠实、不增不减、保留条号与数字、术语表强制。",
         "请将给定的外文法律条款精准翻译为简体中文，并严格遵守以下强制准则：",
         (
@@ -379,6 +405,9 @@ def _build_translation_prompts(
             "5. 【纯译文输出】：只输出翻译后的简体中文法条正文，"
             "不要输出任何前言、后记、Markdown 代码块标记或说明。"
         ),
+        "6. 【币种与单位】：保留原文货币符号/代码，$ 不得自行改成美元、新元或欧元。"
+        "不得把金额改写为万元/百万；百分比保留 %，日期月份和引用条号必须精确对应原文。",
+        "7. __CYSH_PRIVATE_ 开头的占位符必须原样逐一保留，禁止翻译、改写或猜测其内容。",
     ]
     if glossary_hits:
         sys_lines.append("\n【强制法律术语表（原词 -> 规定译法 -> 法定定义）】：")
@@ -432,7 +461,7 @@ async def _call_llm_translate(
     if not settings.llm_api_key:
         return None
 
-    safe_text = redact_sensitive_text(original_text)
+    safe_text, private_tokens = _redact_with_mapping(original_text)
     sys_prompt, user_prompt = _build_translation_prompts(
         safe_text, language, glossary_hits, unmatched_terms, retry_issues=retry_issues
     )
@@ -447,7 +476,9 @@ async def _call_llm_translate(
         ],
     }
     if "deepseek" in (settings.llm_model or "").lower():
-        payload["reasoning_effort"] = "low"
+        payload["thinking"] = {"type": settings.llm_translation_thinking}
+        if settings.llm_translation_thinking == "enabled":
+            payload["reasoning_effort"] = "low"
 
     semaphore = _get_llm_semaphore()
     max_attempts = 3
@@ -468,6 +499,11 @@ async def _call_llm_translate(
                     resp.raise_for_status()
                     data = resp.json()
                     content = (data["choices"][0]["message"].get("content") or "").strip()
+                    missing_private = [marker for marker in private_tokens if marker not in content]
+                    for marker, original in private_tokens.items():
+                        content = content.replace(marker, original)
+                    if missing_private:
+                        content += "\n__CYSH_RESTORE_MISSING__"
                     usage = data.get("usage") or {}
                     tokens_in = int(usage.get("prompt_tokens") or 0)
                     tokens_out = int(usage.get("completion_tokens") or 0)
@@ -702,7 +738,11 @@ async def translate_clause(
         translated_text=translated_text,
         engine="llm",
         model_name=model_name,
-        prompt_version=PROMPT_VERSION,
+        prompt_version=(
+            PROMPT_VERSION + "-direct"
+            if settings.llm_translation_thinking == "disabled"
+            else PROMPT_VERSION
+        ),
         tokens_in=total_tokens_in,
         tokens_out=total_tokens_out,
         duration_ms=total_duration_ms,

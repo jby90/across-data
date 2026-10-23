@@ -88,3 +88,77 @@ async def test_translation_pagination_reaches_beyond_first_page(client, seed, se
     assert first.headers["X-Total-Count"] == "13"
     assert len(first.json()) == 10 and len(second.json()) == 3
     assert not {row["id"] for row in first.json()} & {row["id"] for row in second.json()}
+
+
+async def test_direct_translation_sends_explicit_mode_and_tracks_real_usage(monkeypatch):
+    import json
+
+    import httpx
+
+    from app.core.config import get_settings
+
+    settings = get_settings()
+    monkeypatch.setattr(settings, "llm_api_key", "test-only")
+    monkeypatch.setattr(settings, "llm_translation_thinking", "disabled")
+    original_client = httpx.AsyncClient
+
+    def handler(request):
+        body = json.loads(request.content)
+        assert body["thinking"] == {"type": "disabled"}
+        assert "reasoning_effort" not in body
+        return httpx.Response(
+            200,
+            json={
+                "model": "actual-response-model",
+                "choices": [{"message": {"content": "最高比例为10%，应依法履行规定。"}}],
+                "usage": {"prompt_tokens": 123, "completion_tokens": 45},
+            },
+        )
+
+    monkeypatch.setattr(
+        translator.httpx,
+        "AsyncClient",
+        lambda **kwargs: original_client(transport=httpx.MockTransport(handler), **kwargs),
+    )
+    result = await translator._call_llm_translate("The maximum percentage is 10%.", "en", [], [])
+    assert result[1:4] == ("actual-response-model", 123, 45)
+
+
+def test_privacy_placeholders_preserve_legal_reference_without_sending_original():
+    text = "Reference 2020-1234; call +65 6123 4567; contact person@example.com."
+    safe, mapping = translator._redact_with_mapping(text)
+    assert "person@example.com" not in safe and "2020-1234" not in safe
+    assert "__CYSH_PRIVATE_" in safe
+    for marker, original in mapping.items():
+        safe = safe.replace(marker, original)
+    assert safe == text
+
+
+@pytest.mark.parametrize("keep_marker", [True, False])
+async def test_transport_restores_private_tokens_or_fails_quality(monkeypatch, keep_marker):
+    import json
+
+    import httpx
+
+    settings = translator.get_settings()
+    monkeypatch.setattr(settings, "llm_api_key", "test-only")
+    original_client = httpx.AsyncClient
+    original = "Contact person@example.com for lawful personal data protection."
+
+    def handler(request):
+        body = json.loads(request.content)
+        assert "person@example.com" not in json.dumps(body)
+        assert "__CYSH_PRIVATE_A__" in body["messages"][1]["content"]
+        content = "请联系相关部门依法保护个人数据并履行保护义务。"
+        if keep_marker:
+            content += "__CYSH_PRIVATE_A__"
+        return httpx.Response(200, json={"choices": [{"message": {"content": content}}]})
+
+    monkeypatch.setattr(
+        translator.httpx,
+        "AsyncClient",
+        lambda **kwargs: original_client(transport=httpx.MockTransport(handler), **kwargs),
+    )
+    result = await translator._call_llm_translate(original, "en", [], [])
+    assert ("person@example.com" in result[0]) is keep_marker
+    assert translator.verify_translation(original, result[0], [])[0] is keep_marker
