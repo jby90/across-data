@@ -1,6 +1,7 @@
 import base64
 import uuid
 from datetime import UTC, date, datetime
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ConfigDict, Field
@@ -65,11 +66,19 @@ class DocumentOut(BaseModel):
     instrument_kind: str | None = None
     relevance: str = "relevant"
     relevance_note: str | None = None
+    relevance_source: str = "rule"
     latest_version: VersionOut | None = None
 
 
 class DocumentDetail(DocumentOut):
     versions: list[VersionOut]
+
+
+class RelevanceOverrideIn(BaseModel):
+    """管理员/法务人工覆盖文件级相关性(覆盖后自动流程不得改写)。"""
+
+    relevance: Literal["relevant", "related", "out_of_scope"]
+    note: str | None = Field(default=None, max_length=500)
 
 
 class ClauseOut(BaseModel):
@@ -307,6 +316,28 @@ async def get_document(
         latest_version=version_out[0] if version_out else None,
         versions=version_out,
     )
+
+
+@router.patch(
+    "/documents/{document_id}/relevance",
+    response_model=DocumentOut,
+    summary="人工覆盖文件级相关性(核心/相关/范围外)",
+)
+async def override_document_relevance(
+    document_id: uuid.UUID,
+    body: RelevanceOverrideIn,
+    principal: Principal = Depends(require_platform_admin),
+    session: AsyncSession = Depends(get_session),
+):
+    doc = await session.get(Document, document_id)
+    if doc is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "文档不存在")
+    doc.relevance = body.relevance
+    doc.relevance_source = "manual"
+    doc.relevance_note = (body.note or "").strip() or "管理员人工覆盖相关性判定"
+    await session.commit()
+    await session.refresh(doc)
+    return DocumentOut.model_validate(doc)
 
 
 async def _version_or_404(session: AsyncSession, version_id: uuid.UUID) -> DocumentVersion:

@@ -288,7 +288,7 @@ async def test_s2_kg_type_constraints_verbatim_judge_and_out_of_scope(session_fa
         evaluate_kg_candidate,
         validate_relation_type_constraints,
     )
-    from app.knowledge.models import KgEdge, NodeType, RelationType
+    from app.knowledge.models import KgEdge, KgNode, NodeType, RelationType
     from app.sources.models import SourceSite
 
     # 1. 类型约束矩阵检查
@@ -456,10 +456,91 @@ async def test_s2_kg_type_constraints_verbatim_judge_and_out_of_scope(session_fa
         monkeypatch.setattr(translator, "_call_llm_translate", _noop_tr)
         await extractor.extract_knowledge_for_country(s, "SG")
         assert extract_called_for_bad is False
+        # 范围外文件: 不产生任何语义边,但图谱节点与结构边保留(文档库与图谱口径一致)
         edges_bad = (
             await s.execute(select(KgEdge).where(KgEdge.evidence_clause_id == c_bad.id))
         ).scalars().all()
-        assert edges_bad == []
+        assert edges_bad
+        assert all(e.is_structural for e in edges_bad)
+        inst_bad = (
+            await s.execute(select(KgNode).where(KgNode.document_id == doc_bad.id))
+        ).scalar_one()
+        assert inst_bad.review_status != "superseded"
+        assert inst_bad.attributes["scope"] == "out_of_scope"
+
+
+async def test_s2_relevance_tiers_manual_override_and_title_inference(monkeypatch):
+    """三档相关性: 配套法规为 related(不被大模型单独判为范围外)、人工覆盖不可被自动流程改写、
+    修正案标题推断 AMENDS 目标。"""
+    from types import SimpleNamespace
+
+    from app.knowledge import extractor
+    from app.knowledge.extractor import (
+        _NON_SUBSTANTIVE_LEAF_RE,
+        _amendment_base_key,
+        _resolve_instrument_target,
+        classify_document_relevance,
+    )
+
+    async def _llm_says_out(*_a, **_k):
+        return extractor.DocumentRelevanceVerdict(relevance="out_of_scope", reason="外围")
+
+    monkeypatch.setattr(extractor, "_call_llm_doc_relevance", _llm_says_out)
+
+    related = SimpleNamespace(
+        title="Personal Data Protection Act 2012 - Personal Data Protection "
+        "(Composition of Offences) Regulations 2021",
+        document_type="REGULATION",
+        source_url="https://sso.agc.gov.sg/x",
+        country_code="SG",
+        relevance="relevant",
+        relevance_note=None,
+        relevance_source="rule",
+    )
+    assert (await classify_document_relevance(related, []))[0] == "related"
+    assert related.relevance_source == "llm"
+
+    manual = SimpleNamespace(
+        title="Personal Data Protection Act 2012",
+        document_type="LAW",
+        source_url="https://sso.agc.gov.sg/y",
+        country_code="SG",
+        relevance="out_of_scope",
+        relevance_note="律所确认无关",
+        relevance_source="manual",
+    )
+    assert (await classify_document_relevance(manual, []))[0] == "out_of_scope"
+    assert manual.relevance_note == "律所确认无关"
+
+    commencement = SimpleNamespace(
+        title="X Act - X Act 2020 (Commencement) Notification 2021",
+        document_type="REGULATION",
+        source_url="https://sso.agc.gov.sg/z",
+        country_code="SG",
+        relevance="relevant",
+        relevance_note=None,
+        relevance_source="rule",
+    )
+    assert (await classify_document_relevance(commencement, []))[0] == "out_of_scope"
+
+    assert _amendment_base_key(
+        "Personal Data Protection (Enforcement) (Amendment) Regulations 2022"
+    ) == _amendment_base_key("Personal Data Protection (Enforcement) Regulations 2014")
+
+    base_node = SimpleNamespace(id="n1")
+    index = [
+        (
+            "personal data protection act 2012",
+            base_node,
+            SimpleNamespace(title="Personal Data Protection Act 2012"),
+        )
+    ]
+    assert _resolve_instrument_target("Personal Data Protection Act 2012", index) is base_node
+    assert _resolve_instrument_target("Courts Reform Act 2021", index) is None
+    # 生效通知不得被标题推断成修正案
+    assert _NON_SUBSTANTIVE_LEAF_RE.search(
+        "Personal Data Protection (Amendment) Act 2020 (Commencement) Notification 2021"
+    )
 
 
 async def test_s2_kg_gold_benchmark_60_samples(monkeypatch):

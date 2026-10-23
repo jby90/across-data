@@ -31,7 +31,7 @@ from typing import Any, Literal
 
 import httpx
 from pydantic import BaseModel, Field, ValidationError
-from sqlalchemy import select, update
+from sqlalchemy import or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
@@ -347,7 +347,7 @@ SEED_REVIEW_POINTS: list[dict] = [
 
 
 class DocumentRelevanceVerdict(BaseModel):
-    relevance: Literal["relevant", "out_of_scope"]
+    relevance: Literal["relevant", "related", "out_of_scope"]
     reason: str
 
 
@@ -466,15 +466,6 @@ _OUT_OF_SCOPE_TITLE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
         "仅规定法案生效日期的行政通知(Commencement Notification)，不含实质性合规权利义务或修订条款",
     ),
     (
-        re.compile(
-            r"\((?:statutory bodies|prescribed healthcare|"
-            r"prescribed law enforcement|appointment of administration|"
-            r"appeal|composition of offences|do not call)",
-            re.IGNORECASE,
-        ),
-        "针对法定机构名录、医疗机构、执法机关、拒收来电登记(DNC)或上诉程序的技术性附表通知，与车联网数据出境及自动驾驶准入无关",
-    ),
-    (
         re.compile(r"formulaire", re.IGNORECASE),
         "办事申请表格/申报模板文件，仅保留在文档库归档，不进入语义关系图谱抽取",
     ),
@@ -516,24 +507,31 @@ async def _call_llm_doc_relevance(
     document_type: str,
     country_code: str,
     sample_text: str,
+    hint: str | None = None,
 ) -> DocumentRelevanceVerdict | None:
-    """调用大模型判断文件是否与“智能网联汽车数据、个人数据、跨境传输、自动驾驶测试准入”相关。"""
+    """调用大模型对文件做三档相关性判定(核心 relevant / 相关 related / 范围外 out_of_scope)。"""
     settings = get_settings()
     if not settings.llm_api_key:
         return None
 
     system_prompt = (
-        "你是跨境智能网联汽车与数据合规专家。请判断给定法规文件是否与"
-        "「智能网联汽车数据、车联网/物联网(IoT/Telematics)、个人数据保护、数据跨境传输、"
-        "网络安全、自动驾驶道路测试或准入监管」直接相关。\n"
-        "若该文件属于法院诉讼程序改革(如 Courts Reform Act)、纯粹生效日期通知(Commencement)、"
-        "公共部门内部治理、医疗/执法机关名录或空白申请表，请判定为 out_of_scope。\n"
-        '请严格输出 JSON: {"relevance": "relevant" | "out_of_scope", "reason": "中文判定理由"}'
+        "你是跨境智能网联汽车与数据合规专家。请把给定法规文件分为三档:\n"
+        "- relevant(核心): 与「智能网联汽车数据、车联网/物联网、个人数据保护、数据跨境传输、"
+        "网络安全、自动驾驶道路测试或准入监管」直接相关的主法、核心条例、指南;\n"
+        "- related(相关): 属于上述核心法规的配套法规体系(如罚则和解、执法机关名录、上诉程序、"
+        "营销触达登记、法定机构名录等),与核心法规同一法律制度,内容较外围;\n"
+        "- out_of_scope(范围外): 与上述主题无关的其他领域立法(如法院诉讼程序改革、"
+        "公共部门内部治理、"
+        "杂项修正案),或仅规定生效日期的通知,或空白申请表。\n"
+        "原则:拿不准时不要判为 out_of_scope。\n"
+        '请严格输出 JSON: {"relevance": "relevant" | "related" | "out_of_scope", '
+        '"reason": "中文判定理由"}'
     )
     user_prompt = (
         f"国家: {country_code}\n"
         f"文件标题: {title}\n"
         f"文件类型: {document_type}\n"
+        f"规则初判提示: {hint or '无'}\n"
         f"正文前段摘录:\n{sample_text[:1200]}"
     )
     payload: dict[str, Any] = {
@@ -560,8 +558,8 @@ async def _call_llm_doc_relevance(
             raw = resp.json()["choices"][0]["message"]["content"]
             data = _parse_json_object(raw)
             rel = data.get("relevance", "relevant")
-            if rel not in ("relevant", "out_of_scope"):
-                rel = "out_of_scope"
+            if rel not in ("relevant", "related", "out_of_scope"):
+                rel = "related"
             return DocumentRelevanceVerdict(
                 relevance=rel,
                 reason=str(data.get("reason") or "大模型相关性判定完成"),
@@ -571,52 +569,80 @@ async def _call_llm_doc_relevance(
         return None
 
 
-_CORE_RELEVANT_TITLE_PATTERNS: re.Pattern[str] = re.compile(
-    r"(?:personal\s+data\s+protection|autonomous\s+motor\s+vehicles|transfer\s+limitation|"
-    r"key\s+concepts\s+in\s+the\s+pdpa|notification\s+of\s+data\s+breaches|"
-    r"09-08|2004-63|151|81/2018|iot|انترنت\s+الأشياء|حماية\s+البيانات|données\s+à\s+caractère\s+personnel)",
+# 核心法规体系的同一法律制度配套法规(PDPA 罚则和解/上诉/DNC/名录通知等):不得仅凭大模型判为范围外
+_RELATED_REGIME_HINT_RE = re.compile(
+    r"\((?:composition of offences|appeal|do not call|prescribed healthcare|"
+    r"prescribed law enforcement|statutory bodies|appointment of administration)",
     re.IGNORECASE,
 )
+
+# 规则对核心文件的初判提示(仅作为大模型提示与无模型时的兜底,不再短路大模型判定)
+_CORE_TITLE_HINT_RE = re.compile(
+    r"(?:personal\s+data\s+protection|autonomous\s+motor\s+vehicles|transfer\s+limitation|"
+    r"key\s+concepts\s+in\s+the\s+pdpa|09-08|2004-63|151|81/2018|iot|"
+    r"انترنت\s+الأشياء|حماية\s+البيانات|données\s+à\s+caractère\s+personnel)",
+    re.IGNORECASE,
+)
+
+
+def _rule_relevance_hint(title: str) -> tuple[str, str] | None:
+    if _RELATED_REGIME_HINT_RE.search(title or ""):
+        return (
+            "related",
+            "核心法规体系的配套法规(罚则和解/上诉/营销登记/机构名录等),同一法律制度但内容较外围",
+        )
+    if _CORE_TITLE_HINT_RE.search(title or ""):
+        return ("relevant", "标题命中个人数据保护/车联网/自动驾驶核心法规关键词")
+    return None
 
 
 async def classify_document_relevance(
     doc: Document, sample_clauses: list[Clause] | None = None
 ) -> tuple[str, str]:
-    """判定单份文档是否进入语义抽取(relevant vs out_of_scope),并写回 doc.relevance。"""
+    """文件级三档相关性: relevant(核心) / related(相关) / out_of_scope(范围外)。
+
+    优先级: 人工覆盖(manual) > 明确无关的硬规则 > 已有大模型判定 > 大模型判定(规则仅作提示)。
+    范围外文件保留在文档库与图谱节点中,只是不进入语义关系抽取。
+    """
+    if doc.relevance_source == "manual":
+        return doc.relevance, doc.relevance_note or ""
+
     det = _deterministic_doc_scope_check(
         doc.title or "", doc.document_type or "", doc.source_url or ""
     )
     if det is not None:
         doc.relevance, doc.relevance_note = det
+        doc.relevance_source = "rule"
         return det
 
-    if _CORE_RELEVANT_TITLE_PATTERNS.search(doc.title or ""):
-        reason = (
-            f"属于 {doc.country_code} 个人数据保护、车联网/物联网或自动驾驶测试准入核心监管文件"
-        )
-        doc.relevance = "relevant"
-        doc.relevance_note = reason
-        return "relevant", reason
+    if doc.relevance_source == "llm" and doc.relevance in ("relevant", "related", "out_of_scope"):
+        return doc.relevance, doc.relevance_note or ""
 
+    hint = _rule_relevance_hint(doc.title or "")
     sample_text = "\n".join(c.original_text[:400] for c in (sample_clauses or [])[:3])
     llm_verdict = await _call_llm_doc_relevance(
         title=doc.title,
         document_type=doc.document_type,
         country_code=doc.country_code,
         sample_text=sample_text,
+        hint=hint[1] if hint else None,
     )
     if llm_verdict is not None:
-        doc.relevance = llm_verdict.relevance
-        doc.relevance_note = llm_verdict.reason
-        return llm_verdict.relevance, llm_verdict.reason
+        rel, reason = llm_verdict.relevance, llm_verdict.reason
+        if rel == "out_of_scope" and hint is not None:
+            rel = hint[0] if hint[0] != "relevant" else "related"
+            reason = f"{reason}(规则提示该文件属核心法规体系,保守保留进入抽取)"
+        doc.relevance, doc.relevance_note = rel, reason
+        doc.relevance_source = "llm"
+        return rel, reason
 
-    reason = (
-        f"属于 {doc.country_code} 个人数据保护、车联网/物联网或自动驾驶测试准入核心监管文件"
+    rel, reason = hint or (
+        "relevant",
+        f"{doc.country_code} 官方法规文件,未能调用大模型,保守视为核心文件",
     )
-    doc.relevance = "relevant"
-    doc.relevance_note = reason
-    return "relevant", reason
-
+    doc.relevance, doc.relevance_note = rel, reason
+    doc.relevance_source = "rule"
+    return rel, reason
 
 def align_verbatim_quote(original_text: str, candidate_quote: str) -> str | None:
     """校验或对齐 candidate_quote 为 original_text 的 100% 逐字子串。
@@ -1607,6 +1633,155 @@ def _select_candidate_clauses(clauses: list[Clause], max_clauses: int = 18) -> l
     return selected
 
 
+async def supersede_unreviewed_graph_edges(session: AsyncSession, country_code: str) -> int:
+    """重跑抽取前,将本国尚未人工复核(pending_review)的语义边与标题推断边标为 superseded。
+
+    已 approved/rejected 的人工复核结果不动,保证 extract-kg 可完整重跑且不累积重复边。
+    """
+    cc = country_code.upper()
+    res = await session.execute(
+        update(KgEdge)
+        .where(
+            KgEdge.country_code == cc,
+            KgEdge.review_status == GraphReviewStatus.PENDING_REVIEW.value,
+            or_(KgEdge.is_structural.is_(False), KgEdge.judge_verdict == "title_inferred"),
+        )
+        .values(review_status=GraphReviewStatus.SUPERSEDED.value)
+    )
+    await session.flush()
+    return int(res.rowcount or 0)
+
+
+_AMENDMENT_TOKEN_RE = re.compile(r"\(amendment(?:\s+no\.?\s*\d+)?\)", re.IGNORECASE)
+_YEAR_RE = re.compile(r"\b(?:19|20)\d{2}\b")
+# 生效通知/勘误/过渡与废止令等非实质性文本,不参与"修正案->主法"的标题推断
+_NON_SUBSTANTIVE_LEAF_RE = re.compile(
+    r"commencement|corrigend|saving|transitional|revocation|cancellation", re.IGNORECASE
+)
+
+
+def _title_leaf(title: str) -> str:
+    """"主法 - 子法规" 形式标题取子法规部分。"""
+    return (title or "").split(" - ")[-1].strip()
+
+
+def _normalize_instrument_title(title: str) -> str:
+    return re.sub(r"[^a-z0-9\u4e00-\u9fff]+", " ", _title_leaf(title).lower()).strip()
+
+
+def _resolve_instrument_target(
+    name: str,
+    index: list[tuple[str, KgNode, Document]],
+    exclude_id: uuid.UUID | None = None,
+    min_ratio: float = 0.88,
+) -> KgNode | None:
+    """按标题相似度在本国已入库法规节点中查找被修订/废止的目标法规,匹配不到返回 None。"""
+    norm = _normalize_instrument_title(name)
+    if not norm:
+        return None
+    best: tuple[float, KgNode | None] = (0.0, None)
+    for cand_norm, node, _doc in index:
+        if exclude_id is not None and node.id == exclude_id:
+            continue
+        ratio = difflib.SequenceMatcher(None, norm, cand_norm).ratio()
+        if ratio > best[0]:
+            best = (ratio, node)
+    return best[1] if best[0] >= min_ratio else None
+
+
+def _amendment_base_key(leaf: str) -> str:
+    """去掉年份与 (Amendment ...) 标记后的标题键,用于把修正案与被修正的主法规配对。"""
+    stripped = _AMENDMENT_TOKEN_RE.sub(" ", leaf)
+    stripped = re.sub(r"\(\d{4}\s+revised\s+edition\)", " ", stripped, flags=re.IGNORECASE)
+    stripped = _YEAR_RE.sub(" ", stripped)
+    return re.sub(r"[^a-z0-9\u4e00-\u9fff]+", " ", stripped.lower()).strip()
+
+
+async def _add_title_inferred_amend_edges(
+    session: AsyncSession,
+    cc: str,
+    index: list[tuple[str, KgNode, Document]],
+    inst_node_by_doc: dict[uuid.UUID, KgNode],
+) -> int:
+    """由标题层级确定性推断 AMENDS 结构边: 修正案 -> 最近的更早版被修正法规。
+
+    推断边标记 judge_verdict=title_inferred、状态 pending_review,不冒充条款证据,需人工复核。
+    """
+    added = 0
+    leaves = {doc.id: _title_leaf(doc.title) for _n, _node, doc in index}
+    for _norm, node, doc in index:
+        leaf = leaves[doc.id]
+        if _NON_SUBSTANTIVE_LEAF_RE.search(leaf) or not _AMENDMENT_TOKEN_RE.search(leaf):
+            continue
+        amend_years = _YEAR_RE.findall(leaf)
+        if not amend_years:
+            continue
+        amend_year = int(amend_years[0])
+        base_key = _amendment_base_key(leaf)
+        if not base_key:
+            continue
+        candidates: list[tuple[int, KgNode]] = []
+        for _n2, node2, doc2 in index:
+            if doc2.id == doc.id:
+                continue
+            leaf2 = leaves[doc2.id]
+            if (
+                _NON_SUBSTANTIVE_LEAF_RE.search(leaf2)
+                or _AMENDMENT_TOKEN_RE.search(leaf2)
+                or _amendment_base_key(leaf2) != base_key
+            ):
+                continue
+            years2 = _YEAR_RE.findall(leaf2)
+            if years2 and int(years2[0]) < amend_year:
+                candidates.append((int(years2[0]), node2))
+        if not candidates:
+            continue
+        candidates.sort(key=lambda t: t[0], reverse=True)
+        target = candidates[0][1]
+
+        exists = (
+            await session.execute(
+                select(KgEdge.id).where(
+                    KgEdge.source_node_id == node.id,
+                    KgEdge.target_node_id == target.id,
+                    KgEdge.relation_type == RelationType.AMENDS.value,
+                    KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
+                )
+            )
+        ).first()
+        if exists:
+            continue
+        first_clause = (
+            await session.execute(
+                select(Clause)
+                .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+                .where(DocumentVersion.document_id == doc.id)
+                .order_by(DocumentVersion.version_no.desc(), Clause.ordinal)
+                .limit(1)
+            )
+        ).scalar_one_or_none()
+        if first_clause is None:
+            continue
+        edge = await _upsert_edge(
+            session,
+            country_code=cc,
+            source_node=inst_node_by_doc.get(doc.id, node),
+            target_node=target,
+            relation_type=RelationType.AMENDS,
+            evidence_clause=first_clause,
+            evidence_quote=first_clause.original_text[:200].strip(),
+            extractor_model=STRUCTURAL_EXTRACTOR_MODEL,
+            confidence=0.8,
+            judge_verdict="title_inferred",
+            judge_reason="由修正案/被修正法规的标题层级与年份推断,非条款语义证据,待人工核对",
+            is_structural=True,
+            review_status=GraphReviewStatus.PENDING_REVIEW.value,
+        )
+        if edge is not None:
+            added += 1
+    return added
+
+
 async def supersede_legacy_rule_edges(
     session: AsyncSession, country_code: str | None = None
 ) -> int:
@@ -1642,6 +1817,7 @@ async def extract_knowledge_for_country(
     cc = country_code.upper()
     await seed_glossary_and_review_points(session)
     superseded_count = await supersede_legacy_rule_edges(session, cc)
+    superseded_unreviewed = await supersede_unreviewed_graph_edges(session, cc)
 
     country_zh, country_orig = COUNTRY_NAMES.get(cc, (cc, cc))
     country_node = await _upsert_node(
@@ -1680,10 +1856,13 @@ async def extract_knowledge_for_country(
     from app.sources.models import SourceSite
 
     translated_count = 0
+    doc_counts: dict[str, int] = {}
+    inst_title_index: list[tuple[str, KgNode, Document]] = []
     relevant_docs_info: list[
         tuple[Document, DocumentVersion, list[Clause], KgNode, KgNode, str]
     ] = []
-    base_act_nodes: dict[str, KgNode] = {}
+    doc_tier: dict[uuid.UUID, str] = {}
+    inst_node_by_doc: dict[uuid.UUID, KgNode] = {}
     inst_by_title: dict[str, KgNode] = {}
 
     for doc in docs:
@@ -1710,22 +1889,22 @@ async def extract_knowledge_for_country(
         if not clauses:
             continue
 
-        rel_status, _ = await classify_document_relevance(doc, clauses[:3])
-        if rel_status != "relevant":
-            # 若该 out_of_scope 文档此前曾生成过 INSTRUMENT 节点或边,将其标记为 superseded
-            old_inst = (
-                await session.execute(select(KgNode).where(KgNode.document_id == doc.id))
-            ).scalars().all()
-            for onode in old_inst:
-                onode.review_status = GraphReviewStatus.SUPERSEDED.value
-                await session.execute(
-                    update(KgEdge)
-                    .where(
-                        (KgEdge.source_node_id == onode.id) | (KgEdge.target_node_id == onode.id)
-                    )
-                    .values(review_status=GraphReviewStatus.SUPERSEDED.value)
+        rel_status, rel_note = await classify_document_relevance(doc, clauses[:3])
+        in_extraction_scope = rel_status in ("relevant", "related")
+        doc_counts[rel_status] = doc_counts.get(rel_status, 0) + 1
+        if not in_extraction_scope:
+            # 范围外文件保留图谱节点(带范围标签),但清除此前可能由它产生的未复核语义边
+            clause_ids_of_doc = [c.id for c in clauses]
+            await session.execute(
+                update(KgEdge)
+                .where(
+                    KgEdge.evidence_clause_id.in_(clause_ids_of_doc),
+                    KgEdge.is_structural.is_(False),
+                    KgEdge.review_status != GraphReviewStatus.APPROVED.value,
+                    KgEdge.review_status != GraphReviewStatus.SUPERSEDED.value,
                 )
-            continue
+                .values(review_status=GraphReviewStatus.SUPERSEDED.value)
+            )
 
         first_clause = clauses[0]
         site = await session.get(SourceSite, doc.site_id)
@@ -1758,36 +1937,18 @@ async def extract_knowledge_for_country(
                 "source_url": doc.source_url,
                 "version_no": ver.version_no,
                 "legal_status": ver.legal_status,
+                "scope": rel_status,
+                "scope_note": rel_note,
+                "scope_source": doc.relevance_source,
             },
             document_id=doc.id,
             evidence_clause_id=first_clause.id,
             review_status=GraphReviewStatus.APPROVED.value,
         )
         inst_by_title[doc.title.lower().strip()] = inst_node
-
-        title_lower = doc.title.lower().strip()
-        if title_lower in (
-            "personal data protection act 2012",
-            "personal data protection act 2012 (2020 revised edition)",
-        ):
-            base_act_nodes["pdpa"] = inst_node
-        elif (
-            "personal data protection regulations 2014" in title_lower
-            or "personal data protection regulations 2021" in title_lower
-        ):
-            base_act_nodes["pdpa_regs"] = inst_node
-        elif (
-            "road traffic" in title_lower
-            and "autonomous motor vehicles" in title_lower
-            and "amendment" not in title_lower
-        ):
-            base_act_nodes["rta_amv"] = inst_node
-        elif "notification of data breaches" in title_lower and "amendment" not in title_lower:
-            base_act_nodes["pdpa_breach"] = inst_node
-        elif (
-            "loi n° 09-08" in title_lower or "09-08" in title_lower
-        ) and "décret" not in title_lower:
-            base_act_nodes["ma_0908"] = inst_node
+        inst_node_by_doc[doc.id] = inst_node
+        doc_tier[doc.id] = rel_status
+        inst_title_index.append((_normalize_instrument_title(doc.title), inst_node, doc))
 
         # 结构边 1: 监管机构 PUBLISHES 法规文件 (is_structural=True)
         await _upsert_edge(
@@ -1822,8 +1983,8 @@ async def extract_knowledge_for_country(
             review_status=GraphReviewStatus.APPROVED.value,
         )
 
-        # 对前 N 条核心条款补齐受控翻译
-        for c in clauses[:translate_sample_per_doc]:
+        # 对前 N 条核心条款补齐受控翻译(范围外文件不消耗模型额度)
+        for c in clauses[:translate_sample_per_doc] if in_extraction_scope else []:
             existing_tr = (
                 await session.execute(
                     select(ClauseTranslation.id).where(
@@ -1837,13 +1998,16 @@ async def extract_knowledge_for_country(
                 await translate_clause(session, c, cc, terms)
                 translated_count += 1
 
-        relevant_docs_info.append((doc, ver, clauses, reg_node, inst_node, publisher_name))
+        if in_extraction_scope:
+            relevant_docs_info.append((doc, ver, clauses, reg_node, inst_node, publisher_name))
 
-    # 并发调用大模型抽取各相关文档的候选条款并执行语义裁判
+    # 并发调用大模型抽取各相关文档的候选条款并执行语义裁判(核心文件预算大,相关文件预算小)
     sem = asyncio.Semaphore(max(1, concurrency))
     extraction_tasks: list[tuple[Document, Clause, KgNode, KgNode, str]] = []
+    related_budget = max(6, max_clauses_per_doc // 3)
     for doc, _ver, clauses, reg_node, inst_node, pub_name in relevant_docs_info:
-        cand_clauses = _select_candidate_clauses(clauses, max_clauses=max_clauses_per_doc)
+        budget = max_clauses_per_doc if doc_tier.get(doc.id) == "relevant" else related_budget
+        cand_clauses = _select_candidate_clauses(clauses, max_clauses=budget)
         for c in cand_clauses:
             extraction_tasks.append((doc, c, reg_node, inst_node, pub_name))
 
@@ -1903,7 +2067,7 @@ async def extract_knowledge_for_country(
 
             top_rels = sorted(
                 payload.relations, key=lambda r: r.confidence, reverse=True
-            )[:3]
+            )[:5]
             for rel in top_rels:
                 src_raw = rel.source.strip()
                 dst_raw = rel.target.strip()
@@ -2028,26 +2192,12 @@ async def extract_knowledge_for_country(
 
             # 确定 target KgNode
             if dst_type == NodeType.INSTRUMENT:
-                # 优先关联本国已入库的被修订/被废止主法规节点
-                dst_lower = dst_zh.lower()
-                dst_node = inst_by_title.get(dst_lower)
+                # 仅关联本国已入库、标题能确定匹配的法规节点;匹配不到就丢弃,不做任意兜底
+                dst_node = inst_by_title.get(dst_zh.lower().strip())
                 if dst_node is None:
-                    if "regulations" in dst_lower and "personal data protection" in dst_lower:
-                        dst_node = base_act_nodes.get("pdpa_regs") or base_act_nodes.get("pdpa")
-                    elif "personal data protection act" in dst_lower or "pdpa" in dst_lower:
-                        dst_node = base_act_nodes.get("pdpa")
-                    elif "autonomous motor vehicles" in dst_lower or "road traffic" in dst_lower:
-                        dst_node = base_act_nodes.get("rta_amv")
-                    elif "notification of data breaches" in dst_lower:
-                        dst_node = base_act_nodes.get("pdpa_breach")
-                    elif "09-08" in dst_lower:
-                        dst_node = base_act_nodes.get("ma_0908")
-                if dst_node is None or dst_node.id == src_node.id:
-                    if base_act_nodes:
-                        candidate_base = next(
-                            (b for b in base_act_nodes.values() if b.id != src_node.id), None
-                        )
-                        dst_node = candidate_base
+                    dst_node = _resolve_instrument_target(
+                        dst_zh, inst_title_index, exclude_id=src_node.id
+                    )
                 if dst_node is None or dst_node.id == src_node.id:
                     continue
             elif dst_type == NodeType.REGULATOR:
@@ -2086,6 +2236,11 @@ async def extract_knowledge_for_country(
             )
             if edge_obj is not None:
                 semantic_edges_added += 1
+
+    # 修正案 -> 被修正主法: 由标题层级确定性推断的结构边(待核对,不冒充条款证据)
+    inferred_amend_edges = await _add_title_inferred_amend_edges(
+        session, cc, inst_title_index, inst_node_by_doc
+    )
 
     # 将没有任何活跃边连接的旧孤立节点标记为 superseded,确保活跃图谱干净
     active_edges = list(
@@ -2138,8 +2293,13 @@ async def extract_knowledge_for_country(
         "nodes_total": active_nodes_after,
         "edges_total": active_edges_after,
         "semantic_edges_added": semantic_edges_added,
+        "title_inferred_amend_edges": inferred_amend_edges,
         "superseded_legacy_edges": superseded_count,
+        "superseded_unreviewed_edges": superseded_unreviewed,
         "clauses_translated": translated_count,
+        "docs_relevant": doc_counts.get("relevant", 0),
+        "docs_related": doc_counts.get("related", 0),
+        "docs_out_of_scope": doc_counts.get("out_of_scope", 0),
     }
 
 

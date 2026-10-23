@@ -42,6 +42,29 @@ async function load() {
   }
 }
 
+const RELEVANCE_META: Record<string, { label: string; type: 'success' | 'primary' | 'info' | 'warning' }> = {
+  relevant: { label: '核心(参与抽取)', type: 'success' },
+  related: { label: '相关(参与抽取)', type: 'primary' },
+  out_of_scope: { label: '范围外(仅归档/不抽取)', type: 'info' },
+  irrelevant: { label: '非法规/待过滤', type: 'info' },
+  needs_review: { label: '待判定', type: 'warning' },
+}
+
+async function overrideRelevance(doc: DocumentOut, relevance: string) {
+  try {
+    const updated = await api.patch<DocumentOut>(`/admin/documents/${doc.id}/relevance`, {
+      relevance,
+      note: '管理员人工覆盖相关性判定',
+    })
+    doc.relevance = updated.relevance
+    doc.relevance_note = updated.relevance_note
+    doc.relevance_source = updated.relevance_source
+    ElMessage.success('已调整相关性,下次重新抽取图谱时生效(人工判定不会被自动流程改写)')
+  } catch (e) {
+    ElMessage.error((e as Error).message)
+  }
+}
+
 function clearSiteFilter() {
   siteId.value = ''
   sitePublisher.value = ''
@@ -191,11 +214,26 @@ onMounted(load)
     <el-table-column label="类型" width="100">
       <template #default="{ row }">{{ DOC_TYPE_LABEL[row.document_type] }}</template>
     </el-table-column>
-    <el-table-column label="相关性" width="110">
+    <el-table-column label="相关性(语义抽取范围)" width="230">
       <template #default="{ row }">
-        <el-tag :type="row.relevance === 'irrelevant' ? 'info' : 'success'" size="small">
-          {{ row.relevance === 'irrelevant' ? '非法规/待过滤' : '相关法规' }}
+        <el-tooltip :content="row.relevance_note || ''" placement="top" :disabled="!row.relevance_note">
+          <el-tag :type="RELEVANCE_META[row.relevance]?.type ?? 'info'" size="small">
+            {{ RELEVANCE_META[row.relevance]?.label ?? row.relevance }}
+          </el-tag>
+        </el-tooltip>
+        <el-tag v-if="row.relevance_source === 'manual'" type="warning" size="small" style="margin-left: 4px">
+          人工
         </el-tag>
+        <el-dropdown trigger="click" style="margin-left: 6px" @command="(c: string) => overrideRelevance(row, c)">
+          <el-button size="small" link type="primary" @click.stop>调整</el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="relevant">设为核心(参与抽取)</el-dropdown-item>
+              <el-dropdown-item command="related">设为相关(参与抽取)</el-dropdown-item>
+              <el-dropdown-item command="out_of_scope">设为范围外(不抽取)</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </template>
     </el-table-column>
     <el-table-column label="最新版本" width="90">

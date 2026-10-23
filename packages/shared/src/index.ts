@@ -175,8 +175,9 @@ export interface DocumentOut {
   last_error: string | null
   instrument_family: string | null
   instrument_kind: string | null
-  relevance: 'relevant' | 'irrelevant' | 'needs_review'
+  relevance: 'relevant' | 'related' | 'out_of_scope' | 'irrelevant' | 'needs_review'
   relevance_note: string | null
+  relevance_source?: 'rule' | 'llm' | 'manual'
   latest_version: VersionOut | null
 }
 

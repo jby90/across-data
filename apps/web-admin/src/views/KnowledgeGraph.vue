@@ -41,6 +41,11 @@ interface KgEdge {
 }
 
 interface QualitySummary {
+  documents_total?: number
+  documents_core?: number
+  documents_related?: number
+  documents_out_of_scope?: number
+  documents_extracted?: number
   structural_edges?: number
   semantic_edges?: number
   semantic_unjudged?: number
@@ -157,11 +162,24 @@ function hideHubNodeTypes() {
   }
 }
 
+// 范围外文件的法规节点: 默认折叠(仍属于全部文件,可用开关显示),它们不参与语义抽取
+const showOutOfScope = ref(false)
+const outOfScopeNodeIds = computed(
+  () =>
+    new Set(
+      graph.value.nodes
+        .filter((n) => n.node_type === 'INSTRUMENT' && n.attributes?.scope === 'out_of_scope')
+        .map((n) => n.id),
+    ),
+)
+
 // 先按可见节点类型与质量体检状态过滤边
 const typeFilteredEdges = computed(() => {
   const vis = new Set(visibleNodeTypes.value)
+  const hidden = showOutOfScope.value ? new Set<string>() : outOfScopeNodeIds.value
   return graph.value.edges.filter((e) => {
     if (!vis.has(e.source_node_type) || !vis.has(e.target_node_type)) return false
+    if (hidden.has(e.source_node_id) || hidden.has(e.target_node_id)) return false
     if (qualityFilter.value === 'pending_review' && e.review_status !== 'pending_review')
       return false
     if (qualityFilter.value === 'approved' && e.review_status !== 'approved') return false
@@ -342,6 +360,11 @@ onMounted(loadGraph)
           <el-option value="LB" label="LB 黎巴嫩" />
         </el-select>
         <el-switch v-model="onlyApproved" active-text="仅展示已复核依据" @change="loadGraph" />
+        <el-switch
+          v-model="showOutOfScope"
+          active-text="显示范围外文件"
+          data-testid="kg-show-out-of-scope"
+        />
         <el-button type="primary" :loading="loading" @click="runExtract">
           重新抽取本国图谱
         </el-button>
@@ -385,6 +408,18 @@ onMounted(loadGraph)
         @click="qualityFilter = 'all'"
       >
         活跃总边 ({{ graph.edges.length }})
+      </el-tag>
+      <el-tag
+        v-if="(graph.quality_summary?.documents_total ?? 0) > 0"
+        type="success"
+        effect="plain"
+        data-testid="kg-doc-scope"
+      >
+        法规文件 {{ graph.quality_summary?.documents_total }} 份(核心
+        {{ graph.quality_summary?.documents_core ?? 0 }} / 相关
+        {{ graph.quality_summary?.documents_related ?? 0 }} / 范围外
+        {{ graph.quality_summary?.documents_out_of_scope ?? 0 }}),其中
+        {{ graph.quality_summary?.documents_extracted ?? 0 }} 份参与语义抽取
       </el-tag>
       <el-tag type="primary" effect="plain">
         条款语义边: {{ graph.quality_summary?.semantic_edges ?? 0 }} 条

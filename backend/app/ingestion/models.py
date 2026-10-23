@@ -38,7 +38,7 @@ class Document(Base):
     __table_args__ = (
         UniqueConstraint("site_id", "source_url", name="uq_documents_site_url"),
         CheckConstraint(
-            "relevance IN ('relevant','irrelevant','out_of_scope','needs_review')",
+            "relevance IN ('relevant','related','irrelevant','out_of_scope','needs_review')",
             name="ck_documents_relevance",
         ),
     )
@@ -65,6 +65,10 @@ class Document(Base):
         String(16), default="relevant", server_default="relevant"
     )
     relevance_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # 相关性判定来源: rule(规则初判) / llm(大模型) / manual(人工覆盖,自动流程不得改写)
+    relevance_source: Mapped[str] = mapped_column(
+        String(16), default="rule", server_default="rule"
+    )
 
 
 class LegalStatus(enum.StrEnum):

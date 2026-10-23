@@ -509,7 +509,7 @@ async def batch_translate(
 
 async def batch_extract_kg(
     country: str | None = None,
-    max_clauses_per_doc: int = 16,
+    max_clauses_per_doc: int = 24,
     concurrency: int = 8,
     sf=None,
 ) -> dict[str, dict[str, int]]:
@@ -609,7 +609,12 @@ def main() -> int:
     t.add_argument("--concurrency", type=int, default=4, help="并发请求数(默认 4)")
     kg = sub.add_parser("extract-kg", help="批量执行 S2 知识图谱结构化抽取与语义裁判")
     kg.add_argument("--country", help="指定国家代码(如 SG/EG/TN/MA/LB),不传则抽取全部五国")
-    kg.add_argument("--max-clauses", type=int, default=16, help="每份相关文档最多抽取的核心条款数")
+    kg.add_argument(
+        "--max-clauses",
+        type=int,
+        default=24,
+        help="每份核心文档最多抽取的条款数(相关文档约为其 1/3)",
+    )
     kg.add_argument("--concurrency", type=int, default=8, help="并发请求数(默认 8)")
     args = parser.parse_args()
 

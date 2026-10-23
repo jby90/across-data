@@ -457,11 +457,27 @@ async def _build_graph_payload(
         nout.attributes = merged_attrs
         node_outs.append(nout)
 
+    doc_scope_rows = (
+        await session.execute(
+            select(Document.relevance, func.count(Document.id))
+            .where(Document.country_code == cc)
+            .group_by(Document.relevance)
+        )
+    ).all()
+    doc_scope = {str(r): int(c) for r, c in doc_scope_rows}
+    docs_total = sum(doc_scope.values())
+    docs_out_of_scope = doc_scope.get("out_of_scope", 0) + doc_scope.get("irrelevant", 0)
+
     return GraphPayloadOut(
         country_code=cc,
         node_counts_by_type=node_counts,
         edge_counts_by_relation=edge_counts,
         quality_summary={
+            "documents_total": docs_total,
+            "documents_core": doc_scope.get("relevant", 0),
+            "documents_related": doc_scope.get("related", 0),
+            "documents_out_of_scope": docs_out_of_scope,
+            "documents_extracted": docs_total - docs_out_of_scope,
             "structural_edges": structural_edges,
             "semantic_edges": semantic_edges,
             "semantic_unjudged": semantic_unjudged,
