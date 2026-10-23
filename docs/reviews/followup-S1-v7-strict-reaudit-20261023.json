@@ -1,0 +1,509 @@
+{
+  "summary": {
+    "total_latest_clauses": 2607,
+    "eligible_latest_clauses": 2517,
+    "source_held_clauses": 90,
+    "current": 2517,
+    "missing_qualified_clauses": 20,
+    "qualified_coverage_percent": 99.205,
+    "gap_kinds": {
+      "translation_quality_failure": 8,
+      "numeric_or_citation_fragment": 12
+    },
+    "identical_to_original": 0,
+    "current_engines": {
+      "llm": 2517
+    },
+    "attempt_statuses": {
+      "translation_failed": 21,
+      "machine_translated": 2586,
+      "superseded": 853
+    },
+    "qualified_unique_clauses": 2497,
+    "invalid_current": 20,
+    "by_country": {
+      "MA": {
+        "clauses": 215,
+        "qualified": 215
+      },
+      "EG": {
+        "clauses": 100,
+        "qualified": 99
+      },
+      "TN": {
+        "clauses": 150,
+        "qualified": 150
+      },
+      "LB": {
+        "clauses": 329,
+        "qualified": 329
+      },
+      "SG": {
+        "clauses": 1723,
+        "qualified": 1704
+      }
+    },
+    "known_tokens_in": 2313847,
+    "known_tokens_out": 2888287,
+    "human_approved": 0
+  },
+  "invalid_current": [
+    {
+      "translation_id": "00615edd-81d4-4eef-8d99-c04dc690e1e2",
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "issues": [
+        "CJK 字符占比未达标: 26.7% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "7. 100,001 and above $3,200\nMade this 21st day of November 2013.\nAUBECK KAM\nPermanent Secretary,\nMinistry of Communications\nand Information,\nSingapore.\n[Y03.002.001.EV30/13; AG/LLRD/SL/227A/2012/5 Vol. 1]",
+      "translated": "7. 100,001及以上 $3,200\n于 2013 年 11 月 21 日订立。\n奥贝克卡姆\n新加坡通讯及新闻部常任秘书。\n[Y03.002.001.EV30/13; AG/LLRD/SL/227A/2012/5 Vol. 1]",
+      "gap_kind": "translation_quality_failure"
+    },
+    {
+      "translation_id": "ef86ea47-ffdc-4b87-932c-cd56fb8d48fd",
+      "clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+      "issues": [
+        "CJK 字符占比未达标: 20.1% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "EG",
+      "document_title": "埃及内阁信息与决策支持中心 IDSC",
+      "source_url": "https://idsc.gov.eg/upload/DocumentLibrary/AttachmentA/10387/7.pdf",
+      "original": "– EU - 2016 April 27 2016/679,) EU (REGULATION ,)GDPR (,Regulation Protection Data General The - 14\n.2016.119.01.0001.01._L.OJ:uriserv=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https from retrieved\nTOC:2016:119:L:OJ=toc&ENG\nNo) EU (REGULATION ,Regulation) eIDAS (Services Authentication and Identification Electronic The - 15\nO:uriserv=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https from retrieved – EU 2014, July 23 910/2014,\nENG.2014.257.01.0073.01._L.J\n/content-legal/eu.europa.lex-eur://https from retrieved – EU 2023, May 31 ,Regulation assets-Crypto The - 16\n1114R:32023CELEX=uri?/ALL/EN\nfrom retrieved – EU 2022, December 14 ,regulation sector financial the for resilience operational digital The - 17\n2554R:32022CELEX=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https\nJanuary 12 on force into entered 2015, November 25 in published ,)2PSD (2, Directive Services Payment The - 18\n2366L32015A%3CELEX=uri?/TXT/en/content-legal/eu.europa.lex-eur://https from retrieved – EU - 2016,\n,(version 2015(\n:2007:319:0L:OJ=uri?do.LexUriServ/LexUriServ/eu.europa.lex-eur://https) version 2007 (2007 November 13\nPDF:en001:0036:\n– EU 2024, -3- 28 updated last 2014, MAY 15 ,)II MiFID (2 Directive Instruments Financial in markets The - 19\n0065L32014A%3celex=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https from retrieved",
+      "translated": "– 欧盟 - 2016 2016年4月27日/679，）欧盟（条例，）《通用数据保护条例》（GDPR），即欧盟条例—— 14\n. 2016.119.01.0001.01._L.OJ:uriserv=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https 以下为检索来源链接：检索自\n目录：2016：119：L：OJ=toc&ENG\nNo）欧盟（条例，条例）《电子身份识别与认证服务条例》（eIDAS），即欧盟条例—— 15\nO:uriserv=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https 以下为检索来源链接：检索自 – 欧盟 2014，7月 23 910/2014，\n英文版.2014.257.01.0073.01._L.J\n/content-legal/eu.europa.lex-eur://https 以下为检索来源链接：检索自 – 欧盟 2023，5月 31，《加密资产条例》—— 16\n1114 R:32023CELEX=uri?/ALL/EN\n以下为检索来源链接：检索自 – 欧盟 2022，12月 14，《金融部门数字运营韧性条例》—— 17\n2554 R:32022CELEX=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https\n于 2015 年1月 12 日生效，于 25 年11月公布，）2PSD（2，《支付服务指令》—— 18\n2366L32015A%3CELEX=uri?/TXT/en/content-legal/eu.europa.lex-eur://https 以下为检索来源链接：检索自 – 欧盟 - 2016，\n，（版本 2015（\n：2007：319：0 L：OJ=uri?do.LexUriServ/LexUriServ/eu.europa.lex-eur://https）版本 2007（2007 11月 13\nPDF：英文 001：0036：\n– 欧盟 2024，-3- 28 最后更新 2014，5月 15，）II MiFID（2 《金融市场金融工具指令》（MiFID II）—— 19\n0065L32014A%3 celex=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https 以下为检索来源链接：检索自",
+      "gap_kind": "translation_quality_failure"
+    },
+    {
+      "translation_id": "916c3754-d5a5-49c3-b17d-25aca05e674e",
+      "clause_id": "74fe152f-5688-4cd6-99b3-2ca9cb322c90",
+      "issues": [
+        "短表格单元译文含原文未支持的扩写；须关联真实表头或上下文",
+        "CJK 字符占比未达标: 23.8% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "4. 100,000 $0.012 per number",
+      "translated": "4. 100,000 $0.012 按照各编号。",
+      "gap_kind": "translation_quality_failure"
+    },
+    {
+      "translation_id": "409d0811-4d9d-4bac-98fb-de0c2755b204",
+      "clause_id": "bf35708a-0e6a-4e0a-944a-ea1dd354d19b",
+      "issues": [
+        "短表格单元译文含原文未支持的扩写；须关联真实表头或上下文"
+      ],
+      "status": "machine_translated",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "6. 1,000,000 $0.01 per number",
+      "translated": "6. 1,000,000 $0.01 按照编号逐项一一对应并进行相应处理及相关事项的工作",
+      "gap_kind": "translation_quality_failure"
+    },
+    {
+      "translation_id": "139f8029-70f1-4c24-af5b-9e9e9a62c568",
+      "clause_id": "1226dd89-1989-42d6-919a-d84e3f17aa77",
+      "issues": [
+        "短表格单元译文含原文未支持的扩写；须关联真实表头或上下文"
+      ],
+      "status": "machine_translated",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "Amount\n1. 5,000 $100",
+      "translated": "金额：本条款项下应支付或收取的相关款项的具体数额如下，本项金额为1.\n5,000 $100",
+      "gap_kind": "translation_quality_failure"
+    },
+    {
+      "translation_id": "6f262bc1-e70e-4040-96c9-c525103aa443",
+      "clause_id": "8a1dd9a1-eda9-4bee-8649-867c630fff73",
+      "issues": [
+        "CJK 字符占比未达标: 27.3% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "$30\n2. Processing fee $30",
+      "translated": "$30\n2。办理费 $30",
+      "gap_kind": "translation_quality_failure"
+    },
+    {
+      "translation_id": "a786f38b-7c4a-4ef9-8612-b83555a54827",
+      "clause_id": "60033c36-4329-4bd6-a19d-7bfc0f2077b3",
+      "issues": [
+        "短表格单元译文含原文未支持的扩写；须关联真实表头或上下文"
+      ],
+      "status": "machine_translated",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "Fee\n1. 1 – 20 $100",
+      "translated": "费用项目如下：\n1. 1 – 20 $100",
+      "gap_kind": "translation_quality_failure"
+    },
+    {
+      "translation_id": "84d19c57-75f8-4460-8d6c-772c05e75eeb",
+      "clause_id": "12a105b8-0f27-45ce-9768-af1890aa8cb4",
+      "issues": [
+        "CJK 字符占比未达标: 15.8% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "5. 250,000 $0.0108 per number",
+      "translated": "5. 250,000 $0.0108 按编号",
+      "gap_kind": "translation_quality_failure"
+    },
+    {
+      "translation_id": "8e8c584a-c86d-4073-a1e6-c47945412eda",
+      "clause_id": "fccf6741-f08e-45a9-9bd7-db34b9d6813e",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+      "original": "[40/2020]",
+      "translated": "[40/2020]",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "713f7ec1-211d-412c-b37e-e034bc647def",
+      "clause_id": "f3f84b66-5c57-40e8-a978-688665fb624b",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+      "original": "[40/2020]",
+      "translated": "[40/2020]",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "e4938220-f2cf-41c0-8618-6a4eab07e14a",
+      "clause_id": "2e5f62ea-92d8-4b0b-b3c6-f8d94da2ea5a",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "4. 501 – 1,000 $1,500",
+      "translated": "4. 501 – 1,000 $1,500",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "7550f674-7290-4af1-890c-a9b160dac2de",
+      "clause_id": "d14790e5-793e-471f-a4f1-e4847a957cde",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "6. 10,001 – 100,000 $2,900",
+      "translated": "6. 10,001 – 100,000 $2,900",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "3f44460a-a733-4ec6-8b71-8ad1a6a7c1f4",
+      "clause_id": "a60593ed-20b5-4d80-a74c-5ab46c9e6362",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "5. 1,001 – 10,000 $2,000",
+      "translated": "5. 1,001 – 10,000 $2,000",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "f484a214-439f-429d-8f25-e42f9f256550",
+      "clause_id": "26bd60f4-9262-4050-8f94-5d7c41a5556c",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "2. 21 – 100 $500",
+      "translated": "2. 21 – 100 $500",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "d08af23e-bcb7-4bc2-a341-bdd8586af1b2",
+      "clause_id": "de59e8c3-1333-4b3c-9b1d-56ba14d19c48",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "3. 101 – 500 $1,000",
+      "translated": "3. 101 – 500 $1,000",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "118b0d8d-6279-4a4f-8843-c8aaa577330f",
+      "clause_id": "882e24d5-19e1-4709-92b6-9e569ec71ff6",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "4. 100,000 $1,200",
+      "translated": "4. 100,000 $1,200",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "215c71fc-9696-4ed8-926c-005daadfcc6c",
+      "clause_id": "6625e7a4-2f3d-4f46-b04a-7475f0229d79",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "6. 1,000,000 $10,000",
+      "translated": "6. 1,000,000 $10,000",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "4c3e1917-fc1c-4bca-a9f7-d9dfc81f2dc4",
+      "clause_id": "cbc8bcd0-9934-4898-9c5d-73d68a37ce59",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "5. 250,000 $2,700",
+      "translated": "5. 250,000 $2,700",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "63585797-d8e1-404e-a1d6-3e6cea2ab2bc",
+      "clause_id": "7987058e-d017-46b7-af77-1fc6fc97239e",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "2. 10,000 $150",
+      "translated": "2. 10,000 $150",
+      "gap_kind": "numeric_or_citation_fragment"
+    },
+    {
+      "translation_id": "7c7874a9-c665-4e4a-953f-280c378eb29e",
+      "clause_id": "60758b8f-ab4c-4b02-b728-804c57fa4d90",
+      "issues": [
+        "原文仅有数字或引用标记，不能冒充独立正文翻译；须关联真实原文上下文",
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "3. 25,000 $350",
+      "translated": "3. 25,000 $350",
+      "gap_kind": "numeric_or_citation_fragment"
+    }
+  ],
+  "human_samples": [
+    {
+      "country_code": "SG",
+      "translation_id": "fe0c8fa8-8d0a-4d6f-93ab-4e9e802c698d",
+      "clause_id": "f0ac9199-9f7b-46a4-b761-198e4ca2e647",
+      "clause_number": "2",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/062.pdf",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Enforcement) Regulations 2021",
+      "version_id": "1ed7f9b2-806b-453f-aa88-99a64a385a61",
+      "content_hash": "2bea44b953a542de67301ada908fd2f2ecc29dcbb577c4343725b8d779437bcf",
+      "original": "Act\n. $25\n2. Filing any other reconsideration application $250\nMade on 28 January 2021.\nCHAN YENG KIT\nChairman,\nInfo-communications Media\nDevelopment Authority,\nSingapore.\n[AG/LEGIS/SL/227A/2020/5 Vol. 1]",
+      "translated": "法案\n. $25\n2. 提交任何其他复议申请 $250\n于2021年1月28日作出。\nCHAN YENG KIT\n主席，\n资讯通信媒体\n发展局，\n新加坡。\n[AG/LEGIS/SL/227A/2020/5 第 1 卷]",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "SG",
+      "translation_id": "c3fc5eac-073f-4f56-9e13-24065dfd827a",
+      "clause_id": "b2f86f59-e58c-46be-a638-b2847d11de94",
+      "clause_number": "0.2",
+      "source_url": "https://www.pdpc.gov.sg/-/media/files/pdpc/pdf-files/advisory-guidelines/ag-on-key-concepts/advisory-guidelines-on-key-concepts-in-the-pdpa-17-may-2022.pdf",
+      "document_title": "Advisory Guidelines on Key Concepts in the PDPA",
+      "version_id": "d5b853df-1027-45a6-ae86-223ccc2822f2",
+      "content_hash": "c012a1e0f6c1c0f0f0bc8f39d0d3725f485fed129c2e773781cac529362d9d7c",
+      "original": "Collection, Use and Disclosure.....................................................................31\nPurposes.........................................................................................................32\nReasonableness.............................................................................................33\nPART III: THE DATA PROTECTION PROVISIONS ..........................................34\nOverview of the Data Protection Provisions................................................34\nApplicability to Inbound Data Transfers ......................................................36\nThe Consent Obligation.................................................................................38\nObtaining consent from an individual..............................................................38\nObtaining consent from a person validly acting on behalf of an individual ......39\nWhen consent is not validly given...................................................................40\nDeemed consent.............................................................................................42\nObtaining personal data from third party sources with the consent of the\nindividual.........................................................................................................51\nExercising appropriate due diligence when obtaining personal data from third",
+      "translated": "收集、使用和披露\t31\n目的\t32\n合理性\t33\n第三部分：数据保护规定\t34\n数据保护规定概述\t34\n对入境数据转移的适用性\t36\n同意义务\t38\n从个人处取得同意\t38\n从有效代表个人行事的人处取得同意\t39\n同意未有效作出时\t40\n视为同意\t42\n经个人同意从第三方来源获取个人数据\t51\n从第三方获取个人数据时进行适当的尽职调查",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "EG",
+      "translation_id": "0e285a71-73d1-45f3-b7ae-ee34010eec73",
+      "clause_id": "04860d97-8327-487a-b5b7-7fc806e463ad",
+      "clause_number": "5.1",
+      "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+      "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+      "version_id": "1329d254-3b6b-42b9-9698-49bfb143f1d1",
+      "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+      "original": "للطاقة ومدى االتصال الكبير الذي يزيد عن عدة كيلومترات.\n3-3-2 االتصال عن طريق شبكات االقمار الصناعية (IoT Satellite(\nيعتبر اتصال اجهزة خدمات انترنت األشياء عن طريق األقمار الصناعية من الوسائل التي تلقى اهتمام متزايد في األونة األخيرة\nوذلك لدورها في توفير وسيلة اتصال بتغطية واسعة تناسب التطبيقات التي تحتاج إلتصال عبر عدة دول، كما يمكن استخدام\nوسائل االتصال األخرى لربط األشياء/المجسات بوحدة اتصال مركزية تعمل عن طريق األقمار الصناعية. هذا وقد ظهرت في\nاألونة األخيرة تكنولوجيات جديدة تناسب التطبيقات الخاصة بخدمات انترنت األشياء مثل IOT-NB Satellite.\n4-3-2 االتصال عن طريق الشبكات قصيرة المدى (WPAN (والشبكات المحلية الالسلكية )WLAN)\nيتم توصيل أكبر عدد من أجهزة إنترنت األشياء من خالل تكنولوجيات االتصال قصير ة المدى )WPAN )التي ال تتجاوز مدى\nتغطيتها\nً\nعادة 100 متر. وتشمل هذه التكنولوجيات االتصال بالبلوتوث )802.15.1IEEE )و (802.15.4IEEE (Zigbee و\nWave Z التي تستخدم التصال أجهزة إنذار الدخان أو منظمات الحرارة في المنازل الذكية.\nاما فيما يتعلق بالشبكات المحلية الالسلكية (WLAN (التي يصل مدى تغطيتها إلى كيلومتر واحد، فان من اشهر تكنولوجياتها\nهى تكنولوجيا الواى فاى (802.11 IEEE (Fi-Wi و التى ما زالت تشهد ا\nً\nا كبير\nً\nنمو ومن اشهر استخدماتها أجهزة التلفزيون الذكية\nومكبرات الصوت الذكية كما انها تستخدم بشكل متزايد فى االنشطة الصناعية.",
+      "translated": "以及能源和超过数公里的大范围连接。\n3-3-2 通过卫星网络（IoT Satellite）进行连接\n通过卫星连接物联网服务设备近来日益受到关注，因为其作用在于提供具有广覆盖的通信方式，适合需要跨多国通信的应用；也可使用其他通信方式将物品/传感器连接至通过卫星运行的中央通信单元。近来还出现了适合物联网服务应用的新技术，例如 IOT-NB Satellite。\n4-3-2 通过短距离网络（WPAN）和无线局域网（WLAN）进行连接\n最大数量的物联网设备通过短距离通信技术（WPAN）连接，其覆盖范围通常不超过 100 米。这些技术包括蓝牙（IEEE 802.15.1）、Zigbee（IEEE 802.15.4）和 Wave Z 的连接，其用于连接智能家居中的烟雾报警器或恒温器。\n至于覆盖范围达到1公里的无线局域网（WLAN），其最著名的技术之一是 Wi-Fi（IEEE 802.11）（Fi-Wi），该技术仍在经历大幅增长，其最著名的用途包括智能电视和智能音箱，并且正越来越多地用于工业活动。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "EG",
+      "translation_id": "4638553b-4e3c-4a3e-83ed-ea2746d71bba",
+      "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+      "clause_number": "‎(TV)‏",
+      "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+      "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+      "content_hash": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+      "original": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل فى غير الأحوال المصرح بها قانونًا أو بدون موافقة الشخص المعنى بالبيانات .\nالجريدة الرسمية - العدد 74 مكرر (ه) فى ‎V0‏ يولية سنة ‎VV 78١‏\nوتكون العقوبة الحبس مدة لا تقل عن ستة شهور وبغرامة لا تقل عن ‎tle‏ ألف جنيه\nنى جنيه ‎ahs‏ بإحدى هاتين العقوبتين . إذا ارتكب ذلك مقابل الحصول على\n‎j‏ أو بقصد تغريض الشخص المعنى بالبيانات للخط ‎gh‏ الضرر .\nكل مثل قانونق\n‎gps‏ هذا القائون .",
+      "translated": "第（TV）2条\n凡持有、控制或处理、收集、处理、披露、提供或以任何方式交易个人数据，且未经法律许可或未经数据主体同意者，处以不低于十万埃及镑、不超过5百万埃及镑的罚金。\n官方公报——第74号增刊（ه），于V0年7月VV 78١\n如实施上述行为以获取利益或意图使数据主体遭受损害，则处以不低于六个月监禁及不低于tle千埃及镑、不超过ahs千埃及镑的罚金，或二者之一。\n本法任何类似规定\ngps本法。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "TN",
+      "translation_id": "f698120a-691a-427c-a08d-8e71bb2b2d20",
+      "clause_id": "074d0e23-0d0c-4a1a-a109-bdee864c1bd6",
+      "clause_number": "4.1",
+      "source_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+      "version_id": "ef435dee-6930-496b-8d22-23b4819a7999",
+      "content_hash": "7b12a8ddddba535f4afb61ab95f9f9be411fdecc31cda1e9242145853edf2735",
+      "original": "أى وليه الكتابية والصريحة إذا كان في الإحالة تحقيق لمصلحتهم\nالحيوية أو إذا كانت المعطيات ضرورية لإجراء بحوث ودراسات تاريخية\nأو علمية أو ضرورية لتنفيذ اتفاق يكون المعني بالأمر طرفا فيه بشرط\nتعهد المحال إليه بتوفير الضمانات الضرورية لحماية المعطيات\nالشخصية والحقوق المرتبطة بها طبق ما تحدده الهيئة وضمان عدم\nاستعمالها في غير الغرض الذي أحيلت من أجله.\nوإذا كان المعني بالأمر طفلا تطبق أحكام الفصل 28 من هذا\nالقانون.\nالفصل 48 يعرض طلب الترخيص على الهيئة في أجل لا يتجاوز\nالشهر من تاريخ رفض المعني بالامر إحالة معطياته الشخصية إلى الغير.\nوتنظر الهيئة في الطلب في أجل لا يتجاوز الشهر من تاريخ تقديمه.\nوتتولى الهيئة إعلام الطالب بقرارها في أجل خمسة عشر يوما من\nتاريخ صدوره. ‎dis‏ برسالة مضمونة الوصول مع الإعلام بالبلوغ أو بأي\nوسيلة أخرى تترك أثرا كتابيا.\nالفصل 49 يمكن إحالة المعطيات الشخصية التى وقعت معالجتها\nلغايات معينة وذلك لإعادة معالجتها في غايات تاريخية أى علمية بشرط\nصفحة 2088\nالرائد الرسمي للجمهورية التونسية -- 30 جويلية 2004\nالحصول على موافقة المعني بالأمر أو ورثته أو وليه وترخيص الهيئة\nوتقرر الهيئة حذف المعطيات التي تشير إلى هوية المعني بالأمر أو\nالإبقاء عليها حسب الحال. ‎١ ١‏\nوإذا كان المعني بالأمر طفلا تطبق أحكام الفصل 28 من هذا\nالقانون.\nالفصل 50 تحجر فى كل الحالات إحالة المعطيات الشخصية أو\nنقلها إلى بلاد أجنبية إذا كان من ‎GLE‏ ذلك المساس بالأمن العام أو\nبالمصالح الحيوية للبلاد التونسية.\nالفصل 51 لا يمكن نقل المعطيات الشخصية الواقع معالجتها أو",
+      "translated": "或其监护人的书面和明确同意，如果转交是为了实现其重大利益，或者如果数据对于开展历史或科学研究是必要的，或者对于执行相关当事人作为一方的协议是必要的，条件是接收方承诺提供保护个人数据及相关权利所必需的保障，依照机构确定的规定，并保证不将其用于转交目的以外的目的。\n如果相关当事人是儿童，则适用本法第28条的规定。\n第48条 许可申请应在相关当事人拒绝将其个人数据转交给第三方之日起不超过一个月的期限内提交给机构。机构应在提交之日起不超过一个月的期限内审议申请。机构应在决定作出之日起15日内通知申请人其决定。dis 通过挂号信并附送达通知或任何其他留下书面痕迹的方式。\n第49条 可以将为特定目的已处理的个人数据转交，以便为历史或科学目的重新处理，条件是第2088页 突尼斯共和国官方公报——2004年7月30日 获得相关当事人或其继承人或其监护人的同意以及机构的许可。机构决定删除表明相关当事人身份的数据或视情况保留之。١ ١ 如果相关当事人是儿童，则适用本法第28条的规定。\n第50条 在任何情况下，禁止将个人数据转交或传输至外国，如果由此 GLE 会损害公共安全或突尼斯共和国的重大利益。\n第51条 不得传输已处理的个人数据或",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "TN",
+      "translation_id": "d027065c-80c7-4677-b6d8-75383ee569aa",
+      "clause_id": "8ef64932-2dab-450a-9567-57af50ad6a6f",
+      "clause_number": "7.2",
+      "source_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+      "version_id": "ef435dee-6930-496b-8d22-23b4819a7999",
+      "content_hash": "7b12a8ddddba535f4afb61ab95f9f9be411fdecc31cda1e9242145853edf2735",
+      "original": "الحكم بصحيفة يومية صادرة بالبلاد التونسية أو أكثر يختارها. وتحمل\nمصاريف النشر على المحكوم عليه.\nولا يسوغ التتبع إلا بطلب من المعني بالأمر.\nويوقف الإسقاط التتبع أو المحاكمة أو تنفيذ العقاب.\nالفصل 94 يعاقب بالسجن مدة ثلاثة أشهر وبخطية قدرها ألف\nدينار كل من يخالف أحكام الفصول 12 و18 و19 والفقرتين الأولى\nالقانون.\nويعاقب بنفس العقوبات المنصوص عليها بالفقرة المتقدمة كل من\nيتولى جمع المعطيات الشخصية لأغراض غير مشروعة أو مخالفة للنظام\nالعام أى يتولى عن قصد معالجة معطيات شخصية غير صحيحة أو غير\nالفصل 95 يعاقب بخطية قدرها عشرة آلاف دينار المحال له الذي\nلا يلتزم بالضمانات والإجراءات التي تحددها له الهيئة طبق أحكام الفقرة\nالثانية من الفصل 47 والفقرة الأولى من الفصل ‎OS‏ من هذا القانون.\nالفصل 96 يعاقب بخطية قدرها خمسة آلاف دينار كل من :\nيتعرض لأعمال الهيئة الوطنية لحماية المعطيات الشخصية بمنعها\nمن إنجاز الأعمال الميدانية أو برفض تسليم الوثائق المطلوبة,\n- يتولى عن سوء نية الإدلاء إلى الهيئة أو إعلام المعني بالأمر\nببيانات مخالفة للحقيقة.\nالفصل 97 ينطبق الفصل 254 من المجلة الجنائية على المسؤول\nعن المعالجة والمناول وأعوانهما ورئيس الهيئة وأعضائها إذا أفشوا\nمحتوى المعطيات الشخصية إلا في الحالات المنصوص عليها بالقانون.\nالفصل 98 يعاقب بخطية قدرها ألف دينار المسؤول عن المعالجة\nأو المناول أو أمين الفلسة أو المصفي الذي يخالف أحكام الفصل 24\nمن هذا القانون.\nالفصل 99 يعاقب بخطية قدرها ألف دينار المسؤول عن المعالجة\nأو المناول الذي يخالف أحكام الفصل 39 من هذا القانون.",
+      "translated": "判处以在突尼斯国境内发行的一份或多份其选定的日报刊登。刊登费用由被判刑人承担。\n非经相关当事人请求，不得进行追诉。\n放弃告诉即停止追诉、审判或刑罚执行。\n第94条 违反第12条、第18条和第19条以及第一款\n法律的规定者，处三个月监禁并处一千第纳尔罚金。\n以相同于前款规定的刑罚，处罚下列人员：\n为非法目的或违反公共秩序收集个人数据，或故意处理不准确或\n第95条 对未遵守国家保护个人数据机构依据本法第47条第二款\n和第OS条第一款规定为其确定的保障和程序者，处一万第纳尔罚金。\n第96条 对下列人员处五千第纳尔罚金：\n妨碍国家保护个人数据机构的工作，阻止其开展实地工作或拒绝\n交付所需文件者，\n- 恶意向该机构或相关当事人提供与事实不符的陈述者。\n第97条 刑法典第254条适用于处理负责人、受托处理人及其\n工作人员以及该机构主席和成员，如其泄露个人数据内容，但法律\n规定的情形除外。\n第98条 对违反本法第24条规定的处理负责人、受托处理人、\n财产管理人清算人或清算人，处一千第纳尔罚金。\n第99条 对违反本法第39条规定的处理负责人或受托处理人，\n处一千第纳尔罚金。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "MA",
+      "translation_id": "8d5e47a0-5ce6-4932-9ae4-55a7d32c6244",
+      "clause_id": "d2260559-4f6f-464a-91b2-3cd2bc9f5a08",
+      "clause_number": "4.3",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+      "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+      "version_id": "0e326db8-2429-4006-8ddb-0b12e0f63688",
+      "content_hash": "0a930a84d692c5b7e82a328970c52f10c52ee55ba75bb974918f0694a901365b",
+      "original": "modifiant le décret royal n° 330-66 du 10 moharrem 1387\n(21 avril 1967) portant règlement général de comptabilité\npublique.\nLE PREMIER MINISTRE,\nVu le décret royal n° 330-66 du 10 moharrem 1387 (21 avril\n1967) portant règlement général de comptabilité publique tel\nqu’il a été modifié et compltété ;\nVu Ja décision de la chambre constitutionnelle de la Cour\nsuprême n° 14 du 6 joumada II 1399 (3 mai 1979) ;\nSur proposition du ministre de l’économie et des finances ;\nAprès examen par le conseil des ministres réuni le\n11 joumada I 1430 (7 mai 2009),\nDECRETE :\nARTICLE PREMIER. — Les articles 17, 41 et 86 du décret\nroyal n° 330-66 du 10 moharrem 1387 (21 avril 1967) susvisé\nsont modifiés et complétés comme suit :\n« Article 17, Chaque poste comptable dispose d’une seule\n« caisse et en cas de besoin, d’un compte courant postal ou d’un\n« compte de dépôt au Trésor .\n« En aucun cas l'intitulé du compte courant postal ou du\n«compte de dépôt au Trésor ne peut être libellé au nom\n« personnel du comptale. »\n« Article 41. — Le paiement est l’acte wc. eee de sa dette.\n« Sous réserve des exceptions prévues par les lois et\n« règlement le paiement ne peut intervenir avant, soit l’exécution\n(AU SETVICE, ner rene nnnenerenrneere d'allocation.\n« Par dérogation au principe de l'exécution du service\n« prévu à l’alinéa précédent, il peut être procédé au paiement :",
+      "translated": "修改关于公共会计总条例的1387年穆哈兰姆月10日（1967年4月21日）第330-66号皇家法令。\n总理，\n鉴于经修改和补充的关于公共会计总条例的1387年穆哈兰姆月10日（1967年4月21日）第330-66号皇家法令；\n鉴于最高法院宪法庭1399年主马达·阿赫拉月6日（1979年5月3日）第14号裁决；\n根据经济和财政部长的提议；\n经1430年主马达·乌拉月11日（2009年5月7日）召开的内阁会议审议后，\n兹颁布：\n第一条。——上述1387年穆哈兰姆月10日（1967年4月21日）第330-66号皇家法令的第17条、第41条和第86条修改和补充如下：\n“第17条，每个会计单位仅有一个现金柜，必要时有一个邮政活期账户或一个国库存款账户。\n“任何情况下，邮政活期账户或国库存款账户的户名不得以会计人员个人名义开立。”\n“第41条。——支付是其债务的 wc. eee 行为。\n“除法律和条例规定的例外外，支付不得在（AU SETVICE, ner rene nnnenerenrneere d'allocation）执行之前进行。\n“作为对上款规定的服务执行原则的例外，可进行支付：”",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "MA",
+      "translation_id": "b300d869-c52b-4dd1-b445-d27555e49336",
+      "clause_id": "c2970107-ac76-41a6-8070-2d858059defb",
+      "clause_number": "4.2",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+      "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+      "version_id": "0e326db8-2429-4006-8ddb-0b12e0f63688",
+      "content_hash": "0a930a84d692c5b7e82a328970c52f10c52ee55ba75bb974918f0694a901365b",
+      "original": "informations prévues à l’article 44 du présent décret, les mesures\nou le dispositif destinés à garantir un niveau de protection\nsuffisant de la vie privée ainsi que des libertés et droits\nfondamentaux des personnes.\nConcernant les autorisations de transfert, la CNDP se\nprononce, selon la procédure régissant les autorisations, prévue\npar la loi n° 09-08 susvisées et ces textes d’application.\nART. 49.— Toute\nmentionnées aux articles 46, 47 et 48 du présent décret doit être\nmodification des informations\nportée à la connaissance de la CNDP dans un délai de 8 jours\nouvrables.\nART. 50.— Le transfert, prévu au sein d’un groupe\nd’entreprises ou à l’adresse de plusieurs destinataires pour les\nmêmes catégories de données et les mêmes finalités, peut faire\nl’objet d’une déclaration commune.\nN° 5744 — 24 joumada II 1430 (18-6-2009)\nART. 51, — Le ministre de l’industrie, du commerce et des\nnouvelles technologies et le ministre de l’économie et des\nfinances sont chargés, chacun en ce qui le concerne, de\nl'exécution du présent décret, qui sera publié au Bulletin officiel.\nFait 4 Rabat, le 25 journada I 1430 (21 mai 2009).\nABBAS EL FASSI.\nPour contreseing :\nLe ministre de l’industrie,\ndu commerce et des nouvelles\ntechnologies,\nAHMED REDA CHAML\nLe ministre de l’économie\net des finances,\nSALAHEDDINE MEZOUAR.\nDécret n° 2-07-1237 du 1* joumada IE 1430 (26 mai 2009)",
+      "translated": "本法令第44条规定的信息，旨在保证对私人生活以及个人的自由和基本权利提供充分保护的措施或机制。\n关于转移授权，CNDP依据上述第09-08号法律及其实施文本规定的、规范授权的程序作出决定。\n第49条——本法令第46、47和48条提及的任何信息修改，必须在8个工作日内告知CNDP。\n第50条——在企业集团内部或向多个接收方针对相同数据类别和相同目的进行的转移，可以作出共同申报。\n第5744号——1430年第二主马达月24日（18-6-2009）\n第51条——工业、商业和新技术部长以及经济和财政部长，各自在其职责范围内，负责执行本法令；本法令将在官方公报上公布。\n于拉巴特作出4，1430年主马达·阿瓦尔月25日（2009年5月21日）。\nABBAS EL FASSI。\n副署：\n工业、商业和新技术部长，\nAHMED REDA CHAML\n经济和财政部长，\nSALAHEDDINE MEZOUAR。\n第2-07-1237号法令，1430年主马达·伊 IE 1日（2009年5月26日）",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "LB",
+      "translation_id": "565b914a-e915-4a3e-bbfa-4e406bf4ea69",
+      "clause_id": "6c4c3538-17eb-4741-81ae-515c2933afc2",
+      "clause_number": "٣٣",
+      "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "version_id": "ee99bccb-9fc2-4afa-a223-65a43c00891e",
+      "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+      "original": "المادة ٣٣:\nّ على كل من يعرض بحكم مهنته سلع أواً خدمات بوسيلة إلكترونية أن ن\nُضم\nي العرض ما يأتي :\n١ - المرا حل الواجب اتباعها مرالإب العقد بالوسيلة الإلكترونية .\n٢ - شروط العقد بطريقة تسمح بالمحافظة عليها وبإعادة نسخها .\n٣ - الوسائل التقنية التي تسمح لمتلقي العرض بالتحقق من الأخطاء المرتكبة لدى استعمال الوسـائل\nالإلكترونية وب تصحيحها قبل الموافقة النهائية التي تؤدي إلى مراإب العقد .\n٤ - مدى مزاإلت مقدم العرض بالمحافظة على الآثار الإلكترونيـة للمفاوضـة وللعقـد المبـرم، وفـي حـال\nوجـود هكـذا التـ م،زا تحديـد مـدة هـذا الالتـ مزا وكيفيـة المحافظـة علـى الآثـار الإلكترونيـة، وشـروط\nالولوج إلى المستندات المحفوظة .\n٥ - لغة العقد المعتمدة .\nالمادة ٤ ٣:\nيبقى العرض ملزماً للعارض طالما يبقى في الإمكان الولوج إلى هذا العرض بالوسيلة الإلكترونية .\nالمادة ٥ ٣:\nعلـى مقـدم العـرض إبـلاغ الطـرف الآخـر بـورود القبـول وذلـك ضـمن مهلـة زمنيـة معقولـة أو ضـمن\nالمهلة الزمنية المحددة في العرض .\nيلزم مقدم العرض بالتعويض عن أي إخلال بهذا الموجب ينشأ عنه ضرر .\nالمادة ٦ ٣:\nلا تطبق أحكـام المـادتين و ٣٣ ٣٥ مـن هـذا القـانون علـى العقـود المبرمـة حصـرياً عـن طريـق تبـادل\nالرسائل بواسطة البريد الإلكتروني أو من خلال اتصالات شخصية مستقلة .\nالمادة ٧ ٣:\nفي العق ود المبرمة بين التجار أو في العقود المبرمة بين المحتـرفين فـي مجـال التجـارة الإلكترونيـة أو\nبين التجار وهؤلاء المحترفين، يمكن للفرقاء مخالفة القواعد المنصوص عليها في المـادتين و ٣٣ ٣٥\nمن هذا القانون .\nالمادة ٨ ٣:",
+      "translated": "第٣٣条：\n凡以电子方式在其职业范围内提供商品或服务者，其要约应包含下列内容：\n١ - 以电子方式订立合同应遵循的步骤。\n٢ - 合同条款，其方式应允许予以保存并可重新复制。\n٣ - 允许要约接收人在作出导致订立合同的最终同意之前，核查使用电子方式时所犯错误并予以更正的技术手段。\n٤ - 要约人保存谈判及已订立合同的电子痕迹的义务范围，如存在此种义务，应确定该义务的期限、保存电子痕迹的方式以及查阅所保存文件的条件。\n٥ - 合同所采用的语言。\n第٤条٣：\n只要仍可通过电子方式查阅该要约，要约即对要约人具有约束力。\n第٥条٣：\n要约人应在合理期限内或在要约中规定的期限内，将承诺的到达通知另一方。\n要约人违反此项义务造成损害的，应承担赔偿责任。\n第٦条٣：\n本法第٣٣条٣٥的规定不适用于完全通过电子邮件交换信件或通过独立的个人通信订立的合同。\n第٧条٣：\n在商人之间订立的合同中，或在电子商务领域专业人员之间订立的合同中，或在商人与上述专业人员之间订立的合同中，当事人可以背离本法第٣٣条٣٥所规定的规则。\n第٨条٣：",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "LB",
+      "translation_id": "3ca29dce-a729-414b-835b-23db0f9a1ccc",
+      "clause_id": "9c56439e-4e84-4c89-8b3d-43ed3b45935e",
+      "clause_number": "١.1",
+      "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "version_id": "ee99bccb-9fc2-4afa-a223-65a43c00891e",
+      "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+      "original": "Monnaie Electronique et numérique/ : ) والرقميــــة الإلكترونيــــة النقــــود\nMoney Electronic or Digital ( هـي وحـدات تسـمى وحـدات نقـد إلكترونـي يمكـن حفظهـا\nعلى دعامة إلكترونية .\nّم\nهـو) : Fournisseur d'accès/Network Service provider ) الاتصـال خدمـة مقـد\nمن  يمكـ ن المسـتخدم مـن ولـوج شـبكة اتصـالات إلكترونيـة ويـوفر لـه خـدمات نقـل المعلومـات مب\nً\nاشـرة.\nيمكن أن يتضمن تقديم هذه الخدمات تخزيناً انتقالياً مؤقتاً للمعلومات رسـلة\nُ\nالم شـرط لا أن يـؤدي إلـى\nالمخز وشـرط أن يسـتعمل أي تعديل في البيانات نـة،\nهـذا التخـزين لحسـن تنفيـذ الخدمـة لا وأن يتعـدى ّ\nالوقت اللازم لإتمامها .\nمستضـيف البيانـات ( : host Data/données de Hébergeur (هـو مـن يقـوم بتخـزين\nأيـاً تكـن طبيعتهـا، لحسـاب الغيـر، مقابـل عـوض أو دون عـوض، ويضـعها فـي متنـاول المعلومـات\nالجمهور من خلال خدمات الاتصال المباشر .\nالمعلومـات المتعلقـة بحركـة البيانـات ( data Traffic /trafic de Données(: هـي أيـة\nمعلومـــات متعلقـــة بعمليـــة إتصـــال بو اســـطة نظـــام حاســـب آلـــي مـــرتبط بشـــبكة معلوماتيـــة . تصـــدر\nهـــذه المعلومـــات عـــن نظـــام حاســـب آلـــي مـــرتبط بالشـــبكة، وتـــدل علـــى مصـــدر الإتصـــال ومتلقيـــه\nوخط سير المعلومات والوقت والتاريخ والحجم والمدة الزمنية ما أو شابه ذلك من المعلومات .\nاسـم الموقـع ( Name Domain/domaine de Nom : (امـ هـو يـوازي بـالرموز الأبجديـة أو\nالرقمية أو خلافه العنوان الرقمي المعين لموقع إلكتروني على شبكة الإنترنت .",
+      "translated": "电子货币和数字/电子货币（Monnaie Electronique et numérique／Money Electronic or Digital）是称为电子货币单位的单位，可以保存在电子载体上。\n\n接入服务提供者/网络服务提供者（Fournisseur d'accès／Network Service provider）是提供服务的人，使用户能够接入电子通信网络，并直接向其提供信息传输服务。提供这些服务可包括对信息进行临时性的中转存储，条件是该存储不得导致对已存储数据作出任何修改，并且该存储不得超过完成服务所必需的时间。\n\n数据托管人（Hébergeur de données／Data host）是无论其性质如何，为他人有偿或无偿存储信息，并通过直接连接服务将其提供给公众的人。\n\n与数据流量有关的信息（trafic de Données／traffic data）是与通过连接至信息网络的自动计算机系统进行通信过程有关的任何信息。这些信息由连接至网络的自动计算机系统产生，并表明通信的来源和接收方、信息路径、时间、日期、大小、时长或类似信息。\n\n域名（Nom de domaine／Domain Name）是以字母、数字或其他符号表示的、与互联网上网站特定数字地址相对应的名称。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    }
+  ]
+}

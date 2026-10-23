@@ -93,6 +93,26 @@ def test_arabic_prefix_percentage_and_comma_date_keep_value_and_identity():
     assert not translator.verify_translation(source, "在2023年12月7日，不得超过20%。", [])[0]
 
 
+def test_short_table_labels_cannot_be_padded_to_meet_cjk_ratio():
+    cases = [
+        (
+            "6. 1,000,000 $0.01 per number",
+            "6. 1,000,000 $0.01 按照编号逐项一一对应并进行相应处理及相关事项的工作",
+        ),
+        (
+            "Amount\n1. 5,000 $100",
+            "金额：本条款项下应支付或收取的相关款项的具体数额如下，本项金额为1. 5,000 $100",
+        ),
+        ("Fee\n1. 1 – 20 $100", "费用项目如下：1. 1 – 20 $100"),
+    ]
+    for source, inflated in cases:
+        assert translator.compute_cjk_ratio(inflated) >= 0.30
+        passed, issues, _ = translator.verify_translation(source, inflated, [])
+        assert not passed and any("未支持的扩写" in issue for issue in issues)
+    # Faithful output may still fail density; no threshold exception is introduced.
+    assert not translator.verify_translation("Amount\n1. 5,000 $100", "金额\n1. 5,000 $100", [])[0]
+
+
 async def test_density_context_cannot_hide_a_missing_number(session_factory):
     import pytest
 
@@ -114,3 +134,43 @@ async def test_density_context_cannot_hide_a_missing_number(session_factory):
         await session.flush()
         with pytest.raises(ValueError, match="context requires"):
             await translate_fragment_context(session, clauses[1], density_context=True)
+
+
+async def test_parse_proposal_visible_without_changing_translation_or_approval(session_factory):
+    from app.knowledge.history import payload_hash
+    from app.knowledge.router import _build_translation_outs
+
+    async with session_factory() as session:
+        doc, _, clauses = await make_document(session)
+        tr = ClauseTranslation(
+            clause_id=clauses[0].id,
+            translated_text="未通过的原译文",
+            engine="llm",
+            model_name="old",
+            review_status="translation_failed",
+            quality_check_passed=False,
+        )
+        payload = dict(
+            review_status="pending_review", content_kind="bibliography_ltr_reading_order"
+        )
+        session.add_all(
+            [
+                tr,
+                KnowledgeAuditRecord(
+                    target_type="clauses",
+                    target_id=clauses[0].id,
+                    action="source_parse_revision",
+                    payload=payload,
+                    content_hash=payload_hash(payload),
+                ),
+            ]
+        )
+        await session.flush()
+        result = (await _build_translation_outs(session, [(tr, clauses[0], doc)]))[0]
+        assert result.source_parse_revision["review_status"] == "pending_review"
+        assert not result.source_parse_revision["active"]
+        assert not result.source_parse_revision["usable_as_legal_basis"]
+        assert result.source_context_revision is None
+        assert result.review_status == "translation_failed"
+        assert result.translated_text == "未通过的原译文"
+        assert not result.usable_as_legal_basis

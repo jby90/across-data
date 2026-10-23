@@ -45,7 +45,7 @@ from app.knowledge.numeric_integrity import (
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "translate-v6"
+PROMPT_VERSION = "translate-v7"
 MAX_CHUNK_CHARS = 1500
 DEFAULT_CONCURRENCY = 4
 
@@ -405,6 +405,29 @@ def verify_translation(
         issues.append("译文与原文完全相同")
     if "__CYSH_" in trans_clean:
         issues.append("脱敏占位符丢失或未能安全还原，译文不完整")
+    # A numeric table cell must not gain invented prose just to meet the CJK gate.
+    # These closed vocabulary cases have unambiguous short labels. Other legal
+    # prose still needs ordinary translation and human semantic review.
+    table_labels = {
+        ("per", "number"): {
+            "每个号码",
+            "每一号码",
+            "每号码",
+            "每个编号",
+            "每一编号",
+            "按号码",
+            "按编号",
+        },
+        ("amount",): {"金额", "数额"},
+        ("fee",): {"费用", "收费", "费额"},
+        ("processing", "fee"): {"手续费", "处理费", "办理费", "办理手续费", "处理手续费"},
+    }
+    source_words = tuple(re.findall(r"[A-Za-z]+", orig_clean.casefold()))
+    if (
+        source_words in table_labels
+        and "".join(_CJK_RE.findall(trans_clean)) not in table_labels[source_words]
+    ):
+        issues.append("短表格单元译文含原文未支持的扩写；须关联真实表头或上下文")
 
     # ① CJK 字符占比 >= 30%
     cjk_ratio = compute_cjk_ratio(trans_clean)
@@ -485,6 +508,10 @@ def _build_translation_prompts(
         "10. 文字月份也应规范转为中文年月日格式，如 19 December 2022 应输出2022年12月19日。"
         "若年份和日是占位符，移动对应占位符到正确位置；月份仍须使用阿拉伯数字，不可留成七月等文字。",
         "11. __CYSH_DATE_ 是经程序核对的完整日期，必须原样保留，系统会还原为准确中文日期。",
+        "12. 短表格单元：per number 仅译每个号码，Amount仅译金额，Fee仅译费用，"
+        "Processing fee仅译手续费。保留全部数字、金额；"
+        "不得添加处理工作、支付或收取等原文没有的文字。"
+        "数字表格如无法同时满足中文占比和忠实性，仍只给忠实译文，由系统判定失败，禁止扩写凑字。",
     ]
     if glossary_hits:
         sys_lines.append("\n【强制法律术语表（原词 -> 规定译法 -> 法定定义）】：")

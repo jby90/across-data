@@ -43,6 +43,7 @@ class GlossaryTermOut(BaseModel):
 class ClauseTranslationOut(BaseModel):
     is_current: bool = True
     source_context_revision: dict | None = None
+    source_parse_revision: dict | None = None
     id: uuid.UUID
     clause_id: uuid.UUID
     document_id: uuid.UUID

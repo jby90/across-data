@@ -23,6 +23,7 @@ interface UnmatchedTerm {
 
 interface ClauseTranslation {
   source_context_revision?: { id: string; review_status: string; quality_check_passed: boolean } | null
+  source_parse_revision?: { id: string; review_status: string; content_kind: string; active: false } | null
   id: string
   clause_id: string
   document_id: string
@@ -89,8 +90,15 @@ const hasNextTranslations = ref(false)
 const historyDialog = ref(false)
 const historyResult = ref<{ history: unknown[]; proposals: unknown[] } | null>(null)
 
-async function showHistory(id: string) {
-  historyResult.value = await api.get(`/admin/knowledge/history/${id}`)
+async function showHistory(id: string, action?: string) {
+  const result = await api.get<{
+    history: { action: string }[]
+    proposals: { payload?: Record<string, unknown> }[]
+  }>(`/admin/knowledge/history/${id}`)
+  historyResult.value = action ? {
+    history: result.history.filter((row) => row.action === action),
+    proposals: result.proposals.filter((row) => row.payload?.[action]),
+  } : result
   historyDialog.value = true
 }
 
@@ -451,8 +459,10 @@ onMounted(loadAll)
                       >按文档批量翻译</el-dropdown-item
                     ><el-dropdown-item @click="showHistory(row.id)"
                       >历史与审批记录</el-dropdown-item
-                    ><el-dropdown-item v-if="row.source_context_revision" @click="showHistory(row.clause_id)"
+                    ><el-dropdown-item v-if="row.source_context_revision" @click="showHistory(row.clause_id, 'translation_context_revision')"
                       >原文上下文修订（待核对）</el-dropdown-item
+                    ><el-dropdown-item v-if="row.source_parse_revision" @click="showHistory(row.clause_id, 'source_parse_revision')"
+                      >原页解析修订（待核对、未启用）</el-dropdown-item
                     ></el-dropdown-menu
                   ></template
                 ></el-dropdown

@@ -84,18 +84,32 @@ async def _build_translation_outs(
 ) -> list[ClauseTranslationOut]:
     from app.knowledge.models import KnowledgeAuditRecord
 
-    contexts = {}
+    contexts, parse_revisions = {}, {}
     if rows:
         for record in (
             await session.scalars(
                 select(KnowledgeAuditRecord)
                 .where(
                     KnowledgeAuditRecord.target_id.in_([clause.id for _, clause, _ in rows]),
-                    KnowledgeAuditRecord.action == "translation_context_revision",
+                    KnowledgeAuditRecord.action.in_(
+                        ("translation_context_revision", "source_parse_revision")
+                    ),
                 )
                 .order_by(KnowledgeAuditRecord.created_at.desc())
             )
         ).all():
+            if record.action == "source_parse_revision":
+                parse_revisions.setdefault(
+                    record.target_id,
+                    dict(
+                        id=str(record.id),
+                        review_status=record.payload["review_status"],
+                        content_kind=record.payload["content_kind"],
+                        active=False,
+                        usable_as_legal_basis=False,
+                    ),
+                )
+                continue
             contexts.setdefault(
                 record.target_id,
                 dict(
@@ -112,6 +126,7 @@ async def _build_translation_outs(
         out.append(
             ClauseTranslationOut(
                 source_context_revision=contexts.get(clause.id),
+                source_parse_revision=parse_revisions.get(clause.id),
                 is_current=tr.is_current,
                 id=tr.id,
                 clause_id=clause.id,
