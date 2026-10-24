@@ -11,9 +11,11 @@ import {
   type SiteOut,
 } from '@cyshuhe/shared'
 import { ElMessage } from 'element-plus'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
+import RegulationDirectory from '../components/RegulationDirectory.vue'
+import { directoryCountries, directoryLevels, documentPage } from '@cyshuhe/shared/src/regulationDirectory'
 
 const route = useRoute()
 const router = useRouter()
@@ -26,19 +28,64 @@ const sitePublisher = ref((route.query.publisher as string) || '')
 const loading = ref(false)
 const fmt = (s: string | null) => (s ? new Date(s).toLocaleString('zh-CN') : '—')
 
-async function load() {
+const browseCountry = ref(country.value || '')
+const browseLevel = ref('')
+const selectedDocId = ref('')
+const documentKeyword = ref('')
+const hasMore = ref(false)
+const loadedFilter = ref({ country: '', site: '' })
+const documentPageNumber = ref(1)
+const countries = computed(() => directoryCountries(docs.value))
+const matchingDocs = computed(() => {
+  const query = documentKeyword.value.trim().toLocaleLowerCase()
+  return docs.value.filter(d => !query || `${d.title} ${d.source_url}`.toLocaleLowerCase().includes(query))
+})
+const selectedGroup = computed(() => directoryLevels(matchingDocs.value, browseCountry.value).find(g => g.key === browseLevel.value))
+const visibleDocuments = computed(() => documentPage(selectedGroup.value?.items || [], documentPageNumber.value, 20))
+const browseCountryName = computed(() => countries.value.find(c => c.code === browseCountry.value)?.name || browseCountry.value)
+watch([matchingDocs, browseCountry, browseLevel], () => { documentPageNumber.value = 1 })
+function browseCountryFolder(code: string) {
+  browseCountry.value = code
+  browseLevel.value = ''
+  selectedDocId.value = ''
+}
+function browseLevelFolder(key: string) {
+  browseLevel.value = key
+  selectedDocId.value = ''
+}
+function openDirectoryFile(id: string) {
+  const doc = docs.value.find(d => d.id === id)
+  if (doc) open(doc)
+}
+
+let loadSequence = 0
+async function load(more = false) {
+  if (more && loading.value) return
+  const requestId = ++loadSequence
   loading.value = true
   try {
     const params = new URLSearchParams()
-    if (country.value.trim()) params.set('country_code', country.value.trim())
-    if (siteId.value.trim()) params.set('site_id', siteId.value.trim())
+    const filter = more ? loadedFilter.value : { country: country.value.trim(), site: siteId.value.trim() }
+    if (filter.country) params.set('country_code', filter.country)
+    if (filter.site) params.set('site_id', filter.site)
     params.set('limit', '200')
+    params.set('offset', String(more ? docs.value.length : 0))
     const q = params.toString() ? `?${params.toString()}` : ''
-    docs.value = await api.get<DocumentOut[]>(`/admin/documents${q}`)
+    const batch = await api.get<DocumentOut[]>(`/admin/documents${q}`)
+    if (requestId !== loadSequence) return
+    docs.value = more ? [...docs.value, ...batch] : batch
+    hasMore.value = batch.length === 200
+    if (!more) {
+      loadedFilter.value = filter
+      browseCountry.value = countries.value.some(c => c.code === browseCountry.value)
+        ? browseCountry.value : countries.value[0]?.code || ''
+      browseLevel.value = ''
+      selectedDocId.value = ''
+    }
   } catch (e) {
-    ElMessage.error((e as Error).message)
+    if (requestId === loadSequence) ElMessage.error((e as Error).message)
   } finally {
-    loading.value = false
+    if (requestId === loadSequence) loading.value = false
   }
 }
 
@@ -136,6 +183,7 @@ async function translateDocument(doc: DocumentOut) {
 }
 
 async function open(doc: DocumentOut) {
+  selectedDocId.value = doc.id
   provenance.value = null
   detail.value = await api.get<DocumentDetail>(`/admin/documents/${doc.id}`)
   provenance.value = await api.get(`/admin/documents/${doc.id}/provenance`)
@@ -231,7 +279,7 @@ async function submitUpload() {
   }
 }
 
-onMounted(load)
+onMounted(() => load())
 </script>
 
 <template>
@@ -253,13 +301,24 @@ onMounted(load)
           aria-label="筛选国家"
           style="width: 160px"
           clearable
-          @keyup.enter="load"
+          @keyup.enter="load()"
         />
-        <el-button @click="load">查询</el-button>
+        <el-button @click="load()">查询</el-button>
         <el-button type="primary" @click="openUploadDialog()">上传官方原文</el-button>
       </div>
     </div>
-    <el-table :data="docs" v-loading="loading" border @row-click="open" style="cursor: pointer">
+    <div class="document-library" v-loading="loading">
+      <RegulationDirectory :countries="countries" :documents="matchingDocs" :country="browseCountry"
+        :level="browseLevel" :selected-id="selectedDocId" :loading="loading"
+        @country="browseCountryFolder" @level="browseLevelFolder" @document="openDirectoryFile" />
+      <section class="document-results" aria-label="分类文档列表">
+        <div class="document-results-heading">
+          <div><h2>{{ browseCountryName || '法规文档' }}<template v-if="selectedGroup"> / {{ selectedGroup.name }}</template></h2>
+            <p>已加载 {{ docs.length }} 份文档<template v-if="selectedGroup"> · 本分类匹配 {{ selectedGroup.items.length }} 份</template></p></div>
+          <el-input v-model="documentKeyword" clearable aria-label="搜索已加载文档" placeholder="搜索文件名或来源" style="width: 260px" />
+        </div>
+        <el-empty v-if="!selectedGroup" :description="matchingDocs.length ? '请展开左侧国家并选择文件层级' : '当前筛选下没有文档'" :image-size="72" />
+    <el-table v-if="selectedGroup" :data="visibleDocuments.items" v-loading="loading" border @row-click="open" style="cursor: pointer">
       <el-table-column prop="country_code" label="国家" width="70" />
       <el-table-column label="法规文件 / 官方来源" min-width="330" show-overflow-tooltip>
         <template #default="{ row }"
@@ -356,6 +415,17 @@ onMounted(load)
         </template>
       </el-table-column>
     </el-table>
+        <div v-if="selectedGroup" class="document-pagination" aria-label="分类文档分页">
+          <el-button :disabled="visibleDocuments.page <= 1" @click="documentPageNumber--">上一页文档</el-button>
+          <span>第 {{ visibleDocuments.page }} / {{ visibleDocuments.pages }} 页 · 共 {{ selectedGroup.items.length }} 份，每页 20 份</span>
+          <el-button :disabled="visibleDocuments.page >= visibleDocuments.pages" @click="documentPageNumber++">下一页文档</el-button>
+        </div>
+      </section>
+    </div>
+    <div v-if="hasMore" class="document-pagination">
+      <span>目录与分类统计基于已加载的 {{ docs.length }} 份文件。</span>
+      <el-button :loading="loading" @click="load(true)">继续加载文档</el-button>
+    </div>
 
     <el-dialog
       v-model="uploadDialog"
@@ -585,6 +655,14 @@ onMounted(load)
 </template>
 
 <style scoped>
+.document-library { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 24px; align-items: start; }
+.document-library > :deep(.regulation-directory) { max-height: 780px; overflow-y: auto; }
+.document-results { min-width: 0; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: white; }
+.document-results-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.document-results-heading h2 { font-size: 18px; margin: 0; color: #263c4b; }
+.document-results-heading p { font-size: 13px; color: #8494a5; margin: 10px 0 0; }
+.document-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 20px; color: #738495; font-size: 13px; }
+@media (max-width: 1100px) { .document-library { grid-template-columns: 1fr; } .document-library > :deep(.regulation-directory) { max-height: 420px; } .document-results { padding: 14px; } }
 .document-status {
   display: flex;
   flex-wrap: wrap;

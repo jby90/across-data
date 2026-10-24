@@ -4,6 +4,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { api } from '../api'
 import KgForceGraph from '../components/KgForceGraph.vue'
 import KgLawGroups from '../components/KgLawGroups.vue'
+import RegulationDirectory from '../components/RegulationDirectory.vue'
 import { groupByLaw, mergeDisplayEdges, relationPage } from '@cyshuhe/shared/src/graphGrouping'
 
 interface CountryOverview {
@@ -231,14 +232,10 @@ const fgCategories = Object.entries(NODE_TYPE_META).map(([type, m]) => ({
   color: m.color,
 }))
 
-// 按「法律层级」分组左侧目录树
-const regulationsByTier = computed(() => {
-  const groups: Record<string, RegulationSummary[]> = {}
-  for (const r of regulations.value) {
-    ;(groups[r.document_type_zh] ||= []).push(r)
-  }
-  return groups
-})
+const directoryCountries = computed(() => overviews.value.map(c => ({
+  code: c.country_code, name: c.country_name_zh, count: c.documents_count,
+})))
+const countryName = computed(() => overviews.value.find(c => c.country_code === selectedCountry.value)?.country_name_zh || selectedCountry.value)
 
 function isTypeVisible(ntype: string): boolean {
   return visibleNodeTypes.value.includes(ntype)
@@ -448,8 +445,8 @@ async function loadData() {
     selectLaw('')
     regulations.value = regs
     if (regs.length > 0) {
-      const preferred =
-        regs.find((r) => r.edges_count > 2 && r.translated_clauses_count > 0) || regs[0]
+      const preferred = regs.find(r => r.id === regDetail.value?.regulation.id)
+        || regs.find((r) => r.edges_count > 2 && r.translated_clauses_count > 0) || regs[0]
       await selectRegulation(preferred.id)
     } else {
       regDetail.value = null
@@ -462,7 +459,11 @@ async function loadData() {
 }
 
 function selectCountry(cc: string) {
+  if (cc === selectedCountry.value) return
   selectedCountry.value = cc
+  regDetail.value = null
+  showMiniGraph.value = false
+  showVersions.value = false
   selectedNodeId.value = ''
   loadData()
 }
@@ -487,27 +488,13 @@ onMounted(loadData)
       仅已复核的条款与关系可作正式法律依据；机器译文仅供检索参考，请核对原文。
     </p>
 
-    <div class="country-grid" aria-label="选择国家">
-      <el-tooltip
-        v-for="c in overviews"
-        :key="c.country_code"
-        :content="`${c.country_name_orig} · ${c.clauses_count} 条款 · ${c.translations_count} 条译文（已复核 ${c.approved_translations_count}） · ${c.kg_edges_count} 条关系`"
-        ><button
-          class="country-card"
-          :class="{ active: selectedCountry === c.country_code }"
-          :aria-pressed="selectedCountry === c.country_code"
-          :aria-label="`${c.country_name_zh}，${c.documents_count} 份法规，${c.approved_translations_count} 条已复核译文`"
-          @click="selectCountry(c.country_code)"
-        >
-          <strong>{{ c.country_name_zh }}</strong
-          ><span class="country-code">{{ c.country_code }}</span>
-          <div class="country-summary">{{ c.documents_count }} 份法规</div>
-        </button></el-tooltip
-      >
-    </div>
-
     <!-- 检索栏 -->
     <div class="toolbar knowledge-search">
+      <el-select v-if="activeTab !== 'center'" :model-value="selectedCountry" aria-label="选择知识库国家"
+        style="width: 170px" :disabled="loading" @change="selectCountry">
+        <el-option v-for="c in overviews" :key="c.country_code" :value="c.country_code" :label="c.country_name_zh" />
+      </el-select>
+      <span v-else class="library-context">当前国家：{{ countryName }}</span>
       <el-input
         v-model="keyword"
         style="width: 340px"
@@ -529,32 +516,9 @@ onMounted(loadData)
       <!-- 页签 1: 法规中心 + 法规详情（左右双栏对照 + 8项属性 + 1跳关联图 + 点击义务高亮原文） -->
       <el-tab-pane name="center" :label="`法规原文 (${regulations.length})`">
         <div class="center-layout" v-loading="loading">
-          <!-- 左侧三级分类树：国家 -> 法律层级 -> 法规 -->
-          <div class="reg-sidebar" data-testid="user-reg-tree">
-            <div class="sidebar-title">
-              {{ selectedCountry }} 法规分类目录 ({{ regulations.length }})
-            </div>
-            <div v-for="(list, tierName) in regulationsByTier" :key="tierName" class="tier-group">
-              <div class="tier-header">{{ tierName }} ({{ list.length }})</div>
-              <div
-                v-for="r in list"
-                :key="r.id"
-                class="reg-item"
-                :class="{ active: regDetail?.regulation.id === r.id }"
-                :data-testid="`user-reg-item-${r.id}`"
-                @click="selectRegulation(r.id)"
-              >
-                <div class="reg-item-title">{{ r.title }}</div>
-                <div class="reg-item-meta">
-                  <span>{{ r.publisher }}</span>
-                  <span
-                    >v{{ r.version_no }} · {{ r.clauses_count }} 条款 ·
-                    {{ r.edges_count }} 关系</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
+          <RegulationDirectory :countries="directoryCountries" :documents="regulations"
+            :country="selectedCountry" :selected-id="regDetail?.regulation.id" :loading="loading"
+            @country="selectCountry" @document="selectRegulation" />
 
           <!-- 右侧法规详情面板（页面 2 要求：基本信息、8项核心属性、1跳关联面板、左右双栏原文/中译对照与高亮） -->
           <div class="reg-detail" v-loading="regLoading" data-testid="user-reg-detail">
@@ -965,86 +929,19 @@ onMounted(loadData)
 </template>
 
 <style scoped>
+.library-context { color: #526174; font-size: 14px; }
+.center-layout > :deep(.regulation-directory) { align-self: start; max-height: 760px; overflow-y: auto; }
+@media (max-width: 1200px) { .center-layout > :deep(.regulation-directory) { max-height: 400px; } }
 .graph-caption { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 16px; color: #64748b; font-size: 13px; }
 .sub {
   color: #606266;
   font-size: 13px;
-}
-.country-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-}
-.country-card {
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-  background: #fafafa;
-}
-.country-card.active {
-  border-color: #409eff;
-  background: #ecf5ff;
 }
 .center-layout {
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 14px;
   align-items: start;
-}
-.reg-sidebar {
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  background: #fafafa;
-  max-height: 780px;
-  overflow-y: auto;
-  padding: 10px;
-}
-.sidebar-title {
-  font-weight: 700;
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #1e293b;
-}
-.tier-group {
-  margin-bottom: 10px;
-}
-.tier-header {
-  font-size: 13px;
-  font-weight: 700;
-  color: #475569;
-  background: #e2e8f0;
-  padding: 4px 8px;
-  border-radius: 4px;
-  margin-bottom: 6px;
-}
-.reg-item {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  margin-bottom: 4px;
-  background: #ffffff;
-}
-.reg-item:hover {
-  border-color: #93c5fd;
-}
-.reg-item.active {
-  border-color: #2563eb;
-  background: #eff6ff;
-}
-.reg-item-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #1e293b;
-  line-height: 1.35;
-}
-.reg-item-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: #64748b;
-  margin-top: 4px;
 }
 .reg-detail {
   border: 1px solid #e4e7ed;
@@ -1175,75 +1072,12 @@ onMounted(loadData)
   border-radius: 9px;
   margin: 0 0 24px;
 }
-.country-grid {
-  gap: 12px;
-  margin-bottom: 24px;
-}
-.country-card {
-  position: relative;
-  text-align: left;
-  padding: 16px;
-  background: #fff;
-  border-color: var(--cy-line);
-  transition:
-    border-color 0.18s,
-    background 0.18s;
-}
-.country-card strong {
-  font-size: 15px;
-  color: #334e62;
-}
-.country-code {
-  float: right;
-  font-size: 11px;
-  color: #91a0ad;
-  letter-spacing: 0.08em;
-}
-.country-summary {
-  font-size: 12px;
-  color: #7c8c99;
-  margin-top: 7px;
-}
-.country-more {
-  font-size: 11px;
-  color: #9aa8b4;
-}
-.country-card.active {
-  border-color: #9eb6f2;
-  background: #f1f5ff;
-}
-.country-card.active strong {
-  color: #315fe8;
-}
 .knowledge-search {
   margin: 20px 0;
 }
 .center-layout {
   grid-template-columns: 250px minmax(0, 1fr);
   gap: 20px;
-}
-.reg-sidebar {
-  padding: 16px;
-  background: #f7f9fc;
-  border-color: var(--cy-line);
-}
-.reg-item {
-  padding: 13px 12px;
-  margin-bottom: 8px;
-  border-color: transparent;
-}
-.reg-item-title {
-  font-size: 14px;
-  line-height: 1.65;
-}
-.reg-item-meta {
-  flex-direction: column;
-  gap: 5px;
-  font-size: 12px;
-}
-.reg-item.active {
-  border-color: #c1d0f4;
-  background: #edf2fc;
 }
 .reg-detail {
   min-width: 0;
@@ -1303,24 +1137,8 @@ onMounted(loadData)
   .center-layout {
     grid-template-columns: 1fr;
   }
-  .reg-sidebar {
-    max-height: 230px;
-  }
-  .tier-group {
-    margin-bottom: 12px;
-  }
-  .reg-item-meta {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .country-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 @media (max-width: 800px) {
-  .country-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .reg-detail {
     padding: 16px;
   }
@@ -1353,21 +1171,6 @@ onMounted(loadData)
 }
 
 @media (max-width: 800px) {
-  .country-grid {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    padding-bottom: 8px;
-    scroll-snap-type: x proximity;
-  }
-  .country-card {
-    flex: 0 0 145px;
-    scroll-snap-align: start;
-    padding: 14px;
-  }
-  .country-summary {
-    font-size: 13px;
-  }
   .knowledge-notice {
     font-size: 13px;
     line-height: 1.75;
