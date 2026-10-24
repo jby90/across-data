@@ -1,0 +1,163 @@
+{
+  "facts": {
+    "exterior_video_and_gnss": "采集8路环视视频与GNSS；车端模糊人脸与车牌后回传",
+    "cross_border_mechanism": "传输至中国研发中心，已签数据处理协议并完成评估",
+    "consent_and_notice": "车机弹窗明示同意，车身告示，已任命本地数据保护官",
+    "retention_and_blackbox": "黑匣子留存3年；常规个人数据180天后销毁",
+    "local_admission_and_safety_operator": "已提交路测准入申请，配备安全员与保险"
+  },
+  "runs": [
+    {
+      "task_id": "75d3236e-0b80-4789-8672-a3bb529d65c2",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 42912,
+      "elapsed_seconds": 20.66,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "de46b5c5-932e-4c24-8f76-203055afbcfa",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 43437,
+      "elapsed_seconds": 22.44,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "0fb7eaa6-8621-4e48-9359-d50952f52f21",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 46711,
+      "elapsed_seconds": 30.44,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "31f76b71-e843-4bbb-b091-d74e5ab079ff",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 45637,
+      "elapsed_seconds": 24.44,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "e04499f5-9260-47fc-a730-40de900f7e03",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 44534,
+      "elapsed_seconds": 26.36,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "b995823a-c73f-4fac-aefe-89925ef618f5",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 44702,
+      "elapsed_seconds": 26.35,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "2458753c-88b1-453d-92e0-9516c224bc99",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D5 Advisory Guidelines on Key Con 18.2: sentence_id 无效、重复或不连续；必须选择所给编号"
+      ],
+      "backtrack_count": 1,
+      "tokens": 46021,
+      "elapsed_seconds": 26.32,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "bf9bbbdc-ee71-425d-8870-dbaeaae07e8f",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 41540,
+      "elapsed_seconds": 20.27,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "12213865-3390-41e4-bdbf-91f0a1b7848f",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 45681,
+      "elapsed_seconds": 24.34,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "7f2cf0ef-21f3-47e0-8e0b-49dd8e19f83b",
+      "status": "completed",
+      "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 42539,
+      "elapsed_seconds": 24.29,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    }
+  ]
+}

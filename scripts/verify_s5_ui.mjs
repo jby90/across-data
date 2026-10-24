@@ -3,8 +3,11 @@ import assert from 'node:assert/strict'
 
 export async function verifyS5Ui(tab) {
   assert.match(await tab.url(), /^http:\/\/127\.0\.0\.1:5185\/agent-studio$/)
-  await tab.playwright.getByRole('button', { name: '配置与评测', exact: true }).click()
+  if (!await tab.playwright.getByRole('button', { name: '质量评测', exact: true }).isVisible()) {
+    await tab.playwright.getByRole('button', { name: '配置与评测', exact: true }).click()
+  }
   await tab.playwright.domSnapshot()
+  await tab.playwright.getByRole('button', { name: '质量评测', exact: true }).waitFor({ state: 'visible' })
   await tab.playwright.getByRole('button', { name: '质量评测', exact: true }).click()
   await tab.playwright.getByRole('dialog', { name: '分析质量评测 · 五国 / 八维度' }).waitFor({ state: 'visible' })
   const snapshot = await tab.playwright.domSnapshot()
@@ -14,10 +17,13 @@ export async function verifyS5Ui(tab) {
   assert.match(snapshot, /Judge覆盖/)
   assert.match(snapshot, /0\/32 未经人工复核/)
   assert.match(snapshot, /已完成 32\/32 题/)
+  assert.match(snapshot, /题生成结论/)
   assert.doesNotMatch(snapshot, /10 道|H01 - H10|100%.*法律准确率/)
   await tab.playwright.getByRole('button', { name: '关闭此对话框', exact: true }).click()
+  await tab.playwright.getByRole('dialog', { name: '分析质量评测 · 五国 / 八维度' }).waitFor({ state: 'hidden' })
   await tab.playwright.domSnapshot()
   await tab.playwright.getByRole('button', { name: '查看环节产出', exact: true }).click()
+  await tab.playwright.getByTestId('stage-deliverables-drawer').waitFor({ state: 'visible' })
   const trace = await tab.playwright.domSnapshot()
   assert.match(trace, /本次任务执行版本 v\d+/)
   assert.match(trace, /input|输入|环节|交接/)

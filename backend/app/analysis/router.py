@@ -837,7 +837,11 @@ async def edit_user_report_version(
     new_rv = ReportVersion(
         task_id=task.id,
         version_no=next_ver,
-        status="partial_sample" if latest.is_partial_sample else "edited",
+        status="analysis_failed"
+        if latest.status == "analysis_failed"
+        else "partial_sample"
+        if latest.is_partial_sample
+        else "edited",
         is_partial_sample=latest.is_partial_sample,
         change_note=body.change_note.strip() or f"人工修订版本 v{next_ver}",
         executive_summary=(

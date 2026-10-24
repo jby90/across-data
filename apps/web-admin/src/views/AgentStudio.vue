@@ -519,6 +519,7 @@ const importing = ref(false)
 
 // 真实评测结果只读查看，打开抽屉不触发模型调用
 const benchmarkDrawerVisible = ref(false)
+const configurationPopover = ref<{ hide: () => void } | null>(null)
 const benchmarkData = ref<BenchmarkSummary | null>(null)
 const loadingBenchmarks = ref(false)
 
@@ -946,6 +947,7 @@ async function submitImportWorkflow() {
 }
 
 async function openBenchmarksDrawer() {
+  configurationPopover.value?.hide()
   benchmarkDrawerVisible.value = true
   loadingBenchmarks.value = true
   try {
@@ -1074,7 +1076,7 @@ onUnmounted(() => {
         <el-button size="small" @click="inspectorOpen = !inspectorOpen">{{
           inspectorOpen ? '收起节点详情' : '节点详情'
         }}</el-button
-        ><el-popover trigger="click" placement="bottom-end" :width="280"
+        ><el-popover ref="configurationPopover" trigger="click" placement="bottom-end" :width="280"
           ><template #reference><el-button size="small">配置与评测</el-button></template>
           <div class="secondary-actions">
             <el-button
@@ -2364,6 +2366,7 @@ onUnmounted(() => {
             </div>
           </div>
           <p data-testid="evaluation-completeness">已完成 {{ benchmarkData.completed_cases }}/{{ benchmarkData.total_cases }} 题 · 技术错误 {{ benchmarkData.technical_error_cases }} 题</p>
+          <p>其中 {{ benchmarkData.cases.filter(c => c.findings_total > 0).length }} 题生成结论；无结论项不算引文通过。</p>
 
           <el-table :data="benchmarkData.cases" border stripe size="small" style="margin-top: 16px">
             <el-table-column prop="question_id" label="题号" width="65" />

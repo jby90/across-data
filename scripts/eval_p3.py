@@ -35,6 +35,7 @@ def write_report(result, path):
         f"|人工复核|未经人工复核|0/{result['total_cases']}|",
         "",
         f"完成 {result['completed_cases']}/{result['total_cases']} 题；技术错误 {result['technical_error_cases']} 题。",
+        f"其中 {sum(c['findings_total'] > 0 for c in result['cases'])} 题生成结论；无结论题不算引文通过。",
         f"已知 Token：{result['total_tokens']:,}；客户端总耗时：{result['elapsed_seconds']:.2f} 秒。",
         "",
         "标注按已归档原文定位建立，未根据检索前五结果挑选题目，也未用模型自评冒充人工核验。",

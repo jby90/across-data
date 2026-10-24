@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "human_reviews_changed": 0,
+  "new_model_requests": 0,
+  "workflow_version_no": 23,
+  "suite_cases": 32,
+  "script": "scripts/verify_s5_ui.mjs",
+  "browser": "in-app browser",
+  "actual_task_trace_opened": true
+}

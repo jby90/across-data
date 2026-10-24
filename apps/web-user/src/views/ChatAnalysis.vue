@@ -646,10 +646,10 @@ onUnmounted(() => {
                   report.status === 'analysis_failed'
                     ? '分析技术失败 · 不可交付'
                     : report.source_integrity_alerts?.length
-                    ? '来源异常 · 暂停导出'
-                    : report.is_partial_sample
-                      ? '部分样稿 · 有维度缺依据'
-                      : '全部维度均有核验依据'
+                      ? '来源异常 · 暂停导出'
+                      : report.is_partial_sample
+                        ? '部分样稿 · 有维度缺依据'
+                        : '全部维度均有核验依据'
                 }}
               </el-tag>
             </div>

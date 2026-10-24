@@ -242,6 +242,24 @@ async def test_model_unavailable_is_reported_not_fabricated(client, seed, sessio
     assert report["status"] == "analysis_failed" and not report["is_partial_sample"]
     assert all(d["citations"] == [] for d in report["dimensions"])
     assert any(d["gap_kind"] == "analysis_error" for d in report["dimensions"])
+    for suffix in ("docx", "pdf"):
+        response = await client.get(
+            f"/api/analysis/tasks/{done['id']}/reports/1/export.{suffix}",
+            headers=hdr,
+        )
+        assert response.status_code == 409
+    edited = await client.post(
+        f"/api/analysis/tasks/{done['id']}/reports/edit",
+        headers=hdr,
+        json={"executive_summary": "仅编辑文字不能解除技术失败", "change_note": "回归验证"},
+    )
+    assert edited.status_code == 200 and edited.json()["status"] == "analysis_failed"
+    assert (
+        await client.get(
+            f"/api/analysis/tasks/{done['id']}/reports/2/export.docx",
+            headers=hdr,
+        )
+    ).status_code == 409
 
 
 async def test_retrieval_benchmark_is_honest(client, seed, session_factory):
