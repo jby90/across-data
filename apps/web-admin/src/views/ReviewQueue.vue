@@ -96,7 +96,8 @@ async function showHistory(id: string, action?: string) {
     proposals: { payload?: Record<string, unknown> }[]
   }>(`/admin/knowledge/history/${id}`)
   historyResult.value = action ? {
-    history: result.history.filter((row) => row.action === action),
+    history: result.history.filter((row) => row.action === action ||
+      (action === 'source_parse_revision' && row.action === 'parsed_source_translation')),
     proposals: result.proposals.filter((row) => row.payload?.[action]),
   } : result
   historyDialog.value = true

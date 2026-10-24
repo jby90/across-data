@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import uuid
 from dataclasses import dataclass, field
@@ -213,6 +214,15 @@ async def parse_version(
     try:
         content = archive.read(version.archive_path)
         parsed = await asyncio.to_thread(parse_document, content, version.mime_type)
+        for layout in parsed.layout_events:
+            session.add(
+                PipelineEvent(
+                    version_id=version.id,
+                    step="parse_layout",
+                    status="ok",
+                    message=json.dumps(layout, ensure_ascii=False),
+                )
+            )
         version.page_count = len(parsed.pages)
         version.char_count = parsed.char_count
         version.text_source = "text_layer"

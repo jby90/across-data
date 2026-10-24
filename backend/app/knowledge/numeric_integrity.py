@@ -101,7 +101,8 @@ def dates(text: str) -> set[tuple[int, int, int]]:
         found.add((int(year), int(month), int(day)))
     month_words = "|".join(sorted(MONTHS, key=len, reverse=True))
     for day, month, year in re.findall(
-        rf"(?<!\d)(\d{{1,2}})\s+({month_words})\s*[,،]?\s*(\d{{4}})(?!\d)", text
+        rf"(?<!\d)(\d{{1,2}})(?:st|nd|rd|th)?(?:\s+day\s+of)?\s+({month_words})\s*[,،]?\s*(\d{{4}})(?!\d)",
+        text,
     ):
         found.add((int(year), MONTHS[month], int(day)))
     for month, day, year in re.findall(rf"({month_words})\s+(\d{{1,2}}),?\s+(\d{{4}})(?!\d)", text):

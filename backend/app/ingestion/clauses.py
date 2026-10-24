@@ -18,6 +18,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from app.ingestion.source_layout import atomic_line_blocks
+
 _ARABIC_DIGITS = "٠-٩"
 _CN_NUM = "一二三四五六七八九十百千零〇两"
 
@@ -275,10 +277,16 @@ def _split_numbered(pages: list[str]) -> list[_Raw]:
         seq += 1
 
     flat: list[tuple[int, str]] = []
+    atomic = {}
     for page_no, page in enumerate(pages, start=1):
-        for line in page.splitlines():
-            if line.strip():
-                flat.append((page_no, line.rstrip()))
+        lines = [line.rstrip() for line in page.splitlines() if line.strip()]
+        blocks = atomic_line_blocks("\n".join(lines))
+        base = len(flat)
+        for start, (end, label) in blocks.items():
+            atomic[base + start] = (base + end, label)
+        if blocks:
+            toc_pages.discard(page_no)
+        flat.extend((page_no, line) for line in lines)
 
     accepted_numeric, numeric_count = _choose_numeric(flat, toc_pages)
     keyword_count = sum(
@@ -292,6 +300,24 @@ def _split_numbered(pages: list[str]) -> list[_Raw]:
     while i < len(flat):
         page_no, line = flat[i]
         s = line.strip()
+
+        if i in atomic:
+            end, label = atomic[i]
+            new_sequence()
+            raws.append(
+                _Raw(
+                    None,
+                    label,
+                    [ln for _, ln in flat[i:end]],
+                    page_no,
+                    flat[end - 1][0],
+                    label,
+                    seq,
+                )
+            )
+            current = None
+            i = end
+            continue
 
         # ---- 目录页:整页并入"目录"块,不参与条款识别 ----
         if page_no in toc_pages:
@@ -484,6 +510,8 @@ def split_clauses(
     """
     raws = _split_numbered(pages)
     numbered = [r for r in raws if r.number is not None]
+    if any(r.path and r.path.startswith(("TABLE /", "REFERENCE /")) for r in raws):
+        return _build(raws), "layout"
     if len(numbered) >= 2:
         total_chars = sum(len(pg) for pg in pages)
         sparse = (

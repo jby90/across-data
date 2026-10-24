@@ -45,7 +45,7 @@ from app.knowledge.numeric_integrity import (
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "translate-v7"
+PROMPT_VERSION = "translate-v8"
 MAX_CHUNK_CHARS = 1500
 DEFAULT_CONCURRENCY = 4
 
@@ -206,7 +206,7 @@ def _protect_explicit_dates(text: str) -> tuple[str, dict[str, str]]:
         return marker
 
     for pattern in (
-        rf"(?<!\d)(?P<day>\d{{1,2}})\s+(?P<month>{month_words})\s*[,،]?\s*(?P<year>\d{{4}})(?!\d)",
+        rf"(?<!\d)(?P<day>\d{{1,2}})(?:st|nd|rd|th)?(?:\s+day\s+of)?\s+(?P<month>{month_words})\s*[,،]?\s*(?P<year>\d{{4}})(?!\d)",
         rf"(?P<month>{month_words})\s+(?P<day>\d{{1,2}}),?\s+(?P<year>\d{{4}})(?!\d)",
     ):
         text = re.sub(pattern, replace, text, flags=re.IGNORECASE)
