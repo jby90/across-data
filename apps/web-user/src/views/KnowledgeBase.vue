@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { api } from '../api'
 import KgForceGraph from '../components/KgForceGraph.vue'
+import KgLawGroups from '../components/KgLawGroups.vue'
+import { groupByLaw, mergeDisplayEdges, relationPage } from '@cyshuhe/shared/src/graphGrouping'
 
 interface CountryOverview {
   country_code: string
@@ -218,7 +220,9 @@ const loading = ref(false)
 // 合规地图筛选状态
 const visibleNodeTypes = ref<string[]>([...ALL_NODE_TYPES])
 const relationFilter = ref('')
-const maxEdges = ref(300)
+const selectedLawId = ref('')
+const relationPageNumber = ref(1)
+const evidencePageNumber = ref(1)
 const selectedNodeId = ref('')
 
 const fgCategories = Object.entries(NODE_TYPE_META).map(([type, m]) => ({
@@ -265,8 +269,10 @@ function showAllNodeTypes() {
 
 const typeFilteredEdges = computed(() => {
   const vis = new Set(visibleNodeTypes.value)
+  const approvedNodes = new Set(graph.value.nodes.filter(n => n.review_status === 'approved').map(n => n.id))
   return graph.value.edges.filter(
     (e) =>
+      (!onlyApproved.value || (e.review_status === 'approved' && approvedNodes.has(e.source_node_id) && approvedNodes.has(e.target_node_id))) &&
       vis.has(e.source_node_type) &&
       vis.has(e.target_node_type) &&
       (!e.review_status || e.review_status === 'approved' || e.review_status === 'pending_review'),
@@ -279,48 +285,24 @@ const filteredEdges = computed(() =>
     : typeFilteredEdges.value,
 )
 
-interface MergedEdge {
-  source: string
-  target: string
-  relation: string
-  count: number
-  approved: boolean
+const lawGroups = computed(() => groupByLaw(graph.value.nodes.filter(n => !onlyApproved.value || n.review_status === 'approved'), filteredEdges.value))
+const selectedLaw = computed(() => lawGroups.value.find(g => g.id === selectedLawId.value))
+const scopedEdges = computed(() => selectedLaw.value?.edges ?? filteredEdges.value)
+const mergedEdges = computed(() => mergeDisplayEdges(graph.value.nodes, selectedLaw.value?.edges ?? []))
+const displayedPage = computed(() => relationPage(mergedEdges.value, relationPageNumber.value, 36))
+const graphEdgesRaw = computed(() => displayedPage.value.edges)
+const displayedEvidenceCount = computed(() => graphEdgesRaw.value.reduce((sum, e) => sum + e.count, 0))
+function selectLaw(id: string) {
+  selectedLawId.value = id
+  relationPageNumber.value = 1
+  selectedNodeId.value = ''
 }
-
-const mergedEdges = computed<MergedEdge[]>(() => {
-  const map = new Map<string, MergedEdge>()
-  for (const e of filteredEdges.value) {
-    const key = `${e.source_node_id}|${e.target_node_id}|${e.relation_type}`
-    const cur = map.get(key)
-    if (cur) {
-      cur.count += 1
-      cur.approved = cur.approved && e.usable_as_legal_basis
-    } else {
-      map.set(key, {
-        source: e.source_node_id,
-        target: e.target_node_id,
-        relation: e.relation_type,
-        count: 1,
-        approved: e.usable_as_legal_basis,
-      })
-    }
-  }
-  return [...map.values()]
-})
-
-const graphEdgesRaw = computed(() => {
-  const edges = mergedEdges.value
-  if (edges.length <= maxEdges.value) return edges
-  const degree: Record<string, number> = {}
-  for (const e of edges) {
-    degree[e.source] = (degree[e.source] || 0) + 1
-    degree[e.target] = (degree[e.target] || 0) + 1
-  }
-  return edges
-    .slice()
-    .sort((a, b) => degree[b.source] + degree[b.target] - (degree[a.source] + degree[a.target]))
-    .slice(0, maxEdges.value)
-})
+function selectRelationPage(page: number) {
+  relationPageNumber.value = page
+  selectedNodeId.value = ''
+}
+watch(filteredEdges, () => { relationPageNumber.value = 1; selectedNodeId.value = '' })
+watch(() => graph.value.country_code, () => selectLaw(''))
 
 const fgEdges = computed(() =>
   graphEdgesRaw.value.map((e) => ({
@@ -350,12 +332,17 @@ const fgNodes = computed(() => {
 
 const tableEdges = computed(() =>
   selectedNodeId.value
-    ? filteredEdges.value.filter(
+    ? scopedEdges.value.filter(
         (e) =>
           e.source_node_id === selectedNodeId.value || e.target_node_id === selectedNodeId.value,
       )
-    : filteredEdges.value,
+    : scopedEdges.value,
 )
+const evidencePage = computed(() => relationPage(tableEdges.value, evidencePageNumber.value, 50))
+watch(tableEdges, () => { evidencePageNumber.value = 1 })
+
+
+interface MergedEdge { source: string; target: string; relation: string; count: number; approved: boolean }
 
 // 单部法规的 1 跳关联图数据
 const miniFgEdges = computed(() => {
@@ -451,13 +438,14 @@ async function loadData() {
       api.get<CountryOverview[]>('/knowledge/overview'),
       api.get<ClauseTranslation[]>(`/knowledge/clauses?${q.toString()}`),
       api.get<GraphPayload>(
-        `/knowledge/graph?country_code=${selectedCountry.value}&only_approved=${onlyApproved.value}`,
+        `/knowledge/graph?country_code=${selectedCountry.value}&only_approved=false`,
       ),
       api.get<RegulationSummary[]>(`/knowledge/regulations?${regQ.toString()}`),
     ])
     overviews.value = ov
     clauses.value = cl
     graph.value = gr
+    selectLaw('')
     regulations.value = regs
     if (regs.length > 0) {
       const preferred =
@@ -864,30 +852,23 @@ onMounted(loadData)
           </el-tag>
         </div>
 
-        <!-- ECharts 合规地图画布 -->
-        <div class="graph-canvas">
-          <div class="sub" style="padding: 4px 8px">
-            合规地图展示 {{ fgNodes.length }} 个节点 / {{ fgEdges.length }} 条关系（合并自
-            {{ filteredEdges.length }}
-            条可见证据边，仅展示「已复核」与明确标注「待核对」的合规边；结构边
-            {{ graph.quality_summary?.structural_edges ?? 0 }} 条，大模型语义边
-            {{ graph.quality_summary?.semantic_edges ?? 0 }}
-            条）；点击节点可筛选下方逐字证据明细。
-          </div>
-          <KgForceGraph
-            v-if="activeTab === 'graph'"
-            :nodes="fgNodes"
-            :edges="fgEdges"
-            :categories="fgCategories"
-            :visible-types="visibleNodeTypes"
-            :selected-id="selectedNodeId"
-            height="500px"
-            @node-click="onGraphNodeClick"
-            @toggle-type="toggleNodeType"
-          />
+        <KgLawGroups :key="selectedCountry" v-if="activeTab === 'graph'" v-loading="loading"
+          :groups="lawGroups" :selected-group-id="selectedLawId"
+          :total="graph.edges.length" :filtered="filteredEdges.length"
+          :shown="displayedEvidenceCount" :shown-groups="fgEdges.length"
+          :page="displayedPage.page" :pages="displayedPage.pages"
+          @select="selectLaw" @page="selectRelationPage"
+        >
+          <KgForceGraph :nodes="fgNodes" :edges="fgEdges" :categories="fgCategories"
+            :visible-types="visibleNodeTypes" :selected-id="selectedNodeId" height="480px"
+            @node-click="onGraphNodeClick" @toggle-type="toggleNodeType" />
+        </KgLawGroups>
+        <div class="filter-row">
+          <strong>证据明细 · {{ tableEdges.length }} 条</strong>
+          <el-button v-if="selectedNodeId" link @click="selectedNodeId = ''">清除节点筛选</el-button>
         </div>
 
-        <el-table :data="tableEdges" v-loading="loading" border stripe style="margin-top: 12px">
+        <el-table :data="evidencePage.edges" v-loading="loading" border stripe style="margin-top: 12px">
           <el-table-column prop="source_name_zh" label="源要素" min-width="180" />
           <el-table-column label="关系类型" width="150">
             <template #default="{ row }">
@@ -921,7 +902,11 @@ onMounted(loadData)
               </el-tag>
             </template>
           </el-table-column>
-        </el-table>
+        </el-table><div class="graph-caption" aria-label="证据分页">
+            <el-button :disabled="evidencePage.page <= 1" @click="evidencePageNumber--">上一页证据</el-button>
+            <span>第 {{ evidencePage.page }} / {{ evidencePage.pages }} 页 · 共 {{ tableEdges.length }} 条证据，每页 50 条</span>
+            <el-button :disabled="evidencePage.page >= evidencePage.pages" @click="evidencePageNumber++">下一页证据</el-button>
+          </div>
       </el-tab-pane>
 
       <!-- 页签 3: 法规条款跨文件检索 -->
@@ -980,6 +965,7 @@ onMounted(loadData)
 </template>
 
 <style scoped>
+.graph-caption { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 16px; color: #64748b; font-size: 13px; }
 .sub {
   color: #606266;
   font-size: 13px;

@@ -1,0 +1,90 @@
+{
+  "database": "remediation_20261023",
+  "check": "read-only repeatable-read snapshots of full-row JSON, sorted and SHA-256 hashed per table",
+  "tables": 20,
+  "rows": 29230,
+  "changed_tables": [],
+  "unchanged": true,
+  "fingerprints": {
+    "agent_workflow_configs": {
+      "rows": 16,
+      "sha256": "1dbf8c169a451b274e5822487c8387286792f219643d6ce6067676e13495db0a"
+    },
+    "analysis_messages": {
+      "rows": 25,
+      "sha256": "71f1cd7a2342ea00cf7d787272c4b10e9a7a79ec8d1a2dbf55a446e5f8bd4271"
+    },
+    "analysis_step_traces": {
+      "rows": 6,
+      "sha256": "021317d0ea49fc8f9e8346874f101aaff024460c7609ce4c4d26a0ab32f0006f"
+    },
+    "analysis_tasks": {
+      "rows": 1,
+      "sha256": "6980435e968b37f1446d0cf3aa4944519688d5d53660823e45c633868e5379fc"
+    },
+    "clause_translations": {
+      "rows": 3464,
+      "sha256": "f24ae534a5f45fd413775b469c6ed5edba26bea0cc4173b88fe9d957aa261c72"
+    },
+    "clauses": {
+      "rows": 2607,
+      "sha256": "f7950bc7d0a6bd3ec3be067d550f8b52ffb527408154caf53124cfba78820af2"
+    },
+    "crawl_runs": {
+      "rows": 58,
+      "sha256": "0369864f2b268fbdae56bc5ab8d6749f44eb4520e2e62c885cae38f228aee5f5"
+    },
+    "document_versions": {
+      "rows": 80,
+      "sha256": "c04afa20f10c2f913220df88437e53795a9dfa8fdec9efecd7469c569c8d504e"
+    },
+    "documents": {
+      "rows": 80,
+      "sha256": "3dccdb14a69649a4b6fbb9dfdbe30f14a7865087e290305bd55ac8cd6fa918d0"
+    },
+    "glossary_terms": {
+      "rows": 14,
+      "sha256": "d7fef3bf02cb6b07c40b8d7dad47b8474b82563a94fc6eb589a19694a6449749"
+    },
+    "kg_edges": {
+      "rows": 5259,
+      "sha256": "fd57e0bf17baf3b38bc333549ace489347520def13bdbb11e0efb1bd63ea9943"
+    },
+    "kg_nodes": {
+      "rows": 2419,
+      "sha256": "2a8ee8632e4d47e58994a75c416ec4237ab7f60ff40642e15298cb8c514abe43"
+    },
+    "knowledge_audit_records": {
+      "rows": 14497,
+      "sha256": "38e61b143d907e6dba7583b7b740d79ac1789a40aa4b64833571c127a7014d97"
+    },
+    "knowledge_change_proposals": {
+      "rows": 472,
+      "sha256": "60ed1b7a74aa9649c9f7eb622715d4cc64429b83056deec39cbb378aafbd32b2"
+    },
+    "organizations": {
+      "rows": 1,
+      "sha256": "fd436650d654dd32c9c8e8b37583db13815c3a893058e9ec57690b3461527bc7"
+    },
+    "pipeline_events": {
+      "rows": 201,
+      "sha256": "77b052a5a134b60c9be0425c0a494412d05741b8b4bd444afea2cc72c3fc70b4"
+    },
+    "report_versions": {
+      "rows": 2,
+      "sha256": "86a8ceb56ba4efc3a11bddaa4f3bc1d7a7e4731b0e18b630b9202a97d9d4a371"
+    },
+    "review_points": {
+      "rows": 4,
+      "sha256": "e48b4dae5195d7fc17959616d390f40a36a6ddf37bd5108464f84f807f3ac08b"
+    },
+    "source_sites": {
+      "rows": 20,
+      "sha256": "f2b4040cdacd8a8c47250993192cde374cf19261bd4dc18ef9d2244bc169ab7e"
+    },
+    "users": {
+      "rows": 4,
+      "sha256": "7aca6dff83fc83696878a49138d382222724daff42e16be0dbdaa12fc487038b"
+    }
+  }
+}
