@@ -48,11 +48,12 @@ async def run(args):
                 r = await client.get(f"/api/analysis/tasks/{task['id']}")
                 r.raise_for_status()
                 task = r.json()
-            first = next(
-                (t for t in task["step_traces"] if t["phase"] == "verification"), None
-            )
+            first = next((t for t in task["step_traces"] if t["phase"] == "verification"), None)
             output = (first or {}).get("output_snapshot") or {}
             checks = output.get("verification_items") or []
+            initial_calls = [
+                c for t in task["step_traces"] if t["phase"] == "analysis" for c in t["tool_calls"]
+            ]
             rows.append(
                 {
                     "task_id": task["id"],
@@ -61,6 +62,14 @@ async def run(args):
                     "first_evaluated": bool(checks),
                     "first_failed": bool(output.get("problems")) if checks else None,
                     "first_problems": output.get("problems", []),
+                    "local_selection_retries": sum(
+                        len(c["arguments"].get("selection_retries", [])) for c in initial_calls
+                    ),
+                    "local_grounding_failures": sum(
+                        len(g.get("failures", []))
+                        for c in initial_calls
+                        for g in c["arguments"].get("grounding_calls", [])
+                    ),
                     "backtrack_count": task["backtrack_count"],
                     "tokens": task["total_tokens"],
                     "elapsed_seconds": round(time.perf_counter() - started, 2),
@@ -78,9 +87,7 @@ async def run(args):
             )
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(
-                json.dumps(
-                    {"facts": FACTS, "runs": rows}, ensure_ascii=False, indent=2
-                ),
+                json.dumps({"facts": FACTS, "runs": rows}, ensure_ascii=False, indent=2),
                 encoding="utf-8",
             )
             print(json.dumps(rows[-1], ensure_ascii=False), flush=True)

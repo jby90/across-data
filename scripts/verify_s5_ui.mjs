@@ -17,7 +17,7 @@ export async function verifyS5Ui(tab, baseUrl = 'http://127.0.0.1:5185') {
   assert.match(snapshot, /Judge覆盖/)
   assert.match(snapshot, /0\/32 未经人工复核/)
   assert.match(snapshot, /已完成 32\/32 题/)
-  assert.match(snapshot, /题生成结论/)
+  assert.match(snapshot, /题有分析项/)
   assert.doesNotMatch(snapshot, /10 道|H01 - H10|100%.*法律准确率/)
   await tab.playwright.getByRole('button', { name: '关闭此对话框', exact: true }).click()
   await tab.playwright.getByRole('dialog', { name: '分析质量评测 · 五国 / 八维度' }).waitFor({ state: 'hidden' })

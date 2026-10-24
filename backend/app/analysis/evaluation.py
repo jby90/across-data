@@ -71,6 +71,11 @@ def aggregate(cases):
         "technical_error_cases": sum(
             bool(c.get("analysis_error") or c.get("judge_error")) for c in cases
         ),
+        "local_reselection_cases": sum(
+            bool(c.get("model_call", {}).get("arguments", {}).get("selection_retries"))
+            for c in cases
+            if c.get("model_call")
+        ),
         "note": (
             "工程来源标注集，非人工金标准。事实一致性为独立模型对结论是否获引文支持的判断"
             "（llm_judged），不代表法律准确率。未生成/未判定项不计为通过，另列覆盖率。"
@@ -90,6 +95,18 @@ def generation_diagnostics(case):
         "evidence_gap_count": len(gaps),
         "analysis_error": case.get("analysis_error") or ("；".join(errors) if errors else None),
     }
+
+
+def attempted_findings(result, model_call):
+    """All proposals stay in evaluation, including failed pre-handoff selections."""
+    import copy
+
+    previous = [
+        f
+        for retry in (model_call or {}).get("arguments", {}).get("selection_retries", [])
+        for f in retry["findings"]
+    ]
+    return copy.deepcopy(previous + result.get("findings", []))
 
 
 async def evaluate_case(session, question_id, batch_id, actor_id):
@@ -150,7 +167,8 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
         pipeline._verify_dimension(question["dimension_code"], result, candidates)
     else:
         result = {"findings": [], "gaps": "无可用检索结果", "tokens": 0}
-    findings = result.get("findings", [])
+    findings = attempted_findings(result, model_call)
+    pipeline._verify_dimension(question["dimension_code"], {"findings": findings}, candidates)
     judge_input = [
         {"index": i, "conclusion": f["obligation"], "quote": f.get("quote", "")}
         for i, f in enumerate(findings)
@@ -211,6 +229,8 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
             for c in candidates
         ],
         "findings_total": len(findings),
+        "final_findings_total": len(result.get("findings", [])),
+        "final_findings_offset": len(findings) - len(result.get("findings", [])),
         "faithful_findings": sum(bool(f.get("_ok")) for f in findings),
         "judged_findings": len(judgments),
         "supported_findings": sum(j["supported"] == "yes" for j in judgments),

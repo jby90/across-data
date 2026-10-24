@@ -5,7 +5,7 @@ import re
 import unicodedata
 from collections import Counter
 
-RETRIEVAL_VERSION = "query-bm25-rrf-v1"
+RETRIEVAL_VERSION = "query-bm25-rrf-scope-v2"
 _CJK = re.compile(r"[\u3400-\u9fff]+")
 _WORDS = re.compile(r"[^\W_]+", re.UNICODE)
 

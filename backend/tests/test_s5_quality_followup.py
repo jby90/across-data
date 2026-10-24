@@ -37,10 +37,88 @@ def test_index_normalization_is_separate_from_untouched_arabic_french_source():
     assert source == before
 
 
+@pytest.mark.parametrize("status", ["irrelevant", "out_of_scope", "needs_review"])
+async def test_retrieval_respects_explicit_scope_without_removing_sources_or_reviews(
+    session_factory, status
+):
+    from app.analysis.tools import ToolBox
+    from app.ingestion.models import Clause
+
+    from .review_s1_s2_contracts import make_document, make_edge
+
+    async with session_factory() as s:
+        doc, _, clauses = await make_document(s)
+        doc.relevance = status
+        edge, _, _ = await make_edge(s, clauses[0], "approved")
+        await s.flush()
+        before = (clauses[0].original_text, edge.evidence_quote, edge.review_status)
+        candidates = await ToolBox(s, doc.country_code)._load_candidates()
+        assert bool(candidates) is (status == "needs_review")
+        assert await s.get(Clause, clauses[0].id) is clauses[0]
+        assert before == (clauses[0].original_text, edge.evidence_quote, edge.review_status)
+
+
 def test_saved_prompt_declares_json_for_provider_json_mode():
     from app.analysis.prompts import ANALYSIS_SYSTEM_PROMPT
 
     assert "json" in ANALYSIS_SYSTEM_PROMPT.lower()
+
+
+@pytest.mark.parametrize("status", ["unknown", "in_force", "amended", "repealed"])
+async def test_repealed_latest_source_is_excluded_without_guessing_unknown_status(
+    session_factory, status
+):
+    from app.analysis.tools import ToolBox
+
+    from .review_s1_s2_contracts import make_document
+
+    async with session_factory() as s:
+        _, version, _ = await make_document(s)
+        version.legal_status = status
+        await s.flush()
+        found = await ToolBox(s, "SG")._load_candidates()
+        assert bool(found) is (status != "repealed")
+        if found:
+            assert found[0].legal_status == status
+
+
+async def test_repealed_current_version_never_falls_back_to_older_active_text(session_factory):
+    import uuid
+
+    from app.analysis.tools import ToolBox
+    from app.ingestion.models import Clause, DocumentVersion
+
+    from .review_s1_s2_contracts import make_document
+
+    async with session_factory() as s:
+        doc, version, clauses = await make_document(s)
+        version.legal_status = "in_force"
+        current = DocumentVersion(
+            document_id=doc.id,
+            version_no=2,
+            content_hash="b" * 64,
+            archive_path="unused",
+            size_bytes=1,
+            mime_type="text/plain",
+            final_url=doc.source_url,
+            state="parsed",
+            legal_status="repealed",
+        )
+        s.add(current)
+        await s.flush()
+        s.add(
+            Clause(
+                version_id=current.id,
+                ordinal=1,
+                clause_number="1",
+                language="en",
+                original_text=clauses[0].original_text,
+                text_hash=uuid.uuid4().hex * 2,
+            )
+        )
+        await s.flush()
+        assert await ToolBox(s, "SG")._load_candidates() == []
+        assert clauses[0].original_text and version.legal_status == "in_force"
 
 
 def test_grounding_errors_are_counted_without_rewriting_historical_audit_payloads():
@@ -53,6 +131,19 @@ def test_grounding_errors_are_counted_without_rewriting_historical_audit_payload
     updated = generation_diagnostics(case)
     assert updated["analysis_error"] == "schema failed" and updated["generation_error_count"] == 1
     assert updated["evidence_gap_count"] == 1 and case["analysis_error"] is None
+
+
+def test_evaluation_keeps_rejected_first_selection_in_denominator_after_reselection():
+    from app.analysis.evaluation import attempted_findings
+
+    first = {"obligation": "", "_generation_gap": "缺少条件"}
+    final = {"obligation": "有依据的规则"}
+    result = {"findings": [final]}
+    call = {"arguments": {"selection_retries": [{"findings": [first]}]}}
+    findings = attempted_findings(result, call)
+    assert len(findings) == 2 and findings[0]["_generation_gap"] == "缺少条件"
+    findings[0]["_ok"] = False
+    assert "_ok" not in first and result["findings"] == [final]
 
 
 def test_actual_question_can_distinguish_two_issues_in_same_dimension_without_country_branches():
@@ -191,6 +282,61 @@ async def test_numeric_generation_error_is_retried_with_exact_source_and_remains
     assert finding["obligation"] == "该活动最高比例为2%"
     assert ledger["tokens"] == 10 and ledger["requests"] == 2
     assert ledger["failures"][0]["kind"] == "grounding_validation_error"
+
+
+async def test_source_refusal_returns_to_selector_within_existing_budget_and_preserves_quotes(
+    monkeypatch,
+):
+    rows = [
+        candidate("fragment", "A subordinate list without a governing rule, subject or condition."),
+        candidate("complete", "The operator shall protect personal data from unauthorised access."),
+    ]
+    seen = []
+
+    async def fake(messages, **kwargs):
+        payload = json.loads(messages[1]["content"])
+        seen.append(payload)
+        if payload["phase"] == "select_evidence":
+            retry = "verifier_feedback_must_fix" in payload
+            data = {
+                "findings": [
+                    {
+                        "clause_id": "complete" if retry else "fragment",
+                        "sentence_ids": [1],
+                        "fact_key": "q",
+                        "obligation": "待依据生成",
+                        "risk_level": "MEDIUM",
+                    }
+                ]
+            }
+        elif payload["evidence"]["quote"] == rows[0].text:
+            data = {"obligation": "", "gap": "缺少主语和条件", "risk_level": "MEDIUM"}
+        else:
+            data = {
+                "obligation": "运营者应保护个人数据免遭未经授权访问",
+                "gap": "",
+                "risk_level": "MEDIUM",
+            }
+        return LlmResult(data, 2, 3, 1, "fake")
+
+    monkeypatch.setattr(pipeline, "call_llm_json", fake)
+    cfg = execution_settings(
+        next(n for n in baseline_nodes() if n["node_id"] == "node_dimension_analyst")
+    )
+    result, call = await pipeline._analyse_dimension(
+        AnalysisTask(country_code="KE", facts_json={"q": "处理个人数据"}),
+        "D8",
+        "安全",
+        rows,
+        None,
+        cfg,
+    )
+    assert pipeline._verify_dimension("D8", result, rows) == []
+    assert len(seen) == 4 and result["tokens"] == 20
+    assert call.arguments["schema_attempts"] == 2 and call.arguments["request_attempts"] == 4
+    previous = call.arguments["selection_retries"][0]["findings"][0]
+    assert previous["quote"] == rows[0].text and previous["_generation_gap"] == "缺少主语和条件"
+    assert "缺少主语和条件" in str(seen[2]["verifier_feedback_must_fix"])
 
 
 async def test_source_limited_refusal_is_preserved_and_never_counted_as_verified(monkeypatch):

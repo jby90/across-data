@@ -2366,7 +2366,7 @@ onUnmounted(() => {
             </div>
           </div>
           <p data-testid="evaluation-completeness">已完成 {{ benchmarkData.completed_cases }}/{{ benchmarkData.total_cases }} 题 · 技术错误 {{ benchmarkData.technical_error_cases }} 题</p>
-          <p>其中 {{ benchmarkData.cases.filter(c => c.findings_total > 0).length }} 题生成结论；无结论项不算引文通过。</p>
+          <p>其中 {{ benchmarkData.cases.filter(c => c.findings_total > 0).length }} 题有分析项（含拒绝/失败尝试）；无输出不算引文通过。</p>
 
           <el-table :data="benchmarkData.cases" border stripe size="small" style="margin-top: 16px">
             <el-table-column prop="question_id" label="题号" width="65" />

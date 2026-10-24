@@ -251,6 +251,7 @@ class ToolBox:
                     .join(Document, Document.id == DocumentVersion.document_id)
                     .where(Document.country_code == self.country_code)
                     .where(document_available())
+                    .where(Document.relevance.notin_(("irrelevant", "out_of_scope")))
                     .where(DocumentVersion.state == "parsed")
                 )
             ).all()
@@ -288,7 +289,11 @@ class ToolBox:
         tr_map = {t.clause_id: t for t in trs}
         out: list[ClauseCandidate] = []
         for clause, ver, doc in rows:
-            if ver.version_no != latest[doc.id] or clause.id in layout_held:
+            if (
+                ver.version_no != latest[doc.id]
+                or clause.id in layout_held
+                or ver.legal_status == "repealed"
+            ):
                 continue
             tr = tr_map.get(clause.id)
             out.append(

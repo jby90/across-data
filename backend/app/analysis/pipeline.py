@@ -279,6 +279,8 @@ async def _analyse_dimension(
     cands: list[ClauseCandidate],
     feedback: list[str] | None,
     config: dict[str, Any],
+    *,
+    _attempt_budget: int = 2,
 ) -> tuple[dict[str, Any], ToolCall]:
     """单个维度的分析调用;模型不可用时返回带 error 的结果而不是编造内容。"""
     msgs = [
@@ -297,7 +299,7 @@ async def _analyse_dimension(
     error_kind = "model_unavailable"
     try:
         async with asyncio.timeout(config["timeout"]):
-            for attempts in range(1, 3):
+            for attempts in range(1, _attempt_budget + 1):
                 res: LlmResult = await call_llm_json(
                     msgs,
                     model=config["model"],
@@ -320,7 +322,7 @@ async def _analyse_dimension(
                         else str(exc)[:1800]
                     )
                     failures.append({"kind": "model_schema_error", "reason": detail})
-                    if attempts == 2:
+                    if attempts == _attempt_budget:
                         raise LlmUnavailableError(
                             "模型JSON Schema/事实键校验连续失败: " + detail
                         ) from exc
@@ -358,6 +360,38 @@ async def _analyse_dimension(
                 return finding
 
             grounded = await asyncio.gather(*[ground_one(f) for f in validated.findings])
+            refused = [f for f in grounded if f.get("_generation_gap")]
+            if refused and attempts < _attempt_budget:
+                # Reuse the existing two-selection-attempt budget, not a new retry loop.
+                # A source-limited refusal goes back to the selector with its actual reason.
+                # Preserve every first proposal/quote, even when a later selection succeeds.
+                revised, call = await _analyse_dimension(
+                    task,
+                    dim_code,
+                    dim_title,
+                    cands,
+                    [
+                        *(feedback or []),
+                        "上次所选证据无法支持完整规则，请重新选择完整依据；不能补字或放宽核验。",
+                        *[f["clause_id"] + ": " + f["_generation_gap"] for f in refused],
+                    ],
+                    config,
+                    _attempt_budget=_attempt_budget - attempts,
+                )
+                revised["tokens"] += used_tokens
+                call.arguments.update(
+                    retry=bool(feedback),
+                    schema_attempts=attempts + call.arguments["schema_attempts"],
+                    request_attempts=request_attempts + call.arguments["request_attempts"],
+                    failures=failures + call.arguments.get("failures", []),
+                    grounding_calls=grounding_ledger + call.arguments["grounding_calls"],
+                    selection_retries=[{"reason": "source_limited_refusal", "findings": grounded}],
+                )
+                call.duration_ms = int((time.perf_counter() - started) * 1000)
+                call.result_summary += (
+                    f"；含保留原证据的局部重选，合计已知Token {revised['tokens']}"
+                )
+                return revised, call
     except (LlmUnavailableError, TimeoutError) as exc:
         used_tokens += getattr(exc, "tokens", 0)
         failures.extend(getattr(exc, "failures", []))
