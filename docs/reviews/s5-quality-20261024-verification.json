@@ -1,0 +1,20 @@
+{
+  "backend_tests": 340,
+  "backend_failures": 0,
+  "frontend_logic_tests": 34,
+  "typecheck": "passed",
+  "production_builds": "passed",
+  "ruff_app_tests": "passed",
+  "browser_e2e": {
+    "passed": true,
+    "human_reviews_changed": 0,
+    "new_model_requests": 0
+  },
+  "preservation_file": "s5-quality-20261024-preservation.json",
+  "source_archives": 80,
+  "private_backup": "C:/Users/Jin/.cyshuhe-dev/backups/20261024-S5-quality-final",
+  "database_dump_sha256": "8d75874c7c47adc9951b07f1c28cd7bbc7bb4375121f2b0d032e5a1a481c79b2",
+  "secret_pattern_matches": 0,
+  "report_links": "passed",
+  "note": "真实模型评测及十次完整报告的成功/失败另见对应文件，不以测试通过冒充法律验收。"
+}

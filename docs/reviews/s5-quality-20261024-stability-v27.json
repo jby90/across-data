@@ -1,0 +1,189 @@
+{
+  "facts": {
+    "exterior_video_and_gnss": "采集8路环视视频与GNSS；车端模糊人脸与车牌后回传",
+    "cross_border_mechanism": "传输至中国研发中心，已签数据处理协议并完成评估",
+    "consent_and_notice": "车机弹窗明示同意，车身告示，已任命本地数据保护官",
+    "retention_and_blackbox": "黑匣子留存3年；常规个人数据180天后销毁",
+    "local_admission_and_safety_operator": "已提交路测准入申请，配备安全员与保险"
+  },
+  "runs": [
+    {
+      "task_id": "5c6104f6-981b-4e72-b08b-16898f4642b5",
+      "status": "completed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D8 Personal Data Protection (Amen 23.5: 依据限定生成Schema失败: [{'type': 'value_error', 'loc': (), 'msg': 'Value error, 必须且只能返回一条完整有依据的规则或明确证据缺口', 'ctx': {'error': ValueError('必须且只能返回一条完整有依据的规则或明确证据缺口')}}]"
+      ],
+      "backtrack_count": 1,
+      "tokens": 89775,
+      "elapsed_seconds": 58.73,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "2612b083-1801-4218-852f-445e23fa44bb",
+      "status": "failed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D1 Personal Data Protection Act 2 2: 所提供的原文仅为《2021年个人数据保护条例》第12(2)条的修订对照文本（替换子段(a)并修改子段(b)的表述），未包含第12(2)条的主句、适用场景及义务主体，无法据此形成完整的原子规则；需补充第12(2)条完整条文（含触发条件与法律后果）后才能陈述。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 83595,
+      "elapsed_seconds": 50.73,
+      "report_status": "analysis_failed",
+      "gap_kinds": {
+        "none": 7,
+        "analysis_error": 1
+      }
+    },
+    {
+      "task_id": "454ab848-bc5b-4b04-9dd8-572149652d08",
+      "status": "completed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D2 Road Traffic Act - Road Traffi 17.1: 所给原文仅列举数据记录器相关数据项（车速、车辆状态、操作员接管历史、传感器数据、内部及前后外部摄像头视频），未载明承担记录或提交义务的主体、触发条件、具体规范要求及法律后果；亦未给出汽车核心数据的定义或分类标准，无法形成完整原子规则。",
+        "D6 Personal Data Protection Act 2 10A: 结论中的数字「100」未出现在所选引文中;结论中的数字「1000」未出现在所选引文中;结论中的数字「2000」未出现在所选引文中;币种/金额不一致：DOLLAR_UNSPECIFIED 100;币种/金额不一致：DOLLAR_UNSPECIFIED 1000;币种/金额不一致：DOLLAR_UNSPECIFIED 2000",
+        "D7 Application for Trial of Auton 5.8: 所给原文仅列举测试认证、安全管理认证、质量管理认证等证书示例，未载明提交义务主体、触发条件、提交对象、流程节点或法律后果，且引文末尾不完整（止于“iv.”），无法形成关于属地市场准入认证或申报材料要求的完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 108656,
+      "elapsed_seconds": 60.78,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "abc5186d-c97f-497a-a65c-c9e4d5b3fded",
+      "status": "completed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 75942,
+      "elapsed_seconds": 30.43,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "f7aa1801-5c4e-42ad-a5ed-a5d3300f3099",
+      "status": "completed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D3 Personal Data Protection Act 2 9.1: 截取原文仅列出(a)至(e)项条件，未包含由这些条件所限定的主规则（即这些条件究竟允许或要求何种跨境传输行为），且(a)项引用的paragraph (4)内容未提供，无法形成完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 78841,
+      "elapsed_seconds": 44.56,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "8a5263ea-1c22-4636-b3b4-d5faca79003f",
+      "status": "completed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D1 Personal Data Protection Act 2 2: 引文仅为对《2021年个人数据保护条例》第12(2)条的修订指令，未提供该条完整原文，无法确定适用主体、触发条件及法律后果，缺少形成完整规则所需的上下文。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 84428,
+      "elapsed_seconds": 44.59,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "00231e9d-864c-4aa6-b8fe-3a61c9bf519c",
+      "status": "failed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D1 Personal Data Protection Act 2 2: 所提供的引文仅为对《2021年个人数据保护条例》第12(2)条的修订片段：它把第(2)(a)条替换为接收方为数据中介时可适用的四项认证体系名称清单，并把第(2)(b)条中的“Cross Border Privacy Rules System”替换为“Cross-Border Privacy Rules System 或 Global Cross-Border Privacy Rules System”。但第12(2)条正文（包括义务主体、触发条件，以及这些认证体系在跨境传输中作为何种条件的法律后果）未被提供，而且“data intermediary”的定义及该条与第(1)款的关系也缺失，因此无法拟出一条完整且有依据的规则。",
+        "D2 Road Traffic Act - Road Traffi 17.1: 所给引文仅为(c)至(g)的数据项列举片段，缺少规定记录主体、触发条件及该清单法律性质（如是否属于应记录数据或核心数据）的上文，无法形成完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 92785,
+      "elapsed_seconds": 64.84,
+      "report_status": "analysis_failed",
+      "gap_kinds": {
+        "none": 7,
+        "analysis_error": 1
+      }
+    },
+    {
+      "task_id": "cf6cd047-489f-4922-a94d-e61e05ebba3a",
+      "status": "completed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D2 Road Traffic Act - Road Traffi 17.1: 大模型调用失败(共 2 次请求): output_truncated",
+        "D8 Personal Data Protection Act 2 3: sentence_id 无效、重复或不连续；必须选择所给编号"
+      ],
+      "backtrack_count": 1,
+      "tokens": 98084,
+      "elapsed_seconds": 58.75,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "ca8a457e-e2e2-42dd-904d-296b3ddc15fd",
+      "status": "completed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D1 Personal Data Protection Act 2 2: 所给引文仅为对《2021年个人数据保护条例》第12(2)条的修订指令，未包含该条原有的义务内容、触发条件及法律后果，无法据此形成一条完整的法律规则。",
+        "D6 Personal Data Protection Act 2 10A: 结论中的数字「100」未出现在所选引文中;结论中的数字「1000」未出现在所选引文中;结论中的数字「2000」未出现在所选引文中;币种/金额不一致：DOLLAR_UNSPECIFIED 100;币种/金额不一致：DOLLAR_UNSPECIFIED 1000;币种/金额不一致：DOLLAR_UNSPECIFIED 2000",
+        "D6 Personal Data Protection Act 2 48J.1: 引文从“weight as the Commission considers appropriate to”开始，缺少其前文，无法确定委员会正在裁量的事项（如处罚种类、金额或程序）；第(i)项在“financial penalty”后截断，且引文未包含处罚分级、具体标准或金额，因此不能形成完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 110712,
+      "elapsed_seconds": 66.89,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "ea136183-3b6e-4c56-b3e0-150d3dedc2f3",
+      "status": "failed",
+      "workflow_version_id": "4befb6b5-95bc-4756-ad36-334e00a67aa2",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D2 Road Traffic Act - Road Traffi 17.1: 所给原文仅为(c)至(g)的数据项目列举，缺少义务主体、触发条件以及“应记录、保存或提交”等义务性表述的条文首部或上下文，无法形成完整规则。",
+        "D6 Personal Data Protection Act 2 10A: 结论中的数字「100」未出现在所选引文中;结论中的数字「1000」未出现在所选引文中;结论中的数字「2000」未出现在所选引文中;币种/金额不一致：DOLLAR_UNSPECIFIED 100;币种/金额不一致：DOLLAR_UNSPECIFIED 1000;币种/金额不一致：DOLLAR_UNSPECIFIED 2000"
+      ],
+      "backtrack_count": 1,
+      "tokens": 86668,
+      "elapsed_seconds": 52.76,
+      "report_status": "analysis_failed",
+      "gap_kinds": {
+        "none": 7,
+        "analysis_error": 1
+      }
+    }
+  ]
+}

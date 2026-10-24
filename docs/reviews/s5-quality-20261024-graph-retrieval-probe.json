@@ -1,0 +1,390 @@
+{
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "hits": 14,
+  "cases": [
+    {
+      "id": "S5-01",
+      "hit": false,
+      "retrieved": [
+        "9a845dcd-c7e0-4249-9456-0fee86b3ca9b",
+        "c317c452-8984-4405-9850-aecddc1c8dec",
+        "c9ab0ba5-ceda-4608-82dd-424bd4b29cdf",
+        "6d793141-0f69-4955-876d-f5105ba56890",
+        "9c11df70-2fde-4711-beea-d6fff0eedefd"
+      ],
+      "hint_count": 602
+    },
+    {
+      "id": "S5-02",
+      "hit": false,
+      "retrieved": [
+        "e86d4068-399f-45a5-adff-1f078a78fc2c",
+        "6d793141-0f69-4955-876d-f5105ba56890",
+        "22e9c070-a7fd-40e5-9595-79a1e05223ae",
+        "7d570fb1-223d-471c-8559-70caba4c872a",
+        "d0c9b082-b240-45c1-bc92-13be123c4392"
+      ],
+      "hint_count": 602
+    },
+    {
+      "id": "S5-03",
+      "hit": true,
+      "retrieved": [
+        "9d04d66a-0087-4109-86a0-8c18515058ff",
+        "c9ab0ba5-ceda-4608-82dd-424bd4b29cdf",
+        "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+        "810c6070-50bc-4974-b6b4-7e74872fe146",
+        "5d9962f3-514e-4e43-80ba-211bdb68f482"
+      ],
+      "hint_count": 602
+    },
+    {
+      "id": "S5-04",
+      "hit": false,
+      "retrieved": [
+        "66e22222-e862-45ee-8a56-1073cd6ce6e4",
+        "7d570fb1-223d-471c-8559-70caba4c872a",
+        "5c291ff6-5a0f-4c5c-9af5-756a55099986",
+        "b23c9b98-a65f-41af-a749-6ff4e074e80e",
+        "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de"
+      ],
+      "hint_count": 602
+    },
+    {
+      "id": "S5-05",
+      "hit": false,
+      "retrieved": [
+        "e12c5bd9-b910-43b8-8b97-5019725af0e2",
+        "a2f2ab42-5126-44ab-b837-22b66dd6b200",
+        "ab142f74-a006-4ca2-a7a3-8aadd38b46ed",
+        "4a76c1f6-c976-49d2-9d5a-6bb0ca6f6dac",
+        "4193d701-47d1-4e11-9cd4-c8b0ae944035"
+      ],
+      "hint_count": 602
+    },
+    {
+      "id": "S5-06",
+      "hit": true,
+      "retrieved": [
+        "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+        "6d793141-0f69-4955-876d-f5105ba56890",
+        "5fceb016-2474-4089-85aa-5da5db5db501",
+        "87b7fbf3-b7e7-4e89-806d-8cceaa3f5582",
+        "8efa3be1-0399-43d1-90a4-a831dcdb8a30"
+      ],
+      "hint_count": 602
+    },
+    {
+      "id": "S5-07",
+      "hit": false,
+      "retrieved": [
+        "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+        "ce6b5392-dbb0-477b-8f52-e9e6d9c69c00",
+        "5c291ff6-5a0f-4c5c-9af5-756a55099986",
+        "ae0363ad-7e7d-4dce-88f2-d7c3ebe466b2",
+        "6da74e33-b8fb-4042-b344-6b8e2aa7ab9e"
+      ],
+      "hint_count": 602
+    },
+    {
+      "id": "S5-08",
+      "hit": true,
+      "retrieved": [
+        "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+        "c9fb7efd-b689-4f26-9165-6b729880e0b1",
+        "5c291ff6-5a0f-4c5c-9af5-756a55099986",
+        "09f8319e-2420-49d3-98a7-74326a021f50",
+        "26aee55a-dc11-42b5-adc2-34e28765be74"
+      ],
+      "hint_count": 602
+    },
+    {
+      "id": "S5-09",
+      "hit": false,
+      "retrieved": [
+        "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+        "f3e72f00-5854-4c76-8601-b1444809c124",
+        "6005a4b2-5089-486f-83de-6767b204f0e9",
+        "5475be63-fc48-4f11-a17a-e2588e6af03d",
+        "ae80c1eb-b1cf-4e57-9add-5c0dab654c18"
+      ],
+      "hint_count": 57
+    },
+    {
+      "id": "S5-10",
+      "hit": true,
+      "retrieved": [
+        "6d475ef3-d53e-48b5-8210-319292473271",
+        "16565b71-baa1-4b78-aca9-456cf882f09a",
+        "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+        "9f926914-d84e-423d-9fc6-7f9cccec86dd",
+        "f3e72f00-5854-4c76-8601-b1444809c124"
+      ],
+      "hint_count": 57
+    },
+    {
+      "id": "S5-11",
+      "hit": false,
+      "retrieved": [
+        "ae80c1eb-b1cf-4e57-9add-5c0dab654c18",
+        "99ddbb13-5416-4753-830d-9b6fac3fd648",
+        "f3e72f00-5854-4c76-8601-b1444809c124",
+        "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+        "157d8a76-3b75-4f6c-ad11-7e9e642e3ffb"
+      ],
+      "hint_count": 57
+    },
+    {
+      "id": "S5-12",
+      "hit": true,
+      "retrieved": [
+        "86c35695-9944-422a-b837-f30c95738cd5",
+        "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+        "3fc6861e-286a-471b-83a9-40fa4633b9c1",
+        "42bd2004-81dc-4364-aeb7-bba24d1e8a6f",
+        "91bfec96-3e74-4614-8206-d2eab4cbaaa3"
+      ],
+      "hint_count": 57
+    },
+    {
+      "id": "S5-13",
+      "hit": false,
+      "retrieved": [
+        "58916f40-cef0-4c0d-8773-6c7a603d8b59",
+        "72a559c3-d36d-4fa0-9859-d667138eca4a",
+        "99ddbb13-5416-4753-830d-9b6fac3fd648",
+        "c049a22b-16c8-45ae-a3e1-824e1e4d0ade",
+        "2a674307-b329-4521-ab11-9796c659c0bd"
+      ],
+      "hint_count": 57
+    },
+    {
+      "id": "S5-14",
+      "hit": true,
+      "retrieved": [
+        "99ddbb13-5416-4753-830d-9b6fac3fd648",
+        "6005a4b2-5089-486f-83de-6767b204f0e9",
+        "f3e72f00-5854-4c76-8601-b1444809c124",
+        "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+        "91bfec96-3e74-4614-8206-d2eab4cbaaa3"
+      ],
+      "hint_count": 57
+    },
+    {
+      "id": "S5-15",
+      "hit": false,
+      "retrieved": [
+        "e9f0ded9-c38d-49e0-bdd1-0f406a12209b",
+        "15e74606-a6b0-486a-8d37-e05f183beb50",
+        "1c89d768-54d4-425d-a0c9-6be0ceaa3e1e",
+        "3f961886-5bb3-401c-be0e-a9ed6835676a",
+        "c7fddee1-c02a-48e8-9273-a535296e7ace"
+      ],
+      "hint_count": 80
+    },
+    {
+      "id": "S5-16",
+      "hit": true,
+      "retrieved": [
+        "61514193-a67c-4ca8-aeea-443ce50a0078",
+        "3f961886-5bb3-401c-be0e-a9ed6835676a",
+        "1c89d768-54d4-425d-a0c9-6be0ceaa3e1e",
+        "dbcaaf59-b153-4df6-94ab-61ac4bf1ba40",
+        "62f4dd0a-2883-45bd-ada8-5ed57fca595d"
+      ],
+      "hint_count": 80
+    },
+    {
+      "id": "S5-17",
+      "hit": false,
+      "retrieved": [
+        "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+        "b74b20bc-2242-41d4-bed2-232e90125d9f",
+        "cb785147-f2dd-4edd-a00d-815b2364d07b",
+        "1c89d768-54d4-425d-a0c9-6be0ceaa3e1e",
+        "61514193-a67c-4ca8-aeea-443ce50a0078"
+      ],
+      "hint_count": 80
+    },
+    {
+      "id": "S5-18",
+      "hit": false,
+      "retrieved": [
+        "6e8d81e1-c268-4837-a0fa-aa4e89661eda",
+        "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+        "4ac63298-ca3a-4182-82c4-1734cf3ca241",
+        "61514193-a67c-4ca8-aeea-443ce50a0078",
+        "2bc7c1e1-c315-4bad-8305-381c0b832a27"
+      ],
+      "hint_count": 80
+    },
+    {
+      "id": "S5-19",
+      "hit": false,
+      "retrieved": [
+        "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+        "4a79eabc-164b-4864-b4f5-82acd6945351",
+        "7de2887a-3c2c-4e61-8487-4d7cb42b7e1d",
+        "95e55007-4fef-4ac2-aa26-cf79884203ed",
+        "b2157a10-be2c-4700-a5cd-cb6bd2eb516c"
+      ],
+      "hint_count": 80
+    },
+    {
+      "id": "S5-20",
+      "hit": true,
+      "retrieved": [
+        "6049572a-1552-4ed2-b5f6-69fc3a6c47c0",
+        "95e55007-4fef-4ac2-aa26-cf79884203ed",
+        "f453649e-f22b-49c5-adb9-04da1fda3bed",
+        "e9f0ded9-c38d-49e0-bdd1-0f406a12209b",
+        "91359559-bc7f-4f5f-a2ae-783483d17099"
+      ],
+      "hint_count": 80
+    },
+    {
+      "id": "S5-21",
+      "hit": true,
+      "retrieved": [
+        "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+        "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "28a2c53f-283c-4e6c-b84c-02b9c47dff98",
+        "8cfea491-9d6e-412f-a503-cf2b21a6bbcb",
+        "a9573cd3-6a20-455c-a0ae-5b6e6925fb2d"
+      ],
+      "hint_count": 35
+    },
+    {
+      "id": "S5-22",
+      "hit": false,
+      "retrieved": [
+        "8cfea491-9d6e-412f-a503-cf2b21a6bbcb",
+        "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "21cff2ce-868d-416c-984f-0a4f716edfdb",
+        "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+        "a9573cd3-6a20-455c-a0ae-5b6e6925fb2d"
+      ],
+      "hint_count": 35
+    },
+    {
+      "id": "S5-23",
+      "hit": true,
+      "retrieved": [
+        "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+        "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+        "8cfea491-9d6e-412f-a503-cf2b21a6bbcb",
+        "2509421e-bd12-4875-afdd-8af44f9b1635"
+      ],
+      "hint_count": 35
+    },
+    {
+      "id": "S5-24",
+      "hit": true,
+      "retrieved": [
+        "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+        "467af361-5577-4df4-ab74-1a0dd0eda162",
+        "8cfea491-9d6e-412f-a503-cf2b21a6bbcb",
+        "a9573cd3-6a20-455c-a0ae-5b6e6925fb2d"
+      ],
+      "hint_count": 35
+    },
+    {
+      "id": "S5-25",
+      "hit": true,
+      "retrieved": [
+        "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+        "28a2c53f-283c-4e6c-b84c-02b9c47dff98",
+        "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+        "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "b3cf2404-4048-4628-ac26-42041e621557"
+      ],
+      "hint_count": 35
+    },
+    {
+      "id": "S5-26",
+      "hit": false,
+      "retrieved": [
+        "b3cf2404-4048-4628-ac26-42041e621557",
+        "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+        "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "a9573cd3-6a20-455c-a0ae-5b6e6925fb2d",
+        "8cfea491-9d6e-412f-a503-cf2b21a6bbcb"
+      ],
+      "hint_count": 35
+    },
+    {
+      "id": "S5-27",
+      "hit": false,
+      "retrieved": [
+        "c3e2062d-8547-4eba-aa1d-99236b78754c",
+        "b47438a2-9ec3-4180-9955-e54470e33795",
+        "53aad433-d736-4874-9284-a7b164ae4d17",
+        "5b3b1019-8efc-422f-8326-ca0317d16bee",
+        "1000e374-a567-497c-9093-9227d2eb9d39"
+      ],
+      "hint_count": 12
+    },
+    {
+      "id": "S5-28",
+      "hit": true,
+      "retrieved": [
+        "5b3b1019-8efc-422f-8326-ca0317d16bee",
+        "c3e2062d-8547-4eba-aa1d-99236b78754c",
+        "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+        "17caed9c-1157-4b13-abfc-59c528838f7a",
+        "53aad433-d736-4874-9284-a7b164ae4d17"
+      ],
+      "hint_count": 12
+    },
+    {
+      "id": "S5-29",
+      "hit": true,
+      "retrieved": [
+        "c3e2062d-8547-4eba-aa1d-99236b78754c",
+        "53aad433-d736-4874-9284-a7b164ae4d17",
+        "1000e374-a567-497c-9093-9227d2eb9d39",
+        "b47438a2-9ec3-4180-9955-e54470e33795",
+        "5b3b1019-8efc-422f-8326-ca0317d16bee"
+      ],
+      "hint_count": 12
+    },
+    {
+      "id": "S5-30",
+      "hit": false,
+      "retrieved": [
+        "1000e374-a567-497c-9093-9227d2eb9d39",
+        "d3a5563d-05c8-4a42-84f2-4bf24cce0694",
+        "65e0b0b9-d25c-474d-a095-82f0f7c3b81d",
+        "b47438a2-9ec3-4180-9955-e54470e33795",
+        "c3e2062d-8547-4eba-aa1d-99236b78754c"
+      ],
+      "hint_count": 12
+    },
+    {
+      "id": "S5-31",
+      "hit": false,
+      "retrieved": [
+        "6920f564-9dcd-4f0c-88ce-0f6001cf402f",
+        "b47438a2-9ec3-4180-9955-e54470e33795",
+        "5b3b1019-8efc-422f-8326-ca0317d16bee",
+        "1000e374-a567-497c-9093-9227d2eb9d39",
+        "53aad433-d736-4874-9284-a7b164ae4d17"
+      ],
+      "hint_count": 12
+    },
+    {
+      "id": "S5-32",
+      "hit": false,
+      "retrieved": [
+        "65e0b0b9-d25c-474d-a095-82f0f7c3b81d",
+        "53aad433-d736-4874-9284-a7b164ae4d17",
+        "5b3b1019-8efc-422f-8326-ca0317d16bee",
+        "c3e2062d-8547-4eba-aa1d-99236b78754c",
+        "9d8815d0-5207-41b5-b61d-a1012c65a486"
+      ],
+      "hint_count": 12
+    }
+  ]
+}

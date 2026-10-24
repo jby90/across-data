@@ -1,0 +1,181 @@
+{
+  "facts": {
+    "exterior_video_and_gnss": "采集8路环视视频与GNSS；车端模糊人脸与车牌后回传",
+    "cross_border_mechanism": "传输至中国研发中心，已签数据处理协议并完成评估",
+    "consent_and_notice": "车机弹窗明示同意，车身告示，已任命本地数据保护官",
+    "retention_and_blackbox": "黑匣子留存3年；常规个人数据180天后销毁",
+    "local_admission_and_safety_operator": "已提交路测准入申请，配备安全员与保险"
+  },
+  "runs": [
+    {
+      "task_id": "ce4996f4-3604-43a9-aa43-8a60d3e6986b",
+      "status": "failed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D1 Personal Data Protection Act 2 2: 所给原文仅为对《2021年个人数据保护条例》第12(2)条的修订条文（替换(a)项所列认证体系名称、修改(b)项中“Cross Border Privacy Rules System”的表述），未载明第12条本身的适用主体、触发条件与法律后果（如第12(1)条对传输设定的要求），也未提供(b)项的完整内容及被引用条款文本，无法据此形成一条完整的原子规则。",
+        "D2 Road Traffic Act - Road Traffi 17.1: 所提供的引文仅为一份从(c)项开始的列举清单，逐项列出车速（数据记录仪至少以2 Hz频率运行）、车辆状态（人工、自动驾驶、人工自动驾驶或远程操作模式）、自动驾驶模式下按接管类型划分的操作员接管历史、传感器数据，以及由车内前向摄像头（拍摄车内人员、方向盘和前挡风玻璃部分区域）和车外前后向摄像头拍摄的摄像头或视频影像；引文未包含引导条款，未说明该清单所属的数据类别定义、记录义务主体与触发条件，也未说明该清单是用于定义、记录义务还是其他用途，因此无法据其形成关于汽车核心数据定义与分类的完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 86531,
+      "elapsed_seconds": 48.61,
+      "report_status": "analysis_failed",
+      "gap_kinds": {
+        "none": 7,
+        "analysis_error": 1
+      }
+    },
+    {
+      "task_id": "bfc69290-2852-4d9b-9a3c-92c7d0b770b6",
+      "status": "completed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 72598,
+      "elapsed_seconds": 26.36,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "6d71bb04-410d-4b18-9a90-d8f99a3cb83e",
+      "status": "completed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D7 Application for Trial of Auton 5.8: 原文仅为安全管理、质量管理、网络安全认证类别的列举，缺少义务主体、触发条件、提交或取得认证的要求及法律后果，无法形成属地市场准入认证、申报材料或流程节点要求的完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 83395,
+      "elapsed_seconds": 36.53,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "eb31e099-113f-4663-a8a5-3aff5e128033",
+      "status": "completed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 78659,
+      "elapsed_seconds": 30.43,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "e9e0b541-7bfd-47cd-84a5-9ce7c408fcd5",
+      "status": "completed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D1 Personal Data Protection Act 2 2: 引文仅为对《2021年个人数据保护条例》第12(2)条的修订片段，未提供第12(2)条主文及该款所设定的义务主体、触发条件与法律后果，无法据此形成完整规则。",
+        "D2 Road Traffic Act - Road Traffi 17.1: 引文仅为数据记录器记录项目的列举（车速、车辆状态、接管历史、传感器数据及特定摄像头视频），缺少义务主体、记录或提交义务的触发条件及法律后果，无法形成完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 83499,
+      "elapsed_seconds": 40.48,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "ef90734e-f8fa-4205-bc7d-e969db723a42",
+      "status": "completed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D2 Road Traffic Act - Road Traffi 17.1: 所给引文仅为数据项目清单（车速、车辆状态、接管历史、传感器数据及摄像头/视频画面），未包含义务主体、记录或提交义务、触发条件及法律后果；主语不明，无法形成完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 77255,
+      "elapsed_seconds": 40.65,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "a4726f49-6162-4a91-9332-9ef00f61688b",
+      "status": "completed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D1 Personal Data Protection Act 2 2: 原文仅为对《2021年个人数据保护条例》第12(2)条的修订条款，未完整表述义务主体、触发条件及法律后果，无法形成完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 83784,
+      "elapsed_seconds": 36.43,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "f373780e-70dd-41ad-b9cd-2053f0825905",
+      "status": "completed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D1 Personal Data Protection Act 2 2: 所给原文仅为对《2021年个人数据保护条例》第12(2)条的修订片段，仅列举接收方为数据中介机构时可依据的认证体系名称（亚太经合组织处理器隐私认可体系、亚太经合组织跨境隐私规则体系、全球处理器隐私认可体系、全球跨境隐私规则体系），未载明第12(2)条的适用条件、义务主体及法律后果，无法形成完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 88854,
+      "elapsed_seconds": 42.56,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "d35822da-e037-4434-8d9f-cf6c4e7fafd8",
+      "status": "failed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D2 Road Traffic Act - Road Traffi 17.1: 原文仅为数据项列表（车速、车辆状态、接管历史、传感器数据、摄像头或视频 footage），缺少义务主体、记录要求（如‘应记录’）、法律后果及适用范围等完整规则要素，无法形成一条原子规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 79909,
+      "elapsed_seconds": 40.56,
+      "report_status": "analysis_failed",
+      "gap_kinds": {
+        "none": 7,
+        "analysis_error": 1
+      }
+    },
+    {
+      "task_id": "bba5fb8e-811a-4cfc-ae80-66459fb74770",
+      "status": "completed",
+      "workflow_version_id": "34e49211-1a69-42bb-80ab-687c2b5a96f8",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D6 Personal Data Protection Act 2 48J.1: 所给引文仅为监管机关在裁量罚款时须考量的因素清单（违规性质、严重程度与持续时间，受影响个人数据的类型与性质，是否获得经济利益或避免经济损失，是否采取补救措施及其及时性与有效性，是否已实施适当合规措施，此前是否违规，是否遵守第48I条或第48L(4)条指令，罚款是否相称有效，以及罚款可能影响），但引文起始处残缺，缺少“确定/处以罚款”的主句与主体表述，(i)项亦被截断；引文未载明违规行为的分级、罚款数额或计算标准、上限、其他处罚种类及追责程序，故无法据其形成关于处罚标准或追责机制的完整规则。"
+      ],
+      "backtrack_count": 1,
+      "tokens": 84930,
+      "elapsed_seconds": 36.46,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    }
+  ]
+}

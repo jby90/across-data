@@ -1,0 +1,75 @@
+{
+  "note": "first_quote_check_failed只描述交接时实际存在引文的核验；不代表所有维度完整，更不代表模型首次生成全对。须同时看完整报告成功数、局部重选/纠错和保留的失败记录。",
+  "cohorts": [
+    {
+      "file": "s5-20261024-stability.json",
+      "runs": 10,
+      "statuses": {
+        "completed": 10
+      },
+      "first_quote_check_failed": 1,
+      "backtracks": {
+        "0": 9,
+        "1": 1
+      },
+      "seconds": 245.91,
+      "tokens": 443714,
+      "runs_with_local_reselection": null,
+      "local_reselections": null,
+      "runs_with_local_grounding_correction": null
+    },
+    {
+      "file": "s5-quality-20261024-stability-v27.json",
+      "runs": 10,
+      "statuses": {
+        "completed": 7,
+        "failed": 3
+      },
+      "first_quote_check_failed": 9,
+      "backtracks": {
+        "1": 9,
+        "0": 1
+      },
+      "seconds": 533.06,
+      "tokens": 909486,
+      "runs_with_local_reselection": null,
+      "local_reselections": null,
+      "runs_with_local_grounding_correction": null
+    },
+    {
+      "file": "s5-quality-20261024-stability-v28.json",
+      "runs": 10,
+      "statuses": {
+        "failed": 2,
+        "completed": 8
+      },
+      "first_quote_check_failed": 8,
+      "backtracks": {
+        "1": 8,
+        "0": 2
+      },
+      "seconds": 379.07,
+      "tokens": 819414,
+      "runs_with_local_reselection": null,
+      "local_reselections": null,
+      "runs_with_local_grounding_correction": null
+    },
+    {
+      "file": "s5-quality-20261024-stability.json",
+      "runs": 10,
+      "statuses": {
+        "completed": 9,
+        "failed": 1
+      },
+      "first_quote_check_failed": 0,
+      "backtracks": {
+        "0": 10
+      },
+      "seconds": 362.9,
+      "tokens": 874145,
+      "runs_with_local_reselection": 8,
+      "local_reselections": 11,
+      "runs_with_local_grounding_correction": 4
+    }
+  ]
+}
