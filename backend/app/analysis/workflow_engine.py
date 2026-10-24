@@ -4,7 +4,6 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.analysis.models import (
@@ -563,6 +562,7 @@ def export_workflow_dsl(cfg: AgentWorkflowConfig) -> dict[str, Any]:
     return {
         "kind": "cyshuhe.agent_workflow",
         "schema_version": cfg.dsl_version,
+        "runtime_schema_version": cfg.runtime_schema_version,
         "exported_at": datetime.now(UTC).isoformat(),
         "security_policy": {
             "readonly_locked": True,
@@ -595,131 +595,16 @@ async def validate_and_import_workflow_dsl(
     dsl_payload: dict[str, Any],
     change_note: str,
     user_id: uuid.UUID | None,
-    activate_immediately: bool = True,
+    activate_immediately: bool = False,
 ) -> AgentWorkflowConfig:
-    """校验并导入多智能体编排配置 JSON，强制保持生产只读安全锁并生成新版本。"""
-    workflow_section = dsl_payload.get("workflow") or {}
-    graph_section = workflow_section.get("graph") or dsl_payload.get("graph") or {}
-    nodes = graph_section.get("nodes") or dsl_payload.get("nodes")
-    edges = graph_section.get("edges") or dsl_payload.get("edges")
-
-    if not isinstance(nodes, list) or len(nodes) < 3:
-        raise ValueError("导入失败：工作流配置必须包含至少 3 个智能体节点 (workflow.graph.nodes)")
-    if not isinstance(edges, list) or len(edges) < 2:
-        raise ValueError("导入失败：工作流配置必须包含至少 2 条有向连接边 (workflow.graph.edges)")
-
-    node_ids: set[str] = set()
-    normalized_nodes: list[dict[str, Any]] = []
-    for idx, n in enumerate(nodes):
-        if not isinstance(n, dict) or not n.get("node_id") or not n.get("title"):
-            raise ValueError(f"导入失败：第 {idx + 1} 个节点缺少 node_id 或 title")
-        nid = str(n["node_id"])
-        node_ids.add(nid)
-        copy_n = dict(n)
-        # 强制锁定只读属性，确保导入的配置在管理端同样不可直接调参或改代码
-        copy_n["readonly_locked"] = True
-        copy_n.setdefault(
-            "lock_reason",
-            "生产运行锁定：仅允许查看流程与连接详情，禁止在线调试模型参数或修改节点代码",
-        )
-        normalized_nodes.append(copy_n)
-
-    normalized_edges: list[dict[str, Any]] = []
-    for idx, e in enumerate(edges):
-        if not isinstance(e, dict):
-            raise ValueError(f"导入失败：第 {idx + 1} 条连线格式非法")
-        src = str(e.get("source_node_id") or "")
-        dst = str(e.get("target_node_id") or "")
-        if src not in node_ids or dst not in node_ids:
-            raise ValueError(f"导入失败：连线 {src} -> {dst} 引用了不存在的节点 ID")
-        normalized_edges.append(dict(e))
-
-    existing_versions = list(
-        (
-            await session.execute(
-                select(AgentWorkflowConfig)
-                .where(AgentWorkflowConfig.workflow_key == WORKFLOW_KEY)
-                .order_by(AgentWorkflowConfig.version_no.desc())
-            )
-        )
-        .scalars()
-        .all()
-    )
-    next_ver = (existing_versions[0].version_no + 1) if existing_versions else 1
+    from app.analysis.workflow_runtime import import_version
 
     if activate_immediately:
-        for old in existing_versions:
-            old.is_active = False
-
-    app_meta = dsl_payload.get("app") or {}
-    new_cfg = AgentWorkflowConfig(
-        workflow_key=WORKFLOW_KEY,
-        version_no=next_ver,
-        name=str(app_meta.get("name") or "汽车数据跨境八维度合规评估多智能体工作流"),
-        description=str(
-            app_meta.get("description")
-            or "涵盖信息采集追问、MCP 法规检索、八维度分析、程序化子串核验与退回补证、报告编制及 72h 修订联动的生产级多智能体工作流。"
-        ),
-        dsl_version=str(dsl_payload.get("schema_version") or "cyshuhe-dify-dsl/1.0"),
-        is_active=activate_immediately,
-        readonly_locked=True,
-        nodes_json=normalized_nodes,
-        edges_json=normalized_edges,
-        change_note=change_note.strip() or f"导入配置版本 v{next_ver}",
-        created_by=user_id,
-    )
-    session.add(new_cfg)
-    await session.commit()
-    await session.refresh(new_cfg)
-    return new_cfg
-
-
-BASELINE_REV = "r3"
+        raise ValueError("导入不能自动激活；请保存后由管理员显式激活版本")
+    return await import_version(session, dsl_payload, change_note, user_id)
 
 
 async def ensure_workflow_config(session: AsyncSession) -> AgentWorkflowConfig:
-    """确保存在与当前实现一致的内置基线编排;基线升级时追加新版本,不覆盖历史版本。"""
-    marker = f"[baseline-{BASELINE_REV}]"
-    rows = list(
-        (
-            await session.execute(
-                select(AgentWorkflowConfig)
-                .where(AgentWorkflowConfig.workflow_key == WORKFLOW_KEY)
-                .order_by(AgentWorkflowConfig.version_no.desc())
-            )
-        )
-        .scalars()
-        .all()
-    )
-    active = next((r for r in rows if r.is_active), None)
-    has_baseline = any((r.change_note or "").startswith(marker) for r in rows)
-    if has_baseline and active is not None:
-        return active
-    if has_baseline:
-        target = next(r for r in rows if (r.change_note or "").startswith(marker))
-        target.is_active = True
-        await session.commit()
-        return target
+    from app.analysis.workflow_runtime import ensure_baseline
 
-    for r in rows:
-        r.is_active = False
-    cfg = AgentWorkflowConfig(
-        workflow_key=WORKFLOW_KEY,
-        version_no=(rows[0].version_no + 1) if rows else 1,
-        name="汽车数据跨境八维度合规评估多智能体工作流",
-        description=(
-            "输入触发 → 信息采集与追问 → 关键词检索法规条款 → "
-            "八维度分析(DeepSeek) ↔ 程序化依据子串核验(含退回补证回路) → "
-            "八维度报告编制 → 法规修订联动。"
-        ),
-        dsl_version="cyshuhe-dify-dsl/1.0",
-        is_active=True,
-        readonly_locked=True,
-        nodes_json=DEFAULT_WORKFLOW_NODES,
-        edges_json=DEFAULT_WORKFLOW_EDGES,
-        change_note=f"{marker} 内置基线,与实际流水线一致(工具与模型均为真实调用)",
-    )
-    session.add(cfg)
-    await session.commit()
-    await session.refresh(cfg)
-    return cfg
+    return await ensure_baseline(session)

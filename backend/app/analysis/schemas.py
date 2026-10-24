@@ -89,6 +89,8 @@ class WorkflowNodeOut(BaseModel):
     input_variables: list[dict[str, str]] = Field(default_factory=list)
     output_variables: list[dict[str, str]] = Field(default_factory=list)
     responsibility_desc: str
+    runtime_settings: dict[str, Any] = Field(default_factory=dict)
+    configurable_fields: list[str] = Field(default_factory=list)
 
 
 class WorkflowEdgeOut(BaseModel):
@@ -110,6 +112,8 @@ class AgentWorkflowConfigOut(BaseModel):
     dsl_version: str
     is_active: bool
     readonly_locked: bool
+    runtime_schema_version: str | None = None
+    executable: bool = False
     nodes: list[WorkflowNodeOut]
     edges: list[WorkflowEdgeOut]
     change_note: str | None = None
@@ -123,6 +127,7 @@ class WorkflowVersionSummaryOut(BaseModel):
     dsl_version: str
     is_active: bool
     readonly_locked: bool
+    executable: bool = False
     nodes_count: int
     edges_count: int
     change_note: str | None = None
@@ -132,7 +137,7 @@ class WorkflowVersionSummaryOut(BaseModel):
 class WorkflowDslImportIn(BaseModel):
     dsl_payload: dict[str, Any]
     change_note: str = Field(default="管理员导入多智能体编排配置", max_length=500)
-    activate_immediately: bool = True
+    activate_immediately: bool = False
 
 
 class FollowUpQuestionOut(BaseModel):
@@ -173,6 +178,7 @@ class ToolCallTraceOut(BaseModel):
 
 
 class AnalysisStepTraceOut(BaseModel):
+    workflow_version_id: uuid.UUID | None = None
     id: uuid.UUID
     seq_no: int
     agent_node_id: str
@@ -308,6 +314,7 @@ class AnalysisTaskDetailOut(BaseModel):
     total_duration_ms: int
     mcp_calls_count: int
     backtrack_count: int
+    workflow_version_id: uuid.UUID | None = None
     workflow_version_no: int
     messages: list[ChatMessageOut] = Field(default_factory=list)
     created_at: datetime

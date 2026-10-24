@@ -54,6 +54,12 @@ from app.analysis.workflow_engine import (
     export_workflow_dsl,
     validate_and_import_workflow_dsl,
 )
+from app.analysis.workflow_runtime import (
+    PARAMETERS,
+    RUNTIME_SCHEMA,
+    activate_version,
+    execution_settings,
+)
 from app.core.db import get_session
 from app.iam.deps import (
     Principal,
@@ -111,7 +117,27 @@ def _to_workflow_out(cfg: AgentWorkflowConfig) -> AgentWorkflowConfigOut:
         dsl_version=cfg.dsl_version,
         is_active=cfg.is_active,
         readonly_locked=True,
-        nodes=[WorkflowNodeOut(**n) for n in (cfg.nodes_json or [])],
+        runtime_schema_version=cfg.runtime_schema_version,
+        executable=cfg.runtime_schema_version == RUNTIME_SCHEMA,
+        nodes=[
+            WorkflowNodeOut(
+                **n,
+                runtime_settings=execution_settings(n)
+                if cfg.runtime_schema_version == RUNTIME_SCHEMA
+                else {},
+                configurable_fields=sorted(
+                    PARAMETERS.get(n["node_id"], set())
+                    | (
+                        {"model_name", "system_prompt"}
+                        if n["node_id"] == "node_dimension_analyst"
+                        else set()
+                    )
+                )
+                if cfg.runtime_schema_version == RUNTIME_SCHEMA
+                else [],
+            )
+            for n in (cfg.nodes_json or [])
+        ],
         edges=[WorkflowEdgeOut(**e) for e in (cfg.edges_json or [])],
         change_note=cfg.change_note,
         created_at=cfg.created_at,
@@ -292,6 +318,7 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
         inp_snap, out_snap = _enrich_trace_snapshots(t, tr, rvs, evaluated_missing)
         trace_outs.append(
             AnalysisStepTraceOut(
+                workflow_version_id=tr.workflow_version_id,
                 id=tr.id,
                 seq_no=tr.seq_no,
                 agent_node_id=tr.agent_node_id,
@@ -382,6 +409,7 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
         total_duration_ms=t.total_duration_ms,
         mcp_calls_count=t.mcp_calls_count,
         backtrack_count=t.backtrack_count,
+        workflow_version_id=t.workflow_version_id,
         workflow_version_no=t.workflow_version_no,
         created_at=t.created_at,
         updated_at=t.updated_at,
@@ -443,6 +471,7 @@ async def list_workflow_versions(
             dsl_version=c.dsl_version,
             is_active=c.is_active,
             readonly_locked=True,
+            executable=c.runtime_schema_version == RUNTIME_SCHEMA,
             nodes_count=len(c.nodes_json or []),
             edges_count=len(c.edges_json or []),
             change_note=c.change_note,
@@ -453,30 +482,20 @@ async def list_workflow_versions(
 
 
 @admin_router.post(
-    "/workflow/versions/{version_no}/activate",
+    "/workflow/versions/{version}/activate",
     response_model=AgentWorkflowConfigOut,
 )
 async def activate_workflow_version(
-    version_no: int,
-    _: PlatformAdminDep,
+    version: str,
+    user: PlatformAdminDep,
     session: SessionDep,
 ) -> AgentWorkflowConfigOut:
-    cfgs = list(
-        (
-            await session.execute(
-                select(AgentWorkflowConfig).where(AgentWorkflowConfig.workflow_key == WORKFLOW_KEY)
-            )
-        )
-        .scalars()
-        .all()
-    )
-    target = next((c for c in cfgs if c.version_no == version_no), None)
-    if target is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="目标工作流版本不存在")
-    for c in cfgs:
-        c.is_active = c.version_no == version_no
-    await session.commit()
-    await session.refresh(target)
+    try:
+        target = await activate_version(session, version, user.user_id)
+    except LookupError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
     return _to_workflow_out(target)
 
 

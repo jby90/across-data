@@ -139,7 +139,7 @@ async def test_workflow_config_export_import_and_admin_only(client, seed):
 
     dsl = (await client.get("/api/admin/agent-studio/workflow/export", headers=admin)).json()
     dsl["workflow"]["graph"]["nodes"][0]["readonly_locked"] = False
-    body = {"dsl_payload": dsl, "change_note": "单测", "activate_immediately": True}
+    body = {"dsl_payload": dsl, "change_note": "单测", "activate_immediately": False}
     # 复核员可以查看,但不能导入或激活
     deny = await client.post("/api/admin/agent-studio/workflow/import", headers=reviewer, json=body)
     assert deny.status_code == 403

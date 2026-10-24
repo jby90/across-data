@@ -8,11 +8,13 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
@@ -26,6 +28,9 @@ class AgentWorkflowConfig(Base):
     __tablename__ = "agent_workflow_configs"
     __table_args__ = (
         UniqueConstraint("workflow_key", "version_no", name="uq_workflow_key_version"),
+        Index(
+            "uq_workflow_active", "workflow_key", unique=True, postgresql_where=text("is_active")
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -38,6 +43,7 @@ class AgentWorkflowConfig(Base):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
     readonly_locked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    runtime_schema_version: Mapped[str | None] = mapped_column(String(32), nullable=True)
     nodes_json: Mapped[list[dict]] = mapped_column(JSONB, nullable=False, default=list)
     edges_json: Mapped[list[dict]] = mapped_column(JSONB, nullable=False, default=list)
     change_note: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -90,6 +96,12 @@ class AnalysisTask(Base):
     total_duration_ms: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     mcp_calls_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     backtrack_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    workflow_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("agent_workflow_configs.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
     workflow_version_no: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -112,6 +124,12 @@ class AnalysisStepTrace(Base):
         UUID(as_uuid=True),
         ForeignKey("analysis_tasks.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
+    )
+    workflow_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("agent_workflow_configs.id", ondelete="RESTRICT"),
+        nullable=True,
         index=True,
     )
     seq_no: Mapped[int] = mapped_column(Integer, nullable=False)
