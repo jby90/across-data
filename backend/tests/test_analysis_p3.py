@@ -89,6 +89,18 @@ def _fake_llm_factory(bad_first: bool):
 
         calls["n"] += 1
         payload = json.loads(messages[1]["content"])
+        if payload.get("phase") == "write_from_evidence":
+            return LlmResult(
+                data={
+                    "obligation": "须确保境外接收方提供可比保护",
+                    "risk_level": "HIGH",
+                    "gap": "",
+                },
+                prompt_tokens=100,
+                completion_tokens=50,
+                duration_ms=7,
+                model="fake-model",
+            )
         findings = []
         retry = "verifier_feedback_must_fix" in payload
         for c in payload["candidate_clauses"][:1]:

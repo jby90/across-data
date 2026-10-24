@@ -1,4 +1,5 @@
 """Read-only diagnosis of frozen retrieval misses and independent judge rejections."""
+
 import argparse
 import asyncio
 import json
@@ -11,12 +12,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 from sqlalchemy import text  # noqa: E402
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine  # noqa: E402
 
-from app.analysis.tools import DIMENSION_KEYWORDS, ToolBox, clause_relevance, is_usable_clause_text  # noqa: E402
+from app.analysis.tools import (
+    DIMENSION_KEYWORDS,
+    ToolBox,
+    clause_relevance,
+    is_usable_clause_text,
+)  # noqa: E402
 
 
 async def run(args):
     data = json.loads(args.evaluation.read_text(encoding="utf-8"))
-    engine = create_async_engine(args.database_url.replace("postgresql://", "postgresql+asyncpg://"))
+    engine = create_async_engine(
+        args.database_url.replace("postgresql://", "postgresql+asyncpg://")
+    )
     misses, rejected = [], []
     try:
         async with async_sessionmaker(engine)() as session:
@@ -27,41 +35,91 @@ async def run(args):
                 box = boxes.setdefault(cc, ToolBox(session, cc))
                 candidates = await box._load_candidates()
                 ranked = sorted(
-                    [(c, clause_relevance(c, DIMENSION_KEYWORDS[dim])[0])
-                     for c in candidates if is_usable_clause_text(c.text)],
-                    key=lambda row: (-row[1], row[0].document_title, row[0].label, row[0].clause_id),
+                    [
+                        (c, clause_relevance(c, DIMENSION_KEYWORDS[dim])[0])
+                        for c in candidates
+                        if is_usable_clause_text(c.text)
+                    ],
+                    key=lambda row: (
+                        -row[1],
+                        row[0].document_title,
+                        row[0].label,
+                        row[0].clause_id,
+                    ),
                 )
                 for expected in case["expected_clauses"]:
-                    if any(c["clause_id"] == expected["clause_id"] for c in case["retrieved"]):
+                    if any(
+                        c["clause_id"] == expected["clause_id"]
+                        for c in case["retrieved"]
+                    ):
                         continue
-                    source = next((c for c in candidates if c.clause_id == expected["clause_id"]), None)
-                    rank = next((i + 1 for i, (c, _) in enumerate(ranked) if c.clause_id == expected["clause_id"]), None)
+                    source = next(
+                        (c for c in candidates if c.clause_id == expected["clause_id"]),
+                        None,
+                    )
+                    rank = next(
+                        (
+                            i + 1
+                            for i, (c, _) in enumerate(ranked)
+                            if c.clause_id == expected["clause_id"]
+                        ),
+                        None,
+                    )
                     category = (
-                        "source_unavailable_or_held" if source is None
-                        else "text_quality_gate" if not is_usable_clause_text(source.text)
-                        else "dimension_keyword_miss" if clause_relevance(source, DIMENSION_KEYWORDS[dim])[0] == 0
+                        "source_unavailable_or_held"
+                        if source is None
+                        else "text_quality_gate"
+                        if not is_usable_clause_text(source.text)
+                        else "dimension_keyword_miss"
+                        if clause_relevance(source, DIMENSION_KEYWORDS[dim])[0] == 0
                         else "ranked_below_five"
                     )
-                    misses.append({"question_id": case["question_id"], "country_code": cc,
-                        "category": category, "expected": expected, "rank": rank,
-                        "text_length": len(source.text) if source else None,
-                        "original_text": source.text if source else None})
+                    misses.append(
+                        {
+                            "question_id": case["question_id"],
+                            "country_code": cc,
+                            "category": category,
+                            "expected": expected,
+                            "rank": rank,
+                            "text_length": len(source.text) if source else None,
+                            "original_text": source.text if source else None,
+                        }
+                    )
                 for judge in case["judgments"]:
                     if judge["supported"] != "yes":
                         finding = case["findings"][judge["index"]]
-                        rejected.append({"question_id": case["question_id"], "country_code": cc,
-                            "conclusion": finding["obligation"], "quote": finding.get("quote"),
-                            "clause_id": finding["clause_id"], "verdict": judge["supported"],
-                            "reason": judge["reason"]})
+                        rejected.append(
+                            {
+                                "question_id": case["question_id"],
+                                "country_code": cc,
+                                "conclusion": finding["obligation"],
+                                "quote": finding.get("quote"),
+                                "clause_id": finding["clause_id"],
+                                "verdict": judge["supported"],
+                                "reason": judge["reason"],
+                            }
+                        )
             await session.rollback()
     finally:
         await engine.dispose()
-    result = {"suite_sha256": data["suite_sha256"], "source_batch": data["batch_id"],
+    result = {
+        "suite_sha256": data["suite_sha256"],
+        "source_batch": data["batch_id"],
         "miss_counts": dict(Counter(m["category"] for m in misses)),
-        "unsupported_count": len(rejected), "misses": misses, "unsupported": rejected,
-        "note": "诊断读取基线检索逻辑与原始Judge理由，不改评分、不做人工法律复核。"}
-    args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({k: v for k, v in result.items() if k not in ("misses", "unsupported")}, ensure_ascii=False))
+        "unsupported_count": len(rejected),
+        "misses": misses,
+        "unsupported": rejected,
+        "note": "诊断读取基线检索逻辑与原始Judge理由，不改评分、不做人工法律复核。",
+    }
+    args.output.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {k: v for k, v in result.items() if k not in ("misses", "unsupported")},
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":

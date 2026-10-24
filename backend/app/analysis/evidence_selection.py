@@ -6,12 +6,30 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SELECTION_VERSION = "source-sentences-v1"
-_BOUNDARY = re.compile(r"(?<=[.!?。！？؟؛;])(?:[ \t]+|\r?\n)|\n[ \t]*\n")
+SELECTION_VERSION = "legal-units-v2"
+# Semicolons join legal lists to their chapeau; abbreviations must not split Art. / Sec.
+_BOUNDARY = re.compile(r"(?<=[.!?])(?:[ \t]+|\r?\n)|(?<=[。！？؟])\s*|\n[ \t]*\n")
+_ABBREVIATIONS = {"art", "arts", "sec", "secs", "no", "nos", "mr", "mrs", "dr"}
+_DEFINITION = re.compile(
+    r'(?m)^[ \t]*[“"«][^\n”"»]{1,120}[”"»]\s+(?:means|includes|refers to)\b',
+    re.IGNORECASE,
+)
+_CHILD = re.compile(r"^(?:[-–—•●▪◦*\uf0b7\uf076]|\(?[\dA-Za-z]+[).、]|[\d]+\s*[-–])")
+_QUALIFIER = re.compile(
+    r"^(?:except\b|unless\b|provided\b|however\b|subject to\b|sauf\b|toutefois\b|"
+    r"néanmoins\b|par dérogation\b|لكن|إلا|غير أن|ولكن|但是|但|除外|除非)",
+    re.IGNORECASE,
+)
 
 
 def sentence_catalog(text: str) -> list[dict]:
-    offsets = [0, *(m.end() for m in _BOUNDARY.finditer(text)), len(text)]
+    boundaries = []
+    for m in _BOUNDARY.finditer(text):
+        tail = re.search(r"([A-Za-z]+)\.$", text[: m.start()])
+        if tail and tail.group(1).lower() in _ABBREVIATIONS:
+            continue
+        boundaries.append(m.end())
+    offsets = [0, *boundaries, *(m.start() for m in _DEFINITION.finditer(text)), len(text)]
     offsets = sorted(set(offsets))
     spans = []
     for start, end in zip(offsets, offsets[1:], strict=False):
@@ -48,6 +66,40 @@ def select_quote(text: str, sentence_ids: list[int]) -> dict:
         "selection_version": SELECTION_VERSION,
         "sentence_ids": sentence_ids,
     }
+
+
+def select_legal_quote(text: str, sentence_ids: list[int]) -> dict:
+    """Close list references/provisos inside this unchanged clause, never across source IDs."""
+    selected = select_quote(text, sentence_ids)
+    catalog = sentence_catalog(text)
+    first, last = sentence_ids[0] - 1, sentence_ids[-1] - 1
+    lead = catalog[first]["text"].lstrip()
+    if first and _CHILD.match(lead):
+        first -= 1
+        while first and _CHILD.match(catalog[first]["text"].lstrip()):
+            first -= 1  # nearest list chapeau; do not pull in unrelated earlier definitions
+    if first and _QUALIFIER.match(lead):
+        first -= 1
+    while last + 1 < len(catalog) and _QUALIFIER.match(catalog[last + 1]["text"].lstrip()):
+        last += 1
+    expanded = select_quote(text, list(range(first + 1, last + 2)))
+    expanded["selected_sentence_ids"] = sentence_ids
+    expanded["anchor_quote_start"] = selected["quote_start"]
+    expanded["anchor_quote_end"] = selected["quote_end"]
+    return expanded
+
+
+class GroundedClaim(BaseModel):
+    model_config = ConfigDict(strict=True, extra="forbid")
+    obligation: str = Field(default="", max_length=2000)
+    risk_level: Literal["HIGH", "MEDIUM", "LOW"] = "MEDIUM"
+    gap: str = Field(default="", max_length=1500)
+
+    @model_validator(mode="after")
+    def exactly_rule_or_gap(self):
+        if bool(self.obligation.strip()) == bool(self.gap.strip()):
+            raise ValueError("必须且只能返回一条完整有依据的规则或明确证据缺口")
+        return self
 
 
 class FindingSelection(BaseModel):

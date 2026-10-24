@@ -14,6 +14,7 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.analysis.retrieval import RETRIEVAL_VERSION, ClauseIndex
 from app.ingestion.layout_safety import layout_held_clause_ids
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import document_available
@@ -51,7 +52,7 @@ DIMENSION_KEYWORDS: dict[str, list[str]] = {
     ],
     "D3": [
         "transfer",
-        "outside singapore",
+        "abroad",
         "overseas",
         "cross-border",
         "transfert",
@@ -214,6 +215,7 @@ class ToolBox:
         self._seq = 0
         self.calls: list[ToolCall] = []
         self._candidates_cache: list[ClauseCandidate] | None = None
+        self._index: ClauseIndex | None = None
 
     def _record(
         self,
@@ -334,26 +336,41 @@ class ToolBox:
         return result
 
     async def search_effective_clauses(
-        self, dimension: str, keywords: list[str] | None = None, top_k: int = 5
+        self,
+        dimension: str,
+        keywords: list[str] | None = None,
+        top_k: int = 5,
+        query: str | None = None,
     ) -> list[ClauseCandidate]:
         started = time.perf_counter()
         kws = [k.lower() for k in (keywords or DIMENSION_KEYWORDS.get(dimension, []))]
-        scored: list[ClauseCandidate] = []
-        for c in await self._load_candidates():
-            if not is_usable_clause_text(c.text):
-                continue
-            score, matched = clause_relevance(c, kws)
-            if not matched:
-                continue
-            scored.append(
-                ClauseCandidate(**{**c.__dict__, "score": score, "matched_keywords": matched})
+        if self._index is None:
+            candidates = [c for c in await self._load_candidates() if is_usable_clause_text(c.text)]
+            self._index = ClauseIndex(candidates)
+        from app.analysis.workflow_engine import EIGHT_DIMENSIONS_SPEC
+
+        dimension_title = dict(EIGHT_DIMENSIONS_SPEC).get(dimension, "")
+        scored = self._index.rank(" ".join(kws) + " " + dimension_title, query)
+        top = [
+            ClauseCandidate(
+                **{
+                    **c.__dict__,
+                    "score": score,
+                    "matched_keywords": [k for k in kws if k in c.text.lower()],
+                }
             )
-        scored.sort(key=lambda x: (-x.score, x.document_title, x.label, x.clause_id))
-        top = scored[:top_k]
+            for c, score in scored[:top_k]
+        ]
         self._record(
             "search_effective_clauses",
-            "限定国家的法规条款关键词检索",
-            {"dimension": dimension, "keywords": kws[:6], "top_k": top_k},
+            "限定国家的多语种问题检索与排序融合",
+            {
+                "dimension": dimension,
+                "keywords": kws[:6],
+                "top_k": top_k,
+                "query": query,
+                "retrieval_version": RETRIEVAL_VERSION,
+            },
             f"命中 {len(scored)} 条,取前 {len(top)} 条: "
             + ("; ".join(f"{t.document_title[:24]} {t.label}" for t in top) or "无"),
             started,

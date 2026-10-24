@@ -13,6 +13,7 @@ from sqlalchemy import select
 from app.analysis import pipeline
 from app.analysis.llm import LlmUnavailableError, call_llm_json
 from app.analysis.models import AnalysisTask
+from app.analysis.retrieval import RETRIEVAL_VERSION, task_query
 from app.analysis.tools import ToolBox
 from app.analysis.workflow_engine import EIGHT_DIMENSIONS_SPEC, ensure_workflow_config
 from app.analysis.workflow_runtime import execution_settings, require_executable
@@ -41,6 +42,8 @@ class JudgeResponse(BaseModel):
 
 
 def aggregate(cases):
+    # Derive technical errors from all generation phases, including historical immutable payloads.
+    cases = [generation_diagnostics(c) for c in cases]
     total_expected = sum(c["retrieval_expected"] for c in cases)
     retrieved = sum(c["retrieval_hits"] for c in cases)
     selections = sum(c["findings_total"] for c in cases)
@@ -76,6 +79,19 @@ def aggregate(cases):
     }
 
 
+def generation_diagnostics(case):
+    errors = [
+        str(f["_generation_error"]) for f in case.get("findings", []) if f.get("_generation_error")
+    ]
+    gaps = [str(f["_generation_gap"]) for f in case.get("findings", []) if f.get("_generation_gap")]
+    return {
+        **case,
+        "generation_error_count": len(errors),
+        "evidence_gap_count": len(gaps),
+        "analysis_error": case.get("analysis_error") or ("；".join(errors) if errors else None),
+    }
+
+
 async def evaluate_case(session, question_id, batch_id, actor_id):
     frozen = suite()
     question = next((c for c in frozen["cases"] if c["id"] == question_id), None)
@@ -89,7 +105,11 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
     started = time.perf_counter()
     tb = ToolBox(session, question["country_code"])
     # Same retrieval as production; never inject expected IDs or answer keywords.
-    candidates = await tb.search_effective_clauses(question["dimension_code"], top_k=5)
+    candidates = await tb.search_effective_clauses(
+        question["dimension_code"],
+        top_k=5,
+        query=task_query(question["facts"], question["dimension_code"]),
+    )
     expected = question["expected_clauses"]
     hits = sum(
         any(
@@ -176,6 +196,7 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
         "workflow_version_id": str(cfg.id),
         "workflow_version_no": cfg.version_no,
         "temperature": config["temperature"],
+        "retrieval_version": RETRIEVAL_VERSION,
         "model": config["model"],
         "retrieval_expected": len(expected),
         "retrieval_hits": hits,
@@ -200,6 +221,7 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
         "tokens": tokens,
         "elapsed_seconds": round(time.perf_counter() - started, 3),
     }
+    case = generation_diagnostics(case)
     # Immutable server-computed results, never trust client-submitted scores.
     row = KnowledgeAuditRecord(
         target_type="s5_evaluation",

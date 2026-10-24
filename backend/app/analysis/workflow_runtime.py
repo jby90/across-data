@@ -12,7 +12,7 @@ from app.analysis.prompts import ANALYSIS_SYSTEM_PROMPT
 from app.core.config import get_settings
 from app.knowledge.history import snapshot
 
-RUNTIME_SCHEMA = "s5-source-selection-v1"
+RUNTIME_SCHEMA = "s5-grounded-rules-v2"
 # Applicable fields only: deterministic nodes do not pretend to use LLM parameters.
 PARAMETERS = {
     "node_start": set(),
@@ -181,9 +181,7 @@ async def ensure_baseline(session: AsyncSession) -> AgentWorkflowConfig:
             readonly_locked=True,
             nodes_json=baseline_nodes(),
             edges_json=copy.deepcopy(DEFAULT_WORKFLOW_EDGES),
-            change_note=(
-                "[baseline-s5] 原文句子选择协议基线；旧库升级时仅创建待激活版本，不改变历史激活决定"
-            ),
+            change_note=("[baseline-s5-quality] 问题检索与依据限定生成；旧库仅追加待激活版本"),
         )
         session.add(current)
         await session.flush()

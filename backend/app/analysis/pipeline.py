@@ -17,9 +17,15 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from app.analysis.evidence_selection import AnalysisResponse, select_quote, sentence_catalog
+from app.analysis.evidence_selection import (
+    AnalysisResponse,
+    GroundedClaim,
+    select_legal_quote,
+    sentence_catalog,
+)
 from app.analysis.llm import LlmResult, LlmUnavailableError, call_llm_json
 from app.analysis.models import AgentWorkflowConfig, AnalysisStepTrace, AnalysisTask, ReportVersion
+from app.analysis.retrieval import task_query
 from app.analysis.tools import (
     ClauseCandidate,
     ToolBox,
@@ -157,16 +163,92 @@ def _build_user_message(
     feedback: list[str] | None,
 ) -> str:
     payload: dict[str, Any] = {
+        "phase": "select_evidence",
         "country": task.country_code,
         "vehicle_model": task.vehicle_model,
         "scenario": task.scenario_type,
         "business_facts": task.facts_json or {},
+        "question": task_query(task.facts_json or {}, dim_code),
         "dimension": {"code": dim_code, "title": dim_title},
         "candidate_clauses": [_candidate_payload(c) for c in cands],
     }
     if feedback:
         payload["verifier_feedback_must_fix"] = feedback
     return json.dumps(payload, ensure_ascii=False)
+
+
+_GROUNDING_GATE = asyncio.Semaphore(6)
+
+
+async def _ground_selection(task, dim_code, dim_title, finding, candidates, config):
+    """One isolated evidence unit per generation. Other clauses/draft rules are not sent."""
+    result = dict(finding)
+    # A selection-stage draft is not a legal conclusion.
+    result["obligation"] = ""
+    result["quote_zh"] = ""
+    candidate = next((c for c in candidates if c.clause_id == finding["clause_id"]), None)
+    if candidate is None:
+        return result, {"requests": 0, "tokens": 0, "error": "clause_id不在检索结果中"}
+    try:
+        result.update(select_legal_quote(candidate.text, finding["sentence_ids"]))
+    except ValueError as exc:
+        return result, {"requests": 0, "tokens": 0, "error": str(exc)}
+    message = {
+        "phase": "write_from_evidence",
+        "dimension": {"code": dim_code, "title": dim_title},
+        "business_fact": str(task.facts_json[finding["fact_key"]]),
+        "evidence": {"quote": result["quote"]},
+    }
+    tokens = requests = 0
+    failures = []
+    for attempt in range(2):
+        try:
+            async with _GROUNDING_GATE:
+                response = await call_llm_json(
+                    [
+                        {"role": "system", "content": config["system_prompt"]},
+                        {"role": "user", "content": json.dumps(message, ensure_ascii=False)},
+                    ],
+                    model=config["model"],
+                    temperature=config["temperature"],
+                    timeout=config["timeout"],
+                    max_tokens=2000,
+                )
+            tokens += response.total_tokens
+            requests += response.request_attempts
+            failures.extend(response.failures)
+            claim = GroundedClaim.model_validate(response.data)
+            result.update(obligation=claim.obligation, risk_level=claim.risk_level)
+            if claim.gap:
+                result["_generation_gap"] = claim.gap
+            return result, {
+                "requests": requests,
+                "tokens": tokens,
+                "failures": failures,
+                "gap": claim.gap,
+            }
+        except LlmUnavailableError as exc:
+            tokens += exc.tokens
+            requests += len(exc.failures)
+            failures.extend(exc.failures)
+            result["_generation_error"] = str(exc)
+            break
+        except ValueError as exc:
+            detail = (
+                str(exc.errors(include_input=False, include_url=False))
+                if hasattr(exc, "errors")
+                else str(exc)
+            )
+            failures.append({"kind": "grounding_schema_error", "reason": detail[:1600]})
+            message["schema_feedback"] = detail[:1600]
+            if attempt == 1:
+                result["_generation_error"] = "依据限定生成Schema失败: " + detail[:1600]
+    return result, {
+        "requests": requests,
+        "tokens": tokens,
+        "failures": failures,
+        "error": result.get("_generation_error"),
+    }
 
 
 async def _analyse_dimension(
@@ -190,6 +272,7 @@ async def _analyse_dimension(
     used_tokens = 0
     failures = []
     request_attempts = 0
+    grounding_ledger = []
     error_kind = "model_unavailable"
     try:
         async with asyncio.timeout(config["timeout"]):
@@ -231,6 +314,29 @@ async def _analyse_dimension(
                             detail,
                         ],
                     )
+
+            async def ground_one(finding):
+                nonlocal used_tokens, request_attempts
+                finding, entry = await _ground_selection(
+                    task,
+                    dim_code,
+                    dim_title,
+                    finding.model_dump(),
+                    cands,
+                    config,
+                )
+                used_tokens += entry["tokens"]
+                request_attempts += entry["requests"]
+                grounding_ledger.append(
+                    {
+                        **entry,
+                        "clause_id": finding["clause_id"],
+                        "sentence_ids": finding["sentence_ids"],
+                    }
+                )
+                return finding
+
+            grounded = await asyncio.gather(*[ground_one(f) for f in validated.findings])
     except (LlmUnavailableError, TimeoutError) as exc:
         used_tokens += getattr(exc, "tokens", 0)
         failures.extend(getattr(exc, "failures", []))
@@ -247,6 +353,7 @@ async def _analyse_dimension(
                 "error_kind": error_kind,
                 "failures": failures,
                 "request_attempts": request_attempts + len(getattr(exc, "failures", [])),
+                "grounding_calls": grounding_ledger,
             },
             result_summary=str(exc) or "模型调用超过配置时限",
             duration_ms=int((time.perf_counter() - started) * 1000),
@@ -259,6 +366,11 @@ async def _analyse_dimension(
             "findings": [],
         }, call
     data = validated.model_dump()
+    data["evidence_selections"] = [
+        {"clause_id": f.clause_id, "sentence_ids": f.sentence_ids, "fact_key": f.fact_key}
+        for f in validated.findings
+    ]
+    data["findings"] = grounded
     for finding in data["findings"]:
         finding["business_fact"] = str(task.facts_json[finding["fact_key"]])
         finding["quote_zh"] = ""
@@ -275,14 +387,16 @@ async def _analyse_dimension(
             "schema_attempts": attempts,
             "failures": failures,
             "request_attempts": request_attempts,
+            "grounding_calls": grounding_ledger,
             "model": config["model"],
             "temperature": config["temperature"],
             "timeout": config["timeout"],
         },
         result_summary=(
-            f"返回 {len(data['findings'])} 条结论;Token {res.prompt_tokens}+{res.completion_tokens}"
+            f"选证据后独立生成 {len(data['findings'])} 项规则/缺口；已知Token {used_tokens}"
         ),
-        duration_ms=res.duration_ms,
+        duration_ms=int((time.perf_counter() - started) * 1000),
+        verified=not any(entry.get("error") or entry.get("gap") for entry in grounding_ledger),
     )
     return data, call
 
@@ -303,8 +417,15 @@ def _verify_dimension(
             problems.append(f"{dim_code}: 引用了检索结果之外的条款")
             continue
         try:
-            f.update(select_quote(cand.text, f.get("sentence_ids") or []))
-            ok, issues = verify_finding(f, cand.text)
+            f.update(
+                select_legal_quote(
+                    cand.text, f.get("selected_sentence_ids") or f.get("sentence_ids") or []
+                )
+            )
+            if f.get("_generation_error") or f.get("_generation_gap"):
+                ok, issues = False, [f.get("_generation_error") or f["_generation_gap"]]
+            else:
+                ok, issues = verify_finding(f, cand.text)
         except ValueError as exc:
             ok, issues = False, [str(exc)]
         f["_ok"] = ok
@@ -400,6 +521,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             dim_cands[code] = await tb.search_effective_clauses(
                 code,
                 top_k=runtime["node_mcp_retriever"]["top_k"],
+                query=task_query(task.facts_json or {}, code),
             )
         all_cands = {c.clause_id: c for lst in dim_cands.values() for c in lst}
         await tb.query_kg_obligations(list(all_cands))
@@ -484,7 +606,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         summary=(
             f"对 {len(active)} 个有候选条款的维度调用模型分析,共得到 "
             f"{sum(len(r.get('findings', [])) for r in results.values())} 条待核验结论"
-            + (f";{len(errors)} 个维度模型调用失败,如实标记为待核查" if errors else "")
+            + (f";{len(errors)} 个维度模型/依据生成未通过,如实标记为待核查" if errors else "")
         ),
         calls=llm_calls,
         tokens=tokens,
@@ -505,6 +627,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                     "tokens": r.get("tokens", 0),
                     "summary": r.get("summary", ""),
                     "findings_count": len(r.get("findings", [])),
+                    "evidence_selections": r.get("evidence_selections", []),
                     "findings": [
                         {
                             "business_fact": str(f.get("business_fact") or ""),
@@ -557,6 +680,9 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                         "quote_start": f.get("quote_start"),
                         "quote_end": f.get("quote_end"),
                         "source_text_sha256": f.get("source_text_sha256"),
+                        "selected_sentence_ids": f.get("selected_sentence_ids", []),
+                        "anchor_quote_start": f.get("anchor_quote_start"),
+                        "anchor_quote_end": f.get("anchor_quote_end"),
                         "issues": list(f.get("_issues") or []),
                     }
                 )
@@ -659,6 +785,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                         "tokens": results[code].get("tokens", 0),
                         "summary": results[code].get("summary", ""),
                         "findings_count": len(results[code].get("findings", [])),
+                        "evidence_selections": results[code].get("evidence_selections", []),
                         "findings": [
                             {
                                 "business_fact": str(f.get("business_fact") or ""),
@@ -747,6 +874,9 @@ async def _compile(
                             "quote_end",
                             "source_text_sha256",
                             "selection_version",
+                            "selected_sentence_ids",
+                            "anchor_quote_start",
+                            "anchor_quote_end",
                         )
                     },
                 }
@@ -777,6 +907,9 @@ async def _compile(
                             "quote_end",
                             "source_text_sha256",
                             "selection_version",
+                            "selected_sentence_ids",
+                            "anchor_quote_start",
+                            "anchor_quote_end",
                         )
                     },
                 }
