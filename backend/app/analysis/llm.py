@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 import httpx
@@ -23,10 +23,11 @@ _BAD_ESCAPE = re.compile(r'\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})')
 class LlmUnavailableError(RuntimeError):
     """未配置密钥或接口调用失败。"""
 
-    def __init__(self, message: str, *, kind="model_unavailable", tokens=0):
+    def __init__(self, message: str, *, kind="model_unavailable", tokens=0, failures=None):
         super().__init__(message)
         self.kind = kind
         self.tokens = tokens
+        self.failures = failures or []
 
 
 @dataclass
@@ -36,6 +37,8 @@ class LlmResult:
     completion_tokens: int
     duration_ms: int
     model: str
+    request_attempts: int = 1
+    failures: list[dict] = field(default_factory=list)
 
     @property
     def total_tokens(self) -> int:
@@ -75,6 +78,7 @@ async def call_llm_json(
     error_kind = "model_unavailable"
     started = time.perf_counter()
     prompt_tokens = completion_tokens = 0
+    failures = []
     for _attempt in range(MAX_ATTEMPTS):
         try:
             async with httpx.AsyncClient(timeout=request_timeout) as client:
@@ -108,8 +112,11 @@ async def call_llm_json(
             last_error = (
                 f"HTTP {exc.response.status_code}"
                 if isinstance(exc, httpx.HTTPStatusError)
+                else "output_truncated"
+                if isinstance(exc, ValueError) and str(exc) == "模型输出被长度上限截断"
                 else type(exc).__name__
             )
+            failures.append({"attempt": _attempt + 1, "kind": error_kind, "reason": last_error})
             continue
         return LlmResult(
             data=data,
@@ -117,9 +124,12 @@ async def call_llm_json(
             completion_tokens=completion_tokens,
             duration_ms=int((time.perf_counter() - started) * 1000),
             model=str(body.get("model") or requested_model),
+            request_attempts=_attempt + 1,
+            failures=failures,
         )
     raise LlmUnavailableError(
         f"大模型调用失败(共 {MAX_ATTEMPTS} 次请求): {last_error}",
         kind=error_kind,
         tokens=prompt_tokens + completion_tokens,
+        failures=failures,
     )

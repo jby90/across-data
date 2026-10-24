@@ -7,6 +7,10 @@ ANALYSIS_SYSTEM_PROMPT = (
     "每条结论只选择候选 clause_id 和连续的 sentence_ids；句号后的编号不是法律条号。"
     "不要输出 quote、quote_zh、法律条号、法规名或逐字引文：系统会从原文偏移截取并绑定来源。"
     "fact_key 必须从 business_facts 的键选择，系统填入用户原话，不得编造业务事实。\n"
+    "obligation只提炼法律规则，不复述用户业务事实或做场景比较；业务事实已经由系统单列。"
+    "不要在obligation复述‘用户自定留存期限是否满足’，也不要插入条号或章节编号。"
+    "保留所选原句的主体、触发条件、例外与适用边界，不把例外扩展为一般规则，"
+    "不从法规标题、别的条款或常识补充所选句子没有的内容。\n"
     "obligation 用中文说明所选引文支持的义务。用户的留存天数、采集路数、金额只是业务事实，"
     "不得写成法规要求；其中数字、百分比、币种和日期必须由所选句子支持，不能借用其他句子。"
     "引用数字时保留原文写法和单位，例如 $100,000、1 million，勿换算成100万新元；"
@@ -17,5 +21,7 @@ ANALYSIS_SYSTEM_PROMPT = (
     '"clause_id":"候选ID","sentence_ids":[1],"obligation":"被引文支持的义务",'
     '"risk_level":"HIGH"}],"recommendations":[],"gaps":""}。'
     "findings最多10项，sentence_ids为1到6个连续的整数；risk_level只能是HIGH/MEDIUM/LOW。"
+    "为防输出截断，每维度只选最直接相关的至多3条规则，每条obligation控制在100汉字内。"
+    "summary留空，recommendations为空数组，gaps控制在100汉字内，不展开其他维度。"
     "收到 verifier_feedback_must_fix 时，根据同一消息的完整编号原文定向修正；不支持的结论删除。"
 )

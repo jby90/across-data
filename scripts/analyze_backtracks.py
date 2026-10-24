@@ -104,7 +104,7 @@ def summarize(tasks, traces):
     }
 
 
-async def diagnose(url, limit):
+async def diagnose(url, limit, task_ids=None):
     conn = await asyncpg.connect(url.replace("postgresql+asyncpg://", "postgresql://"))
     try:
         async with conn.transaction(readonly=True, isolation="repeatable_read"):
@@ -112,8 +112,10 @@ async def diagnose(url, limit):
                 dict(r)
                 for r in await conn.fetch(
                     """SELECT id,status,backtrack_count
-                FROM analysis_tasks ORDER BY created_at DESC LIMIT $1""",
+                FROM analysis_tasks WHERE ($2::uuid[] IS NULL OR id=ANY($2::uuid[]))
+                ORDER BY created_at DESC LIMIT $1""",
                     limit,
+                    task_ids,
                 )
             ]
             traces = [
@@ -135,8 +137,19 @@ if __name__ == "__main__":
     parser.add_argument("--limit", type=int, default=30)
     parser.add_argument("--json", type=Path, required=True)
     parser.add_argument("--compare", type=Path)
+    parser.add_argument(
+        "--task-ids", type=Path, help="stability_p3.py的结果，仅统计该次连续任务"
+    )
     args = parser.parse_args()
-    result = asyncio.run(diagnose(args.database_url, args.limit))
+    import uuid
+
+    task_ids = None
+    if args.task_ids:
+        task_ids = [
+            uuid.UUID(r["task_id"])
+            for r in json.loads(args.task_ids.read_text(encoding="utf-8"))["runs"]
+        ]
+    result = asyncio.run(diagnose(args.database_url, args.limit, task_ids))
     if args.compare:
         before = json.loads(args.compare.read_text(encoding="utf-8"))
         result["comparison"] = {

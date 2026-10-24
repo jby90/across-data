@@ -188,6 +188,8 @@ async def _analyse_dimension(
     started = time.perf_counter()
     attempts = 0
     used_tokens = 0
+    failures = []
+    request_attempts = 0
     error_kind = "model_unavailable"
     try:
         async with asyncio.timeout(config["timeout"]):
@@ -199,6 +201,8 @@ async def _analyse_dimension(
                     timeout=config["timeout"],
                 )
                 used_tokens += res.total_tokens
+                request_attempts += res.request_attempts
+                failures.extend(res.failures)
                 try:
                     validated = AnalysisResponse.model_validate(res.data)
                     if any(f.fact_key not in (task.facts_json or {}) for f in validated.findings):
@@ -211,6 +215,7 @@ async def _analyse_dimension(
                         if hasattr(exc, "errors")
                         else str(exc)[:1800]
                     )
+                    failures.append({"kind": "model_schema_error", "reason": detail})
                     if attempts == 2:
                         raise LlmUnavailableError(
                             "模型JSON Schema/事实键校验连续失败: " + detail
@@ -228,6 +233,7 @@ async def _analyse_dimension(
                     )
     except (LlmUnavailableError, TimeoutError) as exc:
         used_tokens += getattr(exc, "tokens", 0)
+        failures.extend(getattr(exc, "failures", []))
         if error_kind != "model_format_error":
             error_kind = getattr(exc, "kind", "model_timeout")
         call = ToolCall(
@@ -239,6 +245,8 @@ async def _analyse_dimension(
                 "candidates": len(cands),
                 "schema_attempts": attempts,
                 "error_kind": error_kind,
+                "failures": failures,
+                "request_attempts": request_attempts + len(getattr(exc, "failures", [])),
             },
             result_summary=str(exc) or "模型调用超过配置时限",
             duration_ms=int((time.perf_counter() - started) * 1000),
@@ -265,6 +273,8 @@ async def _analyse_dimension(
             "candidates": len(cands),
             "retry": bool(feedback),
             "schema_attempts": attempts,
+            "failures": failures,
+            "request_attempts": request_attempts,
             "model": config["model"],
             "temperature": config["temperature"],
             "timeout": config["timeout"],

@@ -635,7 +635,7 @@ onUnmounted(() => {
               <span>八维度合规评估报告 v{{ report.version_no }}</span>
               <el-tag
                 :type="
-                  report.source_integrity_alerts?.length
+                  report.status === 'analysis_failed' || report.source_integrity_alerts?.length
                     ? 'danger'
                     : report.is_partial_sample
                       ? 'warning'
@@ -643,7 +643,9 @@ onUnmounted(() => {
                 "
               >
                 {{
-                  report.source_integrity_alerts?.length
+                  report.status === 'analysis_failed'
+                    ? '分析技术失败 · 不可交付'
+                    : report.source_integrity_alerts?.length
                     ? '来源异常 · 暂停导出'
                     : report.is_partial_sample
                       ? '部分样稿 · 有维度缺依据'
@@ -688,7 +690,7 @@ onUnmounted(() => {
                 />
               </el-select>
               <el-dropdown trigger="click"
-                ><el-button type="primary" size="small">导出报告</el-button
+                ><el-button type="primary" size="small" :disabled="report.status === 'analysis_failed'">导出报告</el-button
                 ><template #dropdown
                   ><el-dropdown-menu
                     ><el-dropdown-item data-testid="btn-export-docx" @click="download('docx')"

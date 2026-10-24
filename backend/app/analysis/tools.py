@@ -32,6 +32,10 @@ DIMENSION_KEYWORDS: dict[str, list[str]] = {
         "حماية البيانات",
         "scope",
         "application",
+        "application of act",
+        "champ d’application",
+        "s’applique",
+        "تطبق",
     ],
     "D2": [
         "personal data",
@@ -135,6 +139,7 @@ class ClauseCandidate:
     translated_text: str = ""
     score: float = 0.0
     matched_keywords: list[str] = field(default_factory=list)
+    heading: str = ""
 
 
 @dataclass
@@ -182,6 +187,22 @@ def clause_label(number: str | None, ordinal: int, page: int | None) -> str:
     if page:
         return f"第{page}页"
     return f"第{ordinal + 1}段"
+
+
+def clause_relevance(candidate: ClauseCandidate, keywords: list[str]) -> tuple[float, list[str]]:
+    """Rank actual clause content/heading; a repeated document title is not body evidence."""
+    body = _norm(candidate.text).casefold()
+    # Parsed heading preferred; leading source text handles numbered FR/AR clauses.
+    first_line = candidate.text.splitlines()[0] if candidate.text.splitlines() else ""
+    heading = _norm(candidate.heading or (first_line if len(first_line) <= 120 else ""))
+    heading = heading.casefold()[:220]
+    matched = [k for k in keywords if k in body]
+    if not matched:
+        return 0, []
+    heading_hits = sum(k in heading for k in keywords)
+    title_hits = sum(k in candidate.document_title.casefold() for k in keywords)
+    score = sum(min(body.count(k), 3) for k in matched) + 2 * len(matched)
+    return score + 8 * heading_hits + 0.15 * title_hits, matched
 
 
 class ToolBox:
@@ -280,6 +301,7 @@ class ToolBox:
                     source_url=doc.source_url,
                     review_status=tr.review_status if tr else "pending_review",
                     legal_status=ver.legal_status,
+                    heading=clause.heading or "",
                     translated_text=tr.translated_text if tr else "",
                 )
             )
@@ -320,16 +342,13 @@ class ToolBox:
         for c in await self._load_candidates():
             if not is_usable_clause_text(c.text):
                 continue
-            hay = f"{c.document_title} {c.text}".lower()
-            matched = [k for k in kws if k in hay]
+            score, matched = clause_relevance(c, kws)
             if not matched:
                 continue
-            hits = sum(min(hay.count(k), 3) for k in matched)
-            score = hits + 2 * len(matched) + (1.5 if not c.label.startswith("第") else 0)
             scored.append(
                 ClauseCandidate(**{**c.__dict__, "score": score, "matched_keywords": matched})
             )
-        scored.sort(key=lambda x: x.score, reverse=True)
+        scored.sort(key=lambda x: (-x.score, x.document_title, x.label, x.clause_id))
         top = scored[:top_k]
         self._record(
             "search_effective_clauses",

@@ -240,8 +240,17 @@ interface TaskDetail {
 
 interface BenchmarkSummary {
   total_cases: number
-  hit_cases: number
-  retrieval_hit_rate_pct: number
+  completed_cases: number
+  recall_at_5: number | null
+  retrieval_hits: number
+  retrieval_expected: number
+  quote_fidelity: number | null
+  faithful_findings: number
+  findings_total: number
+  fact_consistency: number | null
+  supported_findings: number
+  judged_findings: number
+  technical_error_cases: number
   human_review_status: string
   note: string
   cases: Array<{
@@ -249,11 +258,14 @@ interface BenchmarkSummary {
     country_code: string
     dimension_code: string
     scenario_question: string
-    required_phrases: string[]
-    matched_document_title: string
-    matched_clause_label: string
-    passed: boolean
-    evidence_snippet: string
+    retrieval_hits: number
+    retrieval_expected: number
+    faithful_findings: number
+    findings_total: number
+    judged_findings: number
+    supported_findings: number
+    analysis_error: string | null
+    judge_error: string | null
   }>
 }
 
@@ -505,7 +517,7 @@ const importDslText = ref('')
 const importChangeNote = ref('导入维护更新的多智能体编排配置包')
 const importing = ref(false)
 
-// 10道独立评测集抽屉
+// 真实评测结果只读查看，打开抽屉不触发模型调用
 const benchmarkDrawerVisible = ref(false)
 const benchmarkData = ref<BenchmarkSummary | null>(null)
 const loadingBenchmarks = ref(false)
@@ -937,7 +949,7 @@ async function openBenchmarksDrawer() {
   benchmarkDrawerVisible.value = true
   loadingBenchmarks.value = true
   try {
-    benchmarkData.value = await api.get<BenchmarkSummary>('/api/admin/agent-studio/benchmarks')
+    benchmarkData.value = await api.get<BenchmarkSummary>('/api/admin/agent-studio/evaluations/latest')
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '加载评测集结果失败')
   } finally {
@@ -1090,7 +1102,7 @@ onUnmounted(() => {
               data-testid="btn-open-benchmarks"
               @click="openBenchmarksDrawer"
             >
-              检索评测
+              质量评测
             </el-button>
           </div></el-popover
         >
@@ -2317,10 +2329,10 @@ onUnmounted(() => {
       </template>
     </el-dialog>
 
-    <!-- 10 道检索命中评测抽屉 -->
+    <!-- 工程来源标注集：真实检索、逐字核验、独立模型审查，人工复核单列 -->
     <el-drawer
       v-model="benchmarkDrawerVisible"
-      title="检索命中评测 (H01 - H10,自动检查,非法律准确率)"
+      title="分析质量评测 · 五国 / 八维度"
       size="65%"
     >
       <div v-loading="loadingBenchmarks">
@@ -2331,9 +2343,18 @@ onUnmounted(() => {
           <div class="benchmark-summary-cards">
             <div class="bm-card">
               <div class="bm-num">
-                {{ benchmarkData.hit_cases }} / {{ benchmarkData.total_cases }}
+                {{ benchmarkData.recall_at_5 === null ? '未评测' : `${(benchmarkData.recall_at_5 * 100).toFixed(1)}%` }}
               </div>
-              <div class="bm-label">检索命中 ({{ benchmarkData.retrieval_hit_rate_pct }}%)</div>
+              <div class="bm-label">Recall@5 · {{ benchmarkData.retrieval_hits }}/{{ benchmarkData.retrieval_expected }} 条期望条款</div>
+            </div>
+            <div class="bm-card">
+              <div class="bm-num">{{ benchmarkData.quote_fidelity === null ? '未评测' : `${(benchmarkData.quote_fidelity * 100).toFixed(1)}%` }}</div>
+              <div class="bm-label">引文忠实度 · {{ benchmarkData.faithful_findings }}/{{ benchmarkData.findings_total }} 条结论</div>
+            </div>
+            <div class="bm-card">
+              <div class="bm-num">{{ benchmarkData.fact_consistency === null ? '未评测' : `${(benchmarkData.fact_consistency * 100).toFixed(1)}%` }}</div>
+              <div class="bm-label">引文支持结论 · llm_judged · {{ benchmarkData.supported_findings }}/{{ benchmarkData.judged_findings }}</div>
+              <div class="bm-label">Judge覆盖 {{ benchmarkData.judged_findings }}/{{ benchmarkData.findings_total }} 条</div>
             </div>
             <div class="bm-card">
               <div class="bm-num">人工核对</div>
@@ -2342,25 +2363,17 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
+          <p data-testid="evaluation-completeness">已完成 {{ benchmarkData.completed_cases }}/{{ benchmarkData.total_cases }} 题 · 技术错误 {{ benchmarkData.technical_error_cases }} 题</p>
 
           <el-table :data="benchmarkData.cases" border stripe size="small" style="margin-top: 16px">
             <el-table-column prop="question_id" label="题号" width="65" />
             <el-table-column prop="country_code" label="国家" width="65" />
             <el-table-column prop="dimension_code" label="维度" width="65" />
             <el-table-column prop="scenario_question" label="测试问题" min-width="220" />
-            <el-table-column label="要求出现的原文词句" min-width="150">
-              <template #default="{ row }">{{ row.required_phrases.join(' + ') }}</template>
-            </el-table-column>
-            <el-table-column prop="matched_document_title" label="命中法规" min-width="160" />
-            <el-table-column prop="matched_clause_label" label="命中条款" width="100" />
-            <el-table-column label="检索命中" width="90">
-              <template #default="{ row }">
-                <el-tag :type="row.passed ? 'success' : 'danger'" size="small">
-                  {{ row.passed ? '命中' : '未命中' }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="evidence_snippet" label="命中的原文片段" min-width="220" />
+            <el-table-column label="期望条款" width="95"><template #default="{ row }">{{ row.retrieval_hits }}/{{ row.retrieval_expected }}</template></el-table-column>
+            <el-table-column label="引文通过" width="95"><template #default="{ row }">{{ row.faithful_findings }}/{{ row.findings_total }}</template></el-table-column>
+            <el-table-column label="Judge支持" width="100"><template #default="{ row }">{{ row.supported_findings }}/{{ row.judged_findings }}</template></el-table-column>
+            <el-table-column label="技术错误" min-width="180"><template #default="{ row }">{{ row.analysis_error || row.judge_error || '无' }}</template></el-table-column>
           </el-table>
         </template>
       </div>
