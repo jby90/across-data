@@ -2039,15 +2039,19 @@ async def _extract_knowledge_for_country_impl(
         if not in_extraction_scope:
             # 范围外文件保留图谱节点(带范围标签),但清除此前可能由它产生的未复核语义边
             clause_ids_of_doc = [c.id for c in clauses]
-            await session.execute(
-                update(KgEdge)
-                .where(
-                    KgEdge.evidence_clause_id.in_(clause_ids_of_doc),
-                    KgEdge.is_structural.is_(False),
-                    KgEdge.review_status == GraphReviewStatus.PENDING_REVIEW.value,
+            from app.knowledge.history import snapshot
+
+            for old_edge in (
+                await session.scalars(
+                    select(KgEdge).where(
+                        KgEdge.evidence_clause_id.in_(clause_ids_of_doc),
+                        KgEdge.is_structural.is_(False),
+                        KgEdge.review_status == GraphReviewStatus.PENDING_REVIEW.value,
+                    )
                 )
-                .values(review_status=GraphReviewStatus.SUPERSEDED.value)
-            )
+            ).all():
+                snapshot(session, old_edge, "before_scope_exclusion")
+                old_edge.review_status = GraphReviewStatus.SUPERSEDED.value
 
         first_clause = clauses[0]
         site = await session.get(SourceSite, doc.site_id)

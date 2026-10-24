@@ -62,6 +62,41 @@ admin_router = APIRouter(prefix="/api/admin/knowledge", tags=["knowledge-admin"]
 user_router = APIRouter(prefix="/api/knowledge", tags=["knowledge-user"])
 
 
+@admin_router.get("/parsed-graph-revisions")
+async def parsed_graph_revisions(
+    _: AdminOrReviewerDep,
+    session: SessionDep,
+    country_code: str = Query(..., pattern="^(SG|EG|TN|MA|LB)$"),
+) -> list[dict]:
+    """Page-based graph proposals are for review, never active report/legal evidence."""
+    from app.knowledge.history import payload_hash
+    from app.knowledge.models import KnowledgeAuditRecord
+
+    rows = (
+        await session.scalars(
+            select(KnowledgeAuditRecord)
+            .join(Clause, Clause.id == KnowledgeAuditRecord.target_id)
+            .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+            .join(Document, Document.id == DocumentVersion.document_id)
+            .where(
+                KnowledgeAuditRecord.action == "kg_parsed_source_result",
+                Document.country_code == country_code,
+            )
+            .order_by(KnowledgeAuditRecord.created_at.desc())
+        )
+    ).all()
+    return [
+        dict(
+            id=str(row.id),
+            clause_id=str(row.target_id),
+            content_hash=row.content_hash,
+            payload=row.payload,
+        )
+        for row in rows
+        if payload_hash(row.payload) == row.content_hash
+    ]
+
+
 def _status_badge(review_status: str) -> tuple[bool, str]:
     if review_status == TranslationReviewStatus.APPROVED.value:
         return True, "已复核(可作法律依据)"
