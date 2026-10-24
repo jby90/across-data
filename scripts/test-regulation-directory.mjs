@@ -82,3 +82,20 @@ test('admin and user directory components stay identical', async () => {
     new URL(`../apps/${app}/src/components/RegulationDirectory.vue`, import.meta.url), 'utf8')))
   assert.equal(files[0].replace(/\r\n/g, '\n'), files[1].replace(/\r\n/g, '\n'))
 })
+
+test('30 additional countries and custom file levels remain discoverable without modifying labels or algorithms', () => {
+  const codes = 'US CA BR MX AR CL PE CO GB FR DE ES IT PT NL BE SE NO FI DK PL CZ AT CH JP KR IN ID TH VN'.split(' ')
+  const documents = codes.flatMap(code => ['LAW', 'GUIDANCE', 'CUSTOM_CIRCULAR'].flatMap(type =>
+    Array.from({ length: 9 }, (_, i) => doc(`${code}-${type}-${i}`, code, type, '同名合成测试文件'))))
+  const countries = directoryCountries(documents)
+  assert.equal(countries.length, 30)
+  for (const country of countries) {
+    assert.equal(country.count, 27)
+    const levels = directoryLevels(documents, country.code)
+    assert.equal(levels.length, 3)
+    assert.equal(levels.find(g => g.key === 'CUSTOM_CIRCULAR').items.length, 9)
+    assert.equal(documentPage(levels[0].items, 2).items.length, 1)
+  }
+  assert.equal(directoryCountries(documents, { BR: '来自配置的国别名称' }).find(c => c.code === 'BR').name,
+    '来自配置的国别名称')
+})

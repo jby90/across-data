@@ -13,8 +13,8 @@ from app.iam.deps import Principal, require_admin_side, require_user_side
 from app.iam.models import Role
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import document_available, document_is_held
+from app.knowledge.countries import country_catalog
 from app.knowledge.extractor import (
-    COUNTRY_NAMES,
     extract_knowledge_for_country,
     seed_glossary_and_review_points,
 )
@@ -66,7 +66,7 @@ user_router = APIRouter(prefix="/api/knowledge", tags=["knowledge-user"])
 async def parsed_graph_revisions(
     _: AdminOrReviewerDep,
     session: SessionDep,
-    country_code: str = Query(..., pattern="^(SG|EG|TN|MA|LB)$"),
+    country_code: str = Query(..., pattern="^[A-Za-z]{2}$"),
 ) -> list[dict]:
     """Page-based graph proposals are for review, never active report/legal evidence."""
     from app.knowledge.history import payload_hash
@@ -80,7 +80,7 @@ async def parsed_graph_revisions(
             .join(Document, Document.id == DocumentVersion.document_id)
             .where(
                 KnowledgeAuditRecord.action == "kg_parsed_source_result",
-                Document.country_code == country_code,
+                Document.country_code == country_code.upper(),
             )
             .order_by(KnowledgeAuditRecord.created_at.desc())
         )
@@ -875,6 +875,23 @@ async def import_review_point_decisions(
     return {"updated": updated, "not_found": not_found}
 
 
+async def _country_catalog(session: AsyncSession, codes, *, include_sites=False):
+    sites = (await session.execute(select(SourceSite.country_code, SourceSite.config))).all()
+    discovered = set(codes)
+    if include_sites:
+        discovered.update(code for code, _ in sites)
+    return country_catalog(discovered, sites)
+
+
+@admin_router.get("/countries")
+async def get_admin_knowledge_countries(_: AdminOrReviewerDep, session: SessionDep) -> list[dict]:
+    """Read-only discovery; a listed country grants no crawl/analysis/review approval."""
+    codes = (await session.scalars(
+        select(Document.country_code).union(select(KgNode.country_code))
+    )).all()
+    return await _country_catalog(session, codes, include_sites=True)
+
+
 @admin_router.get("/graph", response_model=GraphPayloadOut)
 async def get_admin_knowledge_graph(
     _: AdminOrReviewerDep,
@@ -1021,88 +1038,55 @@ async def get_knowledge_overview(
     _: UserDep,
     session: SessionDep,
 ) -> list[dict]:
-    """按五国返回法规知识库统计概览(文档数、条款数、译文数、已复核可引用的法律依据数、图谱节点与关系边数)。"""
-    results: list[dict] = []
-    for cc, (name_zh, name_orig) in COUNTRY_NAMES.items():
-        docs_count = (
-            await session.execute(
-                select(func.count(Document.id)).where(
-                    Document.country_code == cc, document_available()
-                )
-            )
-        ).scalar_one()
-        clauses_count = (
-            await session.execute(
-                select(func.count(Clause.id))
-                .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
-                .join(Document, Document.id == DocumentVersion.document_id)
-                .where(Document.country_code == cc, document_available())
-            )
-        ).scalar_one()
-        tr_total = (
-            await session.execute(
-                select(func.count(ClauseTranslation.id))
-                .join(Clause, Clause.id == ClauseTranslation.clause_id)
-                .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
-                .join(Document, Document.id == DocumentVersion.document_id)
-                .where(
-                    Document.country_code == cc,
-                    document_available(),
-                    ClauseTranslation.is_current.is_(True),
-                    ClauseTranslation.review_status.notin_(
-                        ("superseded", "not_translated", "translation_failed", "rejected", "stale")
-                    ),
-                )
-            )
-        ).scalar_one()
-        tr_approved = (
-            await session.execute(
-                select(func.count(ClauseTranslation.id))
-                .join(Clause, Clause.id == ClauseTranslation.clause_id)
-                .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
-                .join(Document, Document.id == DocumentVersion.document_id)
-                .where(
-                    Document.country_code == cc,
-                    document_available(),
-                    ClauseTranslation.is_current.is_(True),
-                    ClauseTranslation.review_status == "approved",
-                )
-            )
-        ).scalar_one()
-        nodes_count = (
-            await session.execute(
-                select(func.count(KgNode.id)).where(
-                    KgNode.country_code == cc,
-                    KgNode.review_status != "superseded",
-                    or_(
-                        KgNode.document_id.is_(None),
-                        KgNode.document_id.in_(select(Document.id).where(document_available())),
-                    ),
-                )
-            )
-        ).scalar_one()
-        edges_count = (
-            await session.execute(
-                select(func.count(KgEdge.id)).where(
-                    KgEdge.country_code == cc,
-                    *active_edge_filters(),
-                )
-            )
-        ).scalar_one()
-        results.append(
-            {
-                "country_code": cc,
-                "country_name_zh": name_zh,
-                "country_name_orig": name_orig,
-                "documents_count": int(docs_count or 0),
-                "clauses_count": int(clauses_count or 0),
-                "translations_count": int(tr_total or 0),
-                "approved_translations_count": int(tr_approved or 0),
-                "kg_nodes_count": int(nodes_count or 0),
-                "kg_edges_count": int(edges_count or 0),
-            }
+    """Batch statistics for existing visible countries plus the original pilot labels."""
+    docs = dict((await session.execute(
+        select(Document.country_code, func.count(Document.id))
+        .where(document_available()).group_by(Document.country_code)
+    )).all())
+    clauses = dict((await session.execute(
+        select(Document.country_code, func.count(Clause.id))
+        .select_from(Clause)
+        .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+        .join(Document, Document.id == DocumentVersion.document_id)
+        .where(document_available()).group_by(Document.country_code)
+    )).all())
+    translations = {code: (total, approved) for code, total, approved in (await session.execute(
+        select(
+            Document.country_code, func.count(ClauseTranslation.id),
+            func.count(ClauseTranslation.id).filter(
+                ClauseTranslation.review_status == "approved"),
         )
-    return results
+        .select_from(ClauseTranslation)
+        .join(Clause, Clause.id == ClauseTranslation.clause_id)
+        .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+        .join(Document, Document.id == DocumentVersion.document_id)
+        .where(document_available(), ClauseTranslation.is_current.is_(True),
+               ClauseTranslation.review_status.notin_(
+                   ("superseded", "not_translated", "translation_failed", "rejected", "stale")))
+        .group_by(Document.country_code)
+    )).all()}
+    nodes = dict((await session.execute(
+        select(KgNode.country_code, func.count(KgNode.id))
+        .where(KgNode.review_status != "superseded", or_(
+            KgNode.document_id.is_(None),
+            KgNode.document_id.in_(select(Document.id).where(document_available())),
+        )).group_by(KgNode.country_code)
+    )).all())
+    edges = dict((await session.execute(
+        select(KgEdge.country_code, func.count(KgEdge.id))
+        .where(*active_edge_filters()).group_by(KgEdge.country_code)
+    )).all())
+    catalog = await _country_catalog(session, docs.keys())
+    return [dict(
+        **country,
+        documents_count=docs.get(country["country_code"], 0),
+        clauses_count=clauses.get(country["country_code"], 0),
+        translations_count=translations.get(country["country_code"], (0, 0))[0],
+        approved_translations_count=translations.get(country["country_code"], (0, 0))[1],
+        kg_nodes_count=nodes.get(country["country_code"], 0),
+        kg_edges_count=edges.get(country["country_code"], 0),
+    ) for country in catalog]
+
 
 
 @user_router.get("/clauses", response_model=list[ClauseTranslationOut])

@@ -35,7 +35,8 @@ const documentKeyword = ref('')
 const hasMore = ref(false)
 const loadedFilter = ref({ country: '', site: '' })
 const documentPageNumber = ref(1)
-const countries = computed(() => directoryCountries(docs.value))
+const countryNames = ref<Record<string, string>>({})
+const countries = computed(() => directoryCountries(docs.value, countryNames.value))
 const matchingDocs = computed(() => {
   const query = documentKeyword.value.trim().toLocaleLowerCase()
   return docs.value.filter(d => !query || `${d.title} ${d.source_url}`.toLocaleLowerCase().includes(query))
@@ -279,7 +280,17 @@ async function submitUpload() {
   }
 }
 
-onMounted(() => load())
+onMounted(async () => {
+  const loadNames = async () => {
+    try {
+      const catalog = await api.get<Array<{ country_code: string; country_name_zh: string }>>('/admin/knowledge/countries')
+      countryNames.value = Object.fromEntries(catalog.map(c => [c.country_code, c.country_name_zh]))
+    } catch {
+      // Optional labels: files remain accessible by their existing country codes.
+    }
+  }
+  await Promise.all([load(), loadNames()])
+})
 </script>
 
 <template>

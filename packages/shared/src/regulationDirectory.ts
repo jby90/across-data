@@ -34,11 +34,11 @@ export function directoryLevels<T extends DirectoryDocument>(documents: T[], cou
   return [...groups.values()].sort((a, b) => a.rank - b.rank || a.key.localeCompare(b.key))
 }
 
-export function directoryCountries(documents: DirectoryDocument[]): DirectoryCountry[] {
+export function directoryCountries(documents: DirectoryDocument[], names: Record<string, string> = {}): DirectoryCountry[] {
   const counts = new Map<string, number>()
   for (const d of documents) counts.set(d.country_code, (counts.get(d.country_code) || 0) + 1)
   return [...counts].sort(([a], [b]) => a.localeCompare(b)).map(([code, count]) => ({
-    code, name: COUNTRY_NAMES[code] || code, count,
+    code, name: names[code] || COUNTRY_NAMES[code] || code, count,
   }))
 }
 

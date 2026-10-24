@@ -149,3 +149,39 @@ test('overview position is deterministic and empty filters produce a safe empty 
   assert.deepEqual(layoutLawOverview([], [], []), [])
   for (const n of project(nodes, edges)) assert.ok(Number.isFinite(n.x) && Number.isFinite(n.y))
 })
+
+test('same pipeline handles 30 non-pilot countries and multilingual laws without per-country branches', () => {
+  const countries = 'US CA BR MX AR CL PE CO GB FR DE ES IT PT NL BE SE NO FI DK PL CZ AT CH JP KR IN ID TH VN'.split(' ')
+  const titles = ['Synthetic fixture', 'مثال اصطناعي', 'Exemple synthétique', '合成测试文件']
+  const nodes = []
+  const edges = []
+  for (const code of countries) for (let i = 0; i < 12; i++) {
+    const id = `${code}-law-${i}`
+    nodes.push({ ...law(id, titles[i % titles.length]), country_code: code })
+    for (let j = 0; j < 15; j++) {
+      const target = `${id}-entity-${j}`
+      nodes.push({ ...entity(target), country_code: code })
+      edges.push(edge(`${id}-evidence-${j}`, id, target))
+    }
+  }
+  const before = JSON.stringify({ nodes, edges })
+  const groups = groupByLaw(nodes, edges)
+  const merged = mergeDisplayEdges(nodes, edges)
+  const overview = layoutLawOverview(nodes, groups, merged)
+  assert.equal(groups.length, 360)
+  assert.equal(overview.length, 5760)
+  assert.equal(merged.reduce((sum, e) => sum + e.count, 0), 5400)
+  assert.ok(merged.every(e => !e.approved))
+  const renamed = nodes.map(n => ({ ...n, country_code: 'ZZ', name_zh: `任意新名称 ${n.id}` }))
+  const positions = ns => layoutLawOverview(ns, groupByLaw(ns, edges), mergeDisplayEdges(ns, edges))
+    .map(n => [n.id, n.x, n.y]).sort((a, b) => a[0].localeCompare(b[0]))
+  assert.deepEqual(positions(nodes), positions(renamed), 'country/title must not select a special layout algorithm')
+  assert.equal(JSON.stringify({ nodes, edges }), before)
+})
+
+test('many instrument versions of one document stay in a bounded cluster', () => {
+  const nodes = Array.from({ length: 80 }, (_, i) => law(`version-${i}`, 'Synthetic versions', 'same-document'))
+  const overview = layoutLawOverview(nodes, groupByLaw(nodes, []), [])
+  assert.equal(overview.length, 80)
+  for (const n of overview) assert.ok(Math.hypot(n.x, n.y - 170) <= 18.00001)
+})

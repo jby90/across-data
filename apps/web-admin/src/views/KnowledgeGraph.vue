@@ -114,6 +114,7 @@ const EIGHT_ATTR_LABELS: Array<{ key: string; label: string }> = [
 ]
 
 const countryCode = ref('SG')
+const countryOptions = ref<Array<{ country_code: string; country_name_zh: string }>>([])
 const onlyApproved = ref(false)
 const relationFilter = ref('')
 const qualityFilter = ref<'all' | 'pending_review' | 'approved'>('all')
@@ -350,7 +351,17 @@ async function reviewEdge(edge: KgEdge, decision: 'approved' | 'rejected') {
   }
 }
 
-onMounted(loadGraph)
+onMounted(async () => {
+  try {
+    countryOptions.value = await api.get('/admin/knowledge/countries')
+    if (countryOptions.value.length && !countryOptions.value.some(c => c.country_code === countryCode.value)) {
+      countryCode.value = countryOptions.value[0].country_code
+    }
+  } catch (error: unknown) {
+    ElMessage.error((error as Error).message)
+  }
+  await loadGraph()
+})
 </script>
 <template>
   <div class="knowledge-graph-page">
@@ -366,11 +377,8 @@ onMounted(loadGraph)
           style="width: 168px"
           aria-label="图谱国家"
           @change="loadGraph"
-          ><el-option value="SG" label="新加坡 · SG" /><el-option
-            value="EG"
-            label="埃及 · EG" /><el-option value="TN" label="突尼斯 · TN" /><el-option
-            value="MA"
-            label="摩洛哥 · MA" /><el-option value="LB" label="黎巴嫩 · LB" /></el-select
+          ><el-option v-for="c in countryOptions" :key="c.country_code" :value="c.country_code"
+            :label="`${c.country_name_zh} · ${c.country_code}`" /></el-select
         ><el-popover trigger="click" placement="bottom-end" :width="300"
           ><template #reference><el-button>图谱管理</el-button></template>
           <div class="secondary-actions">

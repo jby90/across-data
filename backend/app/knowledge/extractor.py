@@ -36,6 +36,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.ingestion.models import Clause, Document, DocumentVersion
+from app.knowledge.countries import COUNTRY_NAMES
 from app.knowledge.kg_run_state import begin_usage, end_usage, request_started, response_received
 from app.knowledge.models import (
     ClauseTranslation,
@@ -62,13 +63,6 @@ JUDGE_PROMPT_VERSION = "kg-judge-v2"
 STRUCTURAL_EXTRACTOR_MODEL = "structural-metadata-v2"
 LEGACY_RULE_EXTRACTOR_MODEL = "kg-rule-extractor-v1"
 
-COUNTRY_NAMES: dict[str, tuple[str, str]] = {
-    "SG": ("新加坡", "Republic of Singapore"),
-    "EG": ("埃及", "Arab Republic of Egypt"),
-    "TN": ("突尼斯", "Republic of Tunisia"),
-    "MA": ("摩洛哥", "Kingdom of Morocco"),
-    "LB": ("黎巴嫩", "Republic of Lebanon"),
-}
 
 # 两层术语库种子:country_code=None 为跨国通用核心概念;country_code='SG' 等为各国法定覆盖
 SEED_GLOSSARY_TERMS: list[dict] = [

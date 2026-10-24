@@ -143,13 +143,24 @@ export function layoutLawOverview<N extends DisplayNode, E extends DisplayEdge>(
   const visible = nodes.filter(n => degree.has(n.id) || (n.node_type === 'INSTRUMENT' && owners.has(n.id)))
   const columns = Math.max(1, Math.ceil(Math.sqrt(ordered.length)))
   const positions = new Map<string, { x: number; y: number }>()
+  const membersByGroup = new Map<string, N[]>()
+  for (const n of visible) {
+    const owner = owners.get(n.id)
+    if (!owner) continue
+    if (!membersByGroup.has(owner)) membersByGroup.set(owner, [])
+    membersByGroup.get(owner)!.push(n)
+  }
   ordered.forEach((g, index) => {
     const cx = (index % columns) * 210
     const cy = Math.floor(index / columns) * 180 + 170
-    const members = visible.filter(n => owners.get(n.id) === g.id).sort((a, b) => a.id.localeCompare(b.id))
+    const members = (membersByGroup.get(g.id) || []).sort((a, b) => a.id.localeCompare(b.id))
     const instruments = members.filter(n => n.node_type === 'INSTRUMENT')
     const leaves = members.filter(n => n.node_type !== 'INSTRUMENT')
-    instruments.forEach((n, i) => positions.set(n.id, { x: cx + i * 18, y: cy }))
+    instruments.forEach((n, i) => {
+      const radius = instruments.length > 1 ? 18 : 0
+      const angle = i * 2 * Math.PI / instruments.length
+      positions.set(n.id, { x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius })
+    })
     leaves.forEach((n, i) => {
       const angle = i * Math.PI * (3 - Math.sqrt(5))
       const radius = 22 + 48 * Math.sqrt((i + 1) / leaves.length)
