@@ -50,7 +50,7 @@ watch([search, () => props.groups], () => { directoryPage.value = 1 })
     </div>
     <template v-if="!selected && view === 'overview'">
       <slot name="overview" />
-      <p class="law-hint">展示筛选后的全部关系，法规按组均匀排布。滚轮缩放、拖拽平移，图中序号仅用于定位；悬停查看名称，点击法规或使用上方选择框进入细节。</p>
+      <p class="law-hint">展示筛选后的全部关系，采用力导向布局。滚轮缩放、拖拽节点或平移；悬停查看名称和关系，点击法规或使用上方选择框进入细节。</p>
     </template>
     <template v-else-if="!selected">
       <div class="law-toolbar">
@@ -93,7 +93,7 @@ watch([search, () => props.groups], () => { directoryPage.value = 1 })
 .law-view-switch select { min-height: 40px; min-width: 0; max-width: 100%; width: 260px; margin-left: auto; font: inherit; font-size: 13px; border: 1px solid #d8e1eb; border-radius: 8px; background: white; color: #334b60; padding: 8px; }
 .law-view-switch button[aria-pressed="true"] { background: #eef5ff; border-color: #93b4ef; color: #1d4ed8; }
 .law-counts { display: flex; flex-wrap: wrap; gap: 12px 32px; color: #526174; font-size: 14px; }
-.law-counts strong { color: #172c43; font-size: 22px; margin-left: 6px; }
+.law-counts strong { color: #172c43; font-size: 18px; margin-left: 6px; }
 .law-hint, .law-muted { color: #64748b; font-size: 13px; line-height: 1.7; }
 .law-hint { margin: 12px 0 18px; }
 .law-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin: 20px 0 16px; }
@@ -111,6 +111,6 @@ button:focus-visible, input:focus-visible { outline: 2px solid #2563eb; outline-
 h3 { margin: 0; font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; flex: 1; min-width: 180px; }
 .law-pagination { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 20px; flex-wrap: wrap; font-size: 13px; color: #64748b; }
 button:disabled { opacity: .45; cursor: default; }
-@media (max-width: 640px) { .law-browser { padding: 14px; } .law-counts { gap: 12px; } .law-counts strong { font-size: 19px; } }
+@media (max-width: 640px) { .law-browser { padding: 14px; } .law-counts { gap: 12px; } .law-counts strong { font-size: 17px; } }
 @media (prefers-reduced-motion: reduce) { .law-card { transition: none; } }
 </style>

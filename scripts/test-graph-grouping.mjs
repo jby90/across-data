@@ -9,7 +9,7 @@ const source = await readFile(new URL('../packages/shared/src/graphGrouping.ts',
 const compiled = ts.transpileModule(source, {
   compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
 }).outputText
-const { groupByLaw, mergeDisplayEdges, relationPage, layoutLawOverview, UNASSIGNED_GROUP } = await import(
+const { groupByLaw, mergeDisplayEdges, relationPage, projectOverviewNodes, UNASSIGNED_GROUP } = await import(
   `data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`,
 )
 const law = (id, name = id, doc = id) => ({ id, name_zh: name, node_type: 'INSTRUMENT', document_id: doc })
@@ -109,7 +109,7 @@ test('overview draws every filtered relationship, keeps shared nodes once and cr
   const edges = [edge('1', 'a', 'shared'), edge('2', 'b', 'shared'), edge('3', 'shared', 'data'), edge('4', 'country', 'a')]
   const before = JSON.stringify({ nodes, edges })
   const merged = mergeDisplayEdges(nodes, edges)
-  const overview = layoutLawOverview(nodes, groupByLaw(nodes, edges), merged)
+  const overview = projectOverviewNodes(nodes, groupByLaw(nodes, edges), merged)
   assert.equal(overview.filter(n => n.id === 'shared').length, 1)
   assert.equal(new Set(overview.map(n => n.id)).size, overview.length)
   for (const e of merged) {
@@ -120,7 +120,7 @@ test('overview draws every filtered relationship, keeps shared nodes once and cr
   assert.equal(JSON.stringify({ nodes, edges }), before)
 })
 
-test('large laws stay inside equally spaced clusters; smaller laws retain their own position', () => {
+test('large laws and isolated small laws stay complete without injecting fixed cluster coordinates', () => {
   const nodes = [law('a'), law('b'), law('c')]
   const edges = []
   for (let i = 0; i < 800; i++) {
@@ -129,25 +129,23 @@ test('large laws stay inside equally spaced clusters; smaller laws retain their 
   }
   nodes.push(entity('c-leaf'))
   edges.push(edge('c-edge', 'c', 'c-leaf'))
-  const overview = layoutLawOverview(nodes, groupByLaw(nodes, edges), mergeDisplayEdges(nodes, edges))
-  const a = overview.find(n => n.id === 'a')
-  const b = overview.find(n => n.id === 'b')
-  const c = overview.find(n => n.id === 'c')
-  assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= 180)
-  assert.ok(Math.hypot(a.x - c.x, a.y - c.y) >= 180)
-  for (const n of overview.filter(n => n.id.startsWith('a-leaf-'))) {
-    assert.ok(Math.hypot(n.x - a.x, n.y - a.y) <= 70.00001)
+  const overview = projectOverviewNodes(nodes, groupByLaw(nodes, edges), mergeDisplayEdges(nodes, edges))
+  assert.equal(overview.length, nodes.length)
+  assert.equal(overview.find(n => n.id === 'a').degree, 800)
+  assert.ok(overview.some(n => n.id === 'b'), 'isolated law remains visible')
+  for (const n of overview) {
+    assert.equal('x' in n || 'y' in n || 'overviewLabel' in n, false)
+    assert.equal(n.name, nodes.find(original => original.id === n.id).name_zh)
   }
-  assert.ok(overview.some(n => n.id === 'b'), 'law with no visible relations still has an overview entry')
 })
 
-test('overview position is deterministic and empty filters produce a safe empty diagram', () => {
+test('overview projection is deterministic and empty filters produce a safe empty diagram', () => {
   const nodes = [law('a'), law('b'), entity('shared')]
   const edges = [edge('1', 'a', 'shared'), edge('2', 'b', 'shared')]
-  const project = (ns, es) => layoutLawOverview(ns, groupByLaw(ns, es), mergeDisplayEdges(ns, es)).sort((a, b) => a.id.localeCompare(b.id))
+  const project = (ns, es) => projectOverviewNodes(ns, groupByLaw(ns, es), mergeDisplayEdges(ns, es)).sort((a, b) => a.id.localeCompare(b.id))
   assert.deepEqual(project(nodes, edges), project(nodes.toReversed(), edges.toReversed()))
-  assert.deepEqual(layoutLawOverview([], [], []), [])
-  for (const n of project(nodes, edges)) assert.ok(Number.isFinite(n.x) && Number.isFinite(n.y))
+  assert.deepEqual(projectOverviewNodes([], [], []), [])
+  for (const n of project(nodes, edges)) assert.ok(Number.isFinite(n.degree))
 })
 
 test('same pipeline handles 30 non-pilot countries and multilingual laws without per-country branches', () => {
@@ -167,21 +165,21 @@ test('same pipeline handles 30 non-pilot countries and multilingual laws without
   const before = JSON.stringify({ nodes, edges })
   const groups = groupByLaw(nodes, edges)
   const merged = mergeDisplayEdges(nodes, edges)
-  const overview = layoutLawOverview(nodes, groups, merged)
+  const overview = projectOverviewNodes(nodes, groups, merged)
   assert.equal(groups.length, 360)
   assert.equal(overview.length, 5760)
   assert.equal(merged.reduce((sum, e) => sum + e.count, 0), 5400)
   assert.ok(merged.every(e => !e.approved))
   const renamed = nodes.map(n => ({ ...n, country_code: 'ZZ', name_zh: `任意新名称 ${n.id}` }))
-  const positions = ns => layoutLawOverview(ns, groupByLaw(ns, edges), mergeDisplayEdges(ns, edges))
-    .map(n => [n.id, n.x, n.y]).sort((a, b) => a[0].localeCompare(b[0]))
-  assert.deepEqual(positions(nodes), positions(renamed), 'country/title must not select a special layout algorithm')
+  const positions = ns => projectOverviewNodes(ns, groupByLaw(ns, edges), mergeDisplayEdges(ns, edges))
+    .map(n => [n.id, n.type, n.degree]).sort((a, b) => a[0].localeCompare(b[0]))
+  assert.deepEqual(positions(nodes), positions(renamed), 'country/title must not select a special projection')
   assert.equal(JSON.stringify({ nodes, edges }), before)
 })
 
-test('many instrument versions of one document stay in a bounded cluster', () => {
+test('many instrument versions of one document remain available to force layout', () => {
   const nodes = Array.from({ length: 80 }, (_, i) => law(`version-${i}`, 'Synthetic versions', 'same-document'))
-  const overview = layoutLawOverview(nodes, groupByLaw(nodes, []), [])
+  const overview = projectOverviewNodes(nodes, groupByLaw(nodes, []), [])
   assert.equal(overview.length, 80)
-  for (const n of overview) assert.ok(Math.hypot(n.x, n.y - 170) <= 18.00001)
+  assert.ok(overview.every(n => n.name === 'Synthetic versions' && !('x' in n) && !('y' in n)))
 })

@@ -2,26 +2,8 @@
 import * as echarts from 'echarts'
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 
-export interface FgNode {
-  id: string
-  name: string
-  type: string
-  degree: number
-  overviewLabel?: string
-  x?: number
-  y?: number
-}
-export interface FgEdge {
-  source: string
-  target: string
-  label: string
-  approved: boolean
-}
-export interface FgCategory {
-  type: string
-  name: string
-  color: string
-}
+import { graphSeries, type FgNode, type FgEdge, type FgCategory } from '@cyshuhe/shared/src/graphPresentation'
+export type { FgNode, FgEdge, FgCategory } from '@cyshuhe/shared/src/graphPresentation'
 
 const props = defineProps<{
   nodes: FgNode[]
@@ -43,73 +25,24 @@ let chart: echarts.ECharts | null = null
 let observer: ResizeObserver | null = null
 
 function buildOption(): echarts.EChartsOption {
-  const showEdgeLabel = !props.overview && props.edges.length <= 20
-  const data = props.nodes.map((n) => {
-    const selected = n.id === props.selectedId
-    return {
-      id: n.id,
-      name: n.name,
-      category: props.categories.findIndex((c) => c.type === n.type),
-      x: n.x,
-      y: n.y,
-      symbolSize: selected ? (props.overview ? 18 : 34) : props.overview
-        ? (n.type === 'INSTRUMENT' ? 14 : ['COUNTRY', 'REGULATOR'].includes(n.type) ? 10 : 4)
-        : Math.min(40, 12 + Math.sqrt(n.degree) * 4),
-      itemStyle: selected ? { borderColor: '#0f172a', borderWidth: 3 } : undefined,
-      label: {
-        show: props.overview ? ['COUNTRY', 'INSTRUMENT'].includes(n.type) || selected : n.type === 'COUNTRY' || n.degree >= 10 || selected,
-        ...(props.overview && n.overviewLabel ? { formatter: n.overviewLabel, position: 'bottom' as const, width: 42 } : {}),
-      },
-    }
-  })
-  const links = props.edges.map((e) => ({
-    source: e.source,
-    target: e.target,
-    value: e.label as unknown as number,
-    label: { show: showEdgeLabel, formatter: e.label, fontSize: 12 },
-    lineStyle: { color: e.approved ? '#16a34a' : '#94a3b8', curveness: props.overview ? 0.04 : 0.12, opacity: props.overview ? 0.25 : 1 },
-  }))
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   return {
-    animation: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    animation: !reducedMotion,
     animationDuration: 240,
     animationDurationUpdate: 180,
     tooltip: {
       renderMode: 'richText',
+      textStyle: { fontSize: 12 },
+      confine: true,
       formatter: (p: any) => {
-        if (p.dataType === 'edge') return `${p.data.value}`
+        if (p.dataType === 'edge') return `${p.data.name}`
         const cat = props.categories[p.data.category]
         return `${cat?.name ?? ''}\n${p.data.name}`
       },
     },
-    series: [
-      {
-        type: 'graph',
-        layout: props.overview ? 'none' : 'force',
-        zoom: props.overview ? 0.9 : 0.6,
-        scaleLimit: { min: 0.2, max: 3 },
-        roam: true,
-        draggable: !props.overview,
-        categories: props.categories.map((c) => ({
-          name: c.name,
-          itemStyle: { color: c.color },
-        })),
-        data,
-        links,
-        force: { repulsion: 150, edgeLength: [45, 115], gravity: 0.15 },
-        edgeSymbol: ['none', 'arrow'],
-        edgeSymbolSize: props.overview ? 3 : 6,
-        labelLayout: { hideOverlap: !!props.overview },
-        emphasis: { focus: 'adjacency', label: { show: true } },
-        lineStyle: { width: props.overview ? 0.65 : 1.2 },
-        label: {
-          position: 'right',
-          fontSize: props.overview ? 11 : 13,
-          color: '#334155',
-          overflow: 'truncate',
-          width: props.overview ? 110 : 180,
-        },
-      },
-    ],
+    series: [graphSeries(props.nodes, props.edges, props.categories, {
+      overview: props.overview, selectedId: props.selectedId, reducedMotion, viewportWidth: canvas.value?.clientWidth,
+    })],
   }
 }
 

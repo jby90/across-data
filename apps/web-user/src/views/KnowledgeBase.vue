@@ -5,7 +5,7 @@ import { api } from '../api'
 import KgForceGraph from '../components/KgForceGraph.vue'
 import KgLawGroups from '../components/KgLawGroups.vue'
 import RegulationDirectory from '../components/RegulationDirectory.vue'
-import { groupByLaw, mergeDisplayEdges, relationPage, layoutLawOverview } from '@cyshuhe/shared/src/graphGrouping'
+import { groupByLaw, mergeDisplayEdges, relationPage, projectOverviewNodes } from '@cyshuhe/shared/src/graphGrouping'
 
 interface CountryOverview {
   country_code: string
@@ -290,7 +290,7 @@ const displayedPage = computed(() => relationPage(mergedEdges.value, relationPag
 const graphEdgesRaw = computed(() => displayedPage.value.edges)
 const displayedEvidenceCount = computed(() => graphEdgesRaw.value.reduce((sum, e) => sum + e.count, 0))
 const overviewEdges = computed(() => mergeDisplayEdges(graph.value.nodes, filteredEdges.value))
-const overviewNodes = computed(() => layoutLawOverview(
+const overviewNodes = computed(() => projectOverviewNodes(
   graph.value.nodes.filter(n => visibleNodeTypes.value.includes(n.node_type)), lawGroups.value, overviewEdges.value,
 ))
 const overviewFgEdges = computed(() => overviewEdges.value.map(e => ({
