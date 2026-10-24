@@ -42,6 +42,8 @@ interface WorkflowNode {
   input_variables: Array<{ name: string; type: string; desc: string }>
   output_variables: Array<{ name: string; type: string; desc: string }>
   responsibility_desc: string
+  runtime_settings: Record<string, unknown>
+  configurable_fields: string[]
 }
 
 interface WorkflowEdge {
@@ -63,6 +65,8 @@ interface WorkflowConfig {
   dsl_version: string
   is_active: boolean
   readonly_locked: boolean
+  executable: boolean
+  runtime_schema_version: string | null
   nodes: WorkflowNode[]
   edges: WorkflowEdge[]
   change_note: string | null
@@ -76,6 +80,7 @@ interface WorkflowVersionSummary {
   dsl_version: string
   is_active: boolean
   readonly_locked: boolean
+  executable: boolean
   nodes_count: number
   edges_count: number
   change_note: string | null
@@ -114,6 +119,7 @@ interface TaskSummary {
 }
 
 interface StepTrace {
+  workflow_version_id: string | null
   id: string
   seq_no: number
   agent_node_id: string
@@ -200,6 +206,8 @@ interface ReportVersionItem {
 }
 
 interface TaskDetail {
+  workflow_version_id: string | null
+  workflow_version_no: number
   id: string
   conversation_code: string
   org_id: string | null
@@ -558,7 +566,7 @@ const nodeTraceStatsMap = computed(() => {
       status: string
     }
   >()
-  for (const tr of selectedTaskDetail.value?.step_traces || []) {
+  for (const tr of versionTraces.value) {
     const prev = map.get(tr.agent_node_id) || {
       runs: 0,
       duration_ms: 0,
@@ -570,15 +578,28 @@ const nodeTraceStatsMap = computed(() => {
     prev.duration_ms += tr.duration_ms
     prev.tokens += tr.tokens_used
     if (tr.is_backtrack) prev.hasBacktrack = true
-    if (tr.status === 'backtracked') prev.status = 'backtracked'
+    prev.status = tr.status
     map.set(tr.agent_node_id, prev)
   }
   return map
 })
 
+const versionTraces = computed(() => (selectedTaskDetail.value?.step_traces || []).filter(tr =>
+  tr.workflow_version_id ? tr.workflow_version_id === workflow.value?.id : !workflow.value?.executable,
+))
+const isRollback = computed(() => (versions.value.find(v => v.is_active)?.version_no || 0) > (selectedVersionNo.value || 0))
+async function showExecutionConfig() {
+  const detail = selectedTaskDetail.value
+  if (detail?.workflow_version_id) await loadStudioData(detail.workflow_version_no)
+}
+async function showExecutableBaseline() {
+  const baseline = versions.value.find(v => v.executable)
+  if (baseline) await loadStudioData(baseline.version_no)
+}
+
 const selectedNodeTraces = computed(() => {
   if (!selectedNode.value || !selectedTaskDetail.value) return []
-  return selectedTaskDetail.value.step_traces.filter(
+  return versionTraces.value.filter(
     (t) => t.agent_node_id === selectedNode.value?.node_id,
   )
 })
@@ -667,6 +688,10 @@ async function loadTaskTrace(taskId: string) {
   try {
     const detail = await api.get<TaskDetail>(`/api/admin/agent-studio/tasks/${taskId}`)
     selectedTaskDetail.value = detail
+    if (detail.workflow_version_id && workflow.value?.id !== detail.workflow_version_id) {
+      workflow.value = await api.get<WorkflowConfig>(`/api/admin/agent-studio/workflow?version_no=${detail.workflow_version_no}`)
+      selectedVersionNo.value = workflow.value.version_no
+    }
     // 如果当前任务正在实时运行中，且开启了自动跟随，自动选中当前活跃节点
     if (detail.status === 'running' && detail.current_active_node_id && autoFollowRunning.value) {
       selectedNodeId.value = detail.current_active_node_id
@@ -815,7 +840,7 @@ async function activateSelectedVersion() {
   if (!selectedVersionNo.value) return
   try {
     const wf = await api.post<WorkflowConfig>(
-      `/api/admin/agent-studio/workflow/versions/${selectedVersionNo.value}/activate`,
+      `/api/admin/agent-studio/workflow/versions/${workflow.value?.id}/activate`,
       {},
     )
     workflow.value = wf
@@ -864,8 +889,8 @@ async function copyExportedJson() {
 }
 
 async function openImportModal() {
-  if (!importDslText.value && workflow.value) {
-    const dsl = await api.get<Record<string, unknown>>('/api/admin/agent-studio/workflow/export')
+  if (workflow.value) {
+    const dsl = await api.get<Record<string, unknown>>(`/api/admin/agent-studio/workflow/export?version_no=${workflow.value.version_no}`)
     importDslText.value = JSON.stringify(dsl, null, 2)
   }
   importDialogVisible.value = true
@@ -896,11 +921,11 @@ async function submitImportWorkflow() {
     const newWf = await api.post<WorkflowConfig>('/api/admin/agent-studio/workflow/import', {
       dsl_payload: parsed,
       change_note: importChangeNote.value,
-      activate_immediately: true,
+      activate_immediately: false,
     })
     importDialogVisible.value = false
     await loadStudioData(newWf.version_no)
-    ElMessage.success(`配置导入成功！已生成并激活版本 v${newWf.version_no}（保持生产只读安全锁）`)
+    ElMessage.success(`配置已保存为 v${newWf.version_no}，尚未激活；确认后点击激活版本`)
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '导入配置失败')
   } finally {
@@ -974,6 +999,7 @@ onUnmounted(() => {
           <span class="ctrl-label">配置版本:</span>
           <el-select
             v-model="selectedVersionNo"
+            aria-label="配置版本"
             size="small"
             style="width: 155px"
             @change="handleVersionChange"
@@ -986,13 +1012,14 @@ onUnmounted(() => {
             />
           </el-select>
           <el-button
-            v-if="workflow && !workflow.is_active"
+            v-if="workflow?.executable && !workflow.is_active && auth.user?.role === 'platform_admin'"
             size="small"
             type="warning"
             plain
+            data-testid="btn-activate-workflow"
             @click="activateSelectedVersion"
           >
-            设为当前激活版本
+            {{ isRollback ? '回滚到此版本' : '激活此版本' }}
           </el-button>
         </div>
 
@@ -1000,6 +1027,7 @@ onUnmounted(() => {
           <span class="ctrl-label">当前跟踪对话:</span>
           <el-select
             v-model="selectedTaskId"
+            aria-label="当前跟踪对话"
             size="small"
             style="width: 310px"
             data-testid="agent-trace-task-select"
@@ -1050,6 +1078,7 @@ onUnmounted(() => {
               size="small"
               type="success"
               plain
+              v-if="auth.user?.role === 'platform_admin'"
               data-testid="btn-import-workflow"
               @click="openImportModal"
             >
@@ -1138,6 +1167,21 @@ onUnmounted(() => {
       </div>
     </div>
 
+    <el-alert v-if="workflow && !workflow.executable" type="warning" :closable="false" show-icon>
+      <template #title>历史展示版本，未记录可执行配置；不会用于新的分析任务。</template>
+      <el-button size="small" @click="showExecutableBaseline">查看可执行基线</el-button>
+    </el-alert>
+    <el-alert v-if="selectedTaskDetail" type="info" :closable="false" data-testid="workflow-execution-version">
+      <template #title>
+        <template v-if="selectedTaskDetail.workflow_version_id">
+          本次任务执行版本 v{{ selectedTaskDetail.workflow_version_no }} · {{ selectedTaskDetail.workflow_version_id }}
+          <template v-if="workflow?.id !== selectedTaskDetail.workflow_version_id">（当前画布查看其他版本）</template>
+        </template>
+        <template v-else>历史任务未记录实际执行配置，不能将当前画布视为其执行版本。</template>
+      </template>
+      <el-button v-if="selectedTaskDetail.workflow_version_id && workflow?.id !== selectedTaskDetail.workflow_version_id"
+        size="small" @click="showExecutionConfig">查看任务执行配置</el-button>
+    </el-alert>
     <!-- 主体：左侧 Dify 风格节点连线画布 + 右侧只读详情与轨迹调试栏 -->
     <div class="studio-workspace">
       <!-- 左侧画布 -->
@@ -1307,6 +1351,7 @@ onUnmounted(() => {
                   'is-dragging': draggingNodeId === node.node_id,
                   'has-backtrack': nodeTraceStatsMap.get(node.node_id)?.hasBacktrack,
                   'is-live-running':
+                    selectedTaskDetail?.workflow_version_id === workflow?.id &&
                     selectedTaskDetail?.status === 'running' &&
                     selectedTaskDetail?.current_active_node_id === node.node_id,
                   'is-collecting':
@@ -1372,6 +1417,7 @@ onUnmounted(() => {
                 <!-- 实时运行中指示条 -->
                 <div
                   v-if="
+                    selectedTaskDetail?.workflow_version_id === workflow?.id &&
                     selectedTaskDetail?.status === 'running' &&
                     selectedTaskDetail?.current_active_node_id === node.node_id
                   "
@@ -1395,12 +1441,16 @@ onUnmounted(() => {
                   <el-tag
                     size="small"
                     :type="
-                      nodeTraceStatsMap.get(node.node_id)?.hasBacktrack ? 'warning' : 'success'
+                      nodeTraceStatsMap.get(node.node_id)?.status === 'skipped' ? 'info'
+                      : nodeTraceStatsMap.get(node.node_id)?.status === 'failed' ? 'danger'
+                      : nodeTraceStatsMap.get(node.node_id)?.hasBacktrack ? 'warning' : 'success'
                     "
                   >
                     {{
                       nodeTraceStatsMap.get(node.node_id)?.hasBacktrack
                         ? `执行 ${nodeTraceStatsMap.get(node.node_id)?.runs} 次 (含补证)`
+                        : nodeTraceStatsMap.get(node.node_id)?.status === 'skipped' ? '按配置跳过'
+                        : nodeTraceStatsMap.get(node.node_id)?.status === 'failed' ? '执行失败'
                         : '执行通过'
                     }}
                   </el-tag>
@@ -1522,7 +1572,7 @@ onUnmounted(() => {
 
             <div class="inspector-section">
               <div class="sec-title">
-                System Prompt 提示词模板
+                {{ !workflow?.executable ? '历史配置说明（不证明实际执行）' : selectedNode.node_type === 'analyst' ? '实际模型 System Prompt' : '执行说明（不发送给模型）' }}
                 <el-tag size="small" type="info">只读锁定</el-tag>
               </div>
               <el-input
@@ -1535,6 +1585,11 @@ onUnmounted(() => {
               />
             </div>
 
+            <div v-if="workflow?.executable" class="inspector-section">
+              <div class="sec-title">此版本实际执行参数（只读）</div>
+              <pre class="runtime-settings" data-testid="workflow-runtime-settings">{{ JSON.stringify(Object.fromEntries(Object.entries(selectedNode.runtime_settings).filter(([key]) => key !== 'system_prompt')), null, 2) }}</pre>
+              <p>可通过配置包修改：{{ selectedNode.configurable_fields.join('、') || '无可变参数' }}</p>
+            </div>
             <div class="inspector-section">
               <div class="sec-title">
                 节点执行入口与代码绑定
@@ -1617,7 +1672,8 @@ onUnmounted(() => {
             <div v-if="selectedNodeTraces.length === 0" class="empty-state-box">
               <template
                 v-if="
-                  selectedTaskDetail?.status === 'running' &&
+                  selectedTaskDetail?.workflow_version_id === workflow?.id &&
+                    selectedTaskDetail?.status === 'running' &&
                   selectedTaskDetail?.current_active_node_id === selectedNode.node_id
                 "
               >
@@ -1638,6 +1694,7 @@ onUnmounted(() => {
                 <el-tag size="small" :type="tr.is_backtrack ? 'danger' : 'success'">
                   步骤 #{{ tr.seq_no }} ·
                   {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
+                  · {{ tr.workflow_version_id ? '执行配置 ' + tr.workflow_version_id.slice(0, 8) : '历史配置未记录' }}
                 </el-tag>
                 <span class="trace-metrics">
                   耗时 {{ tr.duration_ms }} ms · {{ tr.tokens_used }} tokens
@@ -2001,6 +2058,7 @@ onUnmounted(() => {
                 >
                   步骤 #{{ tr.seq_no }} ·
                   {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
+                  · {{ tr.workflow_version_id ? '执行配置 ' + tr.workflow_version_id.slice(0, 8) : '历史配置未记录' }}
                 </el-tag>
                 <b>{{ tr.agent_name }}</b>
                 <span class="cell-muted">
@@ -2222,6 +2280,9 @@ onUnmounted(() => {
       title="导入多智能体编排配置包（生成新版本并保持生产只读锁）"
       width="720px"
     >
+      <el-alert type="info" :closable="false" style="margin-bottom: 16px">
+        只允许修改节点白名单参数。代码入口、工具绑定、拓扑与核验闸门不可修改；导入后需单独激活，新运行才使用该版本。
+      </el-alert>
       <div style="margin-bottom: 12px">
         <label style="font-weight: 600; display: block; margin-bottom: 6px">
           方式一：选择本地 .json 配置文件
@@ -2251,7 +2312,7 @@ onUnmounted(() => {
           data-testid="btn-confirm-import-workflow"
           @click="submitImportWorkflow"
         >
-          校验拓扑并导入为新版本
+          校验并保存（不激活）
         </el-button>
       </template>
     </el-dialog>
@@ -2308,6 +2369,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.runtime-settings { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; max-height: 240px; overflow: auto; }
 .agent-studio-page {
   display: flex;
   flex-direction: column;

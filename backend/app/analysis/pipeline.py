@@ -609,9 +609,9 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         )
         problems2 = await _verify_round(bad_codes, "re_verification")
         redo.backtrack_resolution = (
-            "二次核验全部通过"
+            f"第 {round_no + 1} 次核验全部通过"
             if not problems2
-            else f"二次核验仍有 {len(problems2)} 条未通过,已剔除并标记为待核查"
+            else f"第 {round_no + 1} 次核验仍有 {len(problems2)} 条未通过，按配置补证或剔除"
         )
         await session.commit()
         problems = problems2

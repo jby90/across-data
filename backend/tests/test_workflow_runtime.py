@@ -30,6 +30,9 @@ BASE = "/api/admin/agent-studio/workflow"
         "disable_required",
         "non_llm_prompt",
         "invalid_edge",
+        "null_model",
+        "null_prompt",
+        "blank_prompt",
     ],
 )
 def test_reject_unsafe_or_unimplemented_changes(mutation):
@@ -58,6 +61,12 @@ def test_reject_unsafe_or_unimplemented_changes(mutation):
         by_id["node_report_compiler"]["system_prompt"] = "pretend this changes execution"
     elif mutation == "invalid_edge":
         edges[0] = None
+    elif mutation == "null_model":
+        analyst["model_name"] = None
+    elif mutation == "null_prompt":
+        analyst["system_prompt"] = None
+    elif mutation == "blank_prompt":
+        analyst["system_prompt"] = "   "
     with pytest.raises(ValueError):
         validate_graph(nodes, edges)
 

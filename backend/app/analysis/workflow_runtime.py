@@ -85,6 +85,11 @@ def baseline_nodes() -> list[dict]:
 def execution_settings(node: dict) -> dict:
     params = {key: node["parameters"][key] for key in PARAMETERS[node["node_id"]]}
     if node["node_id"] == "node_dimension_analyst":
+        if not all(
+            isinstance(node.get(key), str) and node[key].strip()
+            for key in ("model_name", "system_prompt")
+        ):
+            raise ValueError("分析节点的模型和实际提示词不能为空")
         params.update(model=node["model_name"], system_prompt=node["system_prompt"])
     return NodeExecutionSettings.model_validate(params).model_dump(include=set(params))
 
@@ -214,6 +219,8 @@ async def import_version(session, payload, change_note, user_id):
     graph = workflow.get("graph")
     if not isinstance(graph, dict):
         raise ValueError("缺少 workflow.graph 配置")
+    if graph.keys() != {"nodes", "edges"}:
+        raise ValueError("graph 只能包含固定 nodes 与 edges")
     nodes = validate_graph(graph.get("nodes"), graph.get("edges"))
     await workflow_lock(session)
     latest = await session.scalar(
