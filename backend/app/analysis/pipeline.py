@@ -14,12 +14,11 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.analysis.llm import LlmResult, LlmUnavailableError, call_llm_json
-from app.analysis.models import AnalysisStepTrace, AnalysisTask, ReportVersion
-from app.analysis.prompts import ANALYSIS_SYSTEM_PROMPT as SYSTEM_PROMPT
+from app.analysis.models import AgentWorkflowConfig, AnalysisStepTrace, AnalysisTask, ReportVersion
 from app.analysis.tools import (
     ClauseCandidate,
     ToolBox,
@@ -31,6 +30,7 @@ from app.analysis.workflow_engine import (
     EIGHT_DIMENSIONS_SPEC,
     evaluate_fact_sufficiency,
 )
+from app.analysis.workflow_runtime import execution_settings, pin_active_version, require_executable
 
 log = logging.getLogger(__name__)
 
@@ -100,8 +100,19 @@ async def _add_trace(
         )
         + 1
     )
+    inp = dict(inp or {})
+    if task.workflow_version_id:
+        cfg = await session.get(AgentWorkflowConfig, task.workflow_version_id)
+        inp["workflow_execution"] = {
+            "workflow_version_id": str(cfg.id),
+            "version_no": cfg.version_no,
+            "node_settings": execution_settings(
+                next(n for n in cfg.nodes_json if n["node_id"] == node)
+            ),
+        }
     tr = AnalysisStepTrace(
         task_id=task.id,
+        workflow_version_id=task.workflow_version_id,
         seq_no=seq,
         agent_node_id=node,
         agent_name=name,
@@ -163,28 +174,36 @@ async def _analyse_dimension(
     dim_title: str,
     cands: list[ClauseCandidate],
     feedback: list[str] | None,
+    config: dict[str, Any],
 ) -> tuple[dict[str, Any], ToolCall]:
     """单个维度的分析调用;模型不可用时返回带 error 的结果而不是编造内容。"""
     msgs = [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": config["system_prompt"]},
         {
             "role": "user",
             "content": _build_user_message(task, dim_code, dim_title, cands, feedback),
         },
     ]
+    started = time.perf_counter()
     try:
-        res: LlmResult = await call_llm_json(msgs)
-    except LlmUnavailableError as exc:
+        async with asyncio.timeout(config["timeout"]):
+            res: LlmResult = await call_llm_json(
+                msgs,
+                model=config["model"],
+                temperature=config["temperature"],
+                timeout=config["timeout"],
+            )
+    except (LlmUnavailableError, TimeoutError) as exc:
         call = ToolCall(
             call_id=f"llm-{dim_code}",
             tool_name="llm.chat",
             tool_label=f"{dim_code} 维度分析(模型调用)",
             arguments={"dimension": dim_code, "candidates": len(cands)},
-            result_summary=str(exc),
-            duration_ms=0,
+            result_summary=str(exc) or "模型调用超过配置时限",
+            duration_ms=int((time.perf_counter() - started) * 1000),
             verified=False,
         )
-        return {"error": str(exc), "findings": []}, call
+        return {"error": str(exc) or "模型调用超过配置时限", "findings": []}, call
     findings = res.data.get("findings")
     data = {
         "summary": str(res.data.get("summary") or ""),
@@ -202,6 +221,9 @@ async def _analyse_dimension(
             "dimension": dim_code,
             "candidates": len(cands),
             "retry": bool(feedback),
+            "model": config["model"],
+            "temperature": config["temperature"],
+            "timeout": config["timeout"],
         },
         result_summary=(
             f"返回 {len(data['findings'])} 条结论;Token {res.prompt_tokens}+{res.completion_tokens}"
@@ -241,7 +263,15 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     if task is None:
         return
     cc = task.country_code.upper()
-    await session.execute(delete(AnalysisStepTrace).where(AnalysisStepTrace.task_id == task.id))
+    cfg = (
+        await session.get(AgentWorkflowConfig, task.workflow_version_id)
+        if task.workflow_version_id
+        else None
+    )
+    if cfg is None:
+        cfg = await pin_active_version(session, task)
+    require_executable(cfg)
+    runtime = {n["node_id"]: execution_settings(n) for n in cfg.nodes_json}
     task.status = "running"
     task.total_tokens = task.total_duration_ms = task.mcp_calls_count = 0
     task.backtrack_count = 0
@@ -304,13 +334,24 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
 
     # ---- 2. 检索 ----
     mark = len(tb.calls)
-    availability = await tb.check_source_availability()
-    dim_cands: dict[str, list[ClauseCandidate]] = {}
-    for code, _ in EIGHT_DIMENSIONS_SPEC:
-        dim_cands[code] = await tb.search_effective_clauses(code)
-    all_cands = {c.clause_id: c for lst in dim_cands.values() for c in lst}
-    await tb.query_kg_obligations(list(all_cands))
-    await tb.verify_clause_effective_date(list(all_cands.values()))
+
+    async def retrieve():
+        availability = await tb.check_source_availability()
+        dim_cands = {}
+        for code, _ in EIGHT_DIMENSIONS_SPEC:
+            dim_cands[code] = await tb.search_effective_clauses(
+                code,
+                top_k=runtime["node_mcp_retriever"]["top_k"],
+            )
+        all_cands = {c.clause_id: c for lst in dim_cands.values() for c in lst}
+        await tb.query_kg_obligations(list(all_cands))
+        await tb.verify_clause_effective_date(list(all_cands.values()))
+        return availability, dim_cands
+
+    availability, dim_cands = await asyncio.wait_for(
+        retrieve(),
+        timeout=runtime["node_mcp_retriever"]["timeout"],
+    )
     step_calls = tb.calls[mark:]
     covered = sum(1 for v in dim_cands.values() if v)
     await _add_trace(
@@ -357,7 +398,12 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     active = [code for code, _ in EIGHT_DIMENSIONS_SPEC if dim_cands[code]]
     t_start = asyncio.get_event_loop().time()
     outs = await asyncio.gather(
-        *[_analyse_dimension(task, c, dim_titles[c], dim_cands[c], None) for c in active]
+        *[
+            _analyse_dimension(
+                task, c, dim_titles[c], dim_cands[c], None, runtime["node_dimension_analyst"]
+            )
+            for c in active
+        ]
     )
     wall = int((asyncio.get_event_loop().time() - t_start) * 1000)
     llm_calls: list[ToolCall] = []
@@ -490,8 +536,10 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         return problems
 
     problems = await _verify_round(list(results), "verification")
-    if problems:
-        task.backtrack_count = 1
+    for round_no in range(1, runtime["node_citation_verifier"]["max_backtrack_rounds"] + 1):
+        if not problems:
+            break
+        task.backtrack_count = round_no
         bad_codes = sorted({p.split(":")[0].split(" ")[0] for p in problems})
         b0 = asyncio.get_event_loop().time()
         outs2 = await asyncio.gather(
@@ -502,6 +550,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                     dim_titles[c],
                     dim_cands[c],
                     [p for p in problems if p.startswith(c)],
+                    runtime["node_dimension_analyst"],
                 )
                 for c in bad_codes
             ]
@@ -565,9 +614,14 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             else f"二次核验仍有 {len(problems2)} 条未通过,已剔除并标记为待核查"
         )
         await session.commit()
+        problems = problems2
 
     # ---- 5. 编制 ----
-    await _compile(session, task, tb, results, dim_cands, dim_titles)
+    rv, cited_versions, full = await asyncio.wait_for(
+        _compile(session, task, tb, results, dim_cands, dim_titles),
+        timeout=runtime["node_report_compiler"]["timeout"],
+    )
+    await _update_linkage(session, task, rv, cited_versions, full, runtime)
 
 
 async def _compile(
@@ -577,7 +631,7 @@ async def _compile(
     results: dict[str, dict[str, Any]],
     dim_cands: dict[str, list[ClauseCandidate]],
     dim_titles: dict[str, str],
-) -> None:
+) -> tuple[ReportVersion, dict[str, set[str]], bool]:
     c0 = asyncio.get_event_loop().time()
     dimensions: list[dict[str, Any]] = []
     findings: list[dict[str, Any]] = []
@@ -740,9 +794,28 @@ async def _compile(
         },
     )
 
+    return rv, cited_versions, full
+
+
+async def _update_linkage(
+    session: AsyncSession,
+    task: AnalysisTask,
+    rv: ReportVersion,
+    cited_versions: dict[str, set[str]],
+    full: bool,
+    runtime: dict[str, dict],
+) -> None:
     # ---- 6. 修订联动 ----
     l0 = asyncio.get_event_loop().time()
-    stale = await check_country_report_updates(session, list(cited_versions))
+    linkage_enabled = runtime["node_update_linkage"]["enabled"]
+    stale = (
+        await asyncio.wait_for(
+            check_country_report_updates(session, list(cited_versions)),
+            timeout=runtime["node_update_linkage"]["timeout"],
+        )
+        if linkage_enabled
+        else []
+    )
     impacts = [
         {
             "dimension_code": dim,
@@ -773,13 +846,15 @@ async def _compile(
         node="node_update_linkage",
         name="法规修订 72h 影响联动 Agent",
         phase="update_linkage",
-        status="passed",
-        summary=link.result_summary,
-        calls=[link],
+        status="passed" if linkage_enabled else "skipped",
+        summary=link.result_summary
+        if linkage_enabled
+        else "本次运行配置关闭了报告生成时的更新检查",
+        calls=[link] if linkage_enabled else [],
         duration_ms=link.duration_ms,
         inp={"cited_versions_count": len(cited_versions)},
         out={
-            "cited_versions_checked": len(cited_versions),
+            "cited_versions_checked": len(cited_versions) if linkage_enabled else 0,
             "stale_impacts_count": len(impacts),
             "stale_impacts": impacts,
         },

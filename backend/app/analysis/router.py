@@ -59,6 +59,7 @@ from app.analysis.workflow_runtime import (
     RUNTIME_SCHEMA,
     activate_version,
     execution_settings,
+    pin_active_version,
 )
 from app.core.db import get_session
 from app.iam.deps import (
@@ -89,6 +90,10 @@ STALE_RUNNING_SECONDS = 600
 
 async def _start(session: AsyncSession, task: AnalysisTask) -> None:
     """把任务置为运行中并在后台启动流水线,请求立即返回。"""
+    try:
+        await pin_active_version(session, task)
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
     task.status = "running"
     await session.commit()
     await session.refresh(task)  # updated_at 由数据库更新,需刷新后才能同步读取

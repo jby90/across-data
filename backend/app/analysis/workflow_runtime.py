@@ -44,6 +44,17 @@ def baseline_nodes() -> list[dict]:
 
     nodes = copy.deepcopy(DEFAULT_WORKFLOW_NODES)
     by_id = {n["node_id"]: n for n in nodes}
+    entries = {
+        "node_start": "app.analysis.router:_start",
+        "node_fact_collector": "app.analysis.workflow_engine:evaluate_fact_sufficiency",
+        "node_mcp_retriever": "app.analysis.tools:ToolBox.search_effective_clauses",
+        "node_dimension_analyst": "app.analysis.pipeline:_analyse_dimension",
+        "node_citation_verifier": "app.analysis.pipeline:_verify_dimension",
+        "node_report_compiler": "app.analysis.pipeline:_compile",
+        "node_update_linkage": "app.analysis.pipeline:_update_linkage",
+    }
+    for nid, entry in entries.items():
+        by_id[nid]["code_entrypoint"] = entry
     by_id["node_fact_collector"]["parameters"] = {
         "sufficiency_threshold": 100,
         "block_on_missing_facts": True,
@@ -51,7 +62,14 @@ def baseline_nodes() -> list[dict]:
     retriever = by_id["node_mcp_retriever"]["parameters"]
     retriever.pop("top_k_clauses", None)
     retriever.pop("temperature", None)
-    retriever.update(top_k=5, timeout=150.0)
+    retriever.pop("only_effective_versions", None)
+    retriever.update(
+        top_k=5, timeout=150.0, exclude_held_sources=True, unknown_status_is_not_verified=True
+    )
+    by_id["node_mcp_retriever"]["system_prompt"] = (
+        "确定性检索：限定目标国家，核对归档完整性，隔离错绑来源和待核对解析；"
+        "排除明确失效版本，未知法律状态如实标注，不能视为已确认现行有效。"
+    )
     analyst = by_id["node_dimension_analyst"]
     analyst["system_prompt"] = ANALYSIS_SYSTEM_PROMPT
     analyst["model_name"] = get_settings().llm_model
@@ -166,9 +184,34 @@ async def ensure_baseline(session: AsyncSession) -> AgentWorkflowConfig:
 
 
 async def import_version(session, payload, change_note, user_id):
-    from app.analysis.workflow_engine import WORKFLOW_KEY
+    from app.analysis.workflow_engine import (
+        EIGHT_DIMENSIONS_SPEC,
+        REQUIRED_FACTS_SPEC,
+        WORKFLOW_KEY,
+    )
 
-    graph = (payload.get("workflow") or {}).get("graph")
+    if payload.keys() - {
+        "kind",
+        "schema_version",
+        "runtime_schema_version",
+        "exported_at",
+        "security_policy",
+        "app",
+        "workflow",
+    }:
+        raise ValueError("配置包包含白名单外字段")
+
+    workflow = payload.get("workflow")
+    if not isinstance(workflow, dict):
+        raise ValueError("缺少 workflow 配置对象")
+    if workflow.keys() - {"graph", "report_dimensions", "required_facts_schema"}:
+        raise ValueError("工作流只允许导入现有图与参数")
+    dimensions = [{"code": code, "title": title} for code, title in EIGHT_DIMENSIONS_SPEC]
+    if workflow.get("report_dimensions", dimensions) != dimensions:
+        raise ValueError("报告维度契约不可修改")
+    if workflow.get("required_facts_schema", REQUIRED_FACTS_SPEC) != REQUIRED_FACTS_SPEC:
+        raise ValueError("必填事实契约不可修改")
+    graph = workflow.get("graph")
     if not isinstance(graph, dict):
         raise ValueError("缺少 workflow.graph 配置")
     nodes = validate_graph(graph.get("nodes"), graph.get("edges"))
@@ -182,6 +225,10 @@ async def import_version(session, payload, change_note, user_id):
         .limit(1)
     )
     meta = payload.get("app") or {}
+    if not isinstance(meta, dict):
+        raise ValueError("app 元数据必须为对象")
+    if meta.keys() - {"workflow_key", "name", "description", "version_no", "change_note"}:
+        raise ValueError("app 元数据包含非白名单字段")
     cfg = AgentWorkflowConfig(
         workflow_key=WORKFLOW_KEY,
         version_no=(latest or 0) + 1,

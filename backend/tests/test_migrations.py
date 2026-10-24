@@ -60,6 +60,21 @@ async def test_migrations_apply_and_match_models(pg_url, engine):
             assert (
                 await conn.scalar(text("SELECT action FROM knowledge_audit_records")) == "original"
             )
+            await conn.execute(
+                text("""INSERT INTO agent_workflow_configs
+                (id,workflow_key,version_no,name,description,dsl_version,is_active,
+                 readonly_locked,nodes_json,edges_json)
+                VALUES ('00000000-0000-0000-0000-000000000003','s4-test',1,
+                 'test','test','test',true,true,'[]','[]')""")
+            )
+            for statement in (
+                "UPDATE agent_workflow_configs SET nodes_json='[{}]'",
+                "DELETE FROM agent_workflow_configs",
+            ):
+                with pytest.raises(DBAPIError, match="immutable|append-only"):
+                    async with conn.begin_nested():
+                        await conn.execute(text(statement))
+            await conn.execute(text("UPDATE agent_workflow_configs SET is_active=false"))
     finally:
         await mig_engine.dispose()
 

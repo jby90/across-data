@@ -56,23 +56,27 @@ async def call_llm_json(
     *,
     temperature: float = 0.1,
     max_tokens: int = 6000,
+    model: str | None = None,
+    timeout: float | None = None,
 ) -> LlmResult:
     """调用大模型并要求返回 JSON;格式异常或网络错误时重试一次,仍失败抛出 LlmUnavailableError。"""
     settings = get_settings()
     if not settings.llm_api_key:
         raise LlmUnavailableError("未配置大模型密钥(环境变量 CYSH_LLM_API_KEY)")
+    requested_model = model or settings.llm_model
+    request_timeout = timeout if timeout is not None else settings.llm_analysis_timeout_seconds
     url = settings.llm_base_url.rstrip("/") + "/chat/completions"
     last_error = ""
     started = time.perf_counter()
     prompt_tokens = completion_tokens = 0
     for _attempt in range(MAX_ATTEMPTS):
         try:
-            async with httpx.AsyncClient(timeout=settings.llm_analysis_timeout_seconds) as client:
+            async with httpx.AsyncClient(timeout=request_timeout) as client:
                 resp = await client.post(
                     url,
                     headers={"Authorization": f"Bearer {settings.llm_api_key}"},
                     json={
-                        "model": settings.llm_model,
+                        "model": requested_model,
                         "messages": messages,
                         "temperature": temperature,
                         "max_tokens": max_tokens,
@@ -98,6 +102,6 @@ async def call_llm_json(
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
             duration_ms=int((time.perf_counter() - started) * 1000),
-            model=settings.llm_model,
+            model=str(body.get("model") or requested_model),
         )
     raise LlmUnavailableError(f"大模型调用失败(已重试 {MAX_ATTEMPTS} 次): {last_error}")
