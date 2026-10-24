@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "items": [
+    {
+      "id": "9fc69a7d-67fd-4e5b-9176-c79b1ff6f830",
+      "country": "EG",
+      "cached": true
+    },
+    {
+      "id": "3dd13104-2717-429f-8d3a-24c99469b718",
+      "country": "SG",
+      "cached": true
+    }
+  ],
+  "model_calls": 0,
+  "new_writes": 0
+}
