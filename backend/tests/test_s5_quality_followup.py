@@ -115,6 +115,9 @@ async def test_grounding_call_cannot_see_other_clauses_or_selection_stage_drafts
         p = json.loads(messages[1]["content"])
         observed.append(p)
         if p["phase"] == "select_evidence":
+            assert p["output_schema"]["$defs"]["FindingSelection"]["properties"]["fact_key"][
+                "enum"
+            ] == ["operation"]
             data = {
                 "findings": [
                     {
@@ -131,6 +134,7 @@ async def test_grounding_call_cannot_see_other_clauses_or_selection_stage_drafts
             assert set(p["evidence"]) == {"quote"}
             assert "999" not in messages[1]["content"]
             assert "candidate_clauses" not in p
+            assert len(p["output_schema"]["oneOf"]) == 2
             data = {
                 "obligation": "组织须采取合理安全措施保护数据",
                 "risk_level": "MEDIUM",
@@ -152,6 +156,41 @@ async def test_grounding_call_cannot_see_other_clauses_or_selection_stage_drafts
     assert pipeline._verify_dimension("D8", result, rows) == []
     assert result["tokens"] == 36 and call.arguments["request_attempts"] == 2
     assert len(observed) == 2 and "999" not in result["findings"][0]["obligation"]
+
+
+async def test_numeric_generation_error_is_retried_with_exact_source_and_remains_in_ledger(
+    monkeypatch,
+):
+    source = "The maximum permitted percentage for this activity is 2%."
+    row = candidate("bound", source)
+    calls = []
+
+    async def fake(messages, **kwargs):
+        payload = json.loads(messages[1]["content"])
+        calls.append(payload)
+        assert payload["evidence"] == {"quote": source}
+        if len(calls) == 1:
+            data = {"obligation": "该活动最高比例为20%", "gap": "", "risk_level": "MEDIUM"}
+        else:
+            assert "20%" in payload["schema_feedback"]
+            data = {"obligation": "该活动最高比例为2%", "gap": "", "risk_level": "MEDIUM"}
+        return LlmResult(data, 2, 3, 1, "fake")
+
+    monkeypatch.setattr(pipeline, "call_llm_json", fake)
+    cfg = execution_settings(
+        next(n for n in baseline_nodes() if n["node_id"] == "node_dimension_analyst")
+    )
+    finding, ledger = await pipeline._ground_selection(
+        AnalysisTask(country_code="KE", facts_json={"q": "开展业务"}),
+        "D1",
+        "scope",
+        {"clause_id": "bound", "sentence_ids": [1], "fact_key": "q"},
+        [row],
+        cfg,
+    )
+    assert finding["obligation"] == "该活动最高比例为2%"
+    assert ledger["tokens"] == 10 and ledger["requests"] == 2
+    assert ledger["failures"][0]["kind"] == "grounding_validation_error"
 
 
 async def test_source_limited_refusal_is_preserved_and_never_counted_as_verified(monkeypatch):

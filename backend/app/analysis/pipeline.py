@@ -162,6 +162,10 @@ def _build_user_message(
     cands: list[ClauseCandidate],
     feedback: list[str] | None,
 ) -> str:
+    schema = AnalysisResponse.model_json_schema()
+    properties = schema["$defs"]["FindingSelection"]["properties"]
+    properties["fact_key"]["enum"] = list(task.facts_json or {})
+    properties["clause_id"]["enum"] = [c.clause_id for c in cands]
     payload: dict[str, Any] = {
         "phase": "select_evidence",
         "country": task.country_code,
@@ -171,6 +175,7 @@ def _build_user_message(
         "question": task_query(task.facts_json or {}, dim_code),
         "dimension": {"code": dim_code, "title": dim_title},
         "candidate_clauses": [_candidate_payload(c) for c in cands],
+        "output_schema": schema,
     }
     if feedback:
         payload["verifier_feedback_must_fix"] = feedback
@@ -198,7 +203,19 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
         "dimension": {"code": dim_code, "title": dim_title},
         "business_fact": str(task.facts_json[finding["fact_key"]]),
         "evidence": {"quote": result["quote"]},
+        "output_schema": GroundedClaim.model_json_schema(),
     }
+    # The model sees the same exclusive rule/gap contract that Pydantic enforces.
+    message["output_schema"]["oneOf"] = [
+        {
+            "required": ["obligation", "gap"],
+            "properties": {"obligation": {"minLength": 1}, "gap": {"const": ""}},
+        },
+        {
+            "required": ["obligation", "gap"],
+            "properties": {"obligation": {"const": ""}, "gap": {"minLength": 1}},
+        },
+    ]
     tokens = requests = 0
     failures = []
     for attempt in range(2):
@@ -221,6 +238,10 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
             result.update(obligation=claim.obligation, risk_level=claim.risk_level)
             if claim.gap:
                 result["_generation_gap"] = claim.gap
+            else:
+                ok, issues = verify_finding(result, candidate.text)
+                if not ok:
+                    raise ValueError("；".join(issues))
             return result, {
                 "requests": requests,
                 "tokens": tokens,
@@ -239,10 +260,10 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
                 if hasattr(exc, "errors")
                 else str(exc)
             )
-            failures.append({"kind": "grounding_schema_error", "reason": detail[:1600]})
+            failures.append({"kind": "grounding_validation_error", "reason": detail[:1600]})
             message["schema_feedback"] = detail[:1600]
             if attempt == 1:
-                result["_generation_error"] = "依据限定生成Schema失败: " + detail[:1600]
+                result["_generation_error"] = "依据限定生成校验失败: " + detail[:1600]
     return result, {
         "requests": requests,
         "tokens": tokens,
