@@ -1,8 +1,8 @@
 /** CUA E2E: pass an authenticated S5 Agent Studio tab. Read-only, no model calls/approvals. */
 import assert from 'node:assert/strict'
 
-export async function verifyS5Ui(tab) {
-  assert.match(await tab.url(), /^http:\/\/127\.0\.0\.1:5185\/agent-studio$/)
+export async function verifyS5Ui(tab, baseUrl = 'http://127.0.0.1:5185') {
+  assert.equal(await tab.url(), baseUrl + '/agent-studio')
   if (!await tab.playwright.getByRole('button', { name: '质量评测', exact: true }).isVisible()) {
     await tab.playwright.getByRole('button', { name: '配置与评测', exact: true }).click()
   }

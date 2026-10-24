@@ -9,15 +9,16 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 
-from sqlalchemy import text  # noqa: E402
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine  # noqa: E402
-
+from app.analysis.evaluation import suite
+from app.analysis.retrieval import task_query
 from app.analysis.tools import (
     DIMENSION_KEYWORDS,
     ToolBox,
     clause_relevance,
     is_usable_clause_text,
-)  # noqa: E402
+)
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 
 async def run(args):
@@ -30,6 +31,7 @@ async def run(args):
         async with async_sessionmaker(engine)() as session:
             await session.execute(text("SET TRANSACTION READ ONLY"))
             boxes = {}
+            questions = {q["id"]: q for q in suite()["cases"]}
             for case in data["cases"]:
                 cc, dim = case["country_code"], case["dimension_code"]
                 box = boxes.setdefault(cc, ToolBox(session, cc))
@@ -47,6 +49,20 @@ async def run(args):
                         row[0].clause_id,
                     ),
                 )
+                current = case.get("retrieval_version", "").startswith("query-bm25")
+                if current:
+                    question = questions[case["question_id"]]
+                    await box.search_effective_clauses(
+                        dim, query=task_query(question["facts"], dim)
+                    )
+                    from app.analysis.workflow_engine import EIGHT_DIMENSIONS_SPEC
+
+                    ranked = box._index.rank(
+                        " ".join(DIMENSION_KEYWORDS[dim])
+                        + " "
+                        + dict(EIGHT_DIMENSIONS_SPEC)[dim],
+                        task_query(question["facts"], dim),
+                    )
                 for expected in case["expected_clauses"]:
                     if any(
                         c["clause_id"] == expected["clause_id"]
@@ -70,8 +86,11 @@ async def run(args):
                         if source is None
                         else "text_quality_gate"
                         if not is_usable_clause_text(source.text)
+                        else "query_lexical_miss"
+                        if current and rank is None
                         else "dimension_keyword_miss"
-                        if clause_relevance(source, DIMENSION_KEYWORDS[dim])[0] == 0
+                        if not current
+                        and clause_relevance(source, DIMENSION_KEYWORDS[dim])[0] == 0
                         else "ranked_below_five"
                     )
                     misses.append(
@@ -109,7 +128,7 @@ async def run(args):
         "unsupported_count": len(rejected),
         "misses": misses,
         "unsupported": rejected,
-        "note": "诊断读取基线检索逻辑与原始Judge理由，不改评分、不做人工法律复核。",
+        "note": "按批次的检索版本只读诊断，保留原始Judge理由；不改评分、不做人工法律复核。",
     }
     args.output.write_text(
         json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"

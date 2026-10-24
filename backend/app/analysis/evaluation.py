@@ -136,8 +136,9 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
         scenario_type="evaluation",
         facts_json=question["facts"],
     )
+    model_call = None
     if candidates:
-        result, _ = await pipeline._analyse_dimension(
+        result, call = await pipeline._analyse_dimension(
             task,
             question["dimension_code"],
             dict(EIGHT_DIMENSIONS_SPEC)[question["dimension_code"]],
@@ -145,6 +146,7 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
             None,
             config,
         )
+        model_call = call.as_dict()
         pipeline._verify_dimension(question["dimension_code"], result, candidates)
     else:
         result = {"findings": [], "gaps": "无可用检索结果", "tokens": 0}
@@ -198,6 +200,7 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
         "temperature": config["temperature"],
         "retrieval_version": RETRIEVAL_VERSION,
         "model": config["model"],
+        "model_call": model_call,
         "retrieval_expected": len(expected),
         "retrieval_hits": hits,
         "source_drift": drift,
