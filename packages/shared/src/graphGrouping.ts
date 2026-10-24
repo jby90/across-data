@@ -118,3 +118,50 @@ export function relationPage<T>(relations: T[], page: number, size: number) {
   const current = Math.min(pages, Math.max(1, Math.floor(page) || 1))
   return { page: current, pages, edges: relations.slice((current - 1) * pageSize, current * pageSize) }
 }
+
+/** Fixed, equally spaced law clusters for the overview. No synthetic nodes or edges.
+ * Shared entities are drawn once; their placement is not a new legal relationship.
+ */
+export function layoutLawOverview<N extends DisplayNode, E extends DisplayEdge>(
+  nodes: N[], groups: LawGroup<E>[], edges: MergedDisplayEdge[],
+) {
+  const byId = new Map(nodes.map(n => [n.id, n]))
+  const degree = new Map<string, number>()
+  for (const e of edges) {
+    degree.set(e.source, (degree.get(e.source) || 0) + 1)
+    degree.set(e.target, (degree.get(e.target) || 0) + 1)
+  }
+  const owners = new Map<string, string>()
+  const ordered = [...groups].sort((a, b) => a.id.localeCompare(b.id))
+  for (const g of ordered) for (const id of g.instrumentIds) owners.set(id, g.id)
+  for (const g of ordered) for (const e of g.edges) {
+    for (const id of [e.source_node_id, e.target_node_id]) {
+      const n = byId.get(id)
+      if (n && !['COUNTRY', 'REGULATOR'].includes(n.node_type) && !owners.has(id)) owners.set(id, g.id)
+    }
+  }
+  const visible = nodes.filter(n => degree.has(n.id) || (n.node_type === 'INSTRUMENT' && owners.has(n.id)))
+  const columns = Math.max(1, Math.ceil(Math.sqrt(ordered.length)))
+  const positions = new Map<string, { x: number; y: number }>()
+  ordered.forEach((g, index) => {
+    const cx = (index % columns) * 210
+    const cy = Math.floor(index / columns) * 180 + 170
+    const members = visible.filter(n => owners.get(n.id) === g.id).sort((a, b) => a.id.localeCompare(b.id))
+    const instruments = members.filter(n => n.node_type === 'INSTRUMENT')
+    const leaves = members.filter(n => n.node_type !== 'INSTRUMENT')
+    instruments.forEach((n, i) => positions.set(n.id, { x: cx + i * 18, y: cy }))
+    leaves.forEach((n, i) => {
+      const angle = i * Math.PI * (3 - Math.sqrt(5))
+      const radius = 22 + 48 * Math.sqrt((i + 1) / leaves.length)
+      positions.set(n.id, { x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius })
+    })
+  })
+  const hubs = visible.filter(n => !positions.has(n.id)).sort((a, b) => a.id.localeCompare(b.id))
+  hubs.forEach((n, i) => positions.set(n.id, { x: (i % columns) * 210, y: -Math.floor(i / columns) * 85 }))
+  const groupIndex = new Map(ordered.map((g, index) => [g.id, index + 1]))
+  return visible.map(n => ({
+    overviewLabel: n.node_type === 'INSTRUMENT' ? `#${String(groupIndex.get(owners.get(n.id)!) || '').padStart(2, '0')}` : undefined,
+    id: n.id, name: n.name_zh, type: n.node_type, degree: degree.get(n.id) || 0,
+    ...positions.get(n.id)!,
+  }))
+}

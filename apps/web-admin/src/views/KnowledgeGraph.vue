@@ -4,7 +4,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { api } from '../api'
 import KgForceGraph from '../components/KgForceGraph.vue'
 import KgLawGroups from '../components/KgLawGroups.vue'
-import { groupByLaw, mergeDisplayEdges, relationPage } from '@cyshuhe/shared/src/graphGrouping'
+import { groupByLaw, mergeDisplayEdges, relationPage, layoutLawOverview } from '@cyshuhe/shared/src/graphGrouping'
 
 interface KgNode {
   id: string
@@ -216,6 +216,20 @@ const mergedEdges = computed(() => mergeDisplayEdges(graph.value.nodes, selected
 const displayedPage = computed(() => relationPage(mergedEdges.value, relationPageNumber.value, 36))
 const graphEdgesRaw = computed(() => displayedPage.value.edges)
 const displayedEvidenceCount = computed(() => graphEdgesRaw.value.reduce((sum, e) => sum + e.count, 0))
+const overviewEdges = computed(() => mergeDisplayEdges(graph.value.nodes, filteredEdges.value))
+const overviewNodes = computed(() => layoutLawOverview(
+  graph.value.nodes.filter(n => visibleNodeTypes.value.includes(n.node_type)), lawGroups.value, overviewEdges.value,
+))
+const overviewFgEdges = computed(() => overviewEdges.value.map(e => ({
+  source: e.source, target: e.target,
+  label: (RELATION_LABEL[e.relation] || e.relation) + (e.count > 1 ? ` ×${e.count}` : ''), approved: e.approved,
+})))
+function onOverviewNodeClick(id: string) {
+  const group = lawGroups.value.find(g => g.instrumentIds.includes(id))
+  if (group) selectLaw(group.id)
+  else onNodeClick(id)
+}
+
 function selectLaw(id: string) {
   selectedLawId.value = id
   relationPageNumber.value = 1
@@ -445,9 +459,16 @@ onMounted(loadGraph)
             :groups="lawGroups" :selected-group-id="selectedLawId"
             :total="graph.edges.length" :filtered="filteredEdges.length"
             :shown="displayedEvidenceCount" :shown-groups="fgEdges.length"
+            :overview-shown="filteredEdges.length" :overview-groups="overviewFgEdges.length"
             :page="displayedPage.page" :pages="displayedPage.pages"
             @select="selectLaw" @page="selectRelationPage"
           >
+            <template #overview>
+              <KgForceGraph :nodes="overviewNodes" :edges="overviewFgEdges" :categories="fgCategories"
+                :visible-types="visibleNodeTypes" :selected-id="selectedId" overview height="620px"
+                @node-click="onOverviewNodeClick" @toggle-type="toggleNodeType" />
+              <div class="graph-caption">{{ overviewNodes.length }} 个节点 · {{ lawGroups.length }} 个法规分组（含其他关联） · 全部筛选后关系已绘制</div>
+            </template>
             <KgForceGraph :nodes="fgNodes" :edges="fgEdges" :categories="fgCategories"
               :visible-types="visibleNodeTypes" :selected-id="selectedId" height="480px"
               @node-click="onNodeClick" @toggle-type="toggleNodeType" />

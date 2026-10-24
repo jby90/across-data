@@ -11,17 +11,24 @@ const props = defineProps<{
   shownGroups: number
   page: number
   pages: number
+  overviewShown: number
+  overviewGroups: number
 }>()
 const emit = defineEmits<{
   (e: 'select', id: string): void
   (e: 'page', page: number): void
 }>()
+const view = ref<'overview' | 'directory'>('overview')
 const search = ref('')
 const directoryPage = ref(1)
 const matched = computed(() => props.groups.filter(g => g.name.toLowerCase().includes(search.value.trim().toLowerCase())))
 const directoryPages = computed(() => Math.max(1, Math.ceil(matched.value.length / 12)))
 const directory = computed(() => matched.value.slice((directoryPage.value - 1) * 12, directoryPage.value * 12))
 const selected = computed(() => props.groups.find(g => g.id === props.selectedGroupId))
+function expandFromOverview(event: Event) {
+  const id = (event.target as HTMLSelectElement).value
+  if (props.groups.some(g => g.id === id)) emit('select', id)
+}
 watch([search, () => props.groups], () => { directoryPage.value = 1 })
 </script>
 
@@ -30,10 +37,22 @@ watch([search, () => props.groups], () => { directoryPage.value = 1 })
     <div class="law-counts" data-testid="kg-display-counts" aria-live="polite">
       <span>全部关系 <strong>{{ total }}</strong></span>
       <span>筛选后 <strong>{{ filtered }}</strong></span>
-      <span>当前展示 <strong>{{ shown }}</strong> 条 · {{ shownGroups }} 组连线</span>
+      <span>当前展示 <strong>{{ !selected && view === 'overview' ? overviewShown : shown }}</strong> 条 · {{ !selected && view === 'overview' ? overviewGroups : shownGroups }} 组连线</span>
     </div>
     <p class="law-hint">关系数按原始证据记录计数；同起点、终点及类型的记录合并为连线。分组仅用于浏览，复核状态沿用原记录。</p>
-    <template v-if="!selected">
+    <div v-if="!selected" class="law-view-switch" role="group" aria-label="图谱展示方式">
+      <button :aria-pressed="view === 'overview'" @click="view = 'overview'">全局总览</button>
+      <button :aria-pressed="view === 'directory'" @click="view = 'directory'">法规分组</button>
+      <select v-if="view === 'overview'" value="" aria-label="从总览展开法规" @change="expandFromOverview">
+        <option value="" disabled>选择法规并展开…</option>
+        <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.name }} · {{ group.edges.length }} 条关系</option>
+      </select>
+    </div>
+    <template v-if="!selected && view === 'overview'">
+      <slot name="overview" />
+      <p class="law-hint">展示筛选后的全部关系，法规按组均匀排布。滚轮缩放、拖拽平移，图中序号仅用于定位；悬停查看名称，点击法规或使用上方选择框进入细节。</p>
+    </template>
+    <template v-else-if="!selected">
       <div class="law-toolbar">
         <div><strong>法规目录</strong><span class="law-muted">{{ groups.length }} 组 · 点击法规展开关系</span></div>
         <input v-model="search" aria-label="搜索图谱法规" placeholder="搜索法规名称" type="search" />
@@ -54,7 +73,7 @@ watch([search, () => props.groups], () => { directoryPage.value = 1 })
     </template>
     <template v-else>
       <div class="law-toolbar">
-        <div class="law-selection"><button @click="emit('select', '')">← 返回法规目录</button><h3>{{ selected.name }}</h3></div>
+        <div class="law-selection"><button @click="emit('select', '')">← {{ view === 'overview' ? '返回全局总览' : '返回法规目录' }}</button><h3>{{ selected.name }}</h3></div>
         <span class="law-muted">本法规 {{ selected.edges.length }} 条关系</span>
       </div>
       <slot />
@@ -64,12 +83,15 @@ watch([search, () => props.groups], () => { directoryPage.value = 1 })
         <button :disabled="page >= pages" @click="emit('page', page + 1)">下一页关系</button>
       </div>
     </template>
-    <p class="law-hint">跨法规关系可在双方分组中查看，全部关系数按记录去重。目录未展开时不绘制连线；完整证据可在证据明细中查看。</p>
+    <p class="law-hint">跨法规关系可在双方分组中查看，全部关系数按记录去重。完整证据可在证据明细中查看，待核对状态不会因切换视图改变。</p>
   </section>
 </template>
 
 <style scoped>
 .law-browser { padding: 20px; }
+.law-view-switch { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 16px; }
+.law-view-switch select { min-height: 40px; min-width: 0; max-width: 100%; width: 260px; margin-left: auto; font: inherit; font-size: 13px; border: 1px solid #d8e1eb; border-radius: 8px; background: white; color: #334b60; padding: 8px; }
+.law-view-switch button[aria-pressed="true"] { background: #eef5ff; border-color: #93b4ef; color: #1d4ed8; }
 .law-counts { display: flex; flex-wrap: wrap; gap: 12px 32px; color: #526174; font-size: 14px; }
 .law-counts strong { color: #172c43; font-size: 22px; margin-left: 6px; }
 .law-hint, .law-muted { color: #64748b; font-size: 13px; line-height: 1.7; }

@@ -9,7 +9,7 @@ const source = await readFile(new URL('../packages/shared/src/graphGrouping.ts',
 const compiled = ts.transpileModule(source, {
   compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
 }).outputText
-const { groupByLaw, mergeDisplayEdges, relationPage, UNASSIGNED_GROUP } = await import(
+const { groupByLaw, mergeDisplayEdges, relationPage, layoutLawOverview, UNASSIGNED_GROUP } = await import(
   `data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`,
 )
 const law = (id, name = id, doc = id) => ({ id, name_zh: name, node_type: 'INSTRUMENT', document_id: doc })
@@ -102,4 +102,50 @@ test('both apps use the same tested projection and identical directory presentat
   const [admin, user] = await Promise.all(['web-admin', 'web-user'].map(app =>
     readFile(new URL(`../apps/${app}/src/components/KgLawGroups.vue`, import.meta.url), 'utf8')))
   assert.equal(admin.replace(/\r\n/g, '\n'), user.replace(/\r\n/g, '\n'))
+})
+
+test('overview draws every filtered relationship, keeps shared nodes once and creates no graph data', () => {
+  const nodes = [law('a'), law('b'), entity('shared'), entity('data'), { id: 'country', name_zh: 'SG', node_type: 'COUNTRY' }]
+  const edges = [edge('1', 'a', 'shared'), edge('2', 'b', 'shared'), edge('3', 'shared', 'data'), edge('4', 'country', 'a')]
+  const before = JSON.stringify({ nodes, edges })
+  const merged = mergeDisplayEdges(nodes, edges)
+  const overview = layoutLawOverview(nodes, groupByLaw(nodes, edges), merged)
+  assert.equal(overview.filter(n => n.id === 'shared').length, 1)
+  assert.equal(new Set(overview.map(n => n.id)).size, overview.length)
+  for (const e of merged) {
+    assert.ok(overview.some(n => n.id === e.source))
+    assert.ok(overview.some(n => n.id === e.target))
+  }
+  assert.equal(merged.reduce((sum, e) => sum + e.count, 0), edges.length)
+  assert.equal(JSON.stringify({ nodes, edges }), before)
+})
+
+test('large laws stay inside equally spaced clusters; smaller laws retain their own position', () => {
+  const nodes = [law('a'), law('b'), law('c')]
+  const edges = []
+  for (let i = 0; i < 800; i++) {
+    nodes.push(entity(`a-leaf-${i}`))
+    edges.push(edge(`a-edge-${i}`, 'a', `a-leaf-${i}`))
+  }
+  nodes.push(entity('c-leaf'))
+  edges.push(edge('c-edge', 'c', 'c-leaf'))
+  const overview = layoutLawOverview(nodes, groupByLaw(nodes, edges), mergeDisplayEdges(nodes, edges))
+  const a = overview.find(n => n.id === 'a')
+  const b = overview.find(n => n.id === 'b')
+  const c = overview.find(n => n.id === 'c')
+  assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= 180)
+  assert.ok(Math.hypot(a.x - c.x, a.y - c.y) >= 180)
+  for (const n of overview.filter(n => n.id.startsWith('a-leaf-'))) {
+    assert.ok(Math.hypot(n.x - a.x, n.y - a.y) <= 70.00001)
+  }
+  assert.ok(overview.some(n => n.id === 'b'), 'law with no visible relations still has an overview entry')
+})
+
+test('overview position is deterministic and empty filters produce a safe empty diagram', () => {
+  const nodes = [law('a'), law('b'), entity('shared')]
+  const edges = [edge('1', 'a', 'shared'), edge('2', 'b', 'shared')]
+  const project = (ns, es) => layoutLawOverview(ns, groupByLaw(ns, es), mergeDisplayEdges(ns, es)).sort((a, b) => a.id.localeCompare(b.id))
+  assert.deepEqual(project(nodes, edges), project(nodes.toReversed(), edges.toReversed()))
+  assert.deepEqual(layoutLawOverview([], [], []), [])
+  for (const n of project(nodes, edges)) assert.ok(Number.isFinite(n.x) && Number.isFinite(n.y))
 })

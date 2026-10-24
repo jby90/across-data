@@ -7,6 +7,9 @@ export interface FgNode {
   name: string
   type: string
   degree: number
+  overviewLabel?: string
+  x?: number
+  y?: number
 }
 export interface FgEdge {
   source: string
@@ -27,6 +30,7 @@ const props = defineProps<{
   visibleTypes?: string[]
   selectedId?: string
   height?: string
+  overview?: boolean
 }>()
 const emit = defineEmits<{
   (e: 'node-click', id: string): void
@@ -39,16 +43,23 @@ let chart: echarts.ECharts | null = null
 let observer: ResizeObserver | null = null
 
 function buildOption(): echarts.EChartsOption {
-  const showEdgeLabel = props.edges.length <= 20
+  const showEdgeLabel = !props.overview && props.edges.length <= 20
   const data = props.nodes.map((n) => {
     const selected = n.id === props.selectedId
     return {
       id: n.id,
       name: n.name,
       category: props.categories.findIndex((c) => c.type === n.type),
-      symbolSize: selected ? 34 : Math.min(40, 12 + Math.sqrt(n.degree) * 4),
+      x: n.x,
+      y: n.y,
+      symbolSize: selected ? (props.overview ? 18 : 34) : props.overview
+        ? (n.type === 'INSTRUMENT' ? 14 : ['COUNTRY', 'REGULATOR'].includes(n.type) ? 10 : 4)
+        : Math.min(40, 12 + Math.sqrt(n.degree) * 4),
       itemStyle: selected ? { borderColor: '#0f172a', borderWidth: 3 } : undefined,
-      label: { show: n.type === 'COUNTRY' || n.degree >= 10 || selected },
+      label: {
+        show: props.overview ? ['COUNTRY', 'INSTRUMENT'].includes(n.type) || selected : n.type === 'COUNTRY' || n.degree >= 10 || selected,
+        ...(props.overview && n.overviewLabel ? { formatter: n.overviewLabel, position: 'bottom' as const, width: 42 } : {}),
+      },
     }
   })
   const links = props.edges.map((e) => ({
@@ -56,7 +67,7 @@ function buildOption(): echarts.EChartsOption {
     target: e.target,
     value: e.label as unknown as number,
     label: { show: showEdgeLabel, formatter: e.label, fontSize: 12 },
-    lineStyle: { color: e.approved ? '#16a34a' : '#94a3b8', curveness: 0.12 },
+    lineStyle: { color: e.approved ? '#16a34a' : '#94a3b8', curveness: props.overview ? 0.04 : 0.12, opacity: props.overview ? 0.25 : 1 },
   }))
   return {
     animation: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
@@ -73,11 +84,11 @@ function buildOption(): echarts.EChartsOption {
     series: [
       {
         type: 'graph',
-        layout: 'force',
-        zoom: 0.6,
+        layout: props.overview ? 'none' : 'force',
+        zoom: props.overview ? 0.9 : 0.6,
         scaleLimit: { min: 0.2, max: 3 },
         roam: true,
-        draggable: true,
+        draggable: !props.overview,
         categories: props.categories.map((c) => ({
           name: c.name,
           itemStyle: { color: c.color },
@@ -86,15 +97,16 @@ function buildOption(): echarts.EChartsOption {
         links,
         force: { repulsion: 150, edgeLength: [45, 115], gravity: 0.15 },
         edgeSymbol: ['none', 'arrow'],
-        edgeSymbolSize: 6,
+        edgeSymbolSize: props.overview ? 3 : 6,
+        labelLayout: { hideOverlap: !!props.overview },
         emphasis: { focus: 'adjacency', label: { show: true } },
-        lineStyle: { width: 1.2 },
+        lineStyle: { width: props.overview ? 0.65 : 1.2 },
         label: {
           position: 'right',
-          fontSize: 13,
+          fontSize: props.overview ? 11 : 13,
           color: '#334155',
           overflow: 'truncate',
-          width: 180,
+          width: props.overview ? 110 : 180,
         },
       },
     ],
@@ -122,7 +134,7 @@ async function render() {
 }
 
 watch(
-  () => [props.nodes, props.edges, props.selectedId, props.visibleTypes],
+  () => [props.nodes, props.edges, props.selectedId, props.visibleTypes, props.overview],
   () => render(),
   { deep: true },
 )
