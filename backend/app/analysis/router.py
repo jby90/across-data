@@ -651,6 +651,37 @@ async def get_admin_benchmarks(
 # ==================== 业务用户端多智能体合规分析与八维度报告接口 ====================
 
 
+@admin_router.get("/evaluations/suite")
+async def get_evaluation_suite(_: AdminOrReviewerDep):
+    from app.analysis.evaluation import suite
+
+    return suite()
+
+
+@admin_router.get("/evaluations/latest")
+async def get_latest_evaluation(_: AdminOrReviewerDep, session: SessionDep):
+    from app.analysis.evaluation import latest_evaluation
+
+    return await latest_evaluation(session)
+
+
+@admin_router.post("/evaluations/{batch_id}/cases/{question_id}")
+async def execute_evaluation_case(
+    batch_id: uuid.UUID,
+    question_id: str,
+    user: PlatformAdminDep,
+    session: SessionDep,
+):
+    from app.analysis.evaluation import evaluate_case
+
+    try:
+        return await evaluate_case(session, question_id, batch_id, user.user_id)
+    except LookupError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
+
+
 @user_router.get("/tasks", response_model=list[AnalysisTaskSummaryOut])
 async def list_user_analysis_tasks(
     user: UserDep,
@@ -917,6 +948,8 @@ async def export_user_report_docx(
     if rv is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
 
+    if rv.status == "analysis_failed":
+        raise HTTPException(409, "报告分析技术失败，不能导出为部分样稿，请重试分析")
     if await report_held_citation_ids(session, rv):
         raise HTTPException(409, "报告引用了来源绑定或页级解析待核对的条款，请核查后重新分析再导出")
     docx_bytes = build_report_docx(task, rv)
@@ -949,6 +982,8 @@ async def export_user_report_pdf(
     if rv is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
 
+    if rv.status == "analysis_failed":
+        raise HTTPException(409, "报告分析技术失败，不能导出为部分样稿，请重试分析")
     if await report_held_citation_ids(session, rv):
         raise HTTPException(409, "报告引用了来源绑定或页级解析待核对的条款，请核查后重新分析再导出")
     pdf_bytes = build_report_pdf(task, rv)

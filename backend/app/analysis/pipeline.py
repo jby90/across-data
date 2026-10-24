@@ -17,6 +17,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.analysis.evidence_selection import AnalysisResponse, select_quote, sentence_catalog
 from app.analysis.llm import LlmResult, LlmUnavailableError, call_llm_json
 from app.analysis.models import AgentWorkflowConfig, AnalysisStepTrace, AnalysisTask, ReportVersion
 from app.analysis.tools import (
@@ -144,7 +145,7 @@ def _candidate_payload(c: ClauseCandidate) -> dict[str, str]:
         "clause_id": c.clause_id,
         "document": c.document_title,
         "clause_number": c.label,
-        "text": c.text[:1500],
+        "sentences": sentence_catalog(c.text),
     }
 
 
@@ -185,34 +186,76 @@ async def _analyse_dimension(
         },
     ]
     started = time.perf_counter()
+    attempts = 0
+    used_tokens = 0
+    error_kind = "model_unavailable"
     try:
         async with asyncio.timeout(config["timeout"]):
-            res: LlmResult = await call_llm_json(
-                msgs,
-                model=config["model"],
-                temperature=config["temperature"],
-                timeout=config["timeout"],
-            )
+            for attempts in range(1, 3):
+                res: LlmResult = await call_llm_json(
+                    msgs,
+                    model=config["model"],
+                    temperature=config["temperature"],
+                    timeout=config["timeout"],
+                )
+                used_tokens += res.total_tokens
+                try:
+                    validated = AnalysisResponse.model_validate(res.data)
+                    if any(f.fact_key not in (task.facts_json or {}) for f in validated.findings):
+                        raise ValueError("fact_key 不在用户已提供事实中")
+                    break
+                except ValueError as exc:
+                    error_kind = "model_format_error"
+                    detail = (
+                        str(exc.errors(include_input=False, include_url=False))[:1800]
+                        if hasattr(exc, "errors")
+                        else str(exc)[:1800]
+                    )
+                    if attempts == 2:
+                        raise LlmUnavailableError(
+                            "模型JSON Schema/事实键校验连续失败: " + detail
+                        ) from exc
+                    msgs[1]["content"] = _build_user_message(
+                        task,
+                        dim_code,
+                        dim_title,
+                        cands,
+                        [
+                            *(feedback or []),
+                            "格式错误：只返回指定Schema，fact_key与句子编号取自输入，不要输出quote。",
+                            detail,
+                        ],
+                    )
     except (LlmUnavailableError, TimeoutError) as exc:
+        used_tokens += getattr(exc, "tokens", 0)
+        if error_kind != "model_format_error":
+            error_kind = getattr(exc, "kind", "model_timeout")
         call = ToolCall(
             call_id=f"llm-{dim_code}",
             tool_name="llm.chat",
             tool_label=f"{dim_code} 维度分析(模型调用)",
-            arguments={"dimension": dim_code, "candidates": len(cands)},
+            arguments={
+                "dimension": dim_code,
+                "candidates": len(cands),
+                "schema_attempts": attempts,
+                "error_kind": error_kind,
+            },
             result_summary=str(exc) or "模型调用超过配置时限",
             duration_ms=int((time.perf_counter() - started) * 1000),
             verified=False,
         )
-        return {"error": str(exc) or "模型调用超过配置时限", "findings": []}, call
-    findings = res.data.get("findings")
-    data = {
-        "summary": str(res.data.get("summary") or ""),
-        "findings": findings if isinstance(findings, list) else [],
-        "recommendations": [str(x) for x in (res.data.get("recommendations") or [])][:6],
-        "gaps": str(res.data.get("gaps") or ""),
-        "tokens": res.total_tokens,
-        "model": res.model,
-    }
+        return {
+            "error": str(exc) or "模型调用超过配置时限",
+            "error_kind": error_kind,
+            "tokens": used_tokens,
+            "findings": [],
+        }, call
+    data = validated.model_dump()
+    for finding in data["findings"]:
+        finding["business_fact"] = str(task.facts_json[finding["fact_key"]])
+        finding["quote_zh"] = ""
+    data.update(tokens=used_tokens, model=res.model)
+
     call = ToolCall(
         call_id=f"llm-{dim_code}",
         tool_name="llm.chat",
@@ -221,6 +264,7 @@ async def _analyse_dimension(
             "dimension": dim_code,
             "candidates": len(cands),
             "retry": bool(feedback),
+            "schema_attempts": attempts,
             "model": config["model"],
             "temperature": config["temperature"],
             "timeout": config["timeout"],
@@ -248,7 +292,11 @@ def _verify_dimension(
             f["_issues"] = ["clause_id 不在检索结果中"]
             problems.append(f"{dim_code}: 引用了检索结果之外的条款")
             continue
-        ok, issues = verify_finding(f, cand.text)
+        try:
+            f.update(select_quote(cand.text, f.get("sentence_ids") or []))
+            ok, issues = verify_finding(f, cand.text)
+        except ValueError as exc:
+            ok, issues = False, [str(exc)]
         f["_ok"] = ok
         f["_issues"] = issues
         if not ok:
@@ -418,7 +466,11 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         node="node_dimension_analyst",
         name="八维度合规矩阵分析 Agent",
         phase="analysis",
-        status="failed" if errors and len(errors) == len(llm_calls) else "passed",
+        status="failed"
+        if errors and len(errors) == len(llm_calls)
+        else "warning"
+        if errors
+        else "passed",
         summary=(
             f"对 {len(active)} 个有候选条款的维度调用模型分析,共得到 "
             f"{sum(len(r.get('findings', [])) for r in results.values())} 条待核验结论"
@@ -450,6 +502,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                             "obligation": str(f.get("obligation") or ""),
                             "risk_level": str(f.get("risk_level") or "MEDIUM"),
                             "quote": str(f.get("quote") or ""),
+                            "sentence_ids": f.get("sentence_ids") or [],
                             "quote_zh": str(f.get("quote_zh") or ""),
                         }
                         for f in r.get("findings", [])
@@ -490,6 +543,10 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                         "obligation": str(f.get("obligation") or ""),
                         "quote": str(f.get("quote") or ""),
                         "passed": bool(f.get("_ok")),
+                        "sentence_ids": f.get("sentence_ids") or [],
+                        "quote_start": f.get("quote_start"),
+                        "quote_end": f.get("quote_end"),
+                        "source_text_sha256": f.get("source_text_sha256"),
                         "issues": list(f.get("_issues") or []),
                     }
                 )
@@ -504,7 +561,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                         f"{n - len(probs)}/{n} 条通过" + (f";{'; '.join(probs)}" if probs else "")
                     ),
                     duration_ms=int((asyncio.get_event_loop().time() - c0) * 1000),
-                    verified=not probs,
+                    verified=bool(n) and not probs,
                 )
             )
             problems.extend(probs)
@@ -515,11 +572,17 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             node="node_citation_verifier",
             name="依据子串核验与退回质检 Agent",
             phase=phase,
-            status="backtracked" if problems else "passed",
+            status="backtracked"
+            if problems
+            else "passed"
+            if verification_items
+            else "not_evaluated",
             summary=(
                 f"核验未通过 {len(problems)} 条,退回分析 Agent 补充依据"
                 if problems
-                else "全部结论的引用均为条款原文连续子串,数字与原文一致"
+                else "全部结论的引用均为原文连续子串，数字与所选引文一致"
+                if verification_items
+                else "无可核验结论，不能记作通过"
             ),
             calls=calls,
             duration_ms=ms,
@@ -566,7 +629,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             node="node_dimension_analyst",
             name="八维度合规矩阵分析 Agent",
             phase="re_analysis",
-            status="passed",
+            status="failed" if any(results[c].get("error") for c in bad_codes) else "passed",
             summary=f"按质检退回意见对 {len(bad_codes)} 个维度重新分析并补充依据",
             calls=calls2,
             tokens=tokens2,
@@ -593,6 +656,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                                 "obligation": str(f.get("obligation") or ""),
                                 "risk_level": str(f.get("risk_level") or "MEDIUM"),
                                 "quote": str(f.get("quote") or ""),
+                                "sentence_ids": f.get("sentence_ids") or [],
                                 "quote_zh": str(f.get("quote_zh") or ""),
                             }
                             for f in results[code].get("findings", [])
@@ -609,7 +673,9 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         )
         problems2 = await _verify_round(bad_codes, "re_verification")
         redo.backtrack_resolution = (
-            f"第 {round_no + 1} 次核验全部通过"
+            "补证模型调用或格式校验失败，不能记作核验通过"
+            if any(results[c].get("error") for c in bad_codes)
+            else f"第 {round_no + 1} 次核验全部通过"
             if not problems2
             else f"第 {round_no + 1} 次核验仍有 {len(problems2)} 条未通过，按配置补证或剔除"
         )
@@ -663,6 +729,16 @@ async def _compile(
                     "quote_original": str(f["quote"]),
                     "quote_zh": str(f.get("quote_zh") or "(未提供译文)"),
                     "review_status": cand.review_status,
+                    **{
+                        key: f.get(key)
+                        for key in (
+                            "sentence_ids",
+                            "quote_start",
+                            "quote_end",
+                            "source_text_sha256",
+                            "selection_version",
+                        )
+                    },
                 }
             )
             lines.append(f"- {tag} {f.get('obligation', '')}(风险:{risk})")
@@ -683,20 +759,31 @@ async def _compile(
                     "basis_quote": str(f["quote"]),
                     "basis_zh": str(f.get("quote_zh") or ""),
                     "verification_status": "VERIFIED_SUBSTRING",
+                    **{
+                        key: f.get(key)
+                        for key in (
+                            "sentence_ids",
+                            "quote_start",
+                            "quote_end",
+                            "source_text_sha256",
+                            "selection_version",
+                        )
+                    },
                 }
             )
         gap: str | None = None
         if r.get("error"):
-            gap = "模型调用失败,未生成该维度分析,结论待核查,请稍后重新分析(技术细节见协同过程)"
+            gap = "分析技术失败（模型调用或格式错误），请重试；不能当作法源不足"
         elif not dim_cands.get(code):
             gap = "已归档法源中未检索到与该维度相关的可用条款(待核查)"
         elif not good:
             gap = r.get("gaps") or "模型未能给出可通过原文核验的结论(待核查)"
         elif dropped:
             gap = f"另有 {dropped} 条结论未通过原文核验,已剔除(待核查)"
+        technical_failure = bool(r.get("error") or dropped or (dim_cands.get(code) and not good))
+        if technical_failure and not gap:
+            gap = "证据选择/核验仍失败，未生成可交付结论；请重试分析"
         body = ""
-        if good and not dropped and r.get("summary"):
-            body += r["summary"] + "\n\n"
         if lines:
             body += "依据与合规义务(均已通过原文子串/数字核验,条款状态为机器翻译待律所复核):\n"
             body += "\n".join(lines)
@@ -707,25 +794,41 @@ async def _compile(
             {
                 "dimension_code": code,
                 "dimension_title": title,
-                "status": "COMPLETE" if good and not gap else "PARTIAL_GAP",
+                "status": "ANALYSIS_ERROR"
+                if technical_failure
+                else "COMPLETE"
+                if good and not gap
+                else "PARTIAL_GAP",
+                "gap_kind": "analysis_error"
+                if technical_failure
+                else "source_gap"
+                if gap
+                else None,
                 "risk_level": max(levels, key=lambda x: _RISK_ORDER[x])
                 if levels
                 else "PENDING_VERIFICATION",
                 "content_markdown": body,
-                "key_recommendations": (r.get("recommendations") or [])
-                if good and not dropped
-                else [],
+                "key_recommendations": [
+                    "核对并落实：" + str(f.get("obligation") or "") for f in good
+                ],
                 "citations": citations,
                 "missing_gap_note": gap,
             }
         )
+    technical_failed = any(d["status"] == "ANALYSIS_ERROR" for d in dimensions)
     covered = sum(1 for d in dimensions if d["citations"])
     full = all(d["status"] == "COMPLETE" for d in dimensions)
     summary = (
         f"本报告针对【{task.vehicle_model}】在【{task.country_code}】的业务场景,"
         f"由多智能体检索条款、模型分析并经程序核验:共 {len(findings)} 条结论通过原文核验,"
         f"覆盖 {covered}/8 个维度。所有引用均为官方原文,中文为机器翻译,尚未经律所复核。"
-        + ("" if full else "尚有维度缺少可核验依据,已逐维标注缺口,本报告为部分样稿。")
+        + (
+            "分析存在技术失败，当前记录不可作为报告交付，请检查失败原因后重试。"
+            if technical_failed
+            else ""
+            if full
+            else "尚有维度缺少可用法源,已逐维标注证据缺口,本报告为部分样稿。"
+        )
     )
     rvs = list(
         (await session.execute(select(ReportVersion).where(ReportVersion.task_id == task.id)))
@@ -735,8 +838,12 @@ async def _compile(
     rv = ReportVersion(
         task_id=task.id,
         version_no=max((r.version_no for r in rvs), default=0) + 1,
-        status="full_draft" if full else "partial_sample",
-        is_partial_sample=not full,
+        status="analysis_failed"
+        if technical_failed
+        else "full_draft"
+        if full
+        else "partial_sample",
+        is_partial_sample=not full and not technical_failed,
         change_note="多智能体协同自动编制(引用均经原文子串与数字核验)",
         executive_summary=summary,
         dimensions_json=dimensions,
@@ -759,7 +866,7 @@ async def _compile(
         node="node_report_compiler",
         name="八维度国别报告编制 Agent",
         phase="compilation",
-        status="passed" if full else "warning",
+        status="failed" if technical_failed else "passed" if full else "warning",
         summary=(
             f"编制完成:{len(findings)} 条核验通过的结论,{covered}/8 个维度有依据"
             + ("" if full else ";缺依据的维度已标注缺口,报告为部分样稿")
@@ -859,6 +966,8 @@ async def _update_linkage(
             "stale_impacts": impacts,
         },
     )
-    task.status = "completed" if full else "partial_sample"
+    task.status = (
+        "failed" if rv.status == "analysis_failed" else "completed" if full else "partial_sample"
+    )
     task.updated_at = datetime.now(UTC)
     await session.commit()

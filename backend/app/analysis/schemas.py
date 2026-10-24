@@ -151,6 +151,11 @@ class FollowUpQuestionOut(BaseModel):
 
 
 class AnalysisFindingOut(BaseModel):
+    sentence_ids: list[int] = Field(default_factory=list)
+    quote_start: int | None = None
+    quote_end: int | None = None
+    source_text_sha256: str | None = None
+    selection_version: str | None = None
     finding_id: str
     dimension_code: str
     business_fact: str
@@ -198,6 +203,11 @@ class AnalysisStepTraceOut(BaseModel):
 
 
 class ReportCitationOut(BaseModel):
+    sentence_ids: list[int] = Field(default_factory=list)
+    quote_start: int | None = None
+    quote_end: int | None = None
+    source_text_sha256: str | None = None
+    selection_version: str | None = None
     citation_tag: str  # e.g. "[SG-PDPA-s26]"
     clause_id: str | None = None
     document_id: str | None = None
@@ -211,6 +221,7 @@ class ReportCitationOut(BaseModel):
 
 
 class ReportDimensionOut(BaseModel):
+    gap_kind: str | None = None
     dimension_code: str  # D1..D8
     dimension_title: str
     status: str  # COMPLETE / PARTIAL_GAP / STALE_ALERT

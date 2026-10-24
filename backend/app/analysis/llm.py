@@ -23,6 +23,11 @@ _BAD_ESCAPE = re.compile(r'\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})')
 class LlmUnavailableError(RuntimeError):
     """未配置密钥或接口调用失败。"""
 
+    def __init__(self, message: str, *, kind="model_unavailable", tokens=0):
+        super().__init__(message)
+        self.kind = kind
+        self.tokens = tokens
+
 
 @dataclass
 class LlmResult:
@@ -67,6 +72,7 @@ async def call_llm_json(
     request_timeout = timeout if timeout is not None else settings.llm_analysis_timeout_seconds
     url = settings.llm_base_url.rstrip("/") + "/chat/completions"
     last_error = ""
+    error_kind = "model_unavailable"
     started = time.perf_counter()
     prompt_tokens = completion_tokens = 0
     for _attempt in range(MAX_ATTEMPTS):
@@ -95,7 +101,15 @@ async def call_llm_json(
                 raise ValueError("模型输出被长度上限截断")
             data = parse_model_json(choice["message"]["content"])
         except (httpx.HTTPError, KeyError, ValueError) as exc:
-            last_error = f"{type(exc).__name__}: {exc}"
+            error_kind = (
+                "model_unavailable" if isinstance(exc, httpx.HTTPError) else "model_format_error"
+            )
+            # Do not retain provider URLs, request headers or arbitrary response bodies.
+            last_error = (
+                f"HTTP {exc.response.status_code}"
+                if isinstance(exc, httpx.HTTPStatusError)
+                else type(exc).__name__
+            )
             continue
         return LlmResult(
             data=data,
@@ -104,4 +118,8 @@ async def call_llm_json(
             duration_ms=int((time.perf_counter() - started) * 1000),
             model=str(body.get("model") or requested_model),
         )
-    raise LlmUnavailableError(f"大模型调用失败(已重试 {MAX_ATTEMPTS} 次): {last_error}")
+    raise LlmUnavailableError(
+        f"大模型调用失败(共 {MAX_ATTEMPTS} 次请求): {last_error}",
+        kind=error_kind,
+        tokens=prompt_tokens + completion_tokens,
+    )

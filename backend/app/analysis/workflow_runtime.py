@@ -12,7 +12,7 @@ from app.analysis.prompts import ANALYSIS_SYSTEM_PROMPT
 from app.core.config import get_settings
 from app.knowledge.history import snapshot
 
-RUNTIME_SCHEMA = "s4-runtime-v1"
+RUNTIME_SCHEMA = "s5-source-selection-v1"
 # Applicable fields only: deterministic nodes do not pretend to use LLM parameters.
 PARAMETERS = {
     "node_start": set(),
@@ -35,7 +35,7 @@ class NodeExecutionSettings(BaseModel):
     temperature: float = Field(default=0.1, ge=0, le=2)
     system_prompt: str | None = Field(default=None, min_length=1, max_length=16000)
     top_k: int = Field(default=5, ge=1, le=30)
-    max_backtrack_rounds: int = Field(default=1, ge=0, le=3)
+    max_backtrack_rounds: int = Field(default=2, ge=0, le=2)
     timeout: float = Field(default=150.0, ge=1, le=300)
 
 
@@ -73,10 +73,10 @@ def baseline_nodes() -> list[dict]:
     analyst = by_id["node_dimension_analyst"]
     analyst["system_prompt"] = ANALYSIS_SYSTEM_PROMPT
     analyst["model_name"] = get_settings().llm_model
-    analyst["parameters"].update(temperature=0.1, timeout=150.0)
+    analyst["parameters"].update(temperature=0.0, timeout=150.0)
     verifier = by_id["node_citation_verifier"]["parameters"]
     verifier.pop("max_backtrack_loops", None)
-    verifier["max_backtrack_rounds"] = 1
+    verifier["max_backtrack_rounds"] = 2
     by_id["node_report_compiler"]["parameters"]["timeout"] = 150.0
     by_id["node_update_linkage"]["parameters"].update(enabled=True, timeout=150.0)
     return nodes
@@ -141,7 +141,9 @@ def validate_graph(nodes, edges) -> list[dict]:
 
 def require_executable(cfg: AgentWorkflowConfig) -> None:
     if cfg.runtime_schema_version != RUNTIME_SCHEMA:
-        raise ValueError("此历史版本仅供查看，未记录可执行参数；请导入并激活 S4 基线版本")
+        raise ValueError(
+            "此历史版本仅供查看，未记录可执行参数；请导入并激活当前原文句子选择协议版本"
+        )
     validate_graph(cfg.nodes_json, cfg.edges_json)
 
 
@@ -179,7 +181,9 @@ async def ensure_baseline(session: AsyncSession) -> AgentWorkflowConfig:
             readonly_locked=True,
             nodes_json=baseline_nodes(),
             edges_json=copy.deepcopy(DEFAULT_WORKFLOW_EDGES),
-            change_note="[baseline-s4] 可执行基线；旧库升级时仅创建待激活版本，不改变历史激活决定",
+            change_note=(
+                "[baseline-s5] 原文句子选择协议基线；旧库升级时仅创建待激活版本，不改变历史激活决定"
+            ),
         )
         session.add(current)
         await session.flush()

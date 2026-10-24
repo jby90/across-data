@@ -146,7 +146,8 @@ async def test_configured_retry_budget_never_disables_citation_gate(
                 "findings": [
                     {
                         "clause_id": candidate["clause_id"],
-                        "quote": "fabricated unsupported quotation",
+                        "sentence_ids": [999],
+                        "fact_key": "exterior_video_and_gnss",
                         "obligation": "错误结论",
                         "risk_level": "HIGH",
                     }
@@ -171,7 +172,7 @@ async def test_configured_retry_budget_never_disables_citation_gate(
     task = await _wait_done(client, member, result.json()["id"])
     assert task["backtrack_count"] == 2
     assert len([t for t in task["step_traces"] if t["phase"] == "re_analysis"]) == 2
-    assert task["findings"] == [] and task["status"] == "partial_sample"
+    assert task["findings"] == [] and task["status"] == "failed"
 
 
 async def test_analysis_timeout_is_applied_and_not_turned_into_legal_findings(monkeypatch):

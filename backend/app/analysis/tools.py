@@ -19,6 +19,7 @@ from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import document_available
 from app.knowledge.graph_evidence import active_edge_filters
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
+from app.knowledge.numeric_integrity import amounts, dates, tokens
 
 # 每个维度的多语种检索关键词(英/法/阿)。仅用于检索候选条款,不代表结论。
 DIMENSION_KEYWORDS: dict[str, list[str]] = {
@@ -426,18 +427,18 @@ class ToolBox:
 def verify_finding(finding: dict[str, Any], clause_text: str) -> tuple[bool, list[str]]:
     """程序化核验:引用必须是条款原文的连续子串,且结论中的数字必须出现在原文里。"""
     issues: list[str] = []
-    quote = _norm(str(finding.get("quote") or ""))
-    text = _norm(clause_text)
-    if len(quote) < 15:
+    quote = str(finding.get("quote") or "")
+    if len(quote.strip()) < 15:
         issues.append("引用片段过短或为空")
-    elif quote not in text:
+    elif quote not in clause_text:
         issues.append("引用片段不是该条款原文的连续子串")
     obligation = str(finding.get("obligation") or "")
-    text_digits = re.sub(r"[,\s]", "", text)
-    for num in re.findall(r"\d[\d,\.]*%?", obligation):
-        token = re.sub(r"[,\s]", "", num).rstrip(".")
-        if token and token not in text_digits:
-            issues.append(f"结论中的数字「{num}」未出现在条款原文中")
+    for value, percent in sorted(tokens(obligation) - tokens(quote)):
+        issues.append(f"结论中的数字「{value}{'%' if percent else ''}」未出现在所选引文中")
+    for currency, value in sorted(amounts(obligation) - amounts(quote)):
+        issues.append(f"币种/金额不一致：{currency} {value}")
+    if dates(obligation) - dates(quote):
+        issues.append("结论日期未获所选引文支持")
     return (not issues), issues
 
 

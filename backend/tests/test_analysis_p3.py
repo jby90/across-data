@@ -92,17 +92,14 @@ def _fake_llm_factory(bad_first: bool):
         findings = []
         retry = "verifier_feedback_must_fix" in payload
         for c in payload["candidate_clauses"][:1]:
-            quote = c["text"][:80]
-            if bad_first and not retry:
-                quote = "这段引用并不在条款原文里,应被程序核验拦截并退回"
+            sentence_ids = [999] if bad_first and not retry else [1]
             findings.append(
                 {
-                    "business_fact": "跨境回传",
+                    "fact_key": next(iter(payload["business_facts"])),
                     "clause_id": c["clause_id"],
                     "obligation": "须确保境外接收方提供可比保护",
                     "risk_level": "HIGH",
-                    "quote": quote,
-                    "quote_zh": "(测试译文)",
+                    "sentence_ids": sentence_ids,
                 }
             )
         return LlmResult(
@@ -196,7 +193,7 @@ async def test_pipeline_real_verification_backtrack_and_tenant_isolation(
     # 引用不是原文子串 → 真实触发退回 → 二次分析 → 二次核验
     assert "verification" in phases and "re_analysis" in phases and "re_verification" in phases
     back = next(t for t in traces if t["phase"] == "verification")
-    assert back["is_backtrack"] is True and "连续子串" in back["backtrack_reason"]
+    assert back["is_backtrack"] is True and "sentence_id" in back["backtrack_reason"]
     assert done["backtrack_count"] == 1
     # Token 来自模型返回的真实用量,而不是写死的数字
     assert done["total_tokens"] > 0 and done["total_tokens"] % 150 == 0
@@ -239,11 +236,12 @@ async def test_model_unavailable_is_reported_not_fabricated(client, seed, sessio
         json={"title": "无模型", "country_code": "SG", "facts": FACTS},
     )
     done = await _wait_done(client, hdr, created.json()["id"])
-    assert done["status"] == "partial_sample"
+    assert done["status"] == "failed"
     assert done["findings"] == []
     report = done["report_versions"][0]
+    assert report["status"] == "analysis_failed" and not report["is_partial_sample"]
     assert all(d["citations"] == [] for d in report["dimensions"])
-    assert any("模型调用失败" in (d["missing_gap_note"] or "") for d in report["dimensions"])
+    assert any(d["gap_kind"] == "analysis_error" for d in report["dimensions"])
 
 
 async def test_retrieval_benchmark_is_honest(client, seed, session_factory):
@@ -270,9 +268,7 @@ def test_unusable_clause_text_is_filtered(text):
 def test_verify_finding_checks_substring_and_numbers():
     from app.analysis.tools import verify_finding
 
-    ok, _ = verify_finding(
-        {"quote": PENALTY_TEXT[40:140], "obligation": "最高罚款 10%"}, PENALTY_TEXT
-    )
+    ok, _ = verify_finding({"quote": PENALTY_TEXT, "obligation": "最高罚款 10%"}, PENALTY_TEXT)
     assert ok is True
     bad, issues = verify_finding(
         {"quote": PENALTY_TEXT[40:140], "obligation": "最高罚款 500 万"}, PENALTY_TEXT
@@ -437,16 +433,12 @@ async def test_conversation_id_admin_history_live_monitor_and_stage_outputs(
     assert done["status"] in ("completed", "partial_sample")
 
     # 3. 管理员端可检索与筛选对话工作流历史(按 conversation_code / 状态 / 国家)
-    all_admin_tasks = (
-        await client.get("/api/admin/agent-studio/tasks", headers=admin_hdr)
-    ).json()
+    all_admin_tasks = (await client.get("/api/admin/agent-studio/tasks", headers=admin_hdr)).json()
     codes = {t["conversation_code"] for t in all_admin_tasks}
     assert conv_code in codes and run_code in codes
 
     filtered = (
-        await client.get(
-            f"/api/admin/agent-studio/tasks?keyword={run_code}", headers=admin_hdr
-        )
+        await client.get(f"/api/admin/agent-studio/tasks?keyword={run_code}", headers=admin_hdr)
     ).json()
     assert len(filtered) == 1 and filtered[0]["id"] == run_id
     assert filtered[0]["org_name"] != ""
@@ -454,15 +446,10 @@ async def test_conversation_id_admin_history_live_monitor_and_stage_outputs(
     assert filtered[0]["steps_count"] >= 6
 
     # 4. 展开查看每个环节的产出:验证各阶段 output_snapshot 包含完整结构化交付物
-    detail = (
-        await client.get(f"/api/admin/agent-studio/tasks/{run_id}", headers=admin_hdr)
-    ).json()
+    detail = (await client.get(f"/api/admin/agent-studio/tasks/{run_id}", headers=admin_hdr)).json()
     by_phase = {tr["phase"]: tr for tr in detail["step_traces"]}
     assert "fact_check_items" in by_phase["fact_check"]["output_snapshot"]
-    assert (
-        "retrieved_clauses_by_dimension"
-        in by_phase["retrieval"]["output_snapshot"]
-    )
+    assert "retrieved_clauses_by_dimension" in by_phase["retrieval"]["output_snapshot"]
     assert "dimension_outputs" in by_phase["analysis"]["output_snapshot"]
     assert "verification_items" in by_phase["verification"]["output_snapshot"]
     assert "dimension_outputs" in by_phase["re_analysis"]["output_snapshot"]
@@ -500,4 +487,3 @@ async def test_conversation_id_admin_history_live_monitor_and_stage_outputs(
         f"/api/admin/agent-studio/tasks/{chat_res['id']}", headers=admin_hdr
     )
     assert ok_del.status_code == 200 and ok_del.json()["deleted"] is True
-
