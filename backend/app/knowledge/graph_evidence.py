@@ -2,6 +2,7 @@
 
 from sqlalchemy import func, or_, select
 
+from app.ingestion.layout_safety import clause_layout_available
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import document_available
 from app.knowledge.models import KgEdge
@@ -14,7 +15,7 @@ def active_edge_filters():
         .join(Document, Document.id == DocumentVersion.document_id)
         .where(
             Clause.id == KgEdge.evidence_clause_id,
-            ~document_available(),
+            or_(~document_available(), ~clause_layout_available()),
         )
         .correlate(KgEdge)
         .exists()

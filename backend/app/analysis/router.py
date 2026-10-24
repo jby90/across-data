@@ -314,7 +314,7 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
     rv_outs = [
         ReportVersionOut(
             source_integrity_alerts=[
-                f"原文绑定异常，引用 {cid} 已隔离，需重新分析"
+                f"原文绑定或页级解析待核对，引用 {cid} 已隔离，需核查后重新分析"
                 for cid in await report_held_citation_ids(session, rv)
             ],
             id=rv.id,
@@ -894,7 +894,7 @@ async def export_user_report_docx(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
 
     if await report_held_citation_ids(session, rv):
-        raise HTTPException(409, "报告引用了来源绑定异常的条款，请核实来源并重新分析后导出")
+        raise HTTPException(409, "报告引用了来源绑定或页级解析待核对的条款，请核查后重新分析再导出")
     docx_bytes = build_report_docx(task, rv)
     filename = f"cyshuhe_{task.country_code}_8dim_report_v{version_no}.docx"
     return Response(
@@ -926,7 +926,7 @@ async def export_user_report_pdf(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
 
     if await report_held_citation_ids(session, rv):
-        raise HTTPException(409, "报告引用了来源绑定异常的条款，请核实来源并重新分析后导出")
+        raise HTTPException(409, "报告引用了来源绑定或页级解析待核对的条款，请核查后重新分析再导出")
     pdf_bytes = build_report_pdf(task, rv)
     filename = f"cyshuhe_{task.country_code}_8dim_report_v{version_no}.pdf"
     return Response(
@@ -959,6 +959,9 @@ async def get_clause_citation_card(
 
     if await document_is_held(session, doc.id):
         raise HTTPException(409, "此引用的原文绑定异常已隔离，请管理员核实来源后重做分析")
+    from app.ingestion.layout_safety import layout_held_clause_ids
+
+    layout_pending = bool(await layout_held_clause_ids(session, [clause.id]))
     tr = (
         await session.execute(
             select(ClauseTranslation)
@@ -995,7 +998,9 @@ async def get_clause_citation_card(
             edges = list(
                 (
                     await session.execute(
-                        select(KgEdge).where(KgEdge.evidence_clause_id.in_(sibling_cids))
+                        select(KgEdge).where(
+                            KgEdge.evidence_clause_id.in_(sibling_cids), *active_edge_filters()
+                        )
                     )
                 )
                 .scalars()
@@ -1065,6 +1070,8 @@ async def get_clause_citation_card(
         if e.source_node_id in node_map and e.target_node_id in node_map
     ]
 
+    if layout_pending:
+        node_outs, edge_outs = [], []
     mini_graph = GraphPayloadOut(
         country_code=doc.country_code,
         node_counts_by_type={},
@@ -1094,7 +1101,17 @@ async def get_clause_citation_card(
         "source_url": doc.source_url,
         "original_text": clause.original_text,
         "translated_text": valid_tr_text,
-        "review_status": tr.review_status if tr else "not_translated",
+        "review_status": "pending_review"
+        if layout_pending
+        else tr.review_status
+        if tr
+        else "not_translated",
+        "source_integrity_alerts": [
+            "本页存在待核对解析修订；以下仅保留旧原文和译文，禁止作新的法律依据引用。"
+        ]
+        if layout_pending
+        else [],
+        "usable_as_legal_basis": bool(not layout_pending and tr and tr.review_status == "approved"),
         "mini_graph": mini_graph.model_dump(mode="json"),
     }
 

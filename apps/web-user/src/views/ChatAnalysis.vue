@@ -129,6 +129,7 @@ interface MiniKgEdge {
   review_status: string
 }
 interface CitationCard {
+  source_integrity_alerts?: string[]
   document_title: string
   clause_number: string
   version_no: number
@@ -852,6 +853,8 @@ onUnmounted(() => {
 
     <el-drawer v-model="drawerVisible" title="引用溯源 · 官方原文与关联关系" size="60%">
       <div v-loading="drawerLoading" data-testid="citation-detail-drawer">
+        <el-alert v-for="alert in card?.source_integrity_alerts" :key="alert"
+          :title="alert" type="warning" :closable="false" show-icon />
         <template v-if="card">
           <h4>
             {{ card.document_title }} · {{ card.clause_number }}

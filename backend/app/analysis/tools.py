@@ -14,6 +14,7 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.ingestion.layout_safety import layout_held_clause_ids
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import document_available
 from app.knowledge.graph_evidence import active_edge_filters
@@ -234,6 +235,7 @@ class ToolBox:
         for _, ver, doc in rows:
             latest[doc.id] = max(latest.get(doc.id, 0), ver.version_no)
         clause_ids = [c.id for c, ver, doc in rows if ver.version_no == latest[doc.id]]
+        layout_held = set(await layout_held_clause_ids(self.session, clause_ids))
         trs = (
             list(
                 (
@@ -262,7 +264,7 @@ class ToolBox:
         tr_map = {t.clause_id: t for t in trs}
         out: list[ClauseCandidate] = []
         for clause, ver, doc in rows:
-            if ver.version_no != latest[doc.id]:
+            if ver.version_no != latest[doc.id] or clause.id in layout_held:
                 continue
             tr = tr_map.get(clause.id)
             out.append(

@@ -2147,6 +2147,18 @@ async def _extract_knowledge_for_country_impl(
     # 并发调用大模型抽取各相关文档的候选条款并执行语义裁判(核心文件预算大,相关文件预算小)
     sem = asyncio.Semaphore(max(1, concurrency))
     extraction_tasks: list[tuple[Document, Clause, KgNode, KgNode, str]] = []
+    from app.ingestion.layout_safety import layout_held_clause_ids
+
+    layout_held = set(
+        await layout_held_clause_ids(
+            session,
+            [
+                clause.id
+                for _doc, _ver, clauses, _reg, _inst, _pub in relevant_docs_info
+                for clause in clauses
+            ],
+        )
+    )
     for doc, _ver, clauses, reg_node, inst_node, pub_name in relevant_docs_info:
         cand_clauses = (
             clauses
@@ -2154,6 +2166,8 @@ async def _extract_knowledge_for_country_impl(
             else _select_candidate_clauses(clauses, max_clauses=max_clauses_per_doc)
         )
         for c in cand_clauses:
+            if c.id in layout_held:
+                continue
             extraction_tasks.append((doc, c, reg_node, inst_node, pub_name))
 
     evaluation_records = []
@@ -2707,6 +2721,8 @@ async def _extract_knowledge_for_country_impl(
         "sampled": max_clauses_per_doc is not None,
         "attempted_clauses": len(extraction_tasks),
         "failed_clauses": 0,
+        "layout_held_clauses": len(layout_held),
+        "layout_revisions_auto_activated": False,
         "nodes_total": active_nodes_after,
         "edges_total": active_edges_after,
         "semantic_edges_added": semantic_edges_added,

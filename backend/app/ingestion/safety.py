@@ -56,7 +56,9 @@ async def holds_for_documents(session, document_ids):
 async def held_citation_ids(session, clause_ids):
     if not clause_ids:
         return []
-    return list(
+    from app.ingestion.layout_safety import layout_held_clause_ids
+
+    source_held = list(
         (
             await session.scalars(
                 select(Clause.id)
@@ -65,6 +67,9 @@ async def held_citation_ids(session, clause_ids):
                 .where(Clause.id.in_(clause_ids), ~document_available())
             )
         ).all()
+    )
+    return sorted(
+        set(source_held) | set(await layout_held_clause_ids(session, clause_ids)), key=str
     )
 
 
