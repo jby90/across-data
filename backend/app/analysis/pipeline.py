@@ -175,6 +175,12 @@ def _candidate_payload(c: ClauseCandidate, retained=None, fact_keys=None) -> dic
         "clause_id": c.clause_id,
         "document": c.document_title,
         "clause_number": c.label,
+        "source_url": c.source_url,
+        "version_id": c.version_id,
+        "version_no": c.version_no,
+        "legal_status": c.legal_status,
+        "instrument_identity_for_comparison_only": c.instrument_identity or None,
+        "version_contract": "不同来源/版本保持独立，不得合并引文；未知时效不能认定现行有效。",
         "sentences": sentences,
         "retained_context": context if sentences else [],
     }
@@ -212,8 +218,7 @@ def _build_user_message(
         "dimension": {"code": dim_code, "title": dim_title},
         "candidate_clauses": candidates,
         "selection_contract": (
-            "每项只选sentences中同一scope_id的连续编号；"
-            "retained_context只是上下文，不可再次选择。"
+            "每项只选sentences中同一scope_id的连续编号；retained_context只是上下文，不可再次选择。"
         ),
         "output_schema": schema,
     }

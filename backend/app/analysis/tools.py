@@ -145,6 +145,9 @@ class ClauseCandidate:
     section_path: str | None = None
     context_parent_id: str | None = None
     search_hints: str = ""
+    instrument_identity: str = ""
+    instrument_role: str = ""
+    text_source: str = "text_layer"
 
 
 @dataclass
@@ -318,6 +321,7 @@ class ToolBox:
                     language=clause.language or "",
                     section_path=clause.section_path,
                     translated_text=tr.translated_text if tr else "",
+                    text_source=ver.text_source,
                 )
             )
         # Derive navigation links only from the immutable, hash-checked archive.
@@ -330,6 +334,52 @@ class ToolBox:
 
         versions = {str(ver.id): ver for _, ver, _ in rows}
         store = ArchiveStore(get_settings().archive_dir)
+        # Observations are comparison metadata, never a change to old source rows.
+        from app.ingestion.parsing import ParseError
+        from app.ingestion.source_observations import observation_text, validate_observation
+        from app.knowledge.history import payload_hash
+        from app.knowledge.models import KnowledgeAuditRecord
+
+        documents = {str(doc.id): doc for _, _, doc in rows}
+        observations = (
+            list(
+                (
+                    await self.session.scalars(
+                        select(KnowledgeAuditRecord).where(
+                            KnowledgeAuditRecord.action == "source_identity_observed",
+                            KnowledgeAuditRecord.target_id.in_(
+                                [doc.id for doc in documents.values()]
+                            ),
+                        )
+                    )
+                ).all()
+            )
+            if documents
+            else []
+        )
+        verified = {}
+        for observation in observations:
+            payload = observation.payload
+            version = versions.get(payload.get("version_id"))
+            document = documents.get(str(observation.target_id))
+            if (
+                version is None
+                or document is None
+                or observation.content_hash != payload_hash(payload)
+            ):
+                continue
+            try:
+                blob = store.read(version.archive_path)
+                if store.sha256(blob) != version.content_hash:
+                    continue
+                source = await asyncio.to_thread(observation_text, blob, version.mime_type)
+                identity = validate_observation(payload, version, document, source)
+                verified.setdefault(str(version.id), set()).add(identity)
+            except (OSError, ValueError, ParseError):
+                continue
+        for c in out:
+            if len(verified.get(c.version_id, set())) == 1:
+                c.instrument_identity, c.instrument_role = next(iter(verified[c.version_id]))
         for version_id in {c.version_id for c in out}:
             group = [c for c in out if c.version_id == version_id]
             labels = {c.label for c in group if c.heading}

@@ -117,7 +117,21 @@ def parse_html(content: bytes) -> list[str]:
     soup = BeautifulSoup(content, "html.parser")
     for tag in soup(["script", "style", "noscript", "nav", "footer", "header"]):
         tag.decompose()
-    lines = [" ".join(line.split()) for line in soup.get_text("\n").splitlines()]
+    # Reusable structural adapter: choose the narrowest container containing all
+    # numbered legal headings. No site selectors, law names or expected articles.
+    from app.ingestion.clauses import match_header
+
+    numbered = [h for h in soup.find_all(re.compile(r"^h[1-6]$")) if match_header(h.get_text())]
+    root = soup
+    if len(numbered) >= 3:
+        candidates = [
+            t
+            for t in soup.find_all(["main", "article", "section", "div"])
+            if all(h in t.descendants for h in numbered)
+        ]
+        if candidates:
+            root = min(candidates, key=lambda t: len(t.get_text()))
+    lines = [" ".join(line.split()) for line in root.get_text("\n").splitlines()]
     return ["\n".join(line for line in lines if line)]
 
 

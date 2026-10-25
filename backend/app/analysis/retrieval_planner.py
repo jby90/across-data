@@ -10,9 +10,10 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.analysis import retrieval_cache
 from app.analysis.llm import LlmUnavailableError, call_llm_json
 from app.analysis.retrieval import SparseIndex, terms
+from app.analysis.source_alternatives import include_source_alternatives
 from app.analysis.source_context import include_context_roots
 
-PLANNER_VERSION = "source-context-graph-cache-v7"
+PLANNER_VERSION = "source-identity-comparison-v8"
 _DEFINED_LEAD = re.compile(
     r'(?m)^[ \t]*[“"«][^”"»\n]{1,120}[”"»]\s+'
     r"(?:means\b|includes\b|refers to\b|désigne\b|signifie\b|يعني\b|تعني\b|يقصد\b|是指|指)",
@@ -335,6 +336,8 @@ async def _planned_search(index, dimension, title, query, top_k, config, *, cach
             scored = include_context_roots(
                 [(by_id[i], 1 / (n + 1)) for n, i in enumerate(ids)], index.candidates, top_k
             )
+            selected_ids = {c.clause_id for c, _ in scored}
+            scored = include_source_alternatives(scored, index.candidates, top_k)
             audit = {
                 "version": PLANNER_VERSION,
                 "queries": queries,
@@ -348,6 +351,18 @@ async def _planned_search(index, dimension, title, query, top_k, config, *, cach
                 "cache_hit": False,
                 "model_ranked_count": ranked_count,
                 "local_fill_count": len(ids) - ranked_count,
+                "source_comparison_slots": [
+                    {
+                        "clause_id": c.clause_id,
+                        "version_id": c.version_id,
+                        "source_url": c.source_url,
+                        "instrument_identity": c.instrument_identity,
+                        "same_legal_effect_confirmed": False,
+                        "human_review": None,
+                    }
+                    for c, _ in scored
+                    if c.clause_id not in selected_ids
+                ],
                 "graph_search_vocabulary": [
                     {"clause_id": c.clause_id, "hints": c.search_hints, "legal_evidence": False}
                     for c in hint_candidates
