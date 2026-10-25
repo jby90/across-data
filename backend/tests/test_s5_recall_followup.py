@@ -174,6 +174,76 @@ def test_changed_incomplete_or_ambiguous_dates_are_not_inferred(source_date, wro
     assert not verify_finding({"quote": source, "obligation": "申报日期为" + wrong}, source)[0]
 
 
+@pytest.mark.parametrize(
+    "question",
+    [
+        "谁应保管审计日志？",
+        "Who may revoke access?",
+        "هل يلزم تقديم إشعار؟",
+        "Qui vérifie la demande ?\nThe organisation provides maintenance services.",
+    ],
+)
+def test_explicit_questions_do_not_inherit_unrelated_directory_labels(question):
+    assert retrieval_planner.query_dimension("An unrelated report category", question) is None
+
+
+@pytest.mark.parametrize(
+    "facts",
+    [
+        "传输遥测数据并保留两年",
+        "Store diagnostics at https://official.example/?category=data",
+        "Data is encrypted before upload",
+        "",
+        None,
+    ],
+)
+def test_business_facts_keep_their_dimension_and_url_query_strings_are_not_questions(facts):
+    assert retrieval_planner.query_dimension("Storage obligations", facts) == "Storage obligations"
+
+
+@pytest.mark.parametrize(
+    "query,expected_dimension",
+    [
+        ("Who is responsible for this service?", None),
+        ("The company records service telemetry", "A report directory topic"),
+    ],
+)
+async def test_actual_plan_and_ranking_requests_use_question_context_not_directory_topics(
+    monkeypatch,
+    query,
+    expected_dimension,
+):
+    observed = []
+
+    async def fake(messages, **kwargs):
+        data = json.loads(messages[1]["content"])
+        observed.append(data)
+        assert data["dimension"] == expected_dimension
+        output = (
+            {"queries": ["responsible individual"], "heading_queries": ["Responsibility"]}
+            if data["phase"] == "plan"
+            else {"clause_ids": ["a"]}
+        )
+        return LlmResult(output, 1, 1, 1, "fake")
+
+    monkeypatch.setattr(retrieval_planner, "call_llm_json", fake)
+    rows = [
+        candidate(
+            "a", "The service must designate a responsible individual.", heading="Responsibility"
+        )
+    ]
+    selected, audit = await retrieval_planner.planned_search(
+        ClauseIndex(rows),
+        "directory terms",
+        "A report directory topic",
+        query,
+        5,
+        {"system_prompt": "JSON", "model": "fake", "temperature": 0.0, "timeout": 2.0},
+    )
+    assert selected[0][0].clause_id == "a" and not audit.get("error")
+    assert [d["phase"] for d in observed] == ["plan", "rank"]
+
+
 async def test_correlated_queries_cannot_starve_an_independent_heading_route(monkeypatch):
     rows = [
         candidate(str(i), "Common processing examples common common common.") for i in range(120)

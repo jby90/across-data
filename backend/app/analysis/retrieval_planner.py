@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.analysis.llm import LlmUnavailableError, call_llm_json
 from app.analysis.retrieval import SparseIndex, terms
 
-PLANNER_VERSION = "multilingual-plan-rerank-v4"
+PLANNER_VERSION = "multilingual-plan-rerank-v5"
 _DEFINED_LEAD = re.compile(
     r'(?m)^[ \t]*[“"«][^”"»\n]{1,120}[”"»]\s+'
     r"(?:means\b|includes\b|refers to\b|désigne\b|signifie\b|يعني\b|تعني\b|يقصد\b|是指|指)",
@@ -73,6 +73,17 @@ def source_headings(candidate, fallback=True):
     if not out and fallback and len(first) <= 120:
         out.append(first)
     return list(dict.fromkeys(out))
+
+
+def query_dimension(title, query):
+    """An explicit question must not inherit an unrelated report-directory topic.
+
+    Factual slot values still need the dimension as their search instruction.
+    Terminal question marks are shared punctuation, never country/case identities.
+    A '?' inside a URL or a field value alone does not classify it as a question.
+    """
+    explicit = any(line.rstrip().endswith(("?", "？", "؟")) for line in (query or "").splitlines())
+    return None if explicit else title
 
 
 def heading_catalog(candidates, query, dimension, budget=16000):
@@ -154,13 +165,16 @@ async def planned_search(index, dimension, title, query, top_k, config):
     try:
         async with asyncio.timeout(config["timeout"]):
             languages = sorted({c.language for c in index.candidates if c.language})
+            target_dimension = query_dimension(title, query)
             plan = await invoke(
                 {
                     "phase": "plan",
-                    "dimension": title,
+                    "dimension": target_dimension,
                     "question": query,
                     "languages": languages,
-                    "available_headings": heading_catalog(index.candidates, query, dimension),
+                    "available_headings": heading_catalog(
+                        index.candidates, query, dimension if target_dimension else ""
+                    ),
                 },
                 QueryPlan,
             )
@@ -206,7 +220,7 @@ async def planned_search(index, dimension, title, query, top_k, config):
             ranked = await invoke(
                 {
                     "phase": "rank",
-                    "dimension": title,
+                    "dimension": target_dimension,
                     "question": query,
                     "queries": queries,
                     "top_k": top_k,
