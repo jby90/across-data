@@ -1,0 +1,17 @@
+{
+  "isolated_database": "remediation_s12_demo",
+  "runs": [
+    {
+      "new_accounts": 4,
+      "preserved_completed_tasks": 87,
+      "sample_gap": 0,
+      "note": "示例仅复用恢复的历史任务，不伪造已完成报告或审批。"
+    },
+    {
+      "new_accounts": 0,
+      "preserved_completed_tasks": 87,
+      "sample_gap": 0,
+      "note": "示例仅复用恢复的历史任务，不伪造已完成报告或审批。"
+    }
+  ]
+}

@@ -374,7 +374,9 @@ async function send(text?: string) {
           ? detail.value.pending_user_facts?.[0]?.id : undefined,
       }),
     )
-    await refreshTasks()
+    // The answer is saved and the next question is available. Refreshing the
+    // sidebar must not keep the composer locked while another request is slow.
+    void refreshTasks().catch(() => { /* A later refresh can update the sidebar. */ })
     scrollBottom()
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '发送失败')

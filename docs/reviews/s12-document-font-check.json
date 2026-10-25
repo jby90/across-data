@@ -1,0 +1,22 @@
+{
+  "missing_document_links": [
+    [
+      "docs/architecture/remediation_result.md",
+      "../reviews/s13-final-regression.xml"
+    ]
+  ],
+  "staged_secret_pattern_files": [],
+  "built_font_sources": [
+    {
+      "app": "web-user",
+      "font_face_urls": 452,
+      "remote_font_urls": []
+    },
+    {
+      "app": "web-admin",
+      "font_face_urls": 452,
+      "remote_font_urls": []
+    }
+  ],
+  "note": "Static built CSS font-face inspection, not browser network interception."
+}

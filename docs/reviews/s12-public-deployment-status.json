@@ -1,0 +1,208 @@
+{
+  "collected_at": "2026-10-25T15:03:45.504500+00:00",
+  "containers": [
+    {
+      "name": "cyshuhe-db-1",
+      "status": "running",
+      "oom_killed": false,
+      "restarts": 0,
+      "image_ref": "pgvector/pgvector:pg16",
+      "image_id": "sha256:deaa34bdc123d7e9ab720136ae31d80a78ce055ecfdb127c4e915957c47d8d8e",
+      "memory_limit": 335544320,
+      "health": "healthy",
+      "logging": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    {
+      "name": "cyshuhe-api-1",
+      "status": "running",
+      "oom_killed": false,
+      "restarts": 0,
+      "image_ref": "cyshuhe-api:s12-stage",
+      "image_id": "sha256:af5707483331de9167c29c0f063356ae5fc70b0c077f93150480150beb3347c5",
+      "memory_limit": 440401920,
+      "health": "healthy",
+      "logging": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    {
+      "name": "cyshuhe-worker-1",
+      "status": "running",
+      "oom_killed": false,
+      "restarts": 0,
+      "image_ref": "cyshuhe-api:s12-stage",
+      "image_id": "sha256:af5707483331de9167c29c0f063356ae5fc70b0c077f93150480150beb3347c5",
+      "memory_limit": 335544320,
+      "health": null,
+      "logging": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    {
+      "name": "cyshuhe-web-user-1",
+      "status": "running",
+      "oom_killed": false,
+      "restarts": 0,
+      "image_ref": "cyshuhe-web-user:9097be3",
+      "image_id": "sha256:bd2a5ae86a8fe81a14f9f48d979267dcf075d883126c9923914f6eacb51d8c28",
+      "memory_limit": 50331648,
+      "health": null,
+      "logging": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    {
+      "name": "cyshuhe-web-admin-1",
+      "status": "running",
+      "oom_killed": false,
+      "restarts": 0,
+      "image_ref": "cyshuhe-web-admin:9097be3",
+      "image_id": "sha256:568d5125001f7a28f9ff2ae32de44881f47822bfa47cf1888e7900cab495c3dc",
+      "memory_limit": 50331648,
+      "health": null,
+      "logging": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    {
+      "name": "cyshuhe-nginx-1",
+      "status": "running",
+      "oom_killed": false,
+      "restarts": 0,
+      "image_ref": "nginx:1.28-alpine",
+      "image_id": "sha256:201aafcbd9cdd5385d5aaf610b45389944d8c2269c4a6f10e6fdf39f76cab592",
+      "memory_limit": 50331648,
+      "health": null,
+      "logging": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    {
+      "name": "multiagent-online-database-1",
+      "status": "exited",
+      "oom_killed": false,
+      "restarts": 0,
+      "image_ref": "multiagent-decision-database:1.1.0",
+      "image_id": "sha256:cdeae546f1dfe40566e96914fe33be04f2c8b79b56a8ea5944dd07ce5174b426",
+      "memory_limit": 671088640,
+      "health": "unhealthy",
+      "logging": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    {
+      "name": "multiagent-online-backend-1",
+      "status": "exited",
+      "oom_killed": false,
+      "restarts": 0,
+      "image_ref": "multiagent-decision-backend:handoff-v3.3-diag-20260825-64",
+      "image_id": "sha256:e64ab0a1b0ad502a53b2699bbbbbaff9de118e26263f65c8d389da3087587dc6",
+      "memory_limit": 805306368,
+      "health": "unhealthy",
+      "logging": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    },
+    {
+      "name": "multiagent-online-frontend-1",
+      "status": "exited",
+      "oom_killed": false,
+      "restarts": 0,
+      "image_ref": "multiagent-decision-frontend:handoff-v3.3-diag-20260825-121",
+      "image_id": "sha256:ba706264f471a25ff5bb8fc8677ffc0acb947ec8441025477eb28d5e7f14277d",
+      "memory_limit": 134217728,
+      "health": "unhealthy",
+      "logging": {
+        "Type": "json-file",
+        "Config": {
+          "max-file": "3",
+          "max-size": "10m"
+        }
+      }
+    }
+  ],
+  "migration": "0022",
+  "runtime_role": "{\"role\" : \"cyshuhe_runtime\", \"superuser\" : false, \"bypassrls\" : false, \"login\" : true}",
+  "force_rls_tables": 11,
+  "free_m": "total        used        free      shared  buff/cache   available\nMem:            1608         781          94          56         732         605\nSwap:           2047           0        2047",
+  "disk": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/vda3        40G   19G   19G  50% /",
+  "renew_timer_enabled": "enabled",
+  "renew_timer_active": "active",
+  "public_cert": "subject=\nissuer=C = US, O = Let's Encrypt, CN = YE1\nnotBefore=Oct 25 12:35:40 2026 GMT\nnotAfter=Nov  1 04:35:39 2026 GMT\nsha256 Fingerprint=25:14:64:52:7E:FC:CE:1B:43:3E:17:1F:3D:F8:64:A2:A8:96:5C:66:B5:A5:7F:EC:0E:AB:AC:06:9A:26:D4:77",
+  "release": {
+    "release_tag": "9097be3",
+    "application_source_commit": "9097be3",
+    "tls_enabled": true,
+    "public_user_url": "https://47.116.46.81/",
+    "public_admin_url": "https://47.116.46.81/admin/",
+    "images": {
+      "api": {
+        "ref": "cyshuhe-api:9097be3",
+        "id": "sha256:af5707483331de9167c29c0f063356ae5fc70b0c077f93150480150beb3347c5"
+      },
+      "web-user": {
+        "ref": "cyshuhe-web-user:9097be3",
+        "id": "sha256:bd2a5ae86a8fe81a14f9f48d979267dcf075d883126c9923914f6eacb51d8c28"
+      },
+      "web-admin": {
+        "ref": "cyshuhe-web-admin:9097be3",
+        "id": "sha256:568d5125001f7a28f9ff2ae32de44881f47822bfa47cf1888e7900cab495c3dc"
+      }
+    },
+    "migration": "0022",
+    "manual_review": "pending",
+    "note": "Application image source fixed; documentation and operator refinements may have a later commit."
+  },
+  "old_final_backup": {
+    "backup": "/opt/cyshuhe-backups/20261025T140855Z-final-cutover",
+    "files": [
+      {
+        "file": "mysql-all.sql.gz",
+        "sha256": "95ecfe42b18dbe2f5fe5320de139e544e4f261b3db00bcffc320d8d0698fa58d",
+        "bytes": 996809
+      },
+      {
+        "file": "backend-runtime.tar.gz",
+        "sha256": "4a06b8feaa07368bd4ca692f401a855be95f775b1373675b9f0d8a7619501d74",
+        "bytes": 2835070
+      }
+    ],
+    "prior_images_and_source_backup": "/opt/cyshuhe-backups/20261025T102726Z-pre-cutover",
+    "note": "Original volumes and images retained; logical dump integrity checked, restore not re-tested here"
+  },
+  "manual_review": "pending"
+}

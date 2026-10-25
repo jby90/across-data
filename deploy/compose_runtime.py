@@ -17,7 +17,10 @@ def container_env(name):
 
 def main():
     args = sys.argv[1:]
-    tls = "--tls" in args
+    root = Path(__file__).resolve().parent
+    release_file = root / "release.json"
+    release = json.loads(release_file.read_text()) if release_file.exists() else {}
+    tls = "--tls" in args or release.get("tls_enabled", False)
     args = [arg for arg in args if arg != "--tls"]
     if not args or args[0] not in {"up", "stop", "start", "ps", "restart", "logs", "config"}:
         raise SystemExit("Allowed: [--tls] up|stop|start|ps|restart|logs|config --quiet")
@@ -27,9 +30,6 @@ def main():
     migration = container_env("cyshuhe-migrate-1")
     api = container_env("cyshuhe-api-1")
     env = dict(os.environ)
-    root = Path(__file__).resolve().parent
-    release_file = root / "release.json"
-    release = json.loads(release_file.read_text()) if release_file.exists() else {}
     env.update({key: value for key, value in api.items() if key.startswith("CYSH_")})
     env.update(
         POSTGRES_PASSWORD=db["POSTGRES_PASSWORD"],

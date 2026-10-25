@@ -1,0 +1,16 @@
+{
+  "source_version_id": "7dff5fe7-1396-4000-b982-8f32eeb0d054",
+  "new_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35",
+  "new_version_no": 48,
+  "is_active_at_import": false,
+  "retained_parameter_changes": [
+    {
+      "node": "node_mcp_retriever",
+      "parameter": "semantic_planning",
+      "from": false,
+      "to": true
+    }
+  ],
+  "prompt_note": "S6 业务追问协议使用新基线提示词；历史 v46 提示词和证据保留。",
+  "manual_review": "pending"
+}

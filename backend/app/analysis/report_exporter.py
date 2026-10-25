@@ -100,9 +100,15 @@ PARTIAL_NOTICE = (
 )
 
 
-def _w_p(text: str, bold: bool = False, size: int = 22, color: str = "1E293B") -> str:
+def _w_p(
+    text: str, bold: bool = False, size: int = 22, color: str = "1E293B",
+    *, keep_next: bool = False, keep_lines: bool = False,
+) -> str:
     b_tag = "<w:b/>" if bold else ""
-    keep = "<w:keepNext/>" if (bold and size >= 24) or text.startswith("依据与合规义务") else ""
+    keep = "<w:keepNext/>" if (
+        keep_next or (bold and size >= 24) or text.startswith("依据与合规义务")
+    ) else ""
+    keep += "<w:keepLines/>" if keep_lines else ""
     return (
         f"<w:p><w:pPr>{keep}<w:spacing w:after='120' w:line='300' w:lineRule='auto'/></w:pPr>"
         f"<w:r><w:rPr>{b_tag}<w:rFonts w:ascii='Inter' w:hAnsi='Inter' "
@@ -197,6 +203,7 @@ def build_report_docx(task: AnalysisTask, rv: ReportVersion, dimension: str | No
                     f'原文:"{cite.get("quote_original", "")}" | 译文:{cite.get("quote_zh", "")}',
                     size=18,
                     color="334155",
+                    keep_next=True,
                 )
             )
             parts.append(
@@ -205,6 +212,7 @@ def build_report_docx(task: AnalysisTask, rv: ReportVersion, dimension: str | No
                     f"人工复核：{review_label(cite)}；"
                     f"{review_detail(cite)}",
                     size=18,
+                    keep_lines=True,
                 )
             )
 
