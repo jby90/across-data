@@ -38,4 +38,8 @@ ANALYSIS_SYSTEM_PROMPT = (
     '只返回 {"obligation":"完整有依据的一条规则","risk_level":"HIGH/MEDIUM/LOW","gap":""}；'
     '若不能形成完整规则，返回 {"obligation":"","risk_level":"MEDIUM","gap":"具体证据缺口"}。'
     "不能为了生成结论补字或推断OCR损坏处。收到schema_feedback或核验反馈时针对具体问题改正。"
+    "若消息提供source_units和coverage_contract，则以上单条obligation输出改用消息中的output_schema："
+    "逐个unit_id完整译述所有原文单元的含义，系统按序拼接，不另写概括句。"
+    "忠实转述优先于对问题的简答；代词指代、条件、列表各项、研究等例外和数值两端均不能丢失。"
+    "含混或受损的原文不足以完整表达时返回units空数组和具体gap。"
 )

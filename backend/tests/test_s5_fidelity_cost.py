@@ -7,6 +7,13 @@ from types import SimpleNamespace
 import pytest
 
 from app.analysis import retrieval_cache, retrieval_planner
+from app.analysis.evidence_selection import (
+    CoveredClaim,
+    assemble_covered_claim,
+    coverage_units,
+    select_legal_quote,
+    sentence_catalog,
+)
 from app.analysis.llm import LlmResult
 from app.analysis.retrieval import ClauseIndex
 from app.analysis.source_context import fragment_links, include_context_roots
@@ -89,3 +96,56 @@ async def test_cache_no_cross_scope_source_config_reuse_or_hidden_cost(monkeypat
     assert retrieval_cache.get(key)[1]["tokens"] == 60
     monkeypatch.setattr(retrieval_cache, "TTL_SECONDS", -1)
     assert retrieval_cache.get(key) is None
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "Article 19: The following conditions apply.\n1 - Consent is required.\n2 - Research is exempt.",
+        "Art. 44 : Le responsable agit. Sauf pour la recherche scientifique.",
+        "المادة ١٩: يجب حماية البيانات.\n١ - تمنع الإتاحة.\n٢ - باستثناء البحث العلمي.",
+        "第十九条 本条适用以下情形。\n1 - 需要同意。\n2 - 科研例外。",
+    ],
+)
+def test_every_source_unit_is_retained_and_rendered_in_order(source):
+    units = coverage_units(source)
+    assert len(units) > 1 and "".join(u["text"] for u in units) == source
+    good = {"units": [{"unit_id": u["unit_id"], "meaning": u["text"]} for u in units], "gap": ""}
+    assert assemble_covered_claim(CoveredClaim.model_validate(good), units)
+    for bad in (
+        good["units"][:-1],
+        list(reversed(good["units"])),
+        good["units"] + [good["units"][0]],
+    ):
+        with pytest.raises(ValueError, match="遗漏、重复、乱序"):
+            assemble_covered_claim(CoveredClaim(units=bad), units)
+
+
+def test_unit_numeric_coverage_cannot_drop_either_range_end_or_borrow_from_other_units():
+    units = coverage_units("The fine is 13 to 79 credits. The separate filing period is 8 days.")
+    with pytest.raises(ValueError, match="遗漏数值"):
+        assemble_covered_claim(
+            CoveredClaim(
+                units=[
+                    {"unit_id": 1, "meaning": "罚金不低于13 credits"},
+                    {"unit_id": 2, "meaning": "另有79 credits以及8 days"},
+                ]
+            ),
+            units,
+        )
+
+
+@pytest.mark.parametrize(
+    "marker", ["Article 83:", "Art. 83 :", "الفصل ٨٣ .", "المادة ٨٣:", "第八十三条"]
+)
+def test_no_cross_provision_quote_or_previous_tail_attribution(marker):
+    source = (
+        "Earlier independent provision ends here.\n"
+        + marker
+        + " The applicant must notify the authority."
+    )
+    catalog = sentence_catalog(source)
+    with pytest.raises(ValueError, match="跨越独立条文"):
+        select_legal_quote(source, list(range(1, len(catalog) + 1)))
+    selected = select_legal_quote(source, [len(catalog)])
+    assert "Earlier independent" not in selected["quote"]

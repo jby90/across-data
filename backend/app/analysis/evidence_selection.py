@@ -7,7 +7,16 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SELECTION_VERSION = "legal-units-v3"
+from app.knowledge.numeric_integrity import separate_explicit_dates
+
+SELECTION_VERSION = "legal-boundaries-coverage-v4"
+_ARTICLE = re.compile(
+    r"(?m)^[ \t\u200e\u200f]*(?:(?:Article|Section|Regulation|Rule|Art\.)\s+"
+    r"[0-9A-Za-z]+(?:\.[0-9]+)*\s*[.:—–]|(?:الفصل|المادة|مادة)\s+[0-9٠-٩]+\s*[.:：]|"
+    r"第[一二三四五六七八九十百千0-9]+条)",
+    re.IGNORECASE,
+)
+_LIST_LINE = re.compile(r"(?m)^[ \t]*(?:[-–—•]|[0-9٠-٩]+\s*[-–]|\([a-z0-9]+\))\s*")
 # Semicolons join legal lists to their chapeau; abbreviations must not split Art. / Sec.
 _BOUNDARY = re.compile(r"(?<=[.!?])(?:[ \t]+|\r?\n)|(?<=[。！？؟])\s*|\n[ \t]*\n")
 _ABBREVIATIONS = {"art", "arts", "sec", "secs", "no", "nos", "mr", "mrs", "dr"}
@@ -30,7 +39,13 @@ def sentence_catalog(text: str) -> list[dict]:
         if tail and tail.group(1).lower() in _ABBREVIATIONS:
             continue
         boundaries.append(m.end())
-    offsets = [0, *boundaries, *(m.start() for m in _DEFINITION.finditer(text)), len(text)]
+    offsets = [
+        0,
+        *boundaries,
+        *(m.start() for m in _DEFINITION.finditer(text)),
+        *(m.start() for m in _ARTICLE.finditer(text)),
+        len(text),
+    ]
     offsets = sorted(set(offsets))
     spans = []
     for start, end in zip(offsets, offsets[1:], strict=False):
@@ -72,6 +87,10 @@ def select_quote(text: str, sentence_ids: list[int]) -> dict:
 def select_legal_quote(text: str, sentence_ids: list[int]) -> dict:
     """Close list references/provisos inside this unchanged clause, never across source IDs."""
     selected = select_quote(text, sentence_ids)
+    if any(
+        selected["quote_start"] < m.start() < selected["quote_end"] for m in _ARTICLE.finditer(text)
+    ):
+        raise ValueError("选证跨越独立条文标题；请仅选择同一条文，不能混入前条尾段")
     catalog = sentence_catalog(text)
     first, last = sentence_ids[0] - 1, sentence_ids[-1] - 1
 
@@ -81,7 +100,7 @@ def select_legal_quote(text: str, sentence_ids: list[int]) -> dict:
         return "".join(c for c in value if unicodedata.category(c) != "Cf").lstrip()
 
     lead = prefix(catalog[first]["text"])
-    if first and _CHILD.match(lead):
+    if first and _CHILD.match(lead) and not _ARTICLE.match(lead):
         first -= 1
         while first and _CHILD.match(prefix(catalog[first]["text"])):
             first -= 1  # nearest list chapeau; do not pull in unrelated earlier definitions
@@ -90,10 +109,67 @@ def select_legal_quote(text: str, sentence_ids: list[int]) -> dict:
     while last + 1 < len(catalog) and _QUALIFIER.match(prefix(catalog[last + 1]["text"])):
         last += 1
     expanded = select_quote(text, list(range(first + 1, last + 2)))
+    if any(
+        expanded["quote_start"] < m.start() < expanded["quote_end"] for m in _ARTICLE.finditer(text)
+    ):
+        raise ValueError("列表或例外上下文跨越独立条文；请重新选择完整依据")
     expanded["selected_sentence_ids"] = sentence_ids
     expanded["anchor_quote_start"] = selected["quote_start"]
     expanded["anchor_quote_end"] = selected["quote_end"]
     return expanded
+
+
+def coverage_units(quote):
+    """All source units, including list alternatives. No source bytes are rewritten."""
+    bounds = sorted(
+        {
+            0,
+            len(quote),
+            *(s["start"] for s in sentence_catalog(quote)),
+            *(m.start() for m in _LIST_LINE.finditer(quote)),
+        }
+    )
+    return [
+        {"unit_id": i + 1, "start": a, "end": b, "text": quote[a:b]}
+        for i, (a, b) in enumerate(zip(bounds, bounds[1:], strict=False))
+        if quote[a:b].strip()
+    ]
+
+
+class CoveredUnit(BaseModel):
+    model_config = ConfigDict(strict=True, extra="forbid")
+    unit_id: int
+    meaning: str = Field(min_length=1, max_length=2000)
+
+
+class CoveredClaim(BaseModel):
+    model_config = ConfigDict(strict=True, extra="forbid")
+    units: list[CoveredUnit] = Field(max_length=80)
+    risk_level: Literal["HIGH", "MEDIUM", "LOW"] = "MEDIUM"
+    gap: str = Field(default="", max_length=1500)
+
+    @model_validator(mode="after")
+    def exactly_units_or_gap(self):
+        if bool(self.units) == bool(self.gap.strip()):
+            raise ValueError("必须且只能逐段完整转述或说明证据缺口")
+        return self
+
+
+def assemble_covered_claim(claim, units):
+    if claim.gap:
+        return ""
+    if [u.unit_id for u in claim.units] != [u["unit_id"] for u in units]:
+        raise ValueError("原文单元遗漏、重复、乱序或新增；必须逐个覆盖，不能跳过例外或列表项")
+    for source, rendering in zip(units, claim.units, strict=True):
+        source_numbers, source_dates, _ = separate_explicit_dates(source["text"])
+        target_numbers, target_dates, _ = separate_explicit_dates(rendering.meaning)
+        if source_numbers - target_numbers or source_dates - target_dates:
+            raise ValueError(
+                f"原文单元{source['unit_id']}遗漏数值或日期："
+                f"{sorted(source_numbers - target_numbers)} {sorted(source_dates - target_dates)}；"
+                "完整保留原文写法，不猜测缺损的范围连接词"
+            )
+    return "\n".join(u.meaning.strip() for u in claim.units)
 
 
 class GroundedClaim(BaseModel):

@@ -13,7 +13,7 @@ from app.analysis.retrieval_planner import RETRIEVAL_SYSTEM_PROMPT
 from app.core.config import get_settings
 from app.knowledge.history import snapshot
 
-RUNTIME_SCHEMA = "s5-query-routes-v4"
+RUNTIME_SCHEMA = "s5-source-coverage-cache-v5"
 # Applicable fields only: deterministic nodes do not pretend to use LLM parameters.
 PARAMETERS = {
     "node_start": set(),

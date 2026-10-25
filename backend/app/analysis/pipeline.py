@@ -19,7 +19,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.analysis.evidence_selection import (
     AnalysisResponse,
+    CoveredClaim,
     GroundedClaim,
+    assemble_covered_claim,
+    coverage_units,
     select_legal_quote,
     sentence_catalog,
 )
@@ -198,13 +201,16 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
         result.update(select_legal_quote(candidate.text, finding["sentence_ids"]))
     except ValueError as exc:
         return result, {"requests": 0, "tokens": 0, "error": str(exc)}
+    units = coverage_units(result["quote"])
+    covered = len(units) > 1
+    claim_schema = CoveredClaim if covered else GroundedClaim
     message = {
         "phase": "write_from_evidence",
         "dimension": {"code": dim_code, "title": dim_title},
         "business_fact": str(task.facts_json[finding["fact_key"]]),
         "question": task_query(task.facts_json or {}, dim_code),
         "evidence": {"quote": result["quote"]},
-        "output_schema": GroundedClaim.model_json_schema(),
+        "output_schema": claim_schema.model_json_schema(),
         "fidelity_checklist": [
             "主体、代词和所有格必须相同，不能新增另一主体",
             "规范性动词、行为对象、范围和全部例外保持一致",
@@ -213,19 +219,32 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
             "完整条件来自原文，核验进度或缺其他材料不是本条法律条件",
         ],
     }
+    if covered:
+        message["source_units"] = units
+        message["coverage_contract"] = (
+            "逐段完整转述source_units，每项unit_id恰好一次、按原序。不得摘要或只选相关列表项；"
+            "即使与问题关系较弱，例外、替代项、修饰语、指代关系和数值范围也不能遗漏。"
+            "各段共同组成同一份依据，主语可承接前段，不擅自概括为某条所有规则。"
+            "任一关键行为、限定或范围因OCR残缺而不确定，则整体units=[]并填具体gap，不能补字。"
+            "不要添加原文未载的币种、主体、条号、章条层级或法律性质。"
+        )
     # The model sees the same exclusive rule/gap contract that Pydantic enforces.
+    value_key = "units" if covered else "obligation"
     message["output_schema"]["oneOf"] = [
         {
-            "required": ["obligation", "gap"],
-            "properties": {"obligation": {"minLength": 1}, "gap": {"const": ""}},
+            "required": [value_key, "gap"],
+            "properties": {
+                value_key: {"minItems": 1} if covered else {"minLength": 1},
+                "gap": {"const": ""},
+            },
         },
         {
-            "required": ["obligation", "gap"],
-            "properties": {"obligation": {"const": ""}, "gap": {"minLength": 1}},
+            "required": [value_key, "gap"],
+            "properties": {value_key: {"const": [] if covered else ""}, "gap": {"minLength": 1}},
         },
     ]
     tokens = requests = 0
-    failures = []
+    failures, proposals = [], []
     for attempt in range(2):
         try:
             async with _GROUNDING_GATE:
@@ -242,8 +261,18 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
             tokens += response.total_tokens
             requests += response.request_attempts
             failures.extend(response.failures)
-            claim = GroundedClaim.model_validate(response.data)
-            result.update(obligation=claim.obligation, risk_level=claim.risk_level)
+            proposals.append(
+                {"attempt": attempt + 1, "output": response.data, "tokens": response.total_tokens}
+            )
+            claim = claim_schema.model_validate(response.data)
+            obligation = assemble_covered_claim(claim, units) if covered else claim.obligation
+            result.update(obligation=obligation, risk_level=claim.risk_level)
+            if covered:
+                result["source_coverage"] = {
+                    "units": units,
+                    "rendering": claim.model_dump(),
+                    "human_review": None,
+                }
             if claim.gap:
                 result["_generation_gap"] = claim.gap
             else:
@@ -255,6 +284,7 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
                 "tokens": tokens,
                 "failures": failures,
                 "gap": claim.gap,
+                "proposals": proposals,
             }
         except LlmUnavailableError as exc:
             tokens += exc.tokens
@@ -277,6 +307,7 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
         "tokens": tokens,
         "failures": failures,
         "error": result.get("_generation_error"),
+        "proposals": proposals,
     }
 
 
@@ -532,7 +563,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     task.findings_json = []
     await session.commit()
 
-    tb = ToolBox(session, cc)
+    tb = ToolBox(session, cc, cache_scope=str(task.org_id or task.created_by))
 
     # ---- 1. 信息采集与追问 ----
     t0 = time.perf_counter()
