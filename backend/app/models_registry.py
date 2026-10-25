@@ -9,3 +9,4 @@ from app.iam import models as iam_models  # noqa: F401
 from app.ingestion import models as ingestion_models  # noqa: F401
 from app.knowledge import models as knowledge_models  # noqa: F401
 from app.sources import models as sources_models  # noqa: F401
+from app.updates import models as updates_models  # noqa: F401

@@ -6,6 +6,7 @@ from app.ingestion.layout_safety import clause_layout_available
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import document_available
 from app.knowledge.models import KgEdge
+from app.updates.source_state import observed_version
 
 
 def active_edge_filters():
@@ -35,7 +36,10 @@ def active_edge_filters():
         .join(Document, Document.id == DocumentVersion.document_id)
         .where(
             Clause.id == KgEdge.evidence_clause_id,
-            DocumentVersion.version_no == latest,
+            or_(
+                DocumentVersion.id == observed_version(Document),
+                observed_version(Document).is_(None) & (DocumentVersion.version_no == latest),
+            ),
             DocumentVersion.state == "parsed",
             Document.relevance.in_(("relevant", "related")),
             KgEdge.evidence_quote != "",

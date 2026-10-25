@@ -170,7 +170,10 @@ class ReportVersion(Base):
 
     __tablename__ = "report_versions"
     citation_policy: Mapped[str | None] = mapped_column(String(40), nullable=True)
-    __table_args__ = (UniqueConstraint("task_id", "version_no", name="uq_report_task_version"),)
+    __table_args__ = (
+        UniqueConstraint("task_id", "version_no", name="uq_report_task_version"),
+        Index("ix_report_versions_citation_snapshot", "dimensions_json", postgresql_using="gin"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     task_id: Mapped[uuid.UUID] = mapped_column(

@@ -262,6 +262,7 @@ class StaleImpactAlertOut(BaseModel):
 
 
 class ReportVersionOut(BaseModel):
+    regulatory_updates: list[dict[str, Any]] = Field(default_factory=list)
     citation_policy: str = "legacy_unrecorded"
     citation_review_summary: dict[str, int] = Field(default_factory=dict)
     source_integrity_alerts: list[str] = Field(default_factory=list)

@@ -20,6 +20,8 @@ from app.knowledge.router import (
     user_router as knowledge_user_router,
 )
 from app.sources.router import router as sites_router
+from app.updates.router import admin_router as updates_router
+from app.updates.router import user_router as notifications_router
 
 
 @asynccontextmanager
@@ -69,6 +71,8 @@ def create_app() -> FastAPI:
     app.include_router(knowledge_user_router)
     app.include_router(analysis_admin_router)
     app.include_router(analysis_user_router)
+    app.include_router(notifications_router)
+    app.include_router(updates_router)
 
     return app
 

@@ -2,12 +2,14 @@
 import { ElMessage } from 'element-plus'
 import { startProgressStream, type StreamState } from '@cyshuhe/shared'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { api } from '../api'
 import KgForceGraph, {
   type FgCategory,
   type FgEdge,
   type FgNode,
 } from '../components/KgForceGraph.vue'
+const route = useRoute()
 
 interface ChatMessage {
   id: string
@@ -84,6 +86,7 @@ interface StaleImpact {
 }
 
 interface ReportVersion {
+  regulatory_updates?: Array<{ id: string; change_id: string; dimension_code: string; document_title: string; summary: string; state: string }>
   citation_policy: string
   citation_review_summary: { approved: number; pending: number; total: number; occurrences: number }
   source_integrity_alerts?: string[]
@@ -301,10 +304,12 @@ function scrollBottom() {
 }
 
 function apply(d: TaskDetail) {
+  const previousLatest = detail.value?.report_versions[0]?.version_no
+  const followLatest = detail.value?.id !== d.id || reportVersionNo.value === previousLatest
   detail.value = d
   if (
     d.report_versions.length > 0 &&
-    !d.report_versions.some((r) => r.version_no === reportVersionNo.value)
+    (followLatest || !d.report_versions.some((r) => r.version_no === reportVersionNo.value))
   ) {
     reportVersionNo.value = d.report_versions[0].version_no
   }
@@ -528,10 +533,21 @@ async function copyConversationId() {
   }
 }
 
+async function refreshRegulatoryUpdates() {
+  const id = detail.value?.id
+  if (!id || detail.value?.status === 'running') return
+  try {
+    const next = await api.get<TaskDetail>(`/api/analysis/tasks/${id}`)
+    if (detail.value?.id === id) apply(next)
+  } catch { /* The notification page exposes retryable loading errors. */ }
+}
 onMounted(async () => {
+  window.addEventListener('regulatory-notifications-updated', refreshRegulatoryUpdates)
   try {
     await refreshTasks()
-    if (tasks.value.length === 0) {
+    if (typeof route.query.task === 'string') {
+      await openTask(route.query.task)
+    } else if (tasks.value.length === 0) {
       await newChat()
     } else {
       await openTask(tasks.value[tasks.value.length - 1].id)
@@ -542,6 +558,7 @@ onMounted(async () => {
   timer = window.setInterval(poll, 2000)
 })
 onUnmounted(() => {
+  window.removeEventListener('regulatory-notifications-updated', refreshRegulatoryUpdates)
   progressStream?.close()
   clearTimeout(progressRefresh)
   if (timer !== undefined) window.clearInterval(timer)
@@ -709,6 +726,9 @@ onUnmounted(() => {
               </el-tag>
             </div>
             <p class="summary">{{ report.executive_summary }}</p>
+            <el-alert v-if="report.regulatory_updates?.length" type="warning" :closable="false"
+                :title="report.regulatory_updates.some(u => u.state === 'open') ? '本版本引用的来源曾发生变化，是否属于法规修订及结论影响仍待核对。请在更新通知中重新评估，原文和历史报告保留。' : '本历史版本引用的来源曾发生变化，已有后续报告处理。历史正文及证据保留，人工法律复核仍待核对。'"
+              data-testid="report-regulatory-update" style="margin-bottom:12px" />
             <el-alert type="warning" :closable="false" data-testid="citation-review-overview"
               :title="`引用复核概览：已复核 ${report.citation_review_summary?.approved ?? 0} 条 / 待核对 ${report.citation_review_summary?.pending ?? 0} 条（按条款及版本去重）。分析结论仍为机器草稿。`"
               style="margin-bottom: 12px" />

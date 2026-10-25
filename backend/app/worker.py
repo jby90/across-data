@@ -59,13 +59,26 @@ async def main(once: bool) -> None:
                 fallback_client=direct_client if proxy_url else None,
             )
 
-        while True:
-            runs = await run_due_once(sf, make_fetcher, archive, ocr=ocr)
-            if runs:
-                log.info("本轮执行了 %d 个站点", runs)
-            if once:
-                return
-            await asyncio.sleep(settings.worker_poll_seconds)
+        from app.updates.service import monitor_loop, monitor_once
+
+        monitor = (
+            None
+            if once
+            else asyncio.create_task(monitor_loop(sf, interval=settings.worker_poll_seconds))
+        )
+        try:
+            while True:
+                runs = await run_due_once(sf, make_fetcher, archive, ocr=ocr)
+                if runs:
+                    log.info("本轮执行了 %d 个站点", runs)
+                if once:
+                    await monitor_once(sf)
+                    return
+                await asyncio.sleep(settings.worker_poll_seconds)
+        finally:
+            if monitor:
+                monitor.cancel()
+                await asyncio.gather(monitor, return_exceptions=True)
 
 
 if __name__ == "__main__":

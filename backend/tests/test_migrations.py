@@ -90,6 +90,80 @@ async def test_migrations_apply_and_match_models(pg_url, engine):
                 with pytest.raises(DBAPIError, match="append-only"):
                     async with conn.begin_nested():
                         await conn.execute(text(statement))
+            from datetime import UTC, datetime
+
+            from sqlalchemy.ext.asyncio import AsyncSession
+
+            from app.ingestion.models import Document, DocumentVersion
+            from app.sources.models import SourceSite
+            from app.updates.models import SourceFetchObservation
+            from app.updates.service import create_change
+
+            async with AsyncSession(bind=conn, expire_on_commit=False) as session:
+                site = SourceSite(
+                    country_code="XX",
+                    publisher="Migration fixture",
+                    language="en",
+                    document_type="LAW",
+                    entry_url="https://example.org/synthetic",
+                    strategy="DIRECT",
+                    config={},
+                )
+                session.add(site)
+                await session.flush()
+                doc = Document(
+                    site_id=site.id,
+                    country_code="XX",
+                    source_url="https://example.org/synthetic",
+                    title="Migration fixture",
+                    language="en",
+                    document_type="LAW",
+                )
+                session.add(doc)
+                await session.flush()
+                versions = []
+                for number in (1, 2):
+                    version = DocumentVersion(
+                        document_id=doc.id,
+                        version_no=number,
+                        content_hash=str(number) * 64,
+                        archive_path="synthetic",
+                        size_bytes=1,
+                        mime_type="application/pdf",
+                        final_url=doc.source_url,
+                        state="needs_ocr",
+                    )
+                    session.add(version)
+                    versions.append(version)
+                await session.flush()
+                observed = SourceFetchObservation(
+                    document_id=doc.id,
+                    version_id=versions[1].id,
+                    previous_version_id=versions[0].id,
+                    observed_at=datetime.now(UTC),
+                    comparison_basis="previous_fetch",
+                )
+                session.add(observed)
+                await session.flush()
+                change = await create_change(
+                    session,
+                    versions[0],
+                    versions[1],
+                    origin_key="migration-fixture",
+                    detected_at=observed.observed_at,
+                    observation_id=observed.id,
+                )
+                for table, identifier in (
+                    ("source_fetch_observations", observed.id),
+                    ("version_changes", change.id),
+                ):
+                    for statement in (
+                        f"UPDATE {table} SET document_id=document_id WHERE id=:id",
+                        f"DELETE FROM {table} WHERE id=:id",
+                    ):
+                        with pytest.raises(DBAPIError, match="append-only"):
+                            async with conn.begin_nested():
+                                await conn.execute(text(statement), {"id": identifier})
     finally:
         await mig_engine.dispose()
 

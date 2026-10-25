@@ -115,6 +115,7 @@ class DocumentVersion(Base):
     page_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     char_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     parse_strategy: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    parsed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # 文本来源:PDF 文字层,或 OCR(OCR 文本必须人工核对,准确率不能当作原文)

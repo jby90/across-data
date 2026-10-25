@@ -311,6 +311,7 @@ async def parse_version(
                 )
             )
         version.state = VersionState.PARSED.value
+        version.parsed_at = _now()
         version.parse_strategy = strategy
         version.error = None
         session.add(
@@ -359,6 +360,9 @@ async def _process_candidate(
     stats: Stats,
     ocr: OcrEngine | None = None,
 ) -> None:
+    from app.updates.service import note_discovery, observe_fetch
+
+    await note_discovery(sf, site, cand)
     async with sf() as s:
         doc = (
             await s.execute(
@@ -420,8 +424,14 @@ async def _process_candidate(
             return
 
         doc.last_checked_at = _now()
+        observed_at = _now()
         doc.last_error = None
         if res.not_modified or res.content is None:
+            if latest is not None:
+                body = archive.read(latest.archive_path)
+                if ArchiveStore.sha256(body) != latest.content_hash:
+                    raise ValueError("已有归档哈希不匹配，不能记录来源观察")
+                await observe_fetch(s, doc, latest, observed_at=observed_at)
             await s.commit()
             return
 
@@ -434,7 +444,10 @@ async def _process_candidate(
             )
         ).scalar_one_or_none()
         if existing is not None:  # 内容与某个已有版本完全相同,不产生新版本
-            archive.read(existing.archive_path)
+            body = archive.read(existing.archive_path)
+            if ArchiveStore.sha256(body) != existing.content_hash:
+                raise ValueError("已有归档哈希不匹配，不能记录来源观察")
+            await observe_fetch(s, doc, existing, archived_previous=latest, observed_at=observed_at)
             s.add(
                 PipelineEvent(
                     version_id=existing.id,
@@ -476,6 +489,7 @@ async def _process_candidate(
         )
         stats.versions_new += 1
         await parse_version(s, archive, version, site.language, ocr)
+        await observe_fetch(s, doc, version, archived_previous=latest, observed_at=observed_at)
         if version.state in (VersionState.FAILED.value, VersionState.NEEDS_OCR.value):
             doc.last_error = version.error or f"原文尚未解析完成: {version.state}"
             stats.errors += 1

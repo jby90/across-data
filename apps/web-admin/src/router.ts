@@ -11,6 +11,7 @@ const router = createRouter({
       component: () => import('./views/Layout.vue'),
       children: [
         { path: '', name: 'home', component: () => import('./views/Home.vue') },
+        { path: 'updates', name: 'updates', component: () => import('./views/Updates.vue'), meta: { roles: ['platform_admin','reviewer'] } },
         {
           path: 'sites',
           name: 'sites',

@@ -45,6 +45,11 @@ def _view(task, rv, dimension):
         findings_json=findings,
     )
     rv_view = SimpleNamespace(
+        regulatory_updates=[
+            u
+            for u in getattr(rv, "regulatory_updates", [])
+            if not dimension or u.get("dimension_code") == dimension
+        ],
         citation_policy=getattr(rv, "citation_policy", None),
         version_no=rv.version_no,
         is_partial_sample=rv.is_partial_sample,
@@ -61,6 +66,19 @@ def _view(task, rv, dimension):
 def _context(task, rv, dimension):
     code = format_conversation_code(task.id, task.created_at)
     return f"{code} | 报告 v{rv.version_no} | {dimension or '完整报告'}"
+
+
+def update_notices(rv):
+    groups = {}
+    for update in rv.regulatory_updates:
+        key = update["change_id"]
+        groups.setdefault(key, {"title": update["document_title"], "dimensions": set()})
+        groups[key]["dimensions"].add(update["dimension_code"])
+    return [
+        f"来源变更待核对：{g['title']}；涉及 {'、'.join(sorted(g['dimensions']))}。"
+        "本历史版本正文保留，重新评估后生成新版本；此提醒不是法规修订或人工审批结论。"
+        for g in groups.values()
+    ]
 
 
 def build_report_zip(task, rv):
@@ -133,6 +151,7 @@ def build_report_docx(task: AnalysisTask, rv: ReportVersion, dimension: str | No
     ]
     parts.extend([_w_p(EXPORT_NOTICE, size=19), _w_p(DISCLAIMER, size=19)])
     parts.append(_w_p(review_overview(rv.dimensions_json), size=19))
+    parts.extend(_w_p(notice, True, 19, "B45309") for notice in update_notices(rv))
     parts.append(_w_p(f"生成时引用策略：{policy_label(rv.citation_policy)}", size=18))
     if rv.is_partial_sample:
         parts.append(_w_p(PARTIAL_NOTICE, bold=True, size=20, color="B45309"))
@@ -294,6 +313,7 @@ def build_report_pdf(task: AnalysisTask, rv: ReportVersion, dimension: str | Non
     ]
     queue.extend([("WARN", EXPORT_NOTICE), ("SMALL", DISCLAIMER)])
     queue.append(("SMALL", review_overview(rv.dimensions_json)))
+    queue.extend(("WARN", notice) for notice in update_notices(rv))
     queue.append(("SMALL", f"生成时引用策略：{policy_label(rv.citation_policy)}"))
     if rv.is_partial_sample:
         queue += [("WARN", ln) for ln in _wrap(PARTIAL_NOTICE, 50)]

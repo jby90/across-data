@@ -284,7 +284,18 @@ class ToolBox:
         latest: dict[uuid.UUID, int] = {}
         for _, ver, doc in rows:
             latest[doc.id] = max(latest.get(doc.id, 0), ver.version_no)
-        clause_ids = [c.id for c, ver, doc in rows if ver.version_no == latest[doc.id]]
+        from app.updates.source_state import latest_observations_query
+
+        observed = dict((await self.session.execute(latest_observations_query(list(latest)))).all())
+
+        def eligible(ver, doc):
+            return (
+                ver.id == observed[doc.id]
+                if doc.id in observed
+                else ver.version_no == latest[doc.id]
+            )
+
+        clause_ids = [c.id for c, ver, doc in rows if eligible(ver, doc)]
         layout_held = set(await layout_held_clause_ids(self.session, clause_ids))
         translation_query = (
             select(ClauseTranslation)
@@ -316,7 +327,7 @@ class ToolBox:
         out: list[ClauseCandidate] = []
         for clause, ver, doc in rows:
             if (
-                ver.version_no != latest[doc.id]
+                not eligible(ver, doc)
                 or clause.id in layout_held
                 or ver.legal_status == "repealed"
                 or ver.review_status == "rejected"

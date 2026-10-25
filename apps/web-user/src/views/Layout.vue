@@ -3,6 +3,7 @@ import { ROLE_LABEL } from '@cyshuhe/shared'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppIcon from '../components/AppIcon.vue'
+import NotificationBell from '../components/NotificationBell.vue'
 import { useAuth } from '../auth'
 const auth = useAuth()
 const route = useRoute()
@@ -15,6 +16,7 @@ const groups = [
       { path: '/', title: '工作概览', icon: 'grid' },
       { path: '/analysis', title: '合规评估', icon: 'shield' },
       { path: '/knowledge', title: '法规知识库', icon: 'book' },
+      { path: '/notifications', title: '更新通知', icon: 'check' },
     ],
   },
   {
@@ -95,6 +97,7 @@ function logout() {
           ><strong>{{ current?.title || '工作空间' }}</strong>
         </div>
         <div class="topbar-account" v-if="auth.user">
+          <NotificationBell />
           <span class="account-avatar">{{ auth.user.display_name.slice(0, 1) }}</span
           ><span>{{ auth.user.display_name }}</span
           ><span

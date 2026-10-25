@@ -11,6 +11,7 @@ const router = createRouter({
       component: () => import('./views/Layout.vue'),
       children: [
         { path: '', name: 'home', component: () => import('./views/Home.vue') },
+        { path: 'notifications', name: 'notifications', component: () => import('./views/Notifications.vue') },
         {
           path: 'knowledge',
           name: 'knowledge',

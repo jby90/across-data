@@ -25,6 +25,7 @@ const groups = [
     label: '运行与管理',
     items: [
       { path: '/agent-studio', title: '智能体工作台', icon: 'flow' },
+      { path: '/updates', title: '更新与时效', icon: 'check' },
       { path: '/sites', title: '采集站点', icon: 'globe', admin: true },
       { path: '/orgs', title: '企业管理', icon: 'building', admin: true },
       { path: '/users', title: '账号管理', icon: 'users', admin: true },

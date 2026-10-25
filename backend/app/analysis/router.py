@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
+from types import SimpleNamespace
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, status
@@ -84,6 +85,7 @@ from app.knowledge.graph_evidence import active_edge_filters
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
 from app.knowledge.router import _compute_eight_attributes
 from app.knowledge.schemas import GraphPayloadOut, KgEdgeOut, KgNodeOut
+from app.updates.service import report_updates
 
 AdminOrReviewerDep = Annotated[Principal, Depends(require_admin_side)]
 PlatformAdminDep = Annotated[Principal, Depends(require_platform_admin)]
@@ -371,6 +373,7 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
 
     rv_outs = [
         ReportVersionOut(
+            regulatory_updates=await report_updates(session, rv.id),
             citation_policy=rv.citation_policy or "legacy_unrecorded",
             source_integrity_alerts=[
                 f"原文绑定或页级解析待核对，引用 {cid} 已隔离，需核查后重新分析"
@@ -912,10 +915,16 @@ async def edit_user_report_version(
         created_by=user.user_id,
     )
     session.add(new_rv)
+    await session.flush()
+    from app.updates.service import link_report, reconcile_impacts
+
+    await link_report(session, task, new_rv)
+    await reconcile_impacts(session, task_ids=[task.id])
     await session.commit()
     await session.refresh(new_rv)
 
     return ReportVersionOut(
+        regulatory_updates=await report_updates(session, new_rv.id),
         citation_policy=new_rv.citation_policy or "legacy_unrecorded",
         id=new_rv.id,
         task_id=new_rv.task_id,
@@ -1020,12 +1029,20 @@ async def export_user_report(
         raise HTTPException(404, "该报告版本没有此维度")
     if ext == "zip" and not {f"D{i}" for i in range(1, 9)} <= codes:
         raise HTTPException(409, "历史报告未保存全部八个维度，不能伪造拆分文件")
+    export_view = SimpleNamespace(
+        version_no=rv.version_no,
+        is_partial_sample=rv.is_partial_sample,
+        dimensions_json=rv.dimensions_json,
+        executive_summary=rv.executive_summary,
+        citation_policy=rv.citation_policy,
+        regulatory_updates=await report_updates(session, rv.id),
+    )
     data = (
-        build_report_zip(task, rv)
+        build_report_zip(task, export_view)
         if ext == "zip"
-        else build_report_docx(task, rv, dimension)
+        else build_report_docx(task, export_view, dimension)
         if ext == "docx"
-        else build_report_pdf(task, rv, dimension)
+        else build_report_pdf(task, export_view, dimension)
     )
     media = {
         "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

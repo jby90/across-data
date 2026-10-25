@@ -1697,6 +1697,11 @@ async def _compile(
         created_by=task.created_by,
     )
     session.add(rv)
+    await session.flush()
+    from app.updates.service import link_report, reconcile_impacts
+
+    await link_report(session, task, rv)
+    await reconcile_impacts(session, task_ids=[task.id])
     task.findings_json = findings
     comp = ToolCall(
         call_id="compile-1",
