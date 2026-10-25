@@ -1,0 +1,969 @@
+{
+  "passed": true,
+  "version_id": "e0005706-04fd-4746-89d3-28e7d3960d68",
+  "clauses_checked": 137,
+  "source_text_unchanged": true,
+  "selection_version": "legal-list-coverage-v8",
+  "human_review": null,
+  "details": [
+    {
+      "clause_id": "c2e7bdb6-67f0-4fc0-82be-5cdcded04980",
+      "number": null,
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "c00d30d8fefb4afdc4002c3424bdc7c09381856425e39d5240590e8d6a785b91"
+    },
+    {
+      "clause_id": "9552b9ad-6e75-4a80-a593-d37ac05ddd16",
+      "number": "1",
+      "selection_units": 4,
+      "coverage_units": 21,
+      "raw_sha256": "97b5289bebfb36fc5bdfb823b27ef21fe1364428a4b63e073143caa6f0666b71"
+    },
+    {
+      "clause_id": "9c25a1f8-3883-4800-a39e-d883a47f668c",
+      "number": "2",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "8bf364d284bc1f8ba2c15d3e03da8c6b1129156e13818204924593e00da3b46f"
+    },
+    {
+      "clause_id": "4b8ac617-5149-4fc8-9128-b8463ff69972",
+      "number": "3",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "bfa2cd8f2aafb0eabef7799d0dd7eb0e9c59d20b28c7762e0d0bff6e82a8ec78"
+    },
+    {
+      "clause_id": "c948fdf3-b3a3-4613-8156-8b2c0c46d3fd",
+      "number": "4",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "93009ce5ddb60d3bdcb7e0948f06305377429a509db307c1d1b87b179cf5387f"
+    },
+    {
+      "clause_id": "aa28e6ac-078b-4093-a25a-c43a28f5afae",
+      "number": "5",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "8bfb71f00ca992dc534450324b711b5267b216b64358bac809976dd3645df4c0"
+    },
+    {
+      "clause_id": "ad145255-5960-41f2-875a-cacc8777142e",
+      "number": "6",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "0d9a1b17a0e6d1662e6628eb774fdfb3fa0dd1b264128130e571c53a55e308cd"
+    },
+    {
+      "clause_id": "a68f9517-fd1d-4809-a5ab-68a037888f62",
+      "number": "7",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "4071e3e8579eb29adaa2c38e5c6f24d18c29d904c610e4da745f6716b3165c72"
+    },
+    {
+      "clause_id": "49bded67-5e15-4f8d-9b03-48ed87e4c64b",
+      "number": "8",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "5dfcf42c6a126dd194e1bc3c59e029dca403e76bb37be24b380cd7ac685be08d"
+    },
+    {
+      "clause_id": "6e3a9ee0-9bd9-4924-8e4d-09af9e405b0d",
+      "number": "9",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "3d671a536f815504d31082a7ff1301642c43a81aa37ef1a800159d5f32941e45"
+    },
+    {
+      "clause_id": "a4a87894-8288-44b0-8487-2107c6e62377",
+      "number": "10",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "6f78bbe1522ee91177c4e50b916ad7ed8b2a3b24d098469b6eaa73e1cb82893e"
+    },
+    {
+      "clause_id": "98900b78-9980-4748-b417-6a3b4afd4619",
+      "number": "11",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "14684b466398e42480c49c066a9d9e1cf3442cf443933af558b182b8ce7089b7"
+    },
+    {
+      "clause_id": "30a6321a-c97d-4c37-8ee1-a21a61b2dca1",
+      "number": "12",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "207e72520319aef98bd8a6fae9bc0ef2d452e50ff8753c94febe149b0444561e"
+    },
+    {
+      "clause_id": "902afa49-a629-4937-9f06-355e3cc21bd7",
+      "number": "13",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "80431b494a524d365cdc7950ca7ba7c5e897d041671a862011a20af72225d5b7"
+    },
+    {
+      "clause_id": "fcb2b663-1641-40aa-b1be-5555764320ee",
+      "number": "14",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "ab1e50d037eb4987f6b3925979b6dc046f89551b9c483d55c41b16b383db171c"
+    },
+    {
+      "clause_id": "eb22161c-6306-4b59-9609-63c7f6c231bd",
+      "number": "15",
+      "selection_units": 4,
+      "coverage_units": 4,
+      "raw_sha256": "8299280726091cf2b7228ea763887d2af899b52d01d5bcec700ddebe9bdac6ac"
+    },
+    {
+      "clause_id": "922e02da-ea9c-4b4b-b89a-505656670836",
+      "number": "16",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "d62982405bac5bfc2054048f98cdbe787cdbbb201e5d82e7449a0fc135672292"
+    },
+    {
+      "clause_id": "2702974c-6cd9-49ab-8927-229c6c21747f",
+      "number": "17",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "ef7cb6b1fb76c8c5f9a2e4fffca1cae127fc9345563c1a1ec16ab36dfbff21d7"
+    },
+    {
+      "clause_id": "19dee441-ee1c-42bc-958c-3dafc4b64e92",
+      "number": "18",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "8287336feaf03a384a57f33c2a5f50fca5a91b2160d162163978e3fe9e8edd4e"
+    },
+    {
+      "clause_id": "b8fa9748-f966-45fc-bc7f-d9c9e2b5f410",
+      "number": "19",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "055fc4a6bb58548dd0497b5cab69e6a35ddfe5476a7c8f15b77ef4bcaa588877"
+    },
+    {
+      "clause_id": "29665b24-65a5-49c9-807b-d5439992d906",
+      "number": "20",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "deed6efd98f35434cb161e4e8a9b93e0f5899b3ffb930ed322f6f57a23a328cd"
+    },
+    {
+      "clause_id": "76c2f376-5ffb-46e5-9410-cda4df59032d",
+      "number": "21",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "ebfab66a8b1eb28c32e3dac636287f7141c9fe495a221f7eab8ab1047b57bfdf"
+    },
+    {
+      "clause_id": "40ef1d88-126a-4b84-b559-2dbc07e966c8",
+      "number": "22",
+      "selection_units": 2,
+      "coverage_units": 8,
+      "raw_sha256": "682b93e8b33f46ba910a466372695a29e275b737c591ed33a4bff0690273ee77"
+    },
+    {
+      "clause_id": "725f2399-19af-4c17-a508-a5ec32ca4cf6",
+      "number": "23",
+      "selection_units": 4,
+      "coverage_units": 4,
+      "raw_sha256": "1807eea3746d92a418dce88293351b7ce03d611c4c9122b732ca6a6c7a194a23"
+    },
+    {
+      "clause_id": "03890855-86ac-45c2-a97c-0b11e14ff2ad",
+      "number": "24",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "5eacb5fa2c916d18df21b6c721d16a9a20ac8ea1b466caf99241152a56820599"
+    },
+    {
+      "clause_id": "23329f53-74a5-4d1d-8167-2a0062fa07e1",
+      "number": "25",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "1b0b933c0672941bcd0c7ca91885e603602e33a4f4a6f6d40415d6d3dd0b9512"
+    },
+    {
+      "clause_id": "93cd6336-6a45-491c-8ba7-0e44623acb34",
+      "number": "26",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "ad916f7b08f271b7ecf36ec8afae90355b587f0023d4143ae082314aeaa69d63"
+    },
+    {
+      "clause_id": "097d0002-b676-4291-b596-64af9d364ba7",
+      "number": "27",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "4c134214effda5abfbfe34b6bcf7250b788e3b795cf56b021bdb15e196835024"
+    },
+    {
+      "clause_id": "d248535c-1efc-4f6c-a444-06313f54fb33",
+      "number": "28",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "c840980f7c999d2fc330cf6727f9ffd4ad25b0eedb1bf3fdfbadbb882e4beb81"
+    },
+    {
+      "clause_id": "8560dd4d-a62c-4a08-a42f-9f5835d01f53",
+      "number": "29",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "90765aa8811bb3cf26f4a0ca695f87a45de6b319f468e2302a71313e1de7fc1e"
+    },
+    {
+      "clause_id": "5ff4bdc1-cdf2-47cf-8d45-4ee6e89a0503",
+      "number": "30",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "f1a08a33ce41cf14fa0e3114253525a24ecd18eb0aa6a8bfc5fe6c1fac11020d"
+    },
+    {
+      "clause_id": "8b9fbdba-c347-4a4f-8ee9-23b961883be5",
+      "number": "31",
+      "selection_units": 1,
+      "coverage_units": 7,
+      "raw_sha256": "efb1dbd0dc5a0482e0ed0c3d26fb57e6617e4db637ca2cd1a0f3df51672d7142"
+    },
+    {
+      "clause_id": "bec83e97-bee8-468d-9b14-0db0911bf3bf",
+      "number": "32",
+      "selection_units": 5,
+      "coverage_units": 5,
+      "raw_sha256": "fb3fe74f504b12c9f385ddbfbde4f9b490f686adc27141dc7fa9d178c628e53b"
+    },
+    {
+      "clause_id": "047789a4-c142-4c53-b86a-57bfa0a36633",
+      "number": "33",
+      "selection_units": 1,
+      "coverage_units": 6,
+      "raw_sha256": "113cdb097570bd3ae0f06758ccd6978e538c7f03d8956fc004233c27b4c2f5c6"
+    },
+    {
+      "clause_id": "8dd26c41-88a5-4c26-a0f1-608d0f3226b1",
+      "number": "34",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "f026e6c732a25476e1452ba9f00a9e3e3373721f3d0ebe10c9c3c9e8a52d9ca2"
+    },
+    {
+      "clause_id": "578f9d27-9683-4b9f-a9e1-6b1edf46594e",
+      "number": "35",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "291372ccf9a03c7c8ccb957d302dcb5080cc54e2189b1961e54390bacdf8c3fe"
+    },
+    {
+      "clause_id": "9aec471b-71d2-442e-8dd5-41850af12bf3",
+      "number": "36",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "e17a133e8921e7e4097f091eb2f5354dd118deb4fd59379e5f8ea727797ac1a4"
+    },
+    {
+      "clause_id": "70683fd0-c3f2-4d43-ae16-67db1bbb9072",
+      "number": "37",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "dc9b091a84cd7df44c7eba7c0f6c83822d371d07bfebb66d3ec9e64c7997f80b"
+    },
+    {
+      "clause_id": "70188fad-93b5-4dd8-a85b-dde88167a41d",
+      "number": "38",
+      "selection_units": 8,
+      "coverage_units": 10,
+      "raw_sha256": "facddfc1b91bd7c8a22c13be1da067641b580482e4c841f3f03abf3dcb255dbe"
+    },
+    {
+      "clause_id": "4bc96823-6dd0-49fc-a21e-eb2432ab3b91",
+      "number": "39",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "c14e83d0232914ce9e87971a89ec74776a2511d4066a288e4ad2656db4c6f7ba"
+    },
+    {
+      "clause_id": "a58d2249-8c63-4f3c-bdb2-3d0cf1385c12",
+      "number": "40",
+      "selection_units": 4,
+      "coverage_units": 4,
+      "raw_sha256": "f4a404fc3ab2eb60040fda96bc1e5957bd97b47a7dff04779be6c39dee29d31c"
+    },
+    {
+      "clause_id": "53e674fc-a55c-4a00-974c-256670d181b6",
+      "number": "41",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "9f75013726547517366f75219716c695ab23011a9a90b0ca96333761a86928b3"
+    },
+    {
+      "clause_id": "9d4e780a-8c6f-4e95-bfee-54ecc0cc5a67",
+      "number": "42",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "4363fc56596bdd8adc8fefcb7bd6bff40dff5f2ec0bf1a0cee9f412038bc712c"
+    },
+    {
+      "clause_id": "151ff5ce-b508-485c-9dde-956916782069",
+      "number": "43",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "3813e29809cfa5a45a7f90374c4cd10219f7dafb6b1b2615fbdd70597a3828d0"
+    },
+    {
+      "clause_id": "5f320e3d-64a7-4de8-91f6-7f723d1623fe",
+      "number": "44",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "7ee47aa40d27eaf36f212fed94202830df7fc2b277531b4d99da6df2ef29191f"
+    },
+    {
+      "clause_id": "b63eddca-c61c-4e33-a1b6-140ef36bd42b",
+      "number": "45",
+      "selection_units": 5,
+      "coverage_units": 5,
+      "raw_sha256": "264f33be68f5e5d361ee18740e66a7f618baf452b7fe476ac0cb0d5446a6d7dd"
+    },
+    {
+      "clause_id": "db70b91a-7bfe-441c-b2ee-8f1799ee9942",
+      "number": "46",
+      "selection_units": 2,
+      "coverage_units": 5,
+      "raw_sha256": "d6feb36d23aad25050304cc9fe23de981779f615d6b57e53f0ce4359d1563c59"
+    },
+    {
+      "clause_id": "faeac5b9-0e77-4d43-a423-c04aaecfa60b",
+      "number": "47",
+      "selection_units": 3,
+      "coverage_units": 7,
+      "raw_sha256": "0b47765f35a1556fec2d283901f236ee07f7e541c8e68f6e74f345ba21894714"
+    },
+    {
+      "clause_id": "6be5f4c5-0dd8-4f47-b181-3d08672aa6b3",
+      "number": "48",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "9b50fd0bcb7159b7494717e08cb78ac518bbce78b5af618a4ab6023492c1c54f"
+    },
+    {
+      "clause_id": "4f862e01-7752-4c47-b969-f28265fc5925",
+      "number": "49",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "3c1df8c89cc0f05aa86c97de4e4c57220f353ccb3ee86dbd25a0d21022691657"
+    },
+    {
+      "clause_id": "41d9241f-6266-48bf-8e54-66bbb4682563",
+      "number": "50",
+      "selection_units": 2,
+      "coverage_units": 6,
+      "raw_sha256": "17f6f40babe8f2f1a1a1ffdc34de15083d2ec691ff5ecdee9308d7e20edc73b9"
+    },
+    {
+      "clause_id": "97be2c10-7a51-46ae-bab7-a651fa935f57",
+      "number": "51",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "607dc77891c6d78e1e56a6ed9b7eec9d0c9f77b4ea08e5d7d9c4a6b7768a1b79"
+    },
+    {
+      "clause_id": "374b2f6e-582f-446d-85b0-fa2b942860b3",
+      "number": "52",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "8cbd9b17aecc369ec2c4b107af032aca46d54c4affc81f782be6b026a3f3307d"
+    },
+    {
+      "clause_id": "833b0f0d-87ea-4556-b988-89dde001a436",
+      "number": "53",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "195b1d49c026753effb29f7303c529d21e8982df16793968ee557bcb7825695a"
+    },
+    {
+      "clause_id": "2936b081-5019-4afb-8b7b-e7654bd4df0e",
+      "number": "54",
+      "selection_units": 2,
+      "coverage_units": 7,
+      "raw_sha256": "f44fc9376f5dc3b7458e62f6dd066d0459368114824c9442d2452b4f2ab0a917"
+    },
+    {
+      "clause_id": "b45512a0-6501-4893-ad51-0b36e086b2cf",
+      "number": "55",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "9f55e26e716357de8961a4d7aacc07e6021a7848fa9f83739aa7484615b4fc96"
+    },
+    {
+      "clause_id": "15b293d7-aa9e-4dd0-aa9e-396a0a666c29",
+      "number": "56",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "26ad4919abb559612b1174b9e0f9bf3b6f42a857e043e9cef3d2bab1173c9bde"
+    },
+    {
+      "clause_id": "c663e85d-39af-463e-a980-9806e9fb38fc",
+      "number": "57",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "e364d67682d30e736d84638e8eec653125af9d0da63b172955381345433af944"
+    },
+    {
+      "clause_id": "c617c463-6ba2-4905-9416-5273580bb580",
+      "number": "58",
+      "selection_units": 2,
+      "coverage_units": 4,
+      "raw_sha256": "2ab2e3e863368d5495288bbe757d926ffdec1c2bef3ca2ffc98a622de7faa78d"
+    },
+    {
+      "clause_id": "47fc4f24-df47-4cb9-928a-827aaa035323",
+      "number": "59",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "4589383fdda6ad391763b54b8d6b39fcb1b9dd3fd8e12e3666456b685f26e7b5"
+    },
+    {
+      "clause_id": "a5f53876-d5ec-493d-b3f5-114b213acfde",
+      "number": "60",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "a150507cb667b479f2bfda9268d9bf88333fb3e9d3326a1daaac77f10a6e86f4"
+    },
+    {
+      "clause_id": "57001f8b-bd12-42a3-9d07-ce93d9191412",
+      "number": "61",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "d205e13ad5323165258041b8799b0c460416c9dd6fe2732070804aefdd96016a"
+    },
+    {
+      "clause_id": "5e7187d4-cac1-4dbb-a93a-badfc30f7174",
+      "number": "62",
+      "selection_units": 6,
+      "coverage_units": 6,
+      "raw_sha256": "78a5710e49d4ba4c4ee6419e08e5fc22ff3178e7695ce87f82805903b87c002d"
+    },
+    {
+      "clause_id": "66b9177f-d75e-4f9c-9470-22d2131b3b9a",
+      "number": "63",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "6205479f2a555c90f6072f6af972ac653a877a7c718d7e35e9566a99fcd8c718"
+    },
+    {
+      "clause_id": "9cffdef1-1994-4a91-904b-f8ea67ee6310",
+      "number": "64",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "43495eaa1aa31043d21ba44b77c6a988b062b034fef6a48918f2be25b0e3d240"
+    },
+    {
+      "clause_id": "09b40df7-f7bd-4457-9d99-fb40f483df1f",
+      "number": "65",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "7f080142ee13fd0c79355cc21856316ca7a2ada03b260347364fc9c46440d3df"
+    },
+    {
+      "clause_id": "df8f1f58-eaef-494a-83c6-60db56a0d719",
+      "number": "66",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "bbea57da18aefe3534a684e8d7b14969db59b7513836ab1aa0ddd49a326e4967"
+    },
+    {
+      "clause_id": "6b9a5698-2368-4be5-97c4-a348c88316f7",
+      "number": "67",
+      "selection_units": 2,
+      "coverage_units": 6,
+      "raw_sha256": "b2fe7b0a5f664f1b195322a816c509d04a177e1129cc61835a65127cfca63434"
+    },
+    {
+      "clause_id": "638d46dc-786f-44dd-b3d0-47d9739350f0",
+      "number": "68",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "1a04f8f034bc168ceca69fe0e7cc4e2923d4d1fe92e0b6f4e181af69108f7301"
+    },
+    {
+      "clause_id": "574e817e-96c1-4dd2-b30b-c924dd381d1c",
+      "number": "69",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "fb2e5fe67b476c480dde8d8764f53a3182a2e66f54df8616222cef4b18aa92a7"
+    },
+    {
+      "clause_id": "789b32b2-18bf-42c3-a6f0-da27fc36f044",
+      "number": "70",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "41de5727268970e98c70880da3d9b37e974efa61789247ab64e1cfbb68d8d8eb"
+    },
+    {
+      "clause_id": "0a741dbb-cec4-4152-8e2c-6ddcd80ac419",
+      "number": "71",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "3ae32f8a14dea01e28ca04ecbbb35d2f9bd5a233f7d28e4ac61b1c3d2af3611a"
+    },
+    {
+      "clause_id": "efbdb0c6-fc20-4cfe-ab70-c2efa8292eab",
+      "number": "72",
+      "selection_units": 8,
+      "coverage_units": 8,
+      "raw_sha256": "ca5e86a0b853f136ac1070c32a2f6a4f1bf7670aba7c0f6fb113a0ffce2b11fc"
+    },
+    {
+      "clause_id": "bf09a9b6-82eb-4dd6-82c1-f7a1b58006af",
+      "number": "73",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "dba06d665c9d5f7b712db6f5be8581546b49c749c49caf8b2d88386661287798"
+    },
+    {
+      "clause_id": "6cffe70f-7dd0-460a-b7db-462025249c1f",
+      "number": "74",
+      "selection_units": 3,
+      "coverage_units": 5,
+      "raw_sha256": "3035438e60400afb2c5f25e6849a3b04e7c26bb1af5b5b2e91b4a1c5c601f412"
+    },
+    {
+      "clause_id": "ca0de974-7227-406c-9da8-ffda1e7d40e6",
+      "number": "75",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "5ef8acb4b39f1fdf46619e4378476fa3a14d3a4f2030f1d0cdbcd29532f81d00"
+    },
+    {
+      "clause_id": "bb792f0a-4f54-4b3c-a009-9ac1afe22bce",
+      "number": "76",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "b7e8f504db444aa5582d7db6700a59a30dfb234d11892131d25f07b970f2b7f4"
+    },
+    {
+      "clause_id": "ef78e223-6821-4d80-8fbb-5efaa95a4df1",
+      "number": "77",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "a17e00af49779e50e3663fec10c5038b6ffdba67ded4790137e45c2c4dd1021d"
+    },
+    {
+      "clause_id": "6f566297-8e94-428b-9db6-5a0b4edc7b78",
+      "number": "78",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "aaf28fa161fd4419b5198ae3cbc952e330609d64deaeeeb0e26d4cd2921c8335"
+    },
+    {
+      "clause_id": "f4484f84-66f2-4a8c-8ccb-37e1dff07201",
+      "number": "79",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "b843fce49997df99b97684d4e563d802c57388cd62652aacafb6b146a67dfd1a"
+    },
+    {
+      "clause_id": "9fd305f6-5848-4ab0-bb6f-7c6b48dcc358",
+      "number": "80",
+      "selection_units": 4,
+      "coverage_units": 5,
+      "raw_sha256": "780a9ceeb9ef9a74a784961dce576c09a7f3312be9e2f52c2cbc2c563ace2105"
+    },
+    {
+      "clause_id": "7bb5cf3c-38ab-463b-9b5b-8af27c24dadc",
+      "number": "81",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "a657901d101d24f923bd059f95ab6089fcf9402b6bf6273020687b053b2cdc9a"
+    },
+    {
+      "clause_id": "fe06d34d-7569-4fdb-8b4a-8ab91b2b27f1",
+      "number": "82",
+      "selection_units": 5,
+      "coverage_units": 5,
+      "raw_sha256": "deb686d4c0966825e065983a635ff8881aa342a5131f89158cdfcc4d115196f2"
+    },
+    {
+      "clause_id": "96e1e295-6685-41c2-8626-d108d0e96b73",
+      "number": "83",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "fafebe45956b116ffe794211004c80e6546c8b2bb2bdcd137e76af29753780b6"
+    },
+    {
+      "clause_id": "b7b3bd43-72da-44e3-b2fd-9b4be8351a60",
+      "number": "84",
+      "selection_units": 4,
+      "coverage_units": 4,
+      "raw_sha256": "55c9218a8cfd16e7b557526ba49f1eb4f2285b04e5fb2cb90acf05540c78b142"
+    },
+    {
+      "clause_id": "45c3fcd8-4d5f-450d-8e2a-19e025b7143e",
+      "number": "85",
+      "selection_units": 4,
+      "coverage_units": 4,
+      "raw_sha256": "f99a43ccd390ba10668e12b13afb14a3a699c1fc7d36ec572172f51b3db17ef4"
+    },
+    {
+      "clause_id": "6f17bc83-84ef-4999-9fe9-42a571626c37",
+      "number": "86",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "62ddbb57d1551d58eb0bc0122cfc9099654ef2e16ad2543a761a2b944cd428e0"
+    },
+    {
+      "clause_id": "72707b45-abb7-4f17-b3b9-429e3b3b5ef8",
+      "number": "87",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "bb21886efffb306eaa81125d1dfee07a80d8ecaed9def8e3df2e68c9693ba294"
+    },
+    {
+      "clause_id": "60c0d1c0-61b2-4c0e-84c8-b1325de02a87",
+      "number": "88",
+      "selection_units": 2,
+      "coverage_units": 8,
+      "raw_sha256": "b15be992238f7d8f71b624fd6d2230d2f9cc29cd5273fe408aff8fee317ffe60"
+    },
+    {
+      "clause_id": "bb7b12ab-6de7-4020-bc06-9211a5172a11",
+      "number": "89",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "020bcbf549d3de9e16b6d82893feeeceacbafc9f7f3246390b05ae23ffecd74d"
+    },
+    {
+      "clause_id": "70d47a56-a878-4da2-a91a-1711c9cf8ecc",
+      "number": "90",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "052c9d0f82f911ffdf39e70ee56b6868a1ac033630d7e04aa2bd744f91b91e53"
+    },
+    {
+      "clause_id": "ef215902-f3c6-4424-a7c0-5b93be82574f",
+      "number": "91",
+      "selection_units": 2,
+      "coverage_units": 6,
+      "raw_sha256": "fe2ff77b1137c5e089e963f472a2590b662af5137811930df2d476d68e5cb25e"
+    },
+    {
+      "clause_id": "a0e9ab9d-b9cf-499a-93c8-f52d868c87dc",
+      "number": "92",
+      "selection_units": 2,
+      "coverage_units": 4,
+      "raw_sha256": "9de3cadf4ca4381f44d494e5ab4cd70b08b703131bf041caaad55c7d0adc185d"
+    },
+    {
+      "clause_id": "35f971f1-2e3f-465c-8056-c182416dc59a",
+      "number": "93",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "5d5e7ce548fa9006abf2911eddc54dcbade64a2aa7e806d590fa0d78fd6945ba"
+    },
+    {
+      "clause_id": "39115596-52cc-416c-b198-70b2b8d4a0e0",
+      "number": "94",
+      "selection_units": 1,
+      "coverage_units": 9,
+      "raw_sha256": "84fc5f1e0f80b2864552dd3d3943cf2ea9288fe552e516d38588300bcd022899"
+    },
+    {
+      "clause_id": "e4eb1055-784d-4e72-9b92-6c57c7dc6f2f",
+      "number": "95",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "534bb01b9d4017d099f49a4671ef75837f8833b4428bd08c4d401210d13ed86b"
+    },
+    {
+      "clause_id": "60ed21f8-5306-4725-aadc-de09a53a7a95",
+      "number": "96",
+      "selection_units": 1,
+      "coverage_units": 15,
+      "raw_sha256": "57177f5e1d2c3f2c2bbac05c6e2ecc8e6fbcd1d9ac499272c523e32b2768c275"
+    },
+    {
+      "clause_id": "d8780d0d-4f65-43d5-b6cb-3aa968c90d16",
+      "number": "97",
+      "selection_units": 3,
+      "coverage_units": 6,
+      "raw_sha256": "06486e3c269c0f18fd125c172cd56e708bc50a6c7628bc728103cce29ee4e8f5"
+    },
+    {
+      "clause_id": "c949d8a3-2309-4d3f-b18b-116e32ac9e62",
+      "number": "98",
+      "selection_units": 3,
+      "coverage_units": 11,
+      "raw_sha256": "b5e1bd709f313a664ed53afb749a97a4e27a8cc1265097724b40f4a342f35bf3"
+    },
+    {
+      "clause_id": "695e5528-6ae8-4ed9-a731-f31f930a7df3",
+      "number": "99",
+      "selection_units": 4,
+      "coverage_units": 4,
+      "raw_sha256": "a7badb7f49c02c157998d823d7badb83f2dd380dbcfdfcc986f46d34c23ae069"
+    },
+    {
+      "clause_id": "8b73da2c-787d-4d8c-8788-d679f3e0fe8b",
+      "number": "100",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "229a244be67ac69df94e01b6951e3f6e3852303df5052d1e43b22c956e962ca2"
+    },
+    {
+      "clause_id": "7d48a5a0-7f6a-4e12-88be-cef823781bb4",
+      "number": "101",
+      "selection_units": 4,
+      "coverage_units": 4,
+      "raw_sha256": "2c2961aa3f6cee8d09bf5f000727634abceeea9cb1456b3dd57a4089c0711f27"
+    },
+    {
+      "clause_id": "e17abda8-da59-40fe-a69b-9f4292422afe",
+      "number": "102",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "a0c0c91b656f10ea708ef46ab08879af37081c3ec9d0b45bbae78bcb041aabe7"
+    },
+    {
+      "clause_id": "7a79b000-4021-48ce-a915-e67acc34b222",
+      "number": "103",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "cfe873ee9197ec9e5d81d1a3a74d690c4a362fa10d837d0afa8037d845db5070"
+    },
+    {
+      "clause_id": "419800ee-88ee-4bd0-aaa7-b6f2c585da4f",
+      "number": "104",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "b6b960223558f5d5dcdc5bd134901a42810b86db2258811aefa3b13d852b61c0"
+    },
+    {
+      "clause_id": "25b4b1b1-711c-47a3-8b6f-f726900a6716",
+      "number": "105",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "d5b72cb11cd036f9f02ff1fcdfae196919f7984e29c222a69ed98ccda95e2e6e"
+    },
+    {
+      "clause_id": "283e5ef3-ffd1-4f3e-a39b-8e0e56bcf5bf",
+      "number": "106",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "04629c7e0a4f8bd6ace8e48eae5c002c6a0b572ddf392e3908bd943b9415b409"
+    },
+    {
+      "clause_id": "e69e1c94-f29c-44ff-bd41-5f814d1a9a14",
+      "number": "107",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "488815e4529c62085d045afdba1ad1f7a6dd1256d15de2c5721d2a50b12f8350"
+    },
+    {
+      "clause_id": "06aa9317-e0ca-4d6f-a72f-90d1a3e7f6b7",
+      "number": "108",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "943257c6e02c1f78e81c90801d7366b9b205b94ab5b033c9f185cdca150c9ed2"
+    },
+    {
+      "clause_id": "9e7b5fd4-e07d-4c0c-8782-0647ecd38c66",
+      "number": "109",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "bd4d159afbb688c5eb4d74eb194bef6125aff6a7290b3568af8463fa65af1c19"
+    },
+    {
+      "clause_id": "034e7c4a-1ebd-4fca-9dc2-ed66aecbac15",
+      "number": "110",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "aea77751fce035823f753e347d5edb5f9239490251725649bbad79bcac685715"
+    },
+    {
+      "clause_id": "f04f0371-5f0d-4418-aa85-3bd9c099a8cd",
+      "number": "111",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "e3ddb03509863b76b5be8df2422c2a51f75c111eed8495596222c46ce7bf1126"
+    },
+    {
+      "clause_id": "10ad2522-2b77-422d-9a8a-429f714ef064",
+      "number": "112",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "d7f5b96e6e0f78dcf50bcd32a8ab1c5b4d2fdaa2add46c2f75cd0a48f8dabe12"
+    },
+    {
+      "clause_id": "2ab01d02-3df4-4279-bbf8-fc92a9d44b2e",
+      "number": "113",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "e4367459b239b0b289166f88d2e3f6af94746885ca64d06273bc7ec3f115a5f6"
+    },
+    {
+      "clause_id": "ddc062eb-2f98-40c1-b32e-c799680e30bf",
+      "number": "114",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "07eee180eb6afe61f61ad59b5f901e109137e6b7090e7f8a4a3fbcf3a71fb83c"
+    },
+    {
+      "clause_id": "460762fa-749e-41c1-ac56-6c9295412938",
+      "number": "115",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "490628bd04684d23b2fad9d5f42d4f0c24529587304f9c6f8c755abafb36aa7f"
+    },
+    {
+      "clause_id": "4c143781-c794-42f2-91a3-b0b9b32fc1a7",
+      "number": "116",
+      "selection_units": 3,
+      "coverage_units": 10,
+      "raw_sha256": "08ff96979faf8db2fbf73f8e6c9d323999c288017ed87d978af773bd52b6bef2"
+    },
+    {
+      "clause_id": "6abffe3c-2dfb-4c70-822f-14286a4a8e8f",
+      "number": "117",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "9d2fc4e626acd3f02e32d716fda178662668248cec8532947fa1766dba1cdbf0"
+    },
+    {
+      "clause_id": "05adad8a-880b-4a8a-a2e7-12e74c6de1ce",
+      "number": "118",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "1d5a6d30521ebae21fdf41c579c9a6586c3a39c68038078b960564cbcae901bd"
+    },
+    {
+      "clause_id": "3188a223-c42b-43f8-b2cd-e94845cba5f7",
+      "number": "119",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "c68f9d610a574343c787f3965b1a25974162fbd4d96b40778a97b4a68fd92c7a"
+    },
+    {
+      "clause_id": "5ca28d6c-0bcc-48aa-a73e-68c75980c59a",
+      "number": "120",
+      "selection_units": 11,
+      "coverage_units": 11,
+      "raw_sha256": "d3a96ed58b68bba80070bd48dbc67232b176704d4c5220eacb7a7a2144bef934"
+    },
+    {
+      "clause_id": "5cc22c5c-faf4-488f-820f-4c2387fc2f43",
+      "number": "121",
+      "selection_units": 6,
+      "coverage_units": 6,
+      "raw_sha256": "ae848601d2554d28437bcb8e851d658e791c6045e1534254a2bac1574a580299"
+    },
+    {
+      "clause_id": "a6db3c70-2993-4476-aaf8-09eab26107c9",
+      "number": "122",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "c06589b6e61ac8e0978dc962fe272b807dc40c50027440e26dba3b25bf134cdd"
+    },
+    {
+      "clause_id": "1aa77527-95ba-495c-89f6-2a4494e550fb",
+      "number": "123",
+      "selection_units": 3,
+      "coverage_units": 3,
+      "raw_sha256": "f2b725533b542300e872a1ef8195cdd3bd04ae14a15081f619ff77977ab439a9"
+    },
+    {
+      "clause_id": "145dcffa-3e0b-45d9-87d8-cafa9558701e",
+      "number": "124",
+      "selection_units": 9,
+      "coverage_units": 9,
+      "raw_sha256": "dee80332ac6cbb699764966fda55904a19e338c02943c2ba28e3934ae37d1550"
+    },
+    {
+      "clause_id": "d60f3e6c-9d54-41a2-ab0e-881a4e761fd0",
+      "number": "125",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "14b6910e89c29f0ca4077de7eda0a867019d0228de3b73e9be61c795f7d63ef9"
+    },
+    {
+      "clause_id": "a01eb90c-cb16-404f-99c8-716ca95174c2",
+      "number": "126",
+      "selection_units": 4,
+      "coverage_units": 4,
+      "raw_sha256": "da62bbef4aa277022a2071065edce6e11f828161655cd5c5dea25fc914c0d5d2"
+    },
+    {
+      "clause_id": "e6cc81d3-954e-47a5-9572-1b23c0111146",
+      "number": "127",
+      "selection_units": 4,
+      "coverage_units": 4,
+      "raw_sha256": "dc0ff89071a9b8ffd95d0331226f97dbfb66ad93012c7ecdba89cad3de87c84e"
+    },
+    {
+      "clause_id": "fde5cec3-99cb-483a-a083-ab1183e99cd2",
+      "number": "128",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "f1e9e071ddcc9db7f8108afa94dfb3cf689e069b543bd85b4425d032c3ceab43"
+    },
+    {
+      "clause_id": "34f0006c-da3f-44fd-bb77-903f7ddc3656",
+      "number": "129",
+      "selection_units": 3,
+      "coverage_units": 10,
+      "raw_sha256": "513f5fa8f10e95434cc3859f2099b4ebfe128d3a5787caba3838d1af42f1398a"
+    },
+    {
+      "clause_id": "1e8edd7c-ba0c-4167-a684-f623d012a9d7",
+      "number": "130",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "75e994e7a5eeb08dab26e3cfb75a8bda1353e54481379762db527201d4ee55dd"
+    },
+    {
+      "clause_id": "c0507269-ab39-427a-ad2e-b734d7205d57",
+      "number": "131",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "10236d96bac9c1607c2017b7442234ca86a108b61eb0d3b64b8825c2bc6b2b60"
+    },
+    {
+      "clause_id": "76f7a86d-cf2e-4113-a1f2-ea06cf7e1f2e",
+      "number": "132",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "9ebcef80597a61751b7a3d4dc306f8d1f5884b8a4b8c9d412c8c4464b75262e2"
+    },
+    {
+      "clause_id": "f4a61ce9-4cc8-43ea-b627-ace17eebc67d",
+      "number": "133",
+      "selection_units": 2,
+      "coverage_units": 4,
+      "raw_sha256": "01a03689bb7254a7a8d643f7e7e303d3ce754f74bdd5ea77ad364be13515ef3f"
+    },
+    {
+      "clause_id": "605cbcee-5468-4c5a-9abd-7e47cc3938aa",
+      "number": "134",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "9e1742862509822aefe53062a1c45789335e6bca3bc35583f3fbbfc51d2ffb0c"
+    },
+    {
+      "clause_id": "12738448-3882-4485-b86c-c721db548674",
+      "number": "135",
+      "selection_units": 2,
+      "coverage_units": 2,
+      "raw_sha256": "9cb4b7803dbbd8be29524ce68cdb6c2561bb509f8f8afa72dc886ecd76c88b19"
+    },
+    {
+      "clause_id": "b01e154a-5095-4351-a3cf-690c99bc46c3",
+      "number": "136",
+      "selection_units": 1,
+      "coverage_units": 1,
+      "raw_sha256": "cc798f4a8c6335b9da898f753f296fc0b0f099efe4ee5d313315765ba27bb4fd"
+    }
+  ]
+}

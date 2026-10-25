@@ -9,10 +9,11 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.knowledge.numeric_integrity import separate_explicit_dates
 
-SELECTION_VERSION = "legal-heading-coverage-v6"
+SELECTION_VERSION = "legal-list-coverage-v8"
 _ARTICLE = re.compile(
     r"(?m)^[ \t\u200e\u200f]*(?:(?:Article\.?|Section\.?|Regulation\.?|Rule\.?|Art\.)\s+"
-    r"[0-9A-Za-z]+(?:\.[0-9]+)*\s*[.:—–]|(?:الفصل|المادة|مادة)\s+[0-9٠-٩]+\s*[.:：]|"
+    r"[0-9A-Za-z]+(?:\.[0-9]+)*\s*[.:—–]|"
+    r"(?:الفصل|ال[ \t]*م[ \t]*ا[ \t]*د[ \t]*ة|مادة)\s+[0-9٠-٩]+\s*[.:：]|"
     r"第[一二三四五六七八九十百千0-9]+条)",
     re.IGNORECASE,
 )
@@ -72,6 +73,38 @@ def sentence_catalog(text: str) -> list[dict]:
         len(text),
     ]
     offsets = sorted(set(offsets))
+    # Keep a chapeau's ordered list atomic for selection. Coverage verification
+    # still checks every list item separately; the six-anchor Schema stays fixed.
+    markers = list(_LIST_LINE.finditer(text))
+    ordinal = re.compile(r"^[ \t]*([0-9٠-٩]+)\s*[-–]")
+    articles = [m.start() for m in _ARTICLE.finditer(text)]
+    atomic = []
+    for n, marker in enumerate(markers):
+        if not text[: marker.start()].rstrip().endswith((":", "：")):
+            continue
+        first = ordinal.match(marker.group())
+        last = n
+        for j in range(n + 1, len(markers)):
+            previous, current = (
+                ordinal.match(markers[j - 1].group()),
+                ordinal.match(markers[j].group()),
+            )
+            if any(marker.start() < p < markers[j].start() for p in articles):
+                break
+            if re.search(r"\n[ \t]*\n", text[markers[j - 1].end() : markers[j].start()]):
+                break
+            if first and (not previous or not current or int(current[1]) != int(previous[1]) + 1):
+                break
+            if not first and current:
+                break
+            if text[markers[j - 1].end() : markers[j].start()].rstrip().endswith((":", "：")):
+                break
+            last = j
+        if last > n:
+            end = next(p for p in offsets if p >= markers[last].end())
+            if not any(marker.start() < p < end for p in articles):
+                atomic.append((marker.start(), end))
+    offsets = [p for p in offsets if not any(start < p < end for start, end in atomic)]
     spans = []
     for start, end in zip(offsets, offsets[1:], strict=False):
         if not text[start:end].strip():

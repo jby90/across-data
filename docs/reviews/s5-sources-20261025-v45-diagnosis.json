@@ -1,0 +1,75 @@
+{
+  "batch_id": "34c24ffc-2716-4153-b0d8-dfa0f8603d48",
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "original_metrics": {
+    "completed_cases": 32,
+    "total_cases": 32,
+    "recall_at_5": 1.0,
+    "retrieval_hits": 32,
+    "retrieval_expected": 32,
+    "quote_fidelity": 0.7894736842105263,
+    "faithful_findings": 60,
+    "findings_total": 76,
+    "fact_consistency": 0.9666666666666667,
+    "supported_findings": 58,
+    "judged_findings": 60,
+    "judge_coverage": 0.7894736842105263,
+    "llm_judged": true,
+    "human_review_count": 0,
+    "human_review_status": "0/32 未经人工复核",
+    "total_tokens": 1316542,
+    "technical_error_cases": 1,
+    "local_reselection_cases": 11,
+    "note": "工程来源标注集，非人工金标准。事实一致性为独立模型对结论是否获引文支持的判断（llm_judged），不代表法律准确率。未生成/未判定项不计为通过，另列覆盖率。",
+    "batch_id": "34c24ffc-2716-4153-b0d8-dfa0f8603d48",
+    "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+    "workflow_version_id": "583c4626-685d-4816-81cb-4ff7d41ccb5a",
+    "elapsed_seconds": 648.2502087000175
+  },
+  "case_diagnosis": [
+    {
+      "question_id": "S5-09",
+      "analysis_error": null,
+      "judge_disagreements_or_rejections": [
+        {
+          "judge": {
+            "index": 2,
+            "reason": "定义内容与引文基本一致，但引文将相关自然人称为“personne concernée”，结论译为“数据主体”，术语名称与引文不完全对应，故仅部分支持。",
+            "supported": "partial"
+          },
+          "runtime_accepted": true,
+          "runtime_issues": [],
+          "clause_id": "5475be63-fc48-4f11-a17a-e2588e6af03d",
+          "quote": "Pour l’application de la présente loi, on entend par :\n1- « données à caractère personnel » : toute information, de quelque nature\nqu’elle soit et indépendamment de son support, y compris le son et l’image,\nconcernant une personne physique identifiée ou identifiable, dénommée ci￾après « personne concernée ».\n",
+          "conclusion": "为适用本法，以下用语的含义为：\n1-“个人数据”：任何性质的信息，不论其载体为何，包括声音和图像，涉及已识别或可识别的自然人，以下称为“数据主体”。"
+        }
+      ]
+    },
+    {
+      "question_id": "S5-22",
+      "analysis_error": "模型JSON Schema/事实键校验连续失败: [{'type': 'too_long', 'loc': ('findings', 0, 'sentence_ids'), 'msg': 'List should have at most 6 items after validation, not 7', 'ctx': {'field_type': 'List', 'max_length': 6, 'actual_length': 7}}]",
+      "judge_disagreements_or_rejections": []
+    },
+    {
+      "question_id": "S5-24",
+      "analysis_error": null,
+      "judge_disagreements_or_rejections": [
+        {
+          "judge": {
+            "index": 0,
+            "reason": "第2、3项、两个月期限及书面通知均与引文一致；但第1项引文为“国防部长与内政和市政部长两位部长”共同发布，结论写成“国防部长、内政部长和市政部长”三位部长，义务主体表述不符。",
+            "supported": "partial"
+          },
+          "runtime_accepted": false,
+          "runtime_issues": [
+            "结论语义核验未通过：结论大部分与原文对应，但第一项将共同发布主体表述为“国防部长、内政部长和市政部长”三位，原文为“وزيري الدفاع الوطني والداخلية والبلديات”，其中“وزيري”为双数，且“الداخلية والبلديات”可能指内政与市政（部长）这一复合主体；结论拆分为三个独立部长并新增“市政部长”作为独立主体，存在主体范围不一致。其余许可条件、两个月期限、默示拒绝及书面通知对象均与原文相符。"
+          ],
+          "clause_id": "d8780d0d-4f65-43d5-b6cb-3aa968c90d16",
+          "quote": "المادة 97\nتخضع للترخيص معالجات البيانات ذات الطابع الشخصي المتعلقة:\n1 – بالامن الخارجي والداخلي للدولة بموجب قرار مشترك يصدر عن وزيري الدفاع الوطني والداخلية والبلديات.\n2 – بالجرائم الجزائية وبالدعاوى القضائية بمختلف انواعها بموجب قرار يصدر عن وزير العدل.\n3 – بالحالات الصحية او بالهوية الوراثية او بالحياة الجنسية للاشخاص بموجب قرار يصدر عن وزير الصحة العامة.\nيصدر قرار الترخيص ضمن مهلة شهرين من تاريخ تقديم الطلب، والا اعتبر مرفوضاً ضمناً عند انقضاء المهلة.\nيبلغ خطياً القرار بالترخيص او برفضه الى وزارة الاقتصاد والتجارة والى مقدم الطلب\n.",
+          "conclusion": "第97条：涉及下列事项的个人性质数据处理须经许可：\n1 – 与国家的对外安全和内部安全有关，依据国防部长、内政部长和市政部长共同发布的决定。\n2 – 与刑事犯罪和各类司法诉讼有关，依据司法部长发布的决定。\n3 – 与人员的健康状况、遗传身份或性生活有关，依据公共卫生部长发布的决定。\n许可决定自提交申请之日起两个月内作出；否则期限届满时视为默示拒绝。\n许可或拒绝的决定须书面通知经济和贸易部以及申请人。"
+        }
+      ]
+    }
+  ],
+  "human_review": null
+}

@@ -10,6 +10,7 @@ ANALYSIS_SYSTEM_PROMPT = (
     "phase=select_evidence：最多选择3项最直接相关的完整依据，优先主体、条件、规则与例外齐全的段落。"
     "clause_id、fact_key来自输入，sentence_ids为1至6个连续整数；不是法律条号。不要重抄quote或翻译。"
     "每项句子须在同一scope_id；只选sentences，不选retained_context或retained_evidence中的已完成部分。"
+    "完整法律列表由系统组织为选证单元，只选实际提供的sentence_id，不把列表项目序号当成句子编号。"
     "此阶段不写最终规则，obligation填‘待依据生成’，risk_level填MEDIUM。"
     '仅返回 {"findings":[{"clause_id":"候选ID","sentence_ids":[1],'
     '"fact_key":"事实键","obligation":"待依据生成","risk_level":"MEDIUM"}],'

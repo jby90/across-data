@@ -82,3 +82,15 @@ python -m pytest -q backend/tests/test_analysis_p3.py backend/tests/review_s1_s2
 - 同作用域、相同源文及配置的成功检索可短期缓存与并发合并；失败不缓存成功。已知 Token、实际新请求与复用来源分开记账，冷运行与连续报告的成本分别比较。
 
 相应验证工具为 `scripts/eval_p3.py`、`stability_p3.py`、`summarize_s5_release.py`、`verify_s5_report_citations.py` 和 `verify_s5_preservation.py`。真实模型评测需进程环境中的密钥和账号；文档、Git 和评测结果中不得存储它们。
+
+## 官方来源候选与版本比较（后续 v45）
+
+详见 [官方原文、版本消歧与 OCR 候选记录](../reviews/S5_OFFICIAL_SOURCES_20261025.md)。本轮使用 `remediation_s5_sources_20261025` / API `18009` / 管理端 `5189`，原 v44 数据和服务保留。
+
+`source_identity_observed` 是有原文归档、出处和摘录绑定的受控登记，身份键由来源资料配置提供，非模型自动断定。它仅允许检索器把可能对应的另一份条款纳入同一 top-k 预算供比较，不能合并文档/版本、认定法律效力相同或猜测现行性。章节结构中的合法罗马数字与阿拉伯数字可等值匹配，附表重号或明确不同章节不匹配；没有章节信息时必须保证条号在相应文档内唯一，仍只作比对候选。
+
+新增清晰正文以独立文档/版本保存。法定机构转载标记同时进入模型输入、API、报告正文和两种导出；原报告不回填。未确认有效状态与人工复核仍保持未知/待核对。
+
+OCR 重识别使用原图、逐词坐标、权重哈希和两个分割模式保存完整候选，不使用模型补字。两次 OCR 一致也不等于人工法律批准；本次结果存在差异，只追加未启用的修订提案，不能替换原条款或进入报告。
+
+`register_official_source_candidates.py` 仅向新隔离库登记已归档、robots 允许的来源，拒绝覆盖已有文档；`probe_ocr_source.py` 限页运行并拒绝覆盖旧探测；`verify_s5_preservation.py` 可传独立归档目录，基线按数据库 JSON 类型规范化后逐字段比较，仍拒绝 ID 错绑、重复和任何未留存的改写。

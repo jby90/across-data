@@ -1,0 +1,45 @@
+{
+  "tasks": 3,
+  "first_verification_runs": 3,
+  "evaluated_runs": 3,
+  "first_failed_runs": 0,
+  "first_failure_rate_percent": 0.0,
+  "no_evidence_checked_runs": 0,
+  "preceding_analysis_failed_runs": 0,
+  "reason_counts": {},
+  "reason_percent_of_categorized_entries": {},
+  "backtrack_count_distribution": {
+    "0": 3
+  },
+  "task_status_distribution": {
+    "completed": 3
+  },
+  "partial_sample_rate_percent": 0.0,
+  "details": [
+    {
+      "task_id": "9ae4403e-8222-4c76-baa9-8a685acdd476",
+      "trace_id": "fcbb09fe-97fb-4f08-8b04-cd2e822d881a",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "dfa02018-8921-45df-8081-c4497a24e262",
+      "trace_id": "acecb45d-98ea-49ad-a78e-341346430782",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "eb13dd4f-dbcf-4d93-9e39-7fc569db8126",
+      "trace_id": "74e22d9a-8050-49ad-b367-388ca3d5973b",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    }
+  ],
+  "note": "原因允许多标签；没有实际核验结论的轨迹不计作首轮通过。历史乱码归为无法分类，不能推测。"
+}

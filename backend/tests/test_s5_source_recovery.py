@@ -180,3 +180,52 @@ def test_republished_source_notice_survives_api_and_shared_export_reference():
     assert (
         cite.document_title == "Original official title" and cite.review_status == "pending_review"
     )
+
+
+@pytest.mark.parametrize("digits", ["123456789", "١٢٣٤٥٦٧٨٩"])
+def test_full_legal_list_is_one_anchor_but_all_coverage_items_remain(digits):
+    from app.analysis.evidence_selection import coverage_units, select_legal_quote, sentence_catalog
+
+    text = "The operator must disclose these matters:\n" + "\n".join(
+        f"{d} – Complete obligation {i}." for i, d in enumerate(digits, 1)
+    )
+    catalog = sentence_catalog(text)
+    assert len(catalog) == 1 and catalog[0]["text"] == text
+    quote = select_legal_quote(text, [1])
+    assert quote["quote"] == text and quote["selected_sentence_ids"] == [1]
+    units = coverage_units(text)
+    assert len(units) == 10 and "".join(u["text"] for u in units) == text
+
+
+def test_list_selection_does_not_absorb_an_independent_provision():
+    from app.analysis.evidence_selection import sentence_catalog
+
+    text = "First rule:\n1 – Duty one.\n2 – Duty two.\nArticle 22.\nNew rule:\n1 – Duty three.\n2 – Duty four."
+    catalog = sentence_catalog(text)
+    assert len(catalog) >= 2
+    assert all(not ("Duty one" in s["text"] and "Duty three" in s["text"]) for s in catalog)
+
+
+def test_spaced_header_is_boundary_detection_only_and_six_anchor_limit_stays():
+    from app.analysis.evidence_selection import (
+        FindingSelection,
+        SourceBoundaryError,
+        select_legal_quote,
+    )
+
+    text = (
+        "سياق كامل من المادة السابقة لا يجوز نقله.\nالم ادة ٧٨:\nهذا هو النص الكامل للمادة التالية."
+    )
+    with pytest.raises(SourceBoundaryError):
+        select_legal_quote(text, [1, 2])
+    assert "الم ادة" in text
+    with pytest.raises(ValueError):
+        FindingSelection.model_validate(
+            dict(
+                clause_id="x",
+                sentence_ids=list(range(1, 8)),
+                fact_key="q",
+                obligation="unchanged",
+                risk_level="MEDIUM",
+            )
+        )
