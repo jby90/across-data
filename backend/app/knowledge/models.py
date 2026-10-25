@@ -21,6 +21,7 @@ from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.core.rls import TenantOwnedMixin
 
 
 class NodeType(enum.StrEnum):
@@ -76,7 +77,7 @@ class ReviewPointStatus(enum.StrEnum):
     NEEDS_DISCUSSION = "needs_discussion"
 
 
-class KnowledgeAuditRecord(Base):
+class KnowledgeAuditRecord(TenantOwnedMixin, Base):
     """Immutable snapshots survive target replacement/deletion; contain no credentials."""
 
     __tablename__ = "knowledge_audit_records"

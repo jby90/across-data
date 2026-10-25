@@ -41,6 +41,11 @@ def principal_for(audience: str, *allowed: Role) -> Callable:
         except (jwt.PyJWTError, ValueError, KeyError):
             raise _unauthorized() from None
 
+        from app.core.rls import DatabaseIdentity, bind_identity, bind_principal
+
+        # A signed subject may read only its own identity before role/org revocation checks.
+        await bind_identity(session, DatabaseIdentity(scope="identity", user_id=user_id))
+
         user = await session.get(User, user_id)
         if user is None or not user.is_active or user.role != role.value:
             raise _unauthorized()
@@ -53,8 +58,10 @@ def principal_for(audience: str, *allowed: Role) -> Callable:
             raise HTTPException(status.HTTP_403_FORBIDDEN, "无权访问")
         from app.core.redaction import bind_egress
 
+        principal = Principal(user_id=user.id, role=role, org_id=user.org_id)
+        await bind_principal(session, principal)
         bind_egress(session, org)
-        return Principal(user_id=user.id, role=role, org_id=user.org_id)
+        return principal
 
     return dependency
 

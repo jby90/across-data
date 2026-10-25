@@ -29,6 +29,10 @@ class RuleError(Exception):
 async def authenticate(
     session: AsyncSession, *, email: str, password: str, audience: str
 ) -> tuple[User, str]:
+    from app.core.rls import DatabaseIdentity, bind_identity
+
+    # Authentication can look up exactly one normalized email, not other tenants' rows.
+    await bind_identity(session, DatabaseIdentity(scope="auth", auth_email=email.lower()))
     allowed = ADMIN_ROLES if audience == AUD_ADMIN else USER_ROLES
     user = (
         await session.execute(select(User).where(User.email == email.lower()))

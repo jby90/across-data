@@ -15,6 +15,11 @@ class Base(DeclarativeBase):
     """所有 ORM 模型的基类。"""
 
 
+from app.core.rls import install_rls_hooks  # noqa: E402
+
+install_rls_hooks()
+
+
 _engine: AsyncEngine | None = None
 _sessionmaker: async_sessionmaker[AsyncSession] | None = None
 

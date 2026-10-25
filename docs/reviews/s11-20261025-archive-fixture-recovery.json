@@ -1,0 +1,11 @@
+{
+  "isolated_database": "remediation_s6_demo_20261025",
+  "restored_missing_files": 2,
+  "sha256": [
+    "21e95b5f1580d2214f79a00a419f8a180f1249d499e18577633efdb9b26f24db",
+    "735499a916d569666fcde7cbbabc4046a7732a94fed5a62c761a01e66baac5b8"
+  ],
+  "overwritten_existing_files": 0,
+  "changed_database_rows": 0,
+  "checks_relaxed": false
+}

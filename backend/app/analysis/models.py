@@ -21,6 +21,7 @@ from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.core.rls import TenantOwnedMixin
 
 
 class AgentWorkflowConfig(Base):
@@ -128,7 +129,7 @@ class AnalysisTask(Base):
     )
 
 
-class AnalysisStepTrace(Base):
+class AnalysisStepTrace(TenantOwnedMixin, Base):
     """多智能体协同步骤轨迹表(记录每个 Agent 节点输入输出、MCP 工具调用、核验与退回补证)。"""
 
     __tablename__ = "analysis_step_traces"
@@ -165,7 +166,7 @@ class AnalysisStepTrace(Base):
     )
 
 
-class ReportVersion(Base):
+class ReportVersion(TenantOwnedMixin, Base):
     """八维度安全评估报告不可变版本表(支持整份与按维度拆分、编辑、对比与导出)。"""
 
     __tablename__ = "report_versions"
@@ -199,7 +200,7 @@ class ReportVersion(Base):
     )
 
 
-class AnalysisMessage(Base):
+class AnalysisMessage(TenantOwnedMixin, Base):
     """分析对话消息:用户与助手的逐轮问答(信息采集全部在对话里完成)。"""
 
     __tablename__ = "analysis_messages"

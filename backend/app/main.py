@@ -26,6 +26,11 @@ from app.updates.router import user_router as notifications_router
 
 @asynccontextmanager
 async def _lifespan(_app):
+    if get_settings().env == "prod":
+        from app.core.db import get_engine
+        from app.core.rls import validate_runtime_role
+
+        await validate_runtime_role(get_engine())
     yield
     from app.analysis.events import close_hubs
 
@@ -54,8 +59,9 @@ def create_app() -> FastAPI:
     @app.middleware("http")
     async def isolate_model_egress_context(request, call_next):
         from app.core.redaction import llm_scope
+        from app.core.rls import database_scope
 
-        with llm_scope():
+        with llm_scope(), database_scope():
             return await call_next(request)
 
     @app.get("/api/health", tags=["system"])

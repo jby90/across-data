@@ -509,4 +509,7 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    from app.core.rls import system_scope
+
+    with system_scope("explicit operator CLI"):
+        raise SystemExit(main())

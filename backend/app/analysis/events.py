@@ -112,6 +112,9 @@ async def close_hubs():
 
 async def validate_reader(session, principal, task_id=None):
     """Recheck revocation on reconnect and while streaming, never accept tokens in URLs."""
+    from app.core.rls import DatabaseIdentity, bind_identity, bind_principal
+
+    await bind_identity(session, DatabaseIdentity(scope="identity", user_id=principal.user_id))
     if task_id is None and principal.role not in ADMIN_ROLES:
         raise HTTPException(403, "无权订阅全部任务")
     user = await session.get(User, principal.user_id, populate_existing=True)
@@ -123,6 +126,7 @@ async def validate_reader(session, principal, task_id=None):
         org = await session.get(Organization, user.org_id, populate_existing=True)
         if org is None or not org.is_active:
             raise HTTPException(401, "企业已停用")
+    await bind_principal(session, principal)
     if task_id is not None:
         task = await session.get(AnalysisTask, task_id, populate_existing=True)
         if task is None or task.org_id != principal.org_id:

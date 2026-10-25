@@ -183,6 +183,23 @@ def main() -> int:
         return r.returncode
     asyncio.run(seed(creds))
 
+    # API/worker never retain the migration owner's database identity. This
+    # development cluster is loopback-only and already uses trust authentication.
+    async def ordinary_runtime_url():
+        import hashlib
+        from sqlalchemy.ext.asyncio import create_async_engine
+        from app.core.runtime_roles import provision_runtime_role
+
+        role = "cyshuhe_local_" + hashlib.sha256(str(pg_dir.resolve()).encode()).hexdigest()[:12]
+        migration_engine = create_async_engine(url)
+        try:
+            runtime = await provision_runtime_role(migration_engine, role, local_trust_only=True)
+            return runtime.render_as_string(hide_password=False)
+        finally:
+            await migration_engine.dispose()
+
+    env["CYSH_DATABASE_URL"] = asyncio.run(ordinary_runtime_url())
+
     children = [
         subprocess.Popen(
             [sys.executable, "-m", "uvicorn", "app.main:app", "--port", str(args.port)],
