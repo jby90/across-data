@@ -21,6 +21,7 @@ export interface OrgOut {
   id: string
   name: string
   is_active: boolean
+  llm_redaction_terms: string[]
 }
 
 export interface TokenResponse {

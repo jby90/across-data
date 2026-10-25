@@ -44,12 +44,16 @@ def principal_for(audience: str, *allowed: Role) -> Callable:
         user = await session.get(User, user_id)
         if user is None or not user.is_active or user.role != role.value:
             raise _unauthorized()
+        org = None
         if user.org_id is not None:
             org = await session.get(Organization, user.org_id)
             if org is None or not org.is_active:
                 raise _unauthorized()
         if allowed and role not in allowed:
             raise HTTPException(status.HTTP_403_FORBIDDEN, "无权访问")
+        from app.core.redaction import bind_egress
+
+        bind_egress(session, org)
         return Principal(user_id=user.id, role=role, org_id=user.org_id)
 
     return dependency

@@ -5,15 +5,19 @@
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import re
 import time
+import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
 import httpx
 
 from app.core.config import get_settings
+from app.core.redaction import Redactor, egress_context
 
 MAX_ATTEMPTS = 2
 # JSON 里合法的转义只有 \" \\ \/ \b \f \n \r \t \uXXXX;模型偶尔会输出裸反斜杠
@@ -28,6 +32,108 @@ class LlmUnavailableError(RuntimeError):
         self.kind = kind
         self.tokens = tokens
         self.failures = failures or []
+
+
+async def post_model(payload, *, timeout, purpose, protected=None):
+    """The only model HTTP boundary. Audit must commit before transmitting.
+
+    Restore only the response of this call, locally and before existing exact
+    evidence/number validators. Restored response bodies are never audit metadata.
+    """
+    from app.core.db import get_sessionmaker
+    from app.core.egress_models import LlmCallAudit
+
+    settings = get_settings()
+    ctx = egress_context.get()
+    factory = ctx.session_factory or get_sessionmaker()
+    redactor = Redactor(ctx.aliases)
+    safe_payload = dict(payload)
+    if settings.llm_redaction == "on":
+        safe_payload["messages"] = []
+        for original in payload.get("messages", []):
+            message = dict(original)
+            content = message.get("content", "")
+            try:
+                parsed = json.loads(content)
+            except (ValueError, TypeError):
+                message["content"] = redactor.tree(content)
+            else:
+                message["content"] = json.dumps(redactor.tree(parsed), ensure_ascii=False)
+            safe_payload["messages"].append(message)
+    fingerprint = hmac.new(
+        settings.jwt_secret.encode(),
+        json.dumps(payload, sort_keys=True, ensure_ascii=False).encode(),
+        hashlib.sha256,
+    ).hexdigest()
+    hits = dict(redactor.counts)
+    if protected:
+        hits["PREPROTECTED"] = len(protected)
+    meta = dict(
+        call_id=uuid.uuid4(),
+        org_id=ctx.org_id,
+        purpose=purpose,
+        model=str(payload.get("model", ""))[:200],
+        input_hash=fingerprint,
+        redaction_mode=settings.llm_redaction,
+        redaction_hits=hits,
+    )
+
+    async def audit(stage, usage=None, duration=0):
+        usage = usage or {}
+        async with factory() as session:
+            session.add(
+                LlmCallAudit(
+                    **meta,
+                    stage=stage,
+                    tokens_in=max(0, int(usage.get("prompt_tokens") or 0)),
+                    tokens_out=max(0, int(usage.get("completion_tokens") or 0)),
+                    duration_ms=duration,
+                )
+            )
+            await session.commit()
+
+    try:
+        await audit("started")
+    except Exception:
+        raise LlmUnavailableError(
+            "模型出站审计不可用，未发送请求", kind="egress_audit_error"
+        ) from None
+    started = time.perf_counter()
+    usage, stage = {}, "transport_error"
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(
+                settings.llm_base_url.rstrip("/") + "/chat/completions",
+                headers={"Authorization": f"Bearer {settings.llm_api_key}"},
+                json=safe_payload,
+            )
+        stage = "success" if response.is_success else "http_error"
+        if response.is_success:
+            body = response.json()
+            usage = body.get("usage") or {}
+            for choice in body.get("choices") or []:
+                message = choice.get("message") or {}
+                content = message.get("content")
+                if not isinstance(content, str):
+                    continue
+                try:
+                    parsed = parse_model_json(content)
+                except ValueError:
+                    message["content"] = redactor.restore(content)
+                else:
+                    message["content"] = json.dumps(redactor.restore(parsed), ensure_ascii=False)
+            response = httpx.Response(response.status_code, json=body, request=response.request)
+        return response
+    except (ValueError, KeyError):
+        stage = "response_format_error"
+        raise
+    finally:
+        # A failed completion audit leaves a durable started record for investigation;
+        # it cannot make an unaudited response usable by the pipeline.
+        try:
+            await audit(stage, usage, int((time.perf_counter() - started) * 1000))
+        except Exception:
+            raise LlmUnavailableError("模型出站结果审计不可用", kind="egress_audit_error") from None
 
 
 @dataclass
@@ -73,7 +179,6 @@ async def call_llm_json(
         raise LlmUnavailableError("未配置大模型密钥(环境变量 CYSH_LLM_API_KEY)")
     requested_model = model or settings.llm_model
     request_timeout = timeout if timeout is not None else settings.llm_analysis_timeout_seconds
-    url = settings.llm_base_url.rstrip("/") + "/chat/completions"
     last_error = ""
     error_kind = "model_unavailable"
     started = time.perf_counter()
@@ -81,20 +186,19 @@ async def call_llm_json(
     failures = []
     for _attempt in range(MAX_ATTEMPTS):
         try:
-            async with httpx.AsyncClient(timeout=request_timeout) as client:
-                resp = await client.post(
-                    url,
-                    headers={"Authorization": f"Bearer {settings.llm_api_key}"},
-                    json={
-                        "model": requested_model,
-                        "messages": messages,
-                        "temperature": temperature,
-                        "max_tokens": max_tokens,
-                        "response_format": {"type": "json_object"},
-                        # 推理型模型默认会耗尽 max_tokens 而返回空内容,分析任务只需低强度推理
-                        "reasoning_effort": "low",
-                    },
-                )
+            resp = await post_model(
+                {
+                    "model": requested_model,
+                    "messages": messages,
+                    "temperature": temperature,
+                    "max_tokens": max_tokens,
+                    "response_format": {"type": "json_object"},
+                    # 推理型模型默认会耗尽 max_tokens 而返回空内容,分析任务只需低强度推理
+                    "reasoning_effort": "low",
+                },
+                timeout=request_timeout,
+                purpose="analysis_json",
+            )
             resp.raise_for_status()
             body = resp.json()
             usage = body.get("usage") or {}

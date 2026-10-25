@@ -34,6 +34,7 @@ from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy import or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.analysis.llm import post_model
 from app.core.config import get_settings
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.knowledge.countries import COUNTRY_NAMES
@@ -546,30 +547,24 @@ async def _call_llm_doc_relevance(
     if "deepseek" in settings.llm_model.lower():
         payload["reasoning_effort"] = "low"
 
-    headers = {
-        "Authorization": f"Bearer {settings.llm_api_key}",
-        "Content-Type": "application/json",
-    }
-    url = f"{settings.llm_base_url.rstrip('/')}/chat/completions"
     try:
         request_started()
-        async with httpx.AsyncClient(timeout=45.0) as client:
-            resp = await client.post(url, headers=headers, json=payload)
-            if resp.status_code != 200:
-                return None
-            response_payload = resp.json()
-            response_received(response_payload)
-            raw = response_payload["choices"][0]["message"]["content"]
-            data = _parse_json_object(raw)
-            rel = data.get("relevance", "relevant")
-            if rel not in ("relevant", "related", "out_of_scope"):
-                rel = "related"
-            return DocumentRelevanceVerdict(
-                relevance=rel,
-                reason=str(data.get("reason") or "大模型相关性判定完成"),
-            )
+        resp = await post_model(payload, timeout=45.0, purpose="document_relevance")
+        if resp.status_code != 200:
+            return None
+        response_payload = resp.json()
+        response_received(response_payload)
+        raw = response_payload["choices"][0]["message"]["content"]
+        data = _parse_json_object(raw)
+        rel = data.get("relevance", "relevant")
+        if rel not in ("relevant", "related", "out_of_scope"):
+            rel = "related"
+        return DocumentRelevanceVerdict(
+            relevance=rel,
+            reason=str(data.get("reason") or "大模型相关性判定完成"),
+        )
     except Exception as exc:
-        logger.warning("LLM document relevance call failed for %s: %s", title, exc)
+        logger.warning("LLM document relevance call failed: %s", type(exc).__name__)
         return None
 
 
@@ -919,31 +914,25 @@ async def _call_llm_judge(
     if "deepseek" in settings.llm_model.lower():
         payload["reasoning_effort"] = "low"
 
-    headers = {
-        "Authorization": f"Bearer {settings.llm_api_key}",
-        "Content-Type": "application/json",
-    }
-    url = f"{settings.llm_base_url.rstrip('/')}/chat/completions"
     try:
         request_started()
-        async with httpx.AsyncClient(timeout=45.0) as client:
-            resp = await client.post(url, headers=headers, json=payload)
-            if resp.status_code != 200:
-                return None
-            response_payload = resp.json()
-            response_received(response_payload)
-            raw = response_payload["choices"][0]["message"]["content"]
-            data = _parse_json_object(raw)
-            sup = str(data.get("supports", "no")).lower().strip()
-            if sup not in ("yes", "no", "partial") or not str(data.get("reason") or "").strip():
-                return None
-            return SemanticJudgeVerdict(
-                supports=sup,  # type: ignore[arg-type]
-                reason=str(data.get("reason") or ""),
-                model_name=str(response_payload.get("model") or settings.llm_model),
-            )
+        resp = await post_model(payload, timeout=45.0, purpose="semantic_relation_judge")
+        if resp.status_code != 200:
+            return None
+        response_payload = resp.json()
+        response_received(response_payload)
+        raw = response_payload["choices"][0]["message"]["content"]
+        data = _parse_json_object(raw)
+        sup = str(data.get("supports", "no")).lower().strip()
+        if sup not in ("yes", "no", "partial") or not str(data.get("reason") or "").strip():
+            return None
+        return SemanticJudgeVerdict(
+            supports=sup,  # type: ignore[arg-type]
+            reason=str(data.get("reason") or ""),
+            model_name=str(response_payload.get("model") or settings.llm_model),
+        )
     except Exception as exc:
-        logger.warning("LLM semantic judge failed: %s", exc)
+        logger.warning("LLM semantic judge failed: %s", type(exc).__name__)
         return None
 
 
@@ -1255,32 +1244,23 @@ async def _call_llm_extract_clause(
         if settings.llm_kg_extraction_thinking == "enabled":
             payload["reasoning_effort"] = "low"
 
-    headers = {
-        "Authorization": f"Bearer {settings.llm_api_key}",
-        "Content-Type": "application/json",
-    }
-    url = f"{settings.llm_base_url.rstrip('/')}/chat/completions"
-
     for attempt in range(2):
         try:
             request_started()
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                resp = await client.post(url, headers=headers, json=payload)
-                if resp.status_code != 200:
-                    await asyncio.sleep(0.8 * (attempt + 1))
-                    continue
-                response_payload = resp.json()
-                response_received(response_payload)
-                raw = response_payload["choices"][0]["message"]["content"]
-                data = _parse_json_object(raw)
-                if not isinstance(data.get("entities"), list) or not isinstance(
-                    data.get("relations"), list
-                ):
-                    raise ValueError(
-                        "Extraction payload requires explicit entity and relation arrays"
-                    )
-                parsed = ClauseExtractionPayload.model_validate(data)
-                return parsed, str(response_payload.get("model") or settings.llm_model)
+            resp = await post_model(payload, timeout=60.0, purpose="clause_extraction")
+            if resp.status_code != 200:
+                await asyncio.sleep(0.8 * (attempt + 1))
+                continue
+            response_payload = resp.json()
+            response_received(response_payload)
+            raw = response_payload["choices"][0]["message"]["content"]
+            data = _parse_json_object(raw)
+            if not isinstance(data.get("entities"), list) or not isinstance(
+                data.get("relations"), list
+            ):
+                raise ValueError("Extraction payload requires explicit entity and relation arrays")
+            parsed = ClauseExtractionPayload.model_validate(data)
+            return parsed, str(response_payload.get("model") or settings.llm_model)
         except ValidationError as exc:
             # Re-request the complete object, never truncate names or silently discard
             # invalid entities/relations. Report only schema locations, not credentials.
@@ -1302,7 +1282,7 @@ async def _call_llm_extract_clause(
             httpx.HTTPError,
             KeyError,
         ) as exc:
-            logger.debug("Clause extraction attempt %d failed: %s", attempt + 1, exc)
+            logger.debug("Clause extraction attempt %d failed: %s", attempt + 1, type(exc).__name__)
             await asyncio.sleep(0.6 * (attempt + 1))
     return None
 

@@ -1,3 +1,5 @@
+import hashlib
+import json
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -19,6 +21,7 @@ from app.iam.schemas import (
     MemberCreate,
     OrgCreate,
     OrgOut,
+    RedactionTermsIn,
     TokenResponse,
     UserCreate,
     UserOut,
@@ -80,6 +83,49 @@ async def list_orgs(
     session: AsyncSession = Depends(get_session),
 ):
     return (await session.execute(select(Organization).order_by(Organization.name))).scalars().all()
+
+
+async def _save_redaction_terms(session, org_id, terms, actor_id):
+    from app.knowledge.models import KnowledgeAuditRecord
+
+    org = await session.get(Organization, org_id)
+    if org is None:
+        raise HTTPException(404, "企业不存在")
+    payload = {"before": org.llm_redaction_terms or [], "after": terms}
+    session.add(
+        KnowledgeAuditRecord(
+            target_type="organization_redaction",
+            target_id=org.id,
+            action="redaction_terms_changed",
+            actor_id=actor_id,
+            payload=payload,
+            content_hash=hashlib.sha256(
+                json.dumps(payload, ensure_ascii=False).encode()
+            ).hexdigest(),
+        )
+    )
+    org.llm_redaction_terms = terms
+    await session.commit()
+    return org
+
+
+@admin_router.patch("/orgs/{org_id}/redaction", response_model=OrgOut)
+async def set_org_redaction(
+    org_id: uuid.UUID,
+    body: RedactionTermsIn,
+    principal: Principal = Depends(require_platform_admin),
+    session: AsyncSession = Depends(get_session),
+):
+    return await _save_redaction_terms(session, org_id, body.terms, principal.user_id)
+
+
+@user_router.patch("/organization/redaction", response_model=OrgOut)
+async def set_own_redaction(
+    body: RedactionTermsIn,
+    principal: Principal = Depends(require_org_admin),
+    session: AsyncSession = Depends(get_session),
+):
+    return await _save_redaction_terms(session, principal.org_id, body.terms, principal.user_id)
 
 
 @admin_router.post("/users", response_model=UserOut, status_code=201, summary="创建账号")

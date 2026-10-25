@@ -60,6 +60,15 @@ async def session_factory(engine):
     return async_sessionmaker(engine, expire_on_commit=False)
 
 
+@pytest_asyncio.fixture(autouse=True)
+async def isolated_model_audit(session_factory):
+    """Real model-transport tests audit only to the isolated test database."""
+    from app.core.redaction import llm_scope
+
+    with llm_scope(session_factory=session_factory):
+        yield
+
+
 @pytest_asyncio.fixture
 async def client(session_factory):
     app = create_app()

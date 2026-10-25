@@ -49,6 +49,13 @@ def create_app() -> FastAPI:
         allow_headers=["Authorization", "Content-Type", "Last-Event-ID"],
     )
 
+    @app.middleware("http")
+    async def isolate_model_egress_context(request, call_next):
+        from app.core.redaction import llm_scope
+
+        with llm_scope():
+            return await call_next(request)
+
     @app.get("/api/health", tags=["system"])
     async def health():
         return {"status": "ok"}

@@ -26,7 +26,7 @@ import time
 from datetime import UTC, date, datetime
 from typing import Any
 
-import httpx
+import httpx  # noqa: F401 - compatibility for existing mocks of shared HTTP transport
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -136,23 +136,10 @@ def _redact_with_mapping(text: str) -> tuple[str, dict[str, str]]:
 
     Even a legal reference mistaken for a phone number can then be preserved faithfully.
     """
-    mapping = {}
+    from app.core.redaction import Redactor, egress_context
 
-    def replace(match):
-        number, letters = len(mapping), ""
-        while True:
-            number, remainder = divmod(number, 26)
-            letters = chr(65 + remainder) + letters
-            if not number:
-                break
-        placeholder = f"__CYSH_PRIVATE_{letters}__"
-        mapping[placeholder] = match.group()
-        return placeholder
-
-    out = text or ""
-    for pattern in (_EMAIL_RE, _SG_NRIC_RE, _PHONE_RE):
-        out = pattern.sub(replace, out)
-    return out, mapping
+    r = Redactor(egress_context.get().aliases, prefix="__CYSH_PRIVATE_")
+    return r.redact(text or ""), r.mapping
 
 
 def _protect_numeric_literals(text: str) -> tuple[str, dict[str, str]]:
@@ -571,7 +558,11 @@ async def _call_llm_translate(
     if not settings.llm_api_key:
         return None
 
-    safe_text, private_tokens = _redact_with_mapping(original_text)
+    safe_text, private_tokens = (
+        _redact_with_mapping(original_text)
+        if settings.llm_redaction == "on"
+        else (original_text, {})
+    )
     safe_text, date_tokens = _protect_explicit_dates(safe_text)
     safe_text, numeric_tokens = _protect_numeric_literals(safe_text)
     protected_tokens = private_tokens | date_tokens | numeric_tokens
@@ -579,7 +570,6 @@ async def _call_llm_translate(
         safe_text, language, glossary_hits, unmatched_terms, retry_issues=retry_issues
     )
 
-    url = settings.llm_base_url.rstrip("/") + "/chat/completions"
     payload: dict[str, Any] = {
         "model": settings.llm_model,
         "temperature": 0.1,
@@ -600,36 +590,40 @@ async def _call_llm_translate(
     async with semaphore:
         for attempt in range(max_attempts):
             try:
-                async with httpx.AsyncClient(timeout=settings.llm_timeout_seconds) as client:
-                    resp = await client.post(
-                        url,
-                        headers={"Authorization": f"Bearer {settings.llm_api_key}"},
-                        json=payload,
-                    )
-                    if resp.status_code in (429, 500, 502, 503, 504) and attempt + 1 < max_attempts:
-                        await asyncio.sleep(0.6 * (2**attempt))
-                        continue
-                    resp.raise_for_status()
-                    data = resp.json()
-                    content = (data["choices"][0]["message"].get("content") or "").strip()
-                    invalid_markers = [
-                        marker for marker in protected_tokens if content.count(marker) != 1
-                    ]
-                    for marker, original in protected_tokens.items():
-                        content = content.replace(marker, original)
-                    if invalid_markers:
-                        content += "\n__CYSH_RESTORE_MISSING__"
-                    usage = data.get("usage") or {}
-                    tokens_in = int(usage.get("prompt_tokens") or 0)
-                    tokens_out = int(usage.get("completion_tokens") or 0)
-                    duration_ms = max(1, int((time.perf_counter() - t_start) * 1000))
-                    model_used = str(data.get("model") or settings.llm_model)
-                    return content, model_used, tokens_in, tokens_out, duration_ms
+                from app.analysis.llm import post_model
+
+                resp = await post_model(
+                    payload,
+                    timeout=settings.llm_timeout_seconds,
+                    purpose="clause_translation",
+                    protected=private_tokens,
+                )
+                if resp.status_code in (429, 500, 502, 503, 504) and attempt + 1 < max_attempts:
+                    await asyncio.sleep(0.6 * (2**attempt))
+                    continue
+                resp.raise_for_status()
+                data = resp.json()
+                content = (data["choices"][0]["message"].get("content") or "").strip()
+                invalid_markers = [
+                    marker for marker in protected_tokens if content.count(marker) != 1
+                ]
+                for marker, original in protected_tokens.items():
+                    content = content.replace(marker, original)
+                if invalid_markers:
+                    content += "\n__CYSH_RESTORE_MISSING__"
+                usage = data.get("usage") or {}
+                tokens_in = int(usage.get("prompt_tokens") or 0)
+                tokens_out = int(usage.get("completion_tokens") or 0)
+                duration_ms = max(1, int((time.perf_counter() - t_start) * 1000))
+                model_used = str(data.get("model") or settings.llm_model)
+                return content, model_used, tokens_in, tokens_out, duration_ms
             except Exception as exc:
                 if attempt + 1 < max_attempts:
                     await asyncio.sleep(0.6 * (2**attempt))
                     continue
-                log.warning("外部 LLM 翻译调用失败 (已重试 %d 次): %s", max_attempts, exc)
+                log.warning(
+                    "外部 LLM 翻译调用失败 (已重试 %d 次): %s", max_attempts, type(exc).__name__
+                )
                 return None
     return None
 

@@ -953,6 +953,19 @@ async def _pause_for_facts(session, task, results, dim_cands):
 
 
 async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
+    from app.core.redaction import bind_egress, llm_scope
+    from app.iam.models import Organization
+
+    task = await session.get(AnalysisTask, task_id)
+    if task is None:
+        return
+    org = await session.get(Organization, task.org_id) if task.org_id else None
+    with llm_scope():
+        bind_egress(session, org)
+        await _run_pipeline(session, task_id)
+
+
+async def _run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     task = await session.get(AnalysisTask, task_id)
     if task is None:
         return

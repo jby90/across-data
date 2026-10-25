@@ -75,6 +75,21 @@ async def test_migrations_apply_and_match_models(pg_url, engine):
                     async with conn.begin_nested():
                         await conn.execute(text(statement))
             await conn.execute(text("UPDATE agent_workflow_configs SET is_active=false"))
+            await conn.execute(
+                text("""INSERT INTO llm_call_audit
+                (id,call_id,purpose,model,input_hash,redaction_mode,redaction_hits,
+                 stage,tokens_in,tokens_out,duration_ms)
+                VALUES ('00000000-0000-0000-0000-000000000004',
+                '00000000-0000-0000-0000-000000000005','test','synthetic','hash',
+                'on','{}','started',0,0,0)""")
+            )
+            for statement in (
+                "UPDATE llm_call_audit SET model='changed'",
+                "DELETE FROM llm_call_audit",
+            ):
+                with pytest.raises(DBAPIError, match="append-only"):
+                    async with conn.begin_nested():
+                        await conn.execute(text(statement))
     finally:
         await mig_engine.dispose()
 

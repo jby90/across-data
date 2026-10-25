@@ -35,6 +35,7 @@ class Settings(BaseSettings):
 
     # 可插拔大模型适配层(OpenAI 兼容接口);未配置密钥时使用本地规则与术语引擎
     llm_api_key: str | None = None
+    llm_redaction: Literal["on", "off"] = "on"
     llm_base_url: str = "https://api.deepseek.com/v1"
     llm_model: str = "deepseek-flash"
     llm_timeout_seconds: float = 30.0
