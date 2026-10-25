@@ -394,7 +394,13 @@ class ToolBox:
                 "retrieval_version": RETRIEVAL_VERSION,
                 "planning": planning,
             },
-            f"命中 {len(scored)} 条,取前 {len(top)} 条: "
+            (
+                f"可用 {len(self._index.candidates)} 条，"
+                f"规划候选池 {len(planning.get('pool_ids', []))} 条，"
+                f"返回 {len(top)} 条: "
+                if planning
+                else f"命中 {len(scored)} 条,取前 {len(top)} 条: "
+            )
             + ("; ".join(f"{t.document_title[:24]} {t.label}" for t in top) or "无"),
             started,
             verified=bool(top) and not planning.get("error"),

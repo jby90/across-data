@@ -101,7 +101,19 @@ async def test_invalid_reranking_does_not_invent_sources_or_hide_failure(monkeyp
     )
     assert result == index.rank("accuracy", "accurate data")[:1]
     assert audit["error"] and audit["fallback"] == "original_sparse_route"
-    assert audit["tokens"] == 24  # rejected call still costs tokens
+    assert audit["tokens"] == (24 if not ids else 36)  # every rejected attempt still costs tokens
+    assert audit["pool_ids"] and audit["queries"]  # failure diagnosis cannot invent a missing pool
+
+
+def test_heading_catalog_is_source_only_bounded_and_independent_of_document_identity():
+    rows = [
+        candidate(str(i), "Body", heading=("Very long descriptive heading " * 2) + str(i))
+        for i in range(500)
+    ]
+    rows.append(candidate("target", "Another body", heading="Interpretation"))
+    headings = retrieval_planner.heading_catalog(rows, "Interpretation", "definitions", budget=200)
+    assert "Interpretation" in headings and sum(map(len, headings)) <= 200
+    assert set(headings) <= {c.heading for c in rows}
 
 
 async def test_correlated_queries_cannot_starve_an_independent_heading_route(monkeypatch):

@@ -75,7 +75,9 @@ def baseline_nodes() -> list[dict]:
     )
     by_id["node_mcp_retriever"]["system_prompt"] = RETRIEVAL_SYSTEM_PROMPT
     by_id["node_mcp_retriever"]["model_name"] = get_settings().llm_model
-    by_id["node_mcp_retriever"]["model_provider"] = "OpenAI-compatible API（可选规划）；本地稀疏检索"
+    by_id["node_mcp_retriever"]["model_provider"] = (
+        "OpenAI-compatible API（可选规划）；本地稀疏检索"
+    )
     analyst = by_id["node_dimension_analyst"]
     analyst["system_prompt"] = ANALYSIS_SYSTEM_PROMPT
     analyst["model_name"] = get_settings().llm_model
@@ -148,7 +150,7 @@ def validate_graph(nodes, edges) -> list[dict]:
 def require_executable(cfg: AgentWorkflowConfig) -> None:
     if cfg.runtime_schema_version != RUNTIME_SCHEMA:
         raise ValueError(
-            "此历史版本仅供查看，未记录可执行参数；请导入并激活当前原文句子选择协议版本"
+            "此历史协议版本与当前引擎不兼容，仅供查看；请导入并激活当前协议，历史记录仍保留"
         )
     validate_graph(cfg.nodes_json, cfg.edges_json)
 

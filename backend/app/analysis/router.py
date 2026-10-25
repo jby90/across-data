@@ -134,7 +134,7 @@ def _to_workflow_out(cfg: AgentWorkflowConfig) -> AgentWorkflowConfigOut:
                     PARAMETERS.get(n["node_id"], set())
                     | (
                         {"model_name", "system_prompt"}
-                        if n["node_id"] == "node_dimension_analyst"
+                        if n["node_id"] in ("node_dimension_analyst", "node_mcp_retriever")
                         else set()
                     )
                 )

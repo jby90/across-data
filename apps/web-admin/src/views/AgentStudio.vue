@@ -1182,7 +1182,7 @@ onUnmounted(() => {
     </div>
 
     <el-alert v-if="workflow && !workflow.executable" type="warning" :closable="false" show-icon>
-      <template #title>历史展示版本，未记录可执行配置；不会用于新的分析任务。</template>
+      <template #title>历史协议版本仅供查看，与当前执行引擎不兼容；历史参数和运行轨迹仍保留。</template>
       <el-button size="small" @click="showExecutableBaseline">查看可执行基线</el-button>
     </el-alert>
     <el-alert v-if="selectedTaskDetail" type="info" :closable="false" data-testid="workflow-execution-version">
