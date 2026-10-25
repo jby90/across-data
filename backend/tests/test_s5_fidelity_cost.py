@@ -149,3 +149,68 @@ def test_no_cross_provision_quote_or_previous_tail_attribution(marker):
         select_legal_quote(source, list(range(1, len(catalog) + 1)))
     selected = select_legal_quote(source, [len(catalog)])
     assert "Earlier independent" not in selected["quote"]
+
+
+@pytest.mark.parametrize(
+    "heading,marker",
+    [
+        ("Notice requirements", "Article 42:"),
+        ("Exigences de déclaration", "Art. 42 :"),
+        ("إجراءات الإخطار", "المادة ٤٢:"),
+        ("告知要求", "第四十二条"),
+    ],
+)
+def test_exact_source_title_and_own_number_are_not_two_provisions(heading, marker):
+    source = heading + "\n" + marker + " Operators must provide notice before processing."
+    ids = list(range(1, len(sentence_catalog(source)) + 1))
+    assert select_legal_quote(source, ids, heading=heading)["quote"] == source
+    with pytest.raises(ValueError, match="跨越独立条文"):
+        select_legal_quote(source, ids, heading="Another title")
+    extended = source + "\nArticle 43: A separate requirement applies."
+    with pytest.raises(ValueError, match="跨越独立条文"):
+        select_legal_quote(
+            extended, list(range(1, len(sentence_catalog(extended)) + 1)), heading=heading
+        )
+
+
+async def test_multiunit_generation_receives_source_once_and_preserves_coverage_audit(monkeypatch):
+    from app.analysis import pipeline
+    from app.analysis.models import AnalysisTask
+
+    source = "Operators must provide notice. Except for purely private use."
+    row = candidate("x", source)
+    seen = []
+
+    async def fake(messages, **kwargs):
+        payload = json.loads(messages[1]["content"])
+        seen.append(payload)
+        assert payload["evidence"] == {"format": "source_units"}
+        assert "quote" not in payload["evidence"]
+        assert "".join(u["text"] for u in payload["source_units"]) == source
+        return LlmResult(
+            {
+                "units": [
+                    {"unit_id": 1, "meaning": "经营者必须提供告知。"},
+                    {"unit_id": 2, "meaning": "纯私人用途除外。"},
+                ],
+                "gap": "",
+                "risk_level": "MEDIUM",
+            },
+            12,
+            3,
+            1,
+            "test",
+        )
+
+    monkeypatch.setattr(pipeline, "call_llm_json", fake)
+    result, audit = await pipeline._ground_selection(
+        AnalysisTask(facts_json={"x": "处理数据"}),
+        "D8",
+        "安全",
+        {"clause_id": "x", "fact_key": "x", "sentence_ids": [1, 2]},
+        [row],
+        dict(system_prompt="JSON", model="test", temperature=0.0, timeout=2.0),
+    )
+    assert result["quote"] == source and "除外" in result["obligation"]
+    assert result["source_coverage"]["human_review"] is None
+    assert audit["tokens"] == 15 and len(audit["proposals"]) == 1 and len(seen) == 1

@@ -198,7 +198,9 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
     if candidate is None:
         return result, {"requests": 0, "tokens": 0, "error": "clause_id不在检索结果中"}
     try:
-        result.update(select_legal_quote(candidate.text, finding["sentence_ids"]))
+        result.update(
+            select_legal_quote(candidate.text, finding["sentence_ids"], heading=candidate.heading)
+        )
     except ValueError as exc:
         return result, {"requests": 0, "tokens": 0, "error": str(exc)}
     units = coverage_units(result["quote"])
@@ -220,6 +222,9 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
         ],
     }
     if covered:
+        # The source exists once in the request; full quote/hash/offset remain in
+        # the server evidence record. No evidence is shortened or reconstructed by LLM.
+        message["evidence"] = {"format": "source_units"}
         message["source_units"] = units
         message["coverage_contract"] = (
             "逐段完整转述source_units，每项unit_id恰好一次、按原序。不得摘要或只选相关列表项；"
@@ -525,7 +530,9 @@ def _verify_dimension(
         try:
             f.update(
                 select_legal_quote(
-                    cand.text, f.get("selected_sentence_ids") or f.get("sentence_ids") or []
+                    cand.text,
+                    f.get("selected_sentence_ids") or f.get("sentence_ids") or [],
+                    heading=cand.heading,
                 )
             )
             if f.get("_generation_error") or f.get("_generation_gap"):

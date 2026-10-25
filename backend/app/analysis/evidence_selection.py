@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.knowledge.numeric_integrity import separate_explicit_dates
 
-SELECTION_VERSION = "legal-boundaries-coverage-v4"
+SELECTION_VERSION = "legal-heading-coverage-v5"
 _ARTICLE = re.compile(
     r"(?m)^[ \t\u200e\u200f]*(?:(?:Article|Section|Regulation|Rule|Art\.)\s+"
     r"[0-9A-Za-z]+(?:\.[0-9]+)*\s*[.:—–]|(?:الفصل|المادة|مادة)\s+[0-9٠-٩]+\s*[.:：]|"
@@ -84,12 +84,16 @@ def select_quote(text: str, sentence_ids: list[int]) -> dict:
     }
 
 
-def select_legal_quote(text: str, sentence_ids: list[int]) -> dict:
+def select_legal_quote(text: str, sentence_ids: list[int], *, heading: str = "") -> dict:
     """Close list references/provisos inside this unchanged clause, never across source IDs."""
     selected = select_quote(text, sentence_ids)
-    if any(
-        selected["quote_start"] < m.start() < selected["quote_end"] for m in _ARTICLE.finditer(text)
-    ):
+    markers = [m.start() for m in _ARTICLE.finditer(text)]
+    # A separately parsed title followed by its own number belongs to one provision.
+    # Only exact metadata correspondence may exempt the first marker; a preceding
+    # normative paragraph or another heading is still an independent boundary.
+    if markers and heading and " ".join(text[: markers[0]].split()) == " ".join(heading.split()):
+        markers = markers[1:]
+    if any(selected["quote_start"] < p < selected["quote_end"] for p in markers):
         raise ValueError("选证跨越独立条文标题；请仅选择同一条文，不能混入前条尾段")
     catalog = sentence_catalog(text)
     first, last = sentence_ids[0] - 1, sentence_ids[-1] - 1
@@ -109,9 +113,7 @@ def select_legal_quote(text: str, sentence_ids: list[int]) -> dict:
     while last + 1 < len(catalog) and _QUALIFIER.match(prefix(catalog[last + 1]["text"])):
         last += 1
     expanded = select_quote(text, list(range(first + 1, last + 2)))
-    if any(
-        expanded["quote_start"] < m.start() < expanded["quote_end"] for m in _ARTICLE.finditer(text)
-    ):
+    if any(expanded["quote_start"] < p < expanded["quote_end"] for p in markers):
         raise ValueError("列表或例外上下文跨越独立条文；请重新选择完整依据")
     expanded["selected_sentence_ids"] = sentence_ids
     expanded["anchor_quote_start"] = selected["quote_start"]

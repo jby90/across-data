@@ -14,7 +14,7 @@ ANALYSIS_SYSTEM_PROMPT = (
     '"fact_key":"事实键","obligation":"待依据生成","risk_level":"MEDIUM"}],'
     '"summary":"","recommendations":[],"gaps":""}。'
     "无直接相关依据时findings为空，gaps说明缺少的依据。原文受损或关键条件残缺时不能猜测。\n"
-    "phase=write_from_evidence：你仅收到一份程序截取的evidence.quote。看不到的内容不构成依据。"
+    "phase=write_from_evidence：你仅收到一份程序截取的依据(evidence.quote或source_units)。看不到的内容不构成依据。"
     "原文可以是定义、适用范围、权利、义务、监管权限、例外或罚则。按原文实际类型陈述，"
     "定义就写定义，权限就写权限，不强行改成义务。只要求当前这条陈述完整，"
     "不要求每份依据都解决整个业务问题或包含处罚；原文没有的要素不得补出。"
