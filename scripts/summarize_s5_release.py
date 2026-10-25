@@ -82,6 +82,12 @@ def stability_summary(data):
 
 def compare(before, after, before_stability, after_stability):
     assert before["suite_sha256"] == after["suite_sha256"]
+    assert len(before_stability["runs"]) == len(after_stability["runs"]) == 10
+    assert before_stability["facts"] == after_stability["facts"]
+    for evaluation, cohort in ((before, before_stability), (after, after_stability)):
+        assert all(
+            r["workflow_version_id"] == evaluation["workflow_version_id"] for r in cohort["runs"]
+        ), "cannot compare mixed workflow versions"
     assert {c["judge_prompt_sha256"] for c in before["cases"]} == {
         c["judge_prompt_sha256"] for c in after["cases"]
     }

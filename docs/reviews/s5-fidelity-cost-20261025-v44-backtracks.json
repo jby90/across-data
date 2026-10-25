@@ -1,0 +1,124 @@
+{
+  "tasks": 10,
+  "first_verification_runs": 10,
+  "evaluated_runs": 10,
+  "first_failed_runs": 0,
+  "first_failure_rate_percent": 0.0,
+  "no_evidence_checked_runs": 0,
+  "preceding_analysis_failed_runs": 0,
+  "reason_counts": {},
+  "reason_percent_of_categorized_entries": {},
+  "backtrack_count_distribution": {
+    "0": 10
+  },
+  "task_status_distribution": {
+    "completed": 10
+  },
+  "partial_sample_rate_percent": 0.0,
+  "details": [
+    {
+      "task_id": "0182a083-2f45-49c5-b12c-89ad31290784",
+      "trace_id": "5f986087-3ebb-487a-8a8b-059c93dbbd28",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "5ad3840a-a5ee-4d51-9b87-77844dec0d58",
+      "trace_id": "4fa2bde9-897b-476a-9973-4d16eb35d56a",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "ddefb570-08a2-412c-9e75-1363f9133720",
+      "trace_id": "d83f1fa3-fbf7-41dd-a0a9-c5240d391cd0",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "c3339b27-846c-441e-8ac6-28f242acacb5",
+      "trace_id": "a824b7d0-7c5f-4fd9-a1ba-dd4613994d47",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "54144457-7d35-4bd7-b530-4d353a564ad4",
+      "trace_id": "c3279ed2-2c29-4935-a774-e400bc7086de",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "1d4b81be-a82a-40c2-862f-5aba82d67516",
+      "trace_id": "8546686f-2054-4690-b994-88cd7cdfed31",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "2587acb5-2bdc-4e67-8f76-ea268c5024b7",
+      "trace_id": "e9a6f714-f4ba-4979-9afd-41b9092a6165",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "d78f469d-856c-4dd0-bca2-0e0be8b69f56",
+      "trace_id": "fe49f07b-c37f-4868-b124-ed50b38a4fb2",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "a12bf8c5-0aeb-4b2f-adfd-166e3f5a679a",
+      "trace_id": "b0df81ff-785d-4ee1-87e8-7d440da06c72",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    },
+    {
+      "task_id": "ebcf95ff-394c-428d-a4a5-835aeb3a8f83",
+      "trace_id": "7bee5370-4ba4-44c7-8237-c4d65ea8e5fb",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    }
+  ],
+  "note": "原因允许多标签；没有实际核验结论的轨迹不计作首轮通过。历史乱码归为无法分类，不能推测。",
+  "comparison": {
+    "evaluated_runs": {
+      "before": 10,
+      "after": 10
+    },
+    "first_failure_rate_percent": {
+      "before": 10.0,
+      "after": 0.0
+    },
+    "backtrack_count_distribution": {
+      "before": {
+        "0": 9,
+        "1": 1
+      },
+      "after": {
+        "0": 10
+      }
+    },
+    "partial_sample_rate_percent": {
+      "before": 0.0,
+      "after": 0.0
+    }
+  }
+}
