@@ -1,0 +1,70 @@
+[
+  {
+    "portal": "/",
+    "index_sha256": "f591a73f54a82ebfdd9652d4fab333d167b38693ba0acdce36b43edd7842b9a9",
+    "matches_local_build": true,
+    "assets": [
+      {
+        "url": "/assets/index-BeJcX3vC.js",
+        "type": "application/javascript",
+        "bytes": 953069,
+        "sha256": "3f299657ed1045576f4268e169864c0b800a624beb201bf5e995028807a4d957"
+      },
+      {
+        "url": "/assets/rolldown-runtime-XKyaHtl9.js",
+        "type": "application/javascript",
+        "bytes": 726,
+        "sha256": "548d1dbf321e7d2ae804fcc158b588706a7c52f8ca175de1490c6ccb4dbe55b7"
+      },
+      {
+        "url": "/assets/runtime-core.esm-bundler-D2QcV7r7.js",
+        "type": "application/javascript",
+        "bytes": 66658,
+        "sha256": "c4fdef5bb0e1e0edf4bb610037def0bf2cd1b4458b657f78ad73907a9545bd43"
+      },
+      {
+        "url": "/assets/index-BrLEs5mM.css",
+        "type": "text/css",
+        "bytes": 624307,
+        "sha256": "ddd9500d94eb6feb8fa6508d6c4f714e9ee082fab457df4903f8d57966b3d2bf"
+      }
+    ]
+  },
+  {
+    "portal": "/admin/",
+    "index_sha256": "97d38478022fe9421f292aa1e2044b54eeb68756fb6761abdb91f1f2471b5596",
+    "matches_local_build": true,
+    "assets": [
+      {
+        "url": "/admin/assets/index-D5zaT7Zs.js",
+        "type": "application/javascript",
+        "bytes": 874910,
+        "sha256": "5034b70f661015d9984cfe5be7c15b3569d484ee402aeeaf9f1338833b661d99"
+      },
+      {
+        "url": "/admin/assets/runtime-core.esm-bundler-D2QcV7r7.js",
+        "type": "application/javascript",
+        "bytes": 66658,
+        "sha256": "c4fdef5bb0e1e0edf4bb610037def0bf2cd1b4458b657f78ad73907a9545bd43"
+      },
+      {
+        "url": "/admin/assets/runtime-dom.esm-bundler-HUKPKsxd.js",
+        "type": "application/javascript",
+        "bytes": 15418,
+        "sha256": "0c4fbbbe01bdde89517d6ec4e8b8aed791b59efea715a2c4778d554e38d1b4aa"
+      },
+      {
+        "url": "/admin/assets/message-Bo21n7Dd.js",
+        "type": "application/javascript",
+        "bytes": 69768,
+        "sha256": "d051501f2d39f906e2eb720ce84fb72cf2e0b033c613bbeb82ba569b42ad985e"
+      },
+      {
+        "url": "/admin/assets/index-B8OBBA40.css",
+        "type": "text/css",
+        "bytes": 626947,
+        "sha256": "1b50cf457c8a0c23a9252566b045d8bd4c1ffafff1fe775d7fe16187bf9e39c4"
+      }
+    ]
+  }
+]

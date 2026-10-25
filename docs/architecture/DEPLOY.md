@@ -20,7 +20,7 @@
 | 引用策略 | 新任务默认 `allow_machine_with_notice`，逐项标明待核对；历史状态保持 |
 | 原项目 | 三个旧容器停止，镜像、卷和源目录保留；未执行 `down -v` |
 
-最终镜像标签、ID 与提交见部署 `deploy/release.json` 和 [最终上线清单](../reviews/s12-release-public-final.json)。应用基础提交 `9097be3`，最后聊天等待态与Word分页修正为 `f8d510e`，线上镜像已切换至该标签；文档/验收记录可有更晚提交。`s12-stage` 是保留的发布目录名，不表示当前仍只有预发布可访问。
+最终镜像标签、ID 与提交见部署 `deploy/release.json` 和 [最终上线清单](../reviews/s13-release-ip-final-public.json)。应用基础提交 `9097be3`，聊天等待态与Word分页修正为 `f8d510e`，评测口径文案为 `c0ec889`；当前发布标签 `c0ec889-ip`，管理端构建参数 `VITE_APP_BASE=/admin/`。API/用户端内容未变化，仍运行原f8d510e镜像，清单中的统一发布别名指向相同ID，避免无意义重启。文档/验收记录可有更晚提交。`s12-stage` 是保留的发布目录名，不表示当前仍只有预发布可访问。
 
 ## 机器资源与适用范围
 
@@ -53,6 +53,16 @@
 构建参数使用固定 uv 0.13.5 的官方 PyPI Linux wheel生成本地工具镜像，`UV_IMAGE=cyshuhe-build-uv:0.13.5`、`UV_OFFLINE=1`。离线 `uv pip install --require-hashes --no-index --find-links` 安装从锁文件导出的 Linux requirements；不是使用未锁版本替代。APT 使用 HTTPS 镜像且保留 Debian 签名验证。
 
 前端本机执行锁定依赖安装、typecheck 和生产构建，再用 `deploy/Dockerfile.prebuilt` 制作静态镜像。准备包含该 Dockerfile、`static.conf` 和本次 `dist/` 的独立构建上下文，执行 `docker build -f Dockerfile.prebuilt -t <标签> .`，避免在 1.6 GiB 主机运行 Node 构建。标准多阶段文件已提供，但不声称本次在本机未启动的 Docker Desktop 上做过 Compose 全栈验收。
+
+本机手工构建管理端必须显式传入基路径（标准Dockerfile已设构建参数）。PowerShell示例：
+
+```powershell
+$env:VITE_APP_BASE='/admin/'
+pnpm --filter @cyshuhe/web-admin build
+Remove-Item Env:VITE_APP_BASE
+```
+
+用户端基路径为`/`。发布前检查管理端index中的脚本/CSS地址以`/admin/assets/`开头，并请求这些资源验证200与正确MIME；仅HTML返回200不足以证明可用。本轮曾漏配而出现管理端空白，已回滚后以新标签重建，错误构建镜像保留，不覆盖成“从未失败”。[最终静态资源校验](../reviews/s13-final-static-assets.json)同时核对两端HTML与本机已检构建字节一致。
 
 PDF 运行库为动态链接 Pango/HarfBuzz/GLib，镜像保留原生许可；Word 仅声明字体名，PDF 注册随包 SHA-256 验证字体。未使用的 Pyphen 字典不进入最终镜像；空资源目录保留以满足初始化。见 [字体策略](../compliance/FONTS.md)、[Linux Python 环境](../compliance/python-linux-runtime.json) 和 `NOTICE`。
 
