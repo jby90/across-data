@@ -1,10 +1,5 @@
 {
-  "missing_document_links": [
-    [
-      "docs/architecture/remediation_result.md",
-      "../reviews/s13-final-regression.xml"
-    ]
-  ],
+  "missing_document_links": [],
   "staged_secret_pattern_files": [],
   "built_font_sources": [
     {
@@ -18,5 +13,10 @@
       "remote_font_urls": []
     }
   ],
-  "note": "Static built CSS font-face inspection, not browser network interception."
+  "note": "Static built CSS font-face inspection, not browser network interception.",
+  "checked_document_names": [
+    "PRODUCT_GUIDE.md",
+    "DEPLOY.md",
+    "remediation_result.md"
+  ]
 }

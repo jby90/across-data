@@ -2,3 +2,5 @@
 # Preserve upstream license texts, including their original whitespace.
 apps/*/public/THIRD-PARTY-NOTICES.txt -whitespace
 backend/app/analysis/fonts/*/OFL.txt -whitespace
+# Preserve the original failed test traceback, including its source-line whitespace.
+docs/reviews/s12-export-regression.xml -whitespace

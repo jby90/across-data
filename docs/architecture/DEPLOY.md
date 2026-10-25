@@ -20,7 +20,7 @@
 | 引用策略 | 新任务默认 `allow_machine_with_notice`，逐项标明待核对；历史状态保持 |
 | 原项目 | 三个旧容器停止，镜像、卷和源目录保留；未执行 `down -v` |
 
-镜像标签、ID 与提交见部署 `deploy/release.json` 和 [上线清单](../reviews/s12-release-public.json)。应用基础提交 `9097be3`；最终导出分页修正会以独立提交和镜像标签记录。`s12-stage` 是保留的发布目录名，不表示当前仍只有预发布可访问。
+最终镜像标签、ID 与提交见部署 `deploy/release.json` 和 [最终上线清单](../reviews/s12-release-public-final.json)。应用基础提交 `9097be3`，最后聊天等待态与Word分页修正为 `f8d510e`，线上镜像已切换至该标签；文档/验收记录可有更晚提交。`s12-stage` 是保留的发布目录名，不表示当前仍只有预发布可访问。
 
 ## 机器资源与适用范围
 
@@ -52,7 +52,7 @@
 
 构建参数使用固定 uv 0.13.5 的官方 PyPI Linux wheel生成本地工具镜像，`UV_IMAGE=cyshuhe-build-uv:0.13.5`、`UV_OFFLINE=1`。离线 `uv pip install --require-hashes --no-index --find-links` 安装从锁文件导出的 Linux requirements；不是使用未锁版本替代。APT 使用 HTTPS 镜像且保留 Debian 签名验证。
 
-前端本机执行锁定依赖安装、typecheck 和生产构建，再用 `deploy/Dockerfile.frontend-prebuilt` 制作静态镜像，避免在 1.6 GiB 主机运行 Node 构建。标准多阶段文件已提供，但不声称本次在本机未启动的 Docker Desktop 上做过 Compose 全栈验收。
+前端本机执行锁定依赖安装、typecheck 和生产构建，再用 `deploy/Dockerfile.prebuilt` 制作静态镜像。准备包含该 Dockerfile、`static.conf` 和本次 `dist/` 的独立构建上下文，执行 `docker build -f Dockerfile.prebuilt -t <标签> .`，避免在 1.6 GiB 主机运行 Node 构建。标准多阶段文件已提供，但不声称本次在本机未启动的 Docker Desktop 上做过 Compose 全栈验收。
 
 PDF 运行库为动态链接 Pango/HarfBuzz/GLib，镜像保留原生许可；Word 仅声明字体名，PDF 注册随包 SHA-256 验证字体。未使用的 Pyphen 字典不进入最终镜像；空资源目录保留以满足初始化。见 [字体策略](../compliance/FONTS.md)、[Linux Python 环境](../compliance/python-linux-runtime.json) 和 `NOTICE`。
 
@@ -118,6 +118,8 @@ Nginx 使用 Docker DNS `127.0.0.11`、共享 upstream zone 与 `resolve`，10 �
 
 对新库使用 PostgreSQL `pg_dump -Fc`，同时备份 `cyshuhe_archive`、发布清单与受保护的运行配置。备份目录必须 0700，不能在 webroot；备份再计算 SHA-256，并定期在独立库做恢复验证。法律数据与审批审计不得通过复制新 dump 覆盖掉上线后的记录。定期备份与异地留存策略需要运维方安排；证书续期 timer 不是数据备份任务。
 
+最后界面修正发布前，另备份了新平台（包含本次新任务与评测）：`/opt/cyshuhe-backups/20261025T150629Z-new-platform`。dump 19,195,723 bytes，原文归档35,429,912 bytes，哈希见 [清单](../reviews/s12-new-platform-backup.json)；未把容器环境或API Key写入该备份。归档CRC已核验，本步骤未做该新dump的隔离恢复，不混称恢复演练完成。
+
 ### 回滚顺序
 
 1. 暂停新业务写入、记录正在运行/等待追问的任务，对新库和原文卷做当前备份。
@@ -129,6 +131,6 @@ Nginx 使用 Docker DNS `127.0.0.11`、共享 upstream zone 与 `resolve`，10 �
 
 公开入口通过可信 HTTPS、HTTP 跳转、健康检查与未登录 401；已有账号登录成功。五国目录、真实译文、图谱、工作流激活、报告预览及整份/单章/压缩包下载已在实际浏览器操作。PDF 全份 19 页、D3 三页、Word 渲染 14 页逐页检查；后续分页优化记录在单独复核文件。
 
-全量后端 554 passed；12 项反例通过；两端 typecheck/生产构建与许可证扫描通过。32 题评测、技术失败原记录与重试结果另见 [总结果](remediation_result.md)。独立 `verify_ui_clickthrough.py` 会写隔离测试数据，新增 `CYSH_UI_ISOLATED_TESTS=1` 防误用，未在真实五国线上库运行它；本轮实际浏览器使用等价手动路径，并如实记录未覆盖的自动脚本项。
+最终全量后端 554 passed（519.93秒）；12项反例12 passed（14.25秒）；两端typecheck/生产构建与279条应用依赖许可证扫描通过。实际Debian原生包清单另见 [native-linux-runtime.json](../compliance/native-linux-runtime.json)，自动采集的许可标签不是法务批准。32题评测、技术失败原记录与重试结果另见 [总结果](remediation_result.md)。独立 `verify_ui_clickthrough.py` 会写隔离测试数据，新增 `CYSH_UI_ISOLATED_TESTS=1` 防误用，未在真实五国线上库运行它；本轮实际浏览器使用等价手动路径，并如实记录未覆盖的自动脚本项。
 
 法律人工复核、正式来源条款/金标确认、埃及等原文/OCR 缺口、备案适用性及容量验收仍待负责人员处理。公网原型可演示不等于全部正式验收通过。

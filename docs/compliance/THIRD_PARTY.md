@@ -62,7 +62,7 @@ S12 新增：WeasyPrint 70.0（BSD-3-Clause）、pydyf/cssselect2/tinycss2/weben
 
 Pyphen 0.18.1 的 Python 代码由上游明确三选一授权，本发行选择 MPL-1.1，保留代码、许可证和来源 https://github.com/Kozea/Pyphen；生产镜像删除全部未使用的 dictionaries，避免分发独立授权的字典，报告禁用自动断字。未修改源码，可从对应版本源码取得；工程登记不等于人工法务审批。
 
-Pango/GLib/FriBidi 等原生动态库使用 Debian 原包（LGPL），HarfBuzz 为 MIT、FreeType 采用 FTL。保留 `/usr/share/doc/*/copyright`，不静态链接、不修改，可以自行替换动态库；对应源码通过 Debian Sources/包管理器按部署记录的版本获得。Windows MSYS2 包仅用于本机 QA，不进入产品镜像。镜像最终包版本清单在部署 SBOM 中留存。
+Pango/GLib/FriBidi 等原生动态库使用 Debian 原包（LGPL），HarfBuzz 为 MIT、FreeType 采用 FTL。保留 `/usr/share/doc/*/copyright`，不静态链接、不修改，可以自行替换动态库；对应源码通过 Debian Sources/包管理器按部署记录的版本获得。Windows MSYS2 包仅用于本机 QA，不进入产品镜像。镜像最终 [164 个 Debian 包、源包版本、原始许可标签及版权文件哈希](native-linux-runtime.json) 已实采，164 个版权文件均存在。清单也包含基础系统工具，其未标准化的许可标签不表示应用依赖自动准入或法务批准；279 条应用依赖扫描的范围与操作系统清单不同。
 
 字体使用 Fontsource WOFF2 和固定提交的 Google Fonts TTF，OFL-1.1，来源、SHA-256、RFN 和子集策略见 [FONTS.md](FONTS.md)。nginx 为 BSD-2-Clause，Node/uv 仅构建使用（MIT / MIT OR Apache-2.0）。
 

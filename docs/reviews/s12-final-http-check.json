@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-10-25T15:09:04.839129+00:00",
+  "checks": [
+    {
+      "url": "http://47.116.46.81/",
+      "status": 308,
+      "location": "https://47.116.46.81/"
+    },
+    {
+      "url": "https://47.116.46.81/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://47.116.46.81/admin/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://47.116.46.81/api/health",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://47.116.46.81/api/analysis/tasks",
+      "status": 401,
+      "location": null
+    }
+  ],
+  "note": "After immutable-image replacement and healthy startup; no nginx reload used in this replacement. Startup window had 502 and is recorded in publication review."
+}
