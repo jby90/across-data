@@ -89,6 +89,14 @@ def _fake_llm_factory(bad_first: bool):
 
         calls["n"] += 1
         payload = json.loads(messages[1]["content"])
+        if payload.get("phase") == "verify_source_support":
+            return LlmResult(
+                {"supported": "yes", "reason": "Fixture source fully supports this rule"},
+                100,
+                50,
+                7,
+                "fake-model",
+            )
         if payload.get("phase") == "write_from_evidence":
             return LlmResult(
                 data={

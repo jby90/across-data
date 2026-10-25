@@ -13,7 +13,7 @@ from app.analysis.retrieval_planner import RETRIEVAL_SYSTEM_PROMPT
 from app.core.config import get_settings
 from app.knowledge.history import snapshot
 
-RUNTIME_SCHEMA = "s5-source-coverage-cache-v5"
+RUNTIME_SCHEMA = "s5-source-support-v6"
 # Applicable fields only: deterministic nodes do not pretend to use LLM parameters.
 PARAMETERS = {
     "node_start": set(),
@@ -31,6 +31,7 @@ class NodeExecutionSettings(BaseModel):
 
     enabled: bool = True
     semantic_planning: bool = False
+    verify_source_support: bool = True
     model: str | None = Field(
         default=None, min_length=1, max_length=128, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:/-]*$"
     )
@@ -81,7 +82,7 @@ def baseline_nodes() -> list[dict]:
     analyst = by_id["node_dimension_analyst"]
     analyst["system_prompt"] = ANALYSIS_SYSTEM_PROMPT
     analyst["model_name"] = get_settings().llm_model
-    analyst["parameters"].update(temperature=0.0, timeout=150.0)
+    analyst["parameters"].update(temperature=0.0, timeout=150.0, verify_source_support=True)
     verifier = by_id["node_citation_verifier"]["parameters"]
     verifier.pop("max_backtrack_loops", None)
     verifier["max_backtrack_rounds"] = 2
@@ -92,6 +93,8 @@ def baseline_nodes() -> list[dict]:
 
 def execution_settings(node: dict) -> dict:
     params = {key: node["parameters"][key] for key in PARAMETERS[node["node_id"]]}
+    if node["node_id"] == "node_dimension_analyst":
+        params["verify_source_support"] = node["parameters"]["verify_source_support"]
     if node["node_id"] in ("node_dimension_analyst", "node_mcp_retriever"):
         if not all(
             isinstance(node.get(key), str) and node[key].strip()

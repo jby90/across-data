@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import asyncio
+import copy
 import json
 import logging
 import time
@@ -21,6 +22,8 @@ from app.analysis.evidence_selection import (
     AnalysisResponse,
     CoveredClaim,
     GroundedClaim,
+    SourceBoundaryError,
+    SourceSupport,
     assemble_covered_claim,
     coverage_units,
     select_legal_quote,
@@ -188,7 +191,9 @@ def _build_user_message(
 _GROUNDING_GATE = asyncio.Semaphore(6)
 
 
-async def _ground_selection(task, dim_code, dim_title, finding, candidates, config):
+async def _ground_selection(
+    task, dim_code, dim_title, finding, candidates, config, *, support_cache=None
+):
     """One isolated evidence unit per generation. Other clauses/draft rules are not sent."""
     result = dict(finding)
     # A selection-stage draft is not a legal conclusion.
@@ -201,6 +206,9 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
         result.update(
             select_legal_quote(candidate.text, finding["sentence_ids"], heading=candidate.heading)
         )
+    except SourceBoundaryError as exc:
+        result["_selection_error"] = str(exc)
+        return result, {"requests": 0, "tokens": 0, "error": str(exc)}
     except ValueError as exc:
         return result, {"requests": 0, "tokens": 0, "error": str(exc)}
     units = coverage_units(result["quote"])
@@ -249,7 +257,8 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
         },
     ]
     tokens = requests = 0
-    failures, proposals = [], []
+    failures, proposals, prior_rejections, support_calls = [], [], [], []
+    support_by_claim = support_cache if support_cache is not None else {}
     for attempt in range(2):
         try:
             async with _GROUNDING_GATE:
@@ -284,12 +293,81 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
                 ok, issues = verify_finding(result, candidate.text)
                 if not ok:
                     raise ValueError("；".join(issues))
+                if config.get("verify_source_support", False):
+                    support_key = (
+                        result["quote"],
+                        obligation,
+                        config["model"],
+                        config["temperature"],
+                        config["system_prompt"],
+                    )
+                    if support_key in support_by_claim:
+                        grade = support_by_claim[support_key]
+                        support_calls.append(
+                            {
+                                "cache_hit": True,
+                                "tokens": 0,
+                                "requests": 0,
+                                "output": grade.model_dump(),
+                            }
+                        )
+                    else:
+                        async with _GROUNDING_GATE:
+                            review = await call_llm_json(
+                                [
+                                    {"role": "system", "content": config["system_prompt"]},
+                                    {
+                                        "role": "user",
+                                        "content": json.dumps(
+                                            {
+                                                "phase": "verify_source_support",
+                                                "quote": result["quote"],
+                                                "conclusion": obligation,
+                                                "contract": (
+                                                    "只核验原文是否完整支持结论；"
+                                                    "不作法律或人工审批；输出所给JSON Schema。"
+                                                ),
+                                                "output_schema": SourceSupport.model_json_schema(),
+                                            },
+                                            ensure_ascii=False,
+                                        ),
+                                    },
+                                ],
+                                model=config["model"],
+                                temperature=config["temperature"],
+                                timeout=config["timeout"],
+                                max_tokens=6000,
+                            )
+                        tokens += review.total_tokens
+                        requests += review.request_attempts
+                        failures.extend(review.failures)
+                        support_calls.append(
+                            {
+                                "output": review.data,
+                                "tokens": review.total_tokens,
+                                "requests": review.request_attempts,
+                                "failures": review.failures,
+                            }
+                        )
+                        grade = SourceSupport.model_validate(review.data)
+                        support_by_claim[support_key] = grade
+                    result["source_support"] = {**grade.model_dump(), "human_review": None}
+                    if grade.supported != "yes":
+                        failures.append({"kind": "source_support_rejected", "reason": grade.reason})
+                        if attempt == 0:
+                            prior_rejections.append(copy.deepcopy(result))
+                            message["semantic_feedback"] = grade.reason
+                            continue
+                        result["_source_support_rejected"] = grade.reason
+                        break
+            result["_rejected_support"] = prior_rejections
             return result, {
                 "requests": requests,
                 "tokens": tokens,
                 "failures": failures,
                 "gap": claim.gap,
                 "proposals": proposals,
+                "source_support_calls": support_calls,
             }
         except LlmUnavailableError as exc:
             tokens += exc.tokens
@@ -307,12 +385,14 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
             message["schema_feedback"] = detail[:1600]
             if attempt == 1:
                 result["_generation_error"] = "依据限定生成校验失败: " + detail[:1600]
+    result["_rejected_support"] = prior_rejections
     return result, {
         "requests": requests,
         "tokens": tokens,
         "failures": failures,
-        "error": result.get("_generation_error"),
+        "error": result.get("_generation_error") or result.get("_source_support_rejected"),
         "proposals": proposals,
+        "source_support_calls": support_calls,
     }
 
 
@@ -325,8 +405,11 @@ async def _analyse_dimension(
     config: dict[str, Any],
     *,
     _attempt_budget: int = 2,
+    _support_cache=None,
 ) -> tuple[dict[str, Any], ToolCall]:
     """单个维度的分析调用;模型不可用时返回带 error 的结果而不是编造内容。"""
+    if _support_cache is None:
+        _support_cache = {}
     msgs = [
         {"role": "system", "content": config["system_prompt"]},
         {
@@ -391,6 +474,7 @@ async def _analyse_dimension(
                     finding.model_dump(),
                     cands,
                     config,
+                    support_cache=_support_cache,
                 )
                 used_tokens += entry["tokens"]
                 request_attempts += entry["requests"]
@@ -405,7 +489,12 @@ async def _analyse_dimension(
 
             grounded = await asyncio.gather(*[ground_one(f) for f in validated.findings])
             refused = [
-                f for f in grounded if f.get("_generation_gap") or f.get("_generation_error")
+                f
+                for f in grounded
+                if f.get("_generation_gap")
+                or f.get("_generation_error")
+                or f.get("_source_support_rejected")
+                or f.get("_selection_error")
             ]
             if refused and attempts < _attempt_budget:
                 # Reuse the existing two-selection-attempt budget, not a new retry loop.
@@ -422,12 +511,18 @@ async def _analyse_dimension(
                         *[
                             f["clause_id"]
                             + ": "
-                            + (f.get("_generation_gap") or f["_generation_error"])
+                            + (
+                                f.get("_generation_gap")
+                                or f.get("_generation_error")
+                                or f.get("_source_support_rejected")
+                                or f["_selection_error"]
+                            )
                             for f in refused
                         ],
                     ],
                     config,
                     _attempt_budget=_attempt_budget - attempts,
+                    _support_cache=_support_cache,
                 )
                 revised["tokens"] += used_tokens
                 call.arguments.update(
@@ -539,8 +634,12 @@ def _verify_dimension(
                 ok, issues = False, [f.get("_generation_error") or f["_generation_gap"]]
             else:
                 ok, issues = verify_finding(f, cand.text)
+            f["_program_ok"] = ok
+            if ok and f.get("source_support", {}).get("supported", "yes") != "yes":
+                ok, issues = False, ["结论语义核验未通过：" + f["source_support"]["reason"]]
         except ValueError as exc:
             ok, issues = False, [str(exc)]
+            f["_program_ok"] = False
         f["_ok"] = ok
         f["_issues"] = issues
         if not ok:

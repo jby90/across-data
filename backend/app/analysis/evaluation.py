@@ -165,7 +165,9 @@ def attempted_findings(result, model_call):
         for retry in (model_call or {}).get("arguments", {}).get("selection_retries", [])
         for f in retry["findings"]
     ]
-    return copy.deepcopy(previous + result.get("findings", []))
+    all_findings = previous + result.get("findings", [])
+    rejected = [r for f in all_findings for r in f.get("_rejected_support", [])]
+    return copy.deepcopy(rejected + all_findings)
 
 
 async def evaluate_case(session, question_id, batch_id, actor_id):
@@ -235,7 +237,7 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
     judge_input = [
         {"index": i, "conclusion": f["obligation"], "quote": f.get("quote", "")}
         for i, f in enumerate(findings)
-        if f.get("_ok")
+        if f.get("_program_ok", f.get("_ok"))
     ]
     judgments = []
     judge_error = None
@@ -281,7 +283,7 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
         "findings_total": len(findings),
         "final_findings_total": len(result.get("findings", [])),
         "final_findings_offset": len(findings) - len(result.get("findings", [])),
-        "faithful_findings": sum(bool(f.get("_ok")) for f in findings),
+        "faithful_findings": sum(bool(f.get("_program_ok", f.get("_ok"))) for f in findings),
         "judged_findings": len(judgments),
         "supported_findings": sum(j["supported"] == "yes" for j in judgments),
         "findings": findings,

@@ -205,6 +205,9 @@ async def test_grounding_call_cannot_see_other_clauses_or_selection_stage_drafts
     async def fake(messages, **kwargs):
         p = json.loads(messages[1]["content"])
         observed.append(p)
+        if p["phase"] == "verify_source_support":
+            assert p["quote"] == source and "999" not in messages[1]["content"]
+            return LlmResult({"supported": "yes", "reason": "Exact fixture rule"}, 0, 0, 1, "fake")
         if p["phase"] == "select_evidence":
             assert p["output_schema"]["$defs"]["FindingSelection"]["properties"]["fact_key"][
                 "enum"
@@ -245,8 +248,8 @@ async def test_grounding_call_cannot_see_other_clauses_or_selection_stage_drafts
     )
     result, call = await pipeline._analyse_dimension(task, "D8", "安全", rows, None, cfg)
     assert pipeline._verify_dimension("D8", result, rows) == []
-    assert result["tokens"] == 36 and call.arguments["request_attempts"] == 2
-    assert len(observed) == 2 and "999" not in result["findings"][0]["obligation"]
+    assert result["tokens"] == 36 and call.arguments["request_attempts"] == 3
+    assert len(observed) == 3 and "999" not in result["findings"][0]["obligation"]
 
 
 async def test_numeric_generation_error_is_retried_with_exact_source_and_remains_in_ledger(
@@ -258,6 +261,8 @@ async def test_numeric_generation_error_is_retried_with_exact_source_and_remains
 
     async def fake(messages, **kwargs):
         payload = json.loads(messages[1]["content"])
+        if payload["phase"] == "verify_source_support":
+            return LlmResult({"supported": "yes", "reason": "Exact fixture rule"}, 0, 0, 1, "fake")
         calls.append(payload)
         assert payload["evidence"] == {"quote": source}
         if len(calls) == 1:
@@ -280,7 +285,7 @@ async def test_numeric_generation_error_is_retried_with_exact_source_and_remains
         cfg,
     )
     assert finding["obligation"] == "该活动最高比例为2%"
-    assert ledger["tokens"] == 10 and ledger["requests"] == 2
+    assert ledger["tokens"] == 10 and ledger["requests"] == 3
     assert ledger["failures"][0]["kind"] == "grounding_validation_error"
 
 
@@ -296,6 +301,8 @@ async def test_source_refusal_returns_to_selector_within_existing_budget_and_pre
     async def fake(messages, **kwargs):
         payload = json.loads(messages[1]["content"])
         seen.append(payload)
+        if payload["phase"] == "verify_source_support":
+            return LlmResult({"supported": "yes", "reason": "Exact fixture rule"}, 0, 0, 1, "fake")
         if payload["phase"] == "select_evidence":
             retry = "verifier_feedback_must_fix" in payload
             data = {
@@ -332,8 +339,8 @@ async def test_source_refusal_returns_to_selector_within_existing_budget_and_pre
         cfg,
     )
     assert pipeline._verify_dimension("D8", result, rows) == []
-    assert len(seen) == 4 and result["tokens"] == 20
-    assert call.arguments["schema_attempts"] == 2 and call.arguments["request_attempts"] == 4
+    assert len(seen) == 5 and result["tokens"] == 20
+    assert call.arguments["schema_attempts"] == 2 and call.arguments["request_attempts"] == 5
     previous = call.arguments["selection_retries"][0]["findings"][0]
     assert previous["quote"] == rows[0].text and previous["_generation_gap"] == "缺少主语和条件"
     assert "缺少主语和条件" in str(seen[2]["verifier_feedback_must_fix"])

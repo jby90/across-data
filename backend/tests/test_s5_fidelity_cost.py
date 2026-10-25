@@ -136,7 +136,16 @@ def test_unit_numeric_coverage_cannot_drop_either_range_end_or_borrow_from_other
 
 
 @pytest.mark.parametrize(
-    "marker", ["Article 83:", "Art. 83 :", "الفصل ٨٣ .", "المادة ٨٣:", "第八十三条"]
+    "marker",
+    [
+        "Article 83:",
+        "Article. 83 :",
+        "Section. 83:",
+        "Art. 83 :",
+        "الفصل ٨٣ .",
+        "المادة ٨٣:",
+        "第八十三条",
+    ],
 )
 def test_no_cross_provision_quote_or_previous_tail_attribution(marker):
     source = (
@@ -149,6 +158,13 @@ def test_no_cross_provision_quote_or_previous_tail_attribution(marker):
         select_legal_quote(source, list(range(1, len(catalog) + 1)))
     selected = select_legal_quote(source, [len(catalog)])
     assert "Earlier independent" not in selected["quote"]
+
+
+@pytest.mark.parametrize("prefix", ["Article.", "Section.", "Regulation.", "Rule."])
+def test_numbered_heading_abbreviation_never_becomes_an_orphan_unit(prefix):
+    source = prefix + " 73 : The provider shall notify the customer before disclosure."
+    units = coverage_units(source)
+    assert len(units) == 1 and units[0]["text"] == source
 
 
 @pytest.mark.parametrize(
@@ -329,3 +345,156 @@ async def test_underfilled_ranking_uses_existing_local_candidates_and_keeps_unce
         c.review_status == "pending_review" and c.legal_status == "unknown" for c, _ in found
     )
     assert audit["requests"] == 2 and audit["tokens"] == 6
+
+
+@pytest.mark.parametrize("changed", [True, False])
+async def test_source_support_repair_preserves_bad_draft_and_never_fishes_same_claim(
+    monkeypatch, changed
+):
+    from app.analysis import evaluation, pipeline
+    from app.analysis.models import AnalysisTask
+
+    source = "The holder shall notify its representative before disclosure."
+    row = candidate("unseen", source)
+    writes, reviews = [], []
+
+    async def fake(messages, **kwargs):
+        p = json.loads(messages[1]["content"])
+        if p["phase"] == "verify_source_support":
+            reviews.append(p)
+            assert set(p) == {"phase", "quote", "conclusion", "contract", "output_schema"}
+            assert p["quote"] == source and "business_fact" not in p
+            output = (
+                {"supported": "yes", "reason": "其代表与原文its一致"}
+                if "其代表" in p["conclusion"]
+                else {"supported": "partial", "reason": "its不能泛化为任何代表"}
+            )
+        else:
+            writes.append(p)
+            output = {
+                "obligation": "持有人在披露前须通知"
+                + ("其代表" if changed and len(writes) > 1 else "任何代表"),
+                "gap": "",
+                "risk_level": "MEDIUM",
+            }
+        return LlmResult(output, 10, 2, 1, "test")
+
+    monkeypatch.setattr(pipeline, "call_llm_json", fake)
+    result, audit = await pipeline._ground_selection(
+        AnalysisTask(facts_json={"q": "披露资料"}),
+        "D4",
+        "告知",
+        {"clause_id": "unseen", "fact_key": "q", "sentence_ids": [1]},
+        [row],
+        dict(
+            system_prompt="JSON",
+            model="test",
+            temperature=0.0,
+            timeout=5.0,
+            verify_source_support=True,
+        ),
+    )
+    assert len(writes) == 2 and len(reviews) == (2 if changed else 1)
+    assert audit["tokens"] == 12 * (4 if changed else 3)
+    assert audit["requests"] == (4 if changed else 3)
+    attempted = evaluation.attempted_findings({"findings": [result]}, None)
+    assert len(attempted) == 2
+    pipeline._verify_dimension("D4", {"findings": attempted}, [row])
+    assert attempted[0]["_program_ok"] and not attempted[0]["_ok"]
+    assert attempted[1]["_ok"] == changed
+    assert all(f["_program_ok"] for f in attempted)
+    assert result["source_support"]["human_review"] is None
+
+
+async def test_source_support_outage_fails_closed_and_keeps_known_cost(monkeypatch):
+    from app.analysis import pipeline
+    from app.analysis.llm import LlmUnavailableError
+    from app.analysis.models import AnalysisTask
+
+    row = candidate("safe", "The operator must protect confidential records from disclosure.")
+
+    async def fake(messages, **kwargs):
+        if json.loads(messages[1]["content"])["phase"] == "verify_source_support":
+            raise LlmUnavailableError("unavailable", tokens=3, failures=[{"kind": "HTTP"}])
+        return LlmResult(
+            {"obligation": "经营者须保护保密记录免遭披露", "gap": "", "risk_level": "MEDIUM"},
+            4,
+            2,
+            1,
+            "test",
+        )
+
+    monkeypatch.setattr(pipeline, "call_llm_json", fake)
+    result, audit = await pipeline._ground_selection(
+        AnalysisTask(facts_json={"q": "业务"}),
+        "D8",
+        "保护",
+        {"clause_id": "safe", "fact_key": "q", "sentence_ids": [1]},
+        [row],
+        dict(
+            system_prompt="JSON",
+            model="test",
+            temperature=0.0,
+            timeout=5.0,
+            verify_source_support=True,
+        ),
+    )
+    assert result["_generation_error"] and audit["tokens"] == 9 and audit["requests"] == 2
+
+
+async def test_cross_article_selection_is_reselected_without_paying_to_rewrite_invalid_quote(
+    monkeypatch,
+):
+    from app.analysis import pipeline
+    from app.analysis.models import AnalysisTask
+
+    source = (
+        "Article 16: Operators must give notice.\nArticle 17: Individuals may withdraw consent."
+    )
+    row = candidate("mixed", source)
+    selections = []
+
+    async def fake(messages, **kwargs):
+        p = json.loads(messages[1]["content"])
+        if p["phase"] == "select_evidence":
+            selections.append(p)
+            out = {
+                "findings": [
+                    {
+                        "clause_id": "mixed",
+                        "fact_key": "q",
+                        "sentence_ids": [1, 2] if len(selections) == 1 else [1],
+                        "obligation": "待依据生成",
+                        "risk_level": "MEDIUM",
+                    }
+                ]
+            }
+        else:
+            out = {"obligation": "Article 16：经营者必须告知", "gap": "", "risk_level": "MEDIUM"}
+        return LlmResult(out, 2, 1, 1, "test")
+
+    monkeypatch.setattr(pipeline, "call_llm_json", fake)
+    result, call = await pipeline._analyse_dimension(
+        AnalysisTask(facts_json={"q": "处理资料"}, country_code="XY"),
+        "D4",
+        "告知",
+        [row],
+        None,
+        dict(system_prompt="JSON", model="test", temperature=0.0, timeout=5.0),
+    )
+    assert len(selections) == 2 and result["tokens"] == 9
+    previous = call.arguments["selection_retries"][0]["findings"][0]
+    assert previous["_selection_error"] and not previous.get("_generation_gap")
+    assert pipeline._verify_dimension("D4", result, [row]) == []
+
+
+def test_source_support_gate_cannot_be_disabled_by_import():
+    from app.analysis.workflow_engine import DEFAULT_WORKFLOW_EDGES
+    from app.analysis.workflow_runtime import baseline_nodes, validate_graph
+
+    nodes = baseline_nodes()
+    next(n for n in nodes if n["node_id"] == "node_dimension_analyst")["parameters"][
+        "verify_source_support"
+    ] = False
+    with pytest.raises(ValueError):
+        validate_graph(nodes, copy.deepcopy(DEFAULT_WORKFLOW_EDGES))
