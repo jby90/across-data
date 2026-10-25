@@ -699,3 +699,26 @@ async def test_source_review_format_retry_never_retries_a_valid_partial_verdict(
     assert grade.supported == "partial" and len(observed) == 2
     assert "schema_feedback" in observed[1] and ledger[0]["error"]
     assert tokens == 12 and requests == 2 and failures[0]["kind"] == "source_support_schema_error"
+
+
+def test_repair_catalog_keeps_original_ids_and_hides_only_completed_fact_spans():
+    from app.analysis import pipeline
+    from app.analysis.models import AnalysisTask
+
+    row = candidate("a", "The operator must notify customers.\nArticle 17. Transfer needs consent.")
+    retained = [{"clause_id": "a", "fact_key": "notice", **select_legal_quote(row.text, [1])}]
+    task = AnalysisTask(country_code="XY", facts_json={"notice": "告知", "transfer": "传输"})
+    p = json.loads(
+        pipeline._build_user_message(task, "D4", "条件", [row], None, retained, 1, {"notice"})
+    )
+    item = p["candidate_clauses"][0]
+    assert [s["sentence_id"] for s in item["retained_context"]] == [1]
+    assert all(s["sentence_id"] != 1 for s in item["sentences"])
+    assert item["sentences"][0]["scope_id"] > item["retained_context"][0]["scope_id"]
+    for s in item["sentences"] + item["retained_context"]:
+        assert row.text[s["start"] : s["end"]] == s["text"]
+    assert p["business_facts"] == {"notice": "告知"}
+    # The same source is still selectable for a different, unfinished fact.
+    other = pipeline._candidate_payload(row, retained, {"transfer"})
+    assert other["sentences"][0]["sentence_id"] == 1
+    assert not other["retained_context"]

@@ -50,6 +50,13 @@ class SourceBoundaryError(ValueError):
     """The selector must choose separate provisions, not repair source text."""
 
 
+def provision_boundaries(text, heading=""):
+    markers = [m.start() for m in _ARTICLE.finditer(text)]
+    if markers and heading and " ".join(text[: markers[0]].split()) == " ".join(heading.split()):
+        markers = markers[1:]
+    return markers
+
+
 def sentence_catalog(text: str) -> list[dict]:
     boundaries = []
     for m in _BOUNDARY.finditer(text):
@@ -105,16 +112,13 @@ def select_quote(text: str, sentence_ids: list[int]) -> dict:
 def select_legal_quote(text: str, sentence_ids: list[int], *, heading: str = "") -> dict:
     """Close list references/provisos inside this unchanged clause, never across source IDs."""
     selected = select_quote(text, sentence_ids)
-    markers = [m.start() for m in _ARTICLE.finditer(text)]
+    markers = provision_boundaries(text, heading)
     # A separately parsed title followed by its own number belongs to one provision.
     # Only exact metadata correspondence may exempt the first marker; a preceding
     # normative paragraph or another heading is still an independent boundary.
-    if markers and heading and " ".join(text[: markers[0]].split()) == " ".join(heading.split()):
-        markers = markers[1:]
     if any(selected["quote_start"] < p < selected["quote_end"] for p in markers):
         raise SourceBoundaryError(
-            "选证跨越独立条文标题；请仅选择同一条文，"
-            "或分为两项独立选证，不能混入前条尾段"
+            "选证跨越独立条文标题；请仅选择同一条文，或分为两项独立选证，不能混入前条尾段"
         )
     catalog = sentence_catalog(text)
     first, last = sentence_ids[0] - 1, sentence_ids[-1] - 1

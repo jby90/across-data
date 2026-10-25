@@ -27,6 +27,7 @@ from app.analysis.evidence_selection import (
     SourceSupport,
     assemble_covered_claim,
     coverage_units,
+    provision_boundaries,
     select_legal_quote,
     sentence_catalog,
 )
@@ -153,12 +154,29 @@ async def _add_trace(
     return tr
 
 
-def _candidate_payload(c: ClauseCandidate) -> dict[str, str]:
+def _candidate_payload(c: ClauseCandidate, retained=None, fact_keys=None) -> dict:
+    markers = provision_boundaries(c.text, c.heading)
+    sentences = []
+    context = []
+    for s in sentence_catalog(c.text):
+        s = {**s, "scope_id": sum(p <= s["start"] for p in markers)}
+        covered_keys = {
+            f["fact_key"]
+            for f in (retained or [])
+            if f["clause_id"] == c.clause_id
+            and f["quote_start"] <= s["start"]
+            and f["quote_end"] >= s["end"]
+        }
+        if fact_keys and set(fact_keys) <= covered_keys:
+            context.append(s)
+        else:
+            sentences.append(s)
     return {
         "clause_id": c.clause_id,
         "document": c.document_title,
         "clause_number": c.label,
-        "sentences": sentence_catalog(c.text),
+        "sentences": sentences,
+        "retained_context": context if sentences else [],
     }
 
 
@@ -170,11 +188,18 @@ def _build_user_message(
     feedback: list[str] | None,
     retained=None,
     repair_limit=None,
+    repair_keys=None,
 ) -> str:
     schema = AnalysisResponse.model_json_schema()
     properties = schema["$defs"]["FindingSelection"]["properties"]
-    properties["fact_key"]["enum"] = list(task.facts_json or {})
-    properties["clause_id"]["enum"] = [c.clause_id for c in cands]
+    facts = {
+        k: v for k, v in (task.facts_json or {}).items() if not repair_keys or k in repair_keys
+    }
+    candidates = [
+        p for c in cands if (p := _candidate_payload(c, retained, facts)).get("sentences")
+    ]
+    properties["fact_key"]["enum"] = list(facts)
+    properties["clause_id"]["enum"] = [c["clause_id"] for c in candidates]
     if repair_limit is not None:
         schema["properties"]["findings"]["maxItems"] = repair_limit
     payload: dict[str, Any] = {
@@ -182,10 +207,14 @@ def _build_user_message(
         "country": task.country_code,
         "vehicle_model": task.vehicle_model,
         "scenario": task.scenario_type,
-        "business_facts": task.facts_json or {},
+        "business_facts": facts,
         "question": task_query(task.facts_json or {}, dim_code),
         "dimension": {"code": dim_code, "title": dim_title},
-        "candidate_clauses": [_candidate_payload(c) for c in cands],
+        "candidate_clauses": candidates,
+        "selection_contract": (
+            "每项只选sentences中同一scope_id的连续编号；"
+            "retained_context只是上下文，不可再次选择。"
+        ),
         "output_schema": schema,
     }
     if retained:
@@ -467,6 +496,7 @@ async def _analyse_dimension(
     _support_cache=None,
     _retained=None,
     _repair_limit=None,
+    _repair_keys=None,
 ) -> tuple[dict[str, Any], ToolCall]:
     """单个维度的分析调用;模型不可用时返回带 error 的结果而不是编造内容。"""
     if _support_cache is None:
@@ -500,7 +530,7 @@ async def _analyse_dimension(
         {
             "role": "user",
             "content": _build_user_message(
-                task, dim_code, dim_title, cands, feedback, retained, _repair_limit
+                task, dim_code, dim_title, cands, feedback, retained, _repair_limit, _repair_keys
             ),
         },
     ]
@@ -527,6 +557,22 @@ async def _analyse_dimension(
                     validated = AnalysisResponse.model_validate(res.data)
                     if any(f.fact_key not in (task.facts_json or {}) for f in validated.findings):
                         raise ValueError("fact_key 不在用户已提供事实中")
+                    available = {
+                        p["clause_id"]: p
+                        for p in json.loads(msgs[1]["content"])["candidate_clauses"]
+                    }
+                    for f in validated.findings:
+                        if _repair_keys and f.fact_key not in _repair_keys:
+                            raise ValueError("仅允许修复失败事实键")
+                        if retained:
+                            p = available.get(f.clause_id)
+                            allowed = (
+                                {s["sentence_id"]: s["scope_id"] for s in p["sentences"]}
+                                if p
+                                else {}
+                            )
+                            if any(i not in allowed for i in f.sentence_ids):
+                                raise ValueError("所选证据不在本轮可选范围，不能重复保留项")
                     if _repair_limit is not None and len(validated.findings) > _repair_limit:
                         raise ValueError("只重试失败项，不得超过本次修复名额")
                     for f in validated.findings if retained else []:
@@ -567,6 +613,7 @@ async def _analyse_dimension(
                         ],
                         retained,
                         _repair_limit,
+                        _repair_keys,
                     )
 
             async def ground_one(finding):
@@ -632,6 +679,7 @@ async def _analyse_dimension(
                     _support_cache=_support_cache,
                     _retained=retained + kept,
                     _repair_limit=len(rejected),
+                    _repair_keys={f["fact_key"] for f in rejected},
                 )
                 revised["tokens"] += used_tokens
                 call.arguments.update(
@@ -1122,6 +1170,9 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                     _repair_limit=max(
                         1, sum(not f.get("_ok") for f in results[c].get("findings", []))
                     ),
+                    _repair_keys={
+                        f["fact_key"] for f in results[c].get("findings", []) if not f.get("_ok")
+                    },
                 )
                 for c in bad_codes
             ]
