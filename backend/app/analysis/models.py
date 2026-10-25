@@ -62,6 +62,7 @@ class AnalysisTask(Base):
     """多智能体合规分析任务表(支持普通企业用户按租户隔离发起、追问补充事实、生成八维度报告)。"""
 
     __tablename__ = "analysis_tasks"
+    citation_policy: Mapped[str | None] = mapped_column(String(40), nullable=True)
     __table_args__ = (
         CheckConstraint(
             "status IN ('collecting_facts','ready_to_run','running','completed',"
@@ -168,6 +169,7 @@ class ReportVersion(Base):
     """八维度安全评估报告不可变版本表(支持整份与按维度拆分、编辑、对比与导出)。"""
 
     __tablename__ = "report_versions"
+    citation_policy: Mapped[str | None] = mapped_column(String(40), nullable=True)
     __table_args__ = (UniqueConstraint("task_id", "version_no", name="uq_report_task_version"),)
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)

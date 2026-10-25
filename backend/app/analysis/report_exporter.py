@@ -12,6 +12,7 @@ from xml.sax.saxutils import escape
 
 from PIL import Image, ImageDraw, ImageFont
 
+from app.analysis.citation_policy import policy_label, review_detail, review_label, review_overview
 from app.analysis.models import AnalysisTask, ReportVersion
 from app.analysis.schemas import format_conversation_code
 
@@ -44,6 +45,7 @@ def _view(task, rv, dimension):
         findings_json=findings,
     )
     rv_view = SimpleNamespace(
+        citation_policy=getattr(rv, "citation_policy", None),
         version_no=rv.version_no,
         is_partial_sample=rv.is_partial_sample,
         dimensions_json=dims,
@@ -89,8 +91,9 @@ PARTIAL_NOTICE = (
 
 def _w_p(text: str, bold: bool = False, size: int = 22, color: str = "1E293B") -> str:
     b_tag = "<w:b/>" if bold else ""
+    keep = "<w:keepNext/>" if (bold and size >= 24) or text.startswith("依据与合规义务") else ""
     return (
-        "<w:p><w:pPr><w:spacing w:after='120' w:line='300' w:lineRule='auto'/></w:pPr>"
+        f"<w:p><w:pPr>{keep}<w:spacing w:after='120' w:line='300' w:lineRule='auto'/></w:pPr>"
         f"<w:r><w:rPr>{b_tag}<w:color w:val='{color}'/>"
         f"<w:sz w:val='{size}'/><w:szCs w:val='{size}'/></w:rPr>"
         f"<w:t xml:space='preserve'>{escape(text or '')}</w:t></w:r></w:p>"
@@ -129,6 +132,8 @@ def build_report_docx(task: AnalysisTask, rv: ReportVersion, dimension: str | No
         ),
     ]
     parts.extend([_w_p(EXPORT_NOTICE, size=19), _w_p(DISCLAIMER, size=19)])
+    parts.append(_w_p(review_overview(rv.dimensions_json), size=19))
+    parts.append(_w_p(f"生成时引用策略：{policy_label(rv.citation_policy)}", size=18))
     if rv.is_partial_sample:
         parts.append(_w_p(PARTIAL_NOTICE, bold=True, size=20, color="B45309"))
     parts.append(_w_p("一、执行摘要", bold=True, size=26, color="1D4ED8"))
@@ -184,7 +189,8 @@ def build_report_docx(task: AnalysisTask, rv: ReportVersion, dimension: str | No
             parts.append(
                 _w_p(
                     f"来源：{cite.get('source_url') or '未提供'}；"
-                    f"人工复核：{cite.get('review_status', 'pending_review')}",
+                    f"人工复核：{review_label(cite)}；"
+                    f"{review_detail(cite)}",
                     size=18,
                 )
             )
@@ -287,6 +293,8 @@ def build_report_pdf(task: AnalysisTask, rv: ReportVersion, dimension: str | Non
         ("SMALL", f"任务:{task.title} | v{rv.version_no} | 车型:{task.vehicle_model}"),
     ]
     queue.extend([("WARN", EXPORT_NOTICE), ("SMALL", DISCLAIMER)])
+    queue.append(("SMALL", review_overview(rv.dimensions_json)))
+    queue.append(("SMALL", f"生成时引用策略：{policy_label(rv.citation_policy)}"))
     if rv.is_partial_sample:
         queue += [("WARN", ln) for ln in _wrap(PARTIAL_NOTICE, 50)]
     queue.append(("H2", "一、执行摘要"))
@@ -320,7 +328,8 @@ def build_report_pdf(task: AnalysisTask, rv: ReportVersion, dimension: str | Non
                 for ln in _wrap(
                     f"原文：{cite.get('quote_original', '')}；"
                     f"来源：{cite.get('source_url') or '未提供'}；"
-                    f"人工复核：{cite.get('review_status', 'pending_review')}",
+                    f"人工复核：{review_label(cite)}；"
+                    f"{review_detail(cite)}",
                     56,
                 )
             )

@@ -19,6 +19,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.analysis.citation_policy import review_label, review_overview
 from app.analysis.events import append_event, trace_events
 from app.analysis.evidence_selection import (
     AnalysisResponse,
@@ -203,6 +204,9 @@ def _candidate_payload(c: ClauseCandidate, retained=None, fact_keys=None) -> dic
         "version_no": c.version_no,
         "source_nature": c.source_nature,
         "legal_status": c.legal_status,
+        "source_review_status": c.source_review_status,
+        "translation_review_status": c.translation_review_status,
+        "review_contract": "程序核验与人工法律复核分开；待核对内容只能进入明确标注的机器草稿。",
         "instrument_identity_for_comparison_only": c.instrument_identity or None,
         "version_contract": "不同来源/版本保持独立，不得合并引文；未知时效不能认定现行有效。",
         "sentences": sentences,
@@ -973,6 +977,8 @@ async def _run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         return  # Manual rerun cannot bypass unanswered questions.
     checkpoint = copy.deepcopy(task.analysis_checkpoint_json or {})
     resume = bool(checkpoint.get("resume_dimensions"))
+    if task.citation_policy is None or not resume:
+        task.citation_policy = get_settings().citation_policy
     cc = task.country_code.upper()
     cfg = (
         await session.get(AgentWorkflowConfig, task.workflow_version_id)
@@ -999,7 +1005,12 @@ async def _run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         task.findings_json = []
     await session.commit()
 
-    tb = ToolBox(session, cc, cache_scope=str(task.org_id or task.created_by))
+    tb = ToolBox(
+        session,
+        cc,
+        cache_scope=str(task.org_id or task.created_by),
+        citation_policy=task.citation_policy,
+    )
 
     # ---- 1. 信息采集与追问 ----
     await _phase_started(session, task, "node_fact_collector", "fact_check")
@@ -1466,6 +1477,30 @@ async def _compile(
     dim_cands: dict[str, list[ClauseCandidate]],
     dim_titles: dict[str, str],
 ) -> tuple[ReportVersion, dict[str, set[str]], bool]:
+    if task.citation_policy == "reviewed_only":
+        # Human review may change during a long model call. Recheck eligibility
+        # immediately before generating a report, rather than trusting its cache.
+        fresh = {
+            c.clause_id: c
+            for c in await ToolBox(
+                session, task.country_code, citation_policy="reviewed_only", lock_reviews=True
+            )._load_candidates()
+        }
+        for code, result in results.items():
+            old = {c.clause_id: c for c in dim_cands.get(code, [])}
+            for finding in result.get("findings", []):
+                if not finding.get("_ok"):
+                    continue
+                cid = str(finding["clause_id"])
+                if (
+                    cid not in fresh
+                    or cid not in old
+                    or fresh[cid].text != old[cid].text
+                    or fresh[cid].translation_id != old[cid].translation_id
+                ):
+                    raise ValueError(
+                        "引用的复核或版本状态在分析中发生变化，禁止沿用旧候选生成严格报告，请重新分析"
+                    )
     c0 = asyncio.get_event_loop().time()
     dimensions: list[dict[str, Any]] = []
     findings: list[dict[str, Any]] = []
@@ -1500,6 +1535,10 @@ async def _compile(
                     "quote_original": str(f["quote"]),
                     "quote_zh": str(f.get("quote_zh") or "(未提供译文)"),
                     "review_status": cand.review_status,
+                    "source_review_status": cand.source_review_status,
+                    "translation_review_status": cand.translation_review_status,
+                    "translation_id": cand.translation_id,
+                    "language": cand.language,
                     **{
                         key: f.get(key)
                         for key in (
@@ -1517,7 +1556,9 @@ async def _compile(
                     },
                 }
             )
-            lines.append(f"- {tag} {f.get('obligation', '')}(风险:{risk})")
+            lines.append(
+                f"- {tag} {f.get('obligation', '')}(风险:{risk}；{review_label(citations[-1])})"
+            )
             if source_notice(cand.source_nature):
                 lines.append(f"  来源说明：{source_notice(cand.source_nature)}。")
             cited_versions.setdefault(cand.version_id, set()).add(code)
@@ -1565,7 +1606,11 @@ async def _compile(
         elif r.get("repair_unresolved"):
             gap = "仍有补证任务未完成；已有核验结果保留，不能标记为完整报告"
         elif not dim_cands.get(code):
-            gap = "已归档法源中未检索到与该维度相关的可用条款(待核查)"
+            gap = (
+                "证据缺口（待律所复核）：严格策略下没有原文及译文均已复核的可用条款"
+                if tb.citation_policy == "reviewed_only"
+                else "已归档法源中未检索到与该维度相关的可用条款(待核查)"
+            )
         elif not good:
             gap = r.get("gaps") or "模型未能给出可通过原文核验的结论(待核查)"
         elif dropped:
@@ -1581,7 +1626,7 @@ async def _compile(
             gap = "证据选择/核验仍失败，未生成可交付结论；请重试分析"
         body = ""
         if lines:
-            body += "依据与合规义务(均已通过原文子串/数字核验,条款状态为机器翻译待律所复核):\n"
+            body += "依据与合规义务（程序子串/数字核验通过；人工复核状态逐条标注）:\n"
             body += "\n".join(lines)
         elif gap:
             body = "本维度暂无经核验的依据,结论待核查。"
@@ -1620,7 +1665,8 @@ async def _compile(
     summary = (
         f"本报告针对【{task.vehicle_model}】在【{task.country_code}】的业务场景,"
         f"由多智能体检索条款、模型分析并经程序核验:共 {len(findings)} 条结论通过原文核验,"
-        f"覆盖 {covered}/8 个维度。所有引用均为官方原文,中文为机器翻译,尚未经律所复核。"
+        f"覆盖 {covered}/8 个维度。来源性质、译文及人工复核状态见各引用；机器分析待人工核对。"
+        + review_overview(dimensions)
         + (
             "分析存在技术失败，当前记录不可作为报告交付，请检查失败原因后重试。"
             if technical_failed
@@ -1635,6 +1681,7 @@ async def _compile(
         .all()
     )
     rv = ReportVersion(
+        citation_policy=task.citation_policy,
         task_id=task.id,
         version_no=max((r.version_no for r in rvs), default=0) + 1,
         status="analysis_failed"

@@ -14,7 +14,9 @@ from typing import Any
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.analysis.citation_policy import fully_reviewed
 from app.analysis.retrieval import RETRIEVAL_VERSION, ClauseIndex
+from app.core.config import get_settings
 from app.ingestion.layout_safety import layout_held_clause_ids
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import document_available
@@ -149,6 +151,9 @@ class ClauseCandidate:
     instrument_role: str = ""
     text_source: str = "text_layer"
     source_nature: str = "unclassified"
+    source_review_status: str = "pending_review"
+    translation_review_status: str = "not_translated"
+    translation_id: str | None = None
 
 
 @dataclass
@@ -217,7 +222,17 @@ def clause_relevance(candidate: ClauseCandidate, keywords: list[str]) -> tuple[f
 class ToolBox:
     """一次分析任务的工具箱;记录每次调用供「任务过程」展示。"""
 
-    def __init__(self, session: AsyncSession, country_code: str, cache_scope: str | None = None):
+    def __init__(
+        self,
+        session: AsyncSession,
+        country_code: str,
+        cache_scope: str | None = None,
+        *,
+        citation_policy=None,
+        lock_reviews=False,
+    ):
+        self.lock_reviews = lock_reviews
+        self.citation_policy = citation_policy or get_settings().citation_policy
         self.session = session
         self.country_code = country_code.upper()
         self.cache_scope = cache_scope
@@ -253,59 +268,76 @@ class ToolBox:
         """加载该国每份文件最新已解析版本的全部条款。"""
         if self._candidates_cache is not None:
             return self._candidates_cache
-        rows = list(
-            (
-                await self.session.execute(
-                    select(Clause, DocumentVersion, Document)
-                    .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
-                    .join(Document, Document.id == DocumentVersion.document_id)
-                    .where(Document.country_code == self.country_code)
-                    .where(document_available())
-                    .where(Document.relevance.notin_(("irrelevant", "out_of_scope")))
-                    .where(DocumentVersion.state == "parsed")
-                )
-            ).all()
+        source_query = (
+            select(Clause, DocumentVersion, Document)
+            .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+            .join(Document, Document.id == DocumentVersion.document_id)
+            .where(Document.country_code == self.country_code)
+            .where(document_available())
+            .where(Document.relevance.notin_(("irrelevant", "out_of_scope")))
+            .where(DocumentVersion.state == "parsed")
+            .execution_options(populate_existing=True)
         )
+        if self.lock_reviews:
+            source_query = source_query.with_for_update(read=True)
+        rows = list((await self.session.execute(source_query)).all())
         latest: dict[uuid.UUID, int] = {}
         for _, ver, doc in rows:
             latest[doc.id] = max(latest.get(doc.id, 0), ver.version_no)
         clause_ids = [c.id for c, ver, doc in rows if ver.version_no == latest[doc.id]]
         layout_held = set(await layout_held_clause_ids(self.session, clause_ids))
-        trs = (
-            list(
-                (
-                    await self.session.execute(
-                        select(ClauseTranslation).where(
-                            ClauseTranslation.clause_id.in_(clause_ids),
-                            ClauseTranslation.is_current.is_(True),
-                            ClauseTranslation.review_status.notin_(
-                                (
-                                    "superseded",
-                                    "not_translated",
-                                    "translation_failed",
-                                    "rejected",
-                                    "stale",
-                                )
-                            ),
-                        )
+        translation_query = (
+            select(ClauseTranslation)
+            .where(
+                ClauseTranslation.clause_id.in_(clause_ids),
+                ClauseTranslation.is_current.is_(True),
+                ClauseTranslation.quality_check_passed.is_(True),
+                ClauseTranslation.review_status.notin_(
+                    (
+                        "superseded",
+                        "not_translated",
+                        "translation_failed",
+                        "rejected",
+                        "stale",
                     )
-                )
-                .scalars()
-                .all()
+                ),
             )
-            if clause_ids
-            else []
+            .execution_options(populate_existing=True)
         )
-        tr_map = {t.clause_id: t for t in trs}
+        if self.lock_reviews:
+            translation_query = translation_query.with_for_update(read=True)
+        trs = list((await self.session.scalars(translation_query)).all()) if clause_ids else []
+        by_clause = {}
+        for t in trs:
+            by_clause.setdefault(t.clause_id, []).append(t)
+        # Multiple 'current' rows are an unresolved version conflict, not permission
+        # to choose an arbitrary approved translation from database row order.
+        tr_map = {cid: values[0] for cid, values in by_clause.items() if len(values) == 1}
         out: list[ClauseCandidate] = []
         for clause, ver, doc in rows:
             if (
                 ver.version_no != latest[doc.id]
                 or clause.id in layout_held
                 or ver.legal_status == "repealed"
+                or ver.review_status == "rejected"
             ):
                 continue
             tr = tr_map.get(clause.id)
+            source_status = (
+                "approved"
+                if ver.review_status == "approved" and not clause.needs_review
+                else "pending_review"
+            )
+            translation_status = (
+                tr.review_status
+                if tr
+                else "ambiguous_current"
+                if len(by_clause.get(clause.id, [])) > 1
+                else "not_translated"
+            )
+            reviewed = fully_reviewed(source_status, translation_status, clause.language or "")
+            if self.citation_policy == "reviewed_only" and not reviewed:
+                continue
             out.append(
                 ClauseCandidate(
                     clause_id=str(clause.id),
@@ -316,7 +348,10 @@ class ToolBox:
                     label=clause_label(clause.clause_number, clause.ordinal, clause.page_start),
                     text=clause.original_text,
                     source_url=doc.source_url,
-                    review_status=tr.review_status if tr else "pending_review",
+                    review_status="approved" if reviewed else "pending_review",
+                    source_review_status=source_status,
+                    translation_review_status=translation_status,
+                    translation_id=str(tr.id) if tr else None,
                     legal_status=ver.legal_status,
                     heading=clause.heading or "",
                     language=clause.language or "",
@@ -330,7 +365,6 @@ class ToolBox:
         import asyncio
 
         from app.analysis.source_context import fragment_links, source_drafts
-        from app.core.config import get_settings
         from app.ingestion.archive import ArchiveStore
 
         versions = {str(ver.id): ver for _, ver, _ in rows}
@@ -417,6 +451,11 @@ class ToolBox:
                     KgEdge.is_structural.is_(False),
                     KgNode.node_type.in_(("OBLIGATION", "PENALTY", "DATA_CATEGORY")),
                     KgNode.review_status.in_(("approved", "pending_review")),
+                    *(
+                        [KgEdge.review_status == "approved", KgNode.review_status == "approved"]
+                        if self.citation_policy == "reviewed_only"
+                        else []
+                    ),
                 )
             )
         ).all()
@@ -441,11 +480,12 @@ class ToolBox:
             "clauses_total": len(cands),
             "clauses_usable": len(usable),
             "legal_status_counts": statuses,
+            "citation_policy": self.citation_policy,
         }
         self._record(
             "check_source_availability",
             "国别法源可用性前置检查",
-            {"country_code": self.country_code},
+            {"country_code": self.country_code, "citation_policy": self.citation_policy},
             f"{len(docs)} 份文件、{len(cands)} 条条款,其中可用于检索 {len(usable)} 条"
             f"(已过滤目录页/过短/乱码);现行状态分布 {statuses}",
             started,
@@ -481,7 +521,9 @@ class ToolBox:
                 query,
                 top_k,
                 config,
-                cache_scope=(self.country_code + ":" + self.cache_scope)
+                cache_scope=(
+                    self.country_code + ":" + self.citation_policy + ":" + self.cache_scope
+                )
                 if self.cache_scope
                 else None,
             )
@@ -536,6 +578,11 @@ class ToolBox:
                             KgEdge.is_structural.is_(False),
                             KgEdge.judge_verdict == "yes",
                             KgEdge.extractor_model != "kg-rule-extractor-v1",
+                            *(
+                                [KgEdge.review_status == "approved"]
+                                if self.citation_policy == "reviewed_only"
+                                else []
+                            ),
                         )
                         .limit(50)
                     )
@@ -570,6 +617,13 @@ class ToolBox:
             and e.target_node_id in nodes
             and nodes[e.source_node_id].review_status in ("approved", "pending_review")
             and nodes[e.target_node_id].review_status in ("approved", "pending_review")
+            and (
+                self.citation_policy != "reviewed_only"
+                or (
+                    nodes[e.source_node_id].review_status == "approved"
+                    and nodes[e.target_node_id].review_status == "approved"
+                )
+            )
         ]
         self._record(
             "query_kg_obligations",

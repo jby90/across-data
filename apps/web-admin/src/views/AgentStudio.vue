@@ -307,6 +307,7 @@ const PHASE_LABEL_MAP: Record<string, string> = {
 }
 
 const loading = ref(false)
+const citationPolicyLabel = ref('引用策略加载中')
 const workflow = ref<WorkflowConfig | null>(null)
 const versions = ref<WorkflowVersionSummary[]>([])
 const selectedVersionNo = ref<number | undefined>(undefined)
@@ -997,6 +998,9 @@ function selectNode(nodeId: string) {
 }
 
 onMounted(() => {
+  api.get<{ label: string }>('/admin/agent-studio/citation-policy')
+    .then(v => { citationPolicyLabel.value = v.label })
+    .catch(() => { citationPolicyLabel.value = '引用策略暂不可用，请刷新' })
   nodeObserver = new ResizeObserver((entries) => {
     const heights = { ...nodeHeights.value }
     let changed = false
@@ -1041,6 +1045,7 @@ onUnmounted(() => {
               配置只读 · 布局可拖动
             </el-tag>
             <el-tag type="info" size="small"> DSL: {{ workflow?.dsl_version }} </el-tag>
+            <el-tag type="info" size="small" data-testid="citation-policy-readonly">{{ citationPolicyLabel }}</el-tag>
           </div>
         </div>
       </div>

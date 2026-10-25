@@ -371,6 +371,7 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
 
     rv_outs = [
         ReportVersionOut(
+            citation_policy=rv.citation_policy or "legacy_unrecorded",
             source_integrity_alerts=[
                 f"原文绑定或页级解析待核对，引用 {cid} 已隔离，需核查后重新分析"
                 for cid in await report_held_citation_ids(session, rv)
@@ -450,6 +451,20 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
 
 
 # ==================== 管理端 Dify 风格只读多智能体工作台接口 ====================
+
+
+@admin_router.get("/citation-policy")
+async def get_citation_policy(_: AdminOrReviewerDep):
+    from app.core.config import get_settings
+
+    policy = get_settings().citation_policy
+    return {
+        "policy": policy,
+        "label": "允许机器内容进入草稿，逐条待核对"
+        if policy == "allow_machine_with_notice"
+        else "仅使用原文及译文均已复核的引用",
+        "readonly": True,
+    }
 
 
 @admin_router.get("/workflow", response_model=AgentWorkflowConfigOut)
@@ -877,6 +892,7 @@ async def edit_user_report_version(
         new_dims.append(copy_d)
 
     new_rv = ReportVersion(
+        citation_policy=latest.citation_policy,
         task_id=task.id,
         version_no=next_ver,
         status="analysis_failed"
@@ -900,6 +916,7 @@ async def edit_user_report_version(
     await session.refresh(new_rv)
 
     return ReportVersionOut(
+        citation_policy=new_rv.citation_policy or "legacy_unrecorded",
         id=new_rv.id,
         task_id=new_rv.task_id,
         version_no=new_rv.version_no,
@@ -1020,7 +1037,8 @@ async def export_user_report(
         media_type=media[ext],
         headers={
             "Content-Disposition": 'attachment; filename="'
-            + export_filename(task, rv, ext, dimension) + '"',
+            + export_filename(task, rv, ext, dimension)
+            + '"',
             "Cache-Control": "private, no-store",
         },
     )
@@ -1101,21 +1119,27 @@ async def get_clause_citation_card(
     from app.ingestion.layout_safety import layout_held_clause_ids
 
     layout_pending = bool(await layout_held_clause_ids(session, [clause.id]))
-    tr = (
-        await session.execute(
-            select(ClauseTranslation)
-            .where(
-                ClauseTranslation.clause_id == clause.id,
-                ClauseTranslation.is_current.is_(True),
-                ClauseTranslation.review_status.in_(
-                    ("machine_translated", "pending_review", "approved")
-                ),
-                ClauseTranslation.quality_check_passed.is_(True),
+    translation_rows = list(
+        (
+            await session.execute(
+                select(ClauseTranslation)
+                .where(
+                    ClauseTranslation.clause_id == clause.id,
+                    ClauseTranslation.is_current.is_(True),
+                    ClauseTranslation.review_status.in_(
+                        ("machine_translated", "pending_review", "approved")
+                    ),
+                    ClauseTranslation.quality_check_passed.is_(True),
+                )
+                .order_by(ClauseTranslation.updated_at.desc())
+                .limit(2)
             )
-            .order_by(ClauseTranslation.updated_at.desc())
-            .limit(1)
         )
-    ).scalar_one_or_none()
+        .scalars()
+        .all()
+    )
+    tr = translation_rows[0] if len(translation_rows) == 1 else None
+    translation_ambiguous = len(translation_rows) > 1
 
     edges = list(
         (
@@ -1240,17 +1264,40 @@ async def get_clause_citation_card(
         "source_url": doc.source_url,
         "original_text": clause.original_text,
         "translated_text": valid_tr_text,
-        "review_status": "pending_review"
-        if layout_pending
-        else tr.review_status
+        "review_status": "approved"
+        if (
+            not layout_pending
+            and ver.review_status == "approved"
+            and not clause.needs_review
+            and ((tr and tr.review_status == "approved") or clause.language.startswith("zh"))
+        )
+        else "pending_review"
         if tr
         else "not_translated",
-        "source_integrity_alerts": [
-            "本页存在待核对解析修订；以下仅保留旧原文和译文，禁止作新的法律依据引用。"
-        ]
-        if layout_pending
-        else [],
-        "usable_as_legal_basis": bool(not layout_pending and tr and tr.review_status == "approved"),
+        "source_integrity_alerts": (
+            ["本页存在待核对解析修订；以下仅保留旧原文和译文，禁止作新的法律依据引用。"]
+            if layout_pending
+            else []
+        )
+        + (
+            ["同一条款存在多个现行译文，尚未消歧；保留原文，不任意选取一个译文。"]
+            if translation_ambiguous
+            else []
+        ),
+        "source_review_status": "approved"
+        if ver.review_status == "approved" and not clause.needs_review
+        else "pending_review",
+        "translation_review_status": tr.review_status
+        if tr
+        else "ambiguous_current"
+        if translation_ambiguous
+        else "not_translated",
+        "usable_as_legal_basis": bool(
+            not layout_pending
+            and ver.review_status == "approved"
+            and not clause.needs_review
+            and ((tr and tr.review_status == "approved") or clause.language.startswith("zh"))
+        ),
         "mini_graph": mini_graph.model_dump(mode="json"),
     }
 

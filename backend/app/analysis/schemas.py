@@ -4,7 +4,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 def format_conversation_code(task_id: uuid.UUID, created_at: datetime | None = None) -> str:
@@ -213,6 +213,10 @@ class AnalysisStepTraceOut(BaseModel):
 
 
 class ReportCitationOut(BaseModel):
+    source_review_status: str = "unrecorded"
+    translation_review_status: str = "unrecorded"
+    translation_id: str | None = None
+    language: str = ""
     version_id: str | None = None
     source_nature: str = "unclassified"
     source_notice: str = ""
@@ -258,6 +262,8 @@ class StaleImpactAlertOut(BaseModel):
 
 
 class ReportVersionOut(BaseModel):
+    citation_policy: str = "legacy_unrecorded"
+    citation_review_summary: dict[str, int] = Field(default_factory=dict)
     source_integrity_alerts: list[str] = Field(default_factory=list)
     id: uuid.UUID
     task_id: uuid.UUID
@@ -269,6 +275,13 @@ class ReportVersionOut(BaseModel):
     dimensions: list[ReportDimensionOut]
     stale_impacts: list[StaleImpactAlertOut] = Field(default_factory=list)
     created_at: datetime
+
+    @model_validator(mode="after")
+    def summarize_reviews(self):
+        from app.analysis.citation_policy import review_summary
+
+        self.citation_review_summary = review_summary([d.model_dump() for d in self.dimensions])
+        return self
 
 
 class AnalysisTaskSummaryOut(BaseModel):

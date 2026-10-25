@@ -53,6 +53,9 @@ interface StepTrace {
 }
 
 interface Citation {
+  source_review_status?: string
+  translation_review_status?: string
+  language?: string
   citation_tag: string
   clause_id: string | null
   document_title: string
@@ -81,6 +84,8 @@ interface StaleImpact {
 }
 
 interface ReportVersion {
+  citation_policy: string
+  citation_review_summary: { approved: number; pending: number; total: number; occurrences: number }
   source_integrity_alerts?: string[]
   version_no: number
   status: string
@@ -133,6 +138,8 @@ interface MiniKgEdge {
   review_status: string
 }
 interface CitationCard {
+  source_review_status?: string
+  translation_review_status?: string
   source_integrity_alerts?: string[]
   document_title: string
   clause_number: string
@@ -697,11 +704,17 @@ onUnmounted(() => {
                       ? '来源异常 · 暂停导出'
                       : report.is_partial_sample
                         ? '部分样稿 · 有维度缺依据'
-                        : '全部维度均有核验依据'
+                        : '八维度程序核验通过 · 草稿待复核'
                 }}
               </el-tag>
             </div>
             <p class="summary">{{ report.executive_summary }}</p>
+            <el-alert type="warning" :closable="false" data-testid="citation-review-overview"
+              :title="`引用复核概览：已复核 ${report.citation_review_summary?.approved ?? 0} 条 / 待核对 ${report.citation_review_summary?.pending ?? 0} 条（按条款及版本去重）。分析结论仍为机器草稿。`"
+              style="margin-bottom: 12px" />
+            <p class="meta">生成时引用策略：{{ report.citation_policy === 'reviewed_only'
+              ? '仅引用已复核材料' : report.citation_policy === 'allow_machine_with_notice'
+                ? '允许机器内容进入草稿，逐条待核对' : '历史未记录，不能推定引用已获人工复核' }}</p>
             <el-alert
               v-for="alert in report.source_integrity_alerts"
               :key="alert"
@@ -771,7 +784,7 @@ onUnmounted(() => {
                   <b>{{ d.dimension_code }}</b
                   >&nbsp;{{ d.dimension_title }}&nbsp;
                   <el-tag size="small" :type="d.status === 'COMPLETE' ? 'success' : 'warning'">
-                    {{ d.status === 'COMPLETE' ? '依据已核验' : '有缺口' }}
+                    {{ d.status === 'COMPLETE' ? '引文程序核验通过' : '有缺口' }}
                   </el-tag>
                   &nbsp;
                   <el-tag size="small" :type="d.risk_level === 'HIGH' ? 'danger' : 'info'">
@@ -801,13 +814,14 @@ onUnmounted(() => {
                     v-for="c in d.citations"
                     :key="c.citation_tag"
                     size="small"
-                    type="primary"
+                    :type="c.source_review_status === 'approved' && (c.translation_review_status === 'approved' || c.language?.startsWith('zh')) ? 'success' : 'warning'"
                     plain
                     data-testid="report-citation-badge"
                     @click="openCitation(c.clause_id, c.quote_original)"
                   >
                     {{ c.citation_tag }} {{ c.document_title.slice(0, 22) }} ·
                     {{ c.clause_number }}
+                    · {{ c.source_review_status === 'approved' && (c.translation_review_status === 'approved' || c.language?.startsWith('zh')) ? '引用材料已复核' : '待核对' }}
                   </el-button>
                 </div>
               </el-collapse-item>
@@ -935,6 +949,9 @@ onUnmounted(() => {
               }}
             </el-tag>
           </h4>
+          <p class="muted">当前条款审查状态：原文 {{ card.source_review_status === 'approved' ? '已复核' : '待核对' }}；
+            译文 {{ card.translation_review_status === 'approved' ? '已复核' : card.translated_text ? '待核对' : '未提供' }}。
+            报告标记保留生成时状态，不自动追认历史结论。</p>
           <div v-if="card.source_url" class="muted">
             官方来源:<a :href="card.source_url" target="_blank" rel="noopener">{{
               card.source_url
