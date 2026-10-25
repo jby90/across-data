@@ -1,0 +1,786 @@
+{
+  "mode": "zero_model_replay_not_new_llm_evaluation",
+  "evaluation_sha256": "6f771349e8ed77b00ae5ab225b02edd742b551667a9db0b8f0b308b35ffebb28",
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "retained_batch_id": "62620731-d335-4dd6-8614-8d8cb56ac0f6",
+  "workflow_version_id": "7dff5fe7-1396-4000-b982-8f32eeb0d054",
+  "source_profiles": {
+    "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe": {
+      "source_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+      "pages": [
+        {
+          "page": 1,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 2,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 3,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 4,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 5,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 6,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 7,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 8,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 9,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 10,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 11,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 12,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 13,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 14,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 15,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 16,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 17,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 18,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 19,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 20,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 21,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 22,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 23,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 24,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 25,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 26,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 27,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 28,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 29,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 30,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        },
+        {
+          "page": 31,
+          "text_characters": 0,
+          "images": [
+            {
+              "width": 1058,
+              "height": 1497,
+              "horizontal_dpi": 128.0269012451172,
+              "vertical_dpi": 128.9980010986328
+            }
+          ]
+        }
+      ],
+      "model_calls": 0,
+      "ocr_runs": 0,
+      "human_review": null,
+      "note": "仅测量源 PDF 的文字层/嵌入图像；不能证明可读性、OCR 正确或法律适用。"
+    }
+  },
+  "unresolved_cases": [
+    {
+      "question_id": "S5-27",
+      "country_code": "EG",
+      "dimension_code": "D4",
+      "question": "收集和披露个人数据应满足什么条件？",
+      "state": "evidence_gap_retained",
+      "findings": [
+        {
+          "attempt_index": 0,
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "(؟):",
+          "page_start": 6,
+          "page_end": 9,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "97803677169eb33f4c1ad5188c5acc7351970f82048dc7c58a96657b76c8dca0",
+          "quote_start": 7,
+          "quote_end": 174,
+          "quote": "):\nلا يجوز جمع البيانات الشخصية أو معا أو الإفصاح عنها أو إفشائها بأى\nوسيلة من الوسائل إلا بمؤافقة ضريخة من اله ‎call‏ بالببياتات : أو فى الأخوال\nالمصرح بها قانونًا .\n",
+          "binding_verified": true,
+          "retained_gap": "原文OCR受损：给予明确同意的主体及部分行为表述无法辨认，无法确认收集和披露个人数据所需同意的具体主体与完整例外条件，故不能形成完整规则。",
+          "retained_issues": [
+            "原文OCR受损：给予明确同意的主体及部分行为表述无法辨认，无法确认收集和披露个人数据所需同意的具体主体与完整例外条件，故不能形成完整规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        },
+        {
+          "attempt_index": 1,
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "‎(TV)‏",
+          "page_start": 26,
+          "page_end": 27,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "1569e15e854f3d3dd04884437223c9626b00b0927197f4ef516872c009d53093",
+          "quote_start": 0,
+          "quote_end": 520,
+          "quote": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل فى غير الأحوال المصرح بها قانونًا أو بدون موافقة الشخص المعنى بالبيانات .\nالجريدة الرسمية - العدد 74 مكرر (ه) فى ‎V0‏ يولية سنة ‎VV 78١‏\nوتكون العقوبة الحبس مدة لا تقل عن ستة شهور وبغرامة لا تقل عن ‎tle‏ ألف جنيه\nنى جنيه ‎ahs‏ بإحدى هاتين العقوبتين . إذا ارتكب ذلك مقابل الحصول على\n‎j‏ أو بقصد تغريض الشخص المعنى بالبيانات للخط ‎gh‏ الضرر .\n",
+          "binding_verified": true,
+          "retained_gap": "原文OCR多处关键内容残缺：第1单元中“个人数据”等行为对象、罚款数额范围（“十万 جنيه”与“5 مليون جنيه”之间关系）及条款编号损坏；第2单元罚金具体数额、监禁与罚金择一关系及日期数字不清；第3单元“为获取……”和损害表述残缺。关键行为、限定和数值范围无法确定，不能补字，故不生成规则。",
+          "retained_issues": [
+            "原文OCR多处关键内容残缺：第1单元中“个人数据”等行为对象、罚款数额范围（“十万 جنيه”与“5 مليون جنيه”之间关系）及条款编号损坏；第2单元罚金具体数额、监禁与罚金择一关系及日期数字不清；第3单元“为获取……”和损害表述残缺。关键行为、限定和数值范围无法确定，不能补字，故不生成规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        }
+      ],
+      "retained_technical_error": null,
+      "retained_gap_note": "缺少可完整辨认的关于收集和披露个人数据须取得数据主体同意及法定例外条件的条文；相关候选条文的主体、行为对象或条款编号受损，不能补字确认。",
+      "human_review": null
+    },
+    {
+      "question_id": "S5-28",
+      "country_code": "EG",
+      "dimension_code": "D8",
+      "question": "控制者和处理者有哪些保护职责？",
+      "state": "evidence_gap_retained",
+      "findings": [
+        {
+          "attempt_index": 0,
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "(؟):",
+          "page_start": 6,
+          "page_end": 9,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "97803677169eb33f4c1ad5188c5acc7351970f82048dc7c58a96657b76c8dca0",
+          "quote_start": 554,
+          "quote_end": 1035,
+          "quote": "‎A‏ القرببة ‎Eee‏ الدبو امك اهن فى 3ولوقايينة م\n‏) الفصل الثالث )\n© التزامات المتحكم والمعالج\nأول: التزامات المنحكم\n‏الاحتفاظ بها لأى سبب من الأسباب المشروعة ب ض ‎٠‏ فيجب ألا تبقى فى صورة\n‎. ‏تصحيح أى خطأ بالبيانات الشخصية فور إبلاغه أو علمه به‎ - A\n4 - إمساك سجل خاص للبيانات . على أن يتضمن وصف فئات البيانات الشخصية\n‎gine‏ لهم عن هذه البيانات أو يتيحها لهم وسنده والمدد الزمنية\n‎SUL! pur &‏ اللدخصية ‎a‏ أو تعديلهنا واعسنانات ‎pel‏\nعبر الحدود ووصف الإجراءات ‎row.‏\nGait\n: التزاما",
+          "binding_verified": true,
+          "retained_gap": "所提供的阿拉伯语原文OCR严重受损，尤其是第1、4、5单元中的主体限定、保留条件、记录内容、跨境相关行为及程序描述均不完整或含义不明；无法在不猜测、不补字的情况下完整转述各单元，故不能形成有依据的规则。",
+          "retained_issues": [
+            "所提供的阿拉伯语原文OCR严重受损，尤其是第1、4、5单元中的主体限定、保留条件、记录内容、跨境相关行为及程序描述均不完整或含义不明；无法在不猜测、不补字的情况下完整转述各单元，故不能形成有依据的规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        },
+        {
+          "attempt_index": 1,
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "(0):",
+          "page_start": 9,
+          "page_end": 14,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "9e84d4d569bd9029ca9760acb5fd9f07ed042390dfb2d32504fba6104d94d217",
+          "quote_start": 459,
+          "quote_end": 658,
+          "quote": "الجريدة الرسمية - العدد ‎VA‏ مكرر (ه) فى 18 ‎١١ 7 des dle‏\nوفى حال وجود أكثر من معالج « يلتزم كل منهم بجميع الالتزامات المنصوص عليها\nأوذلك فى يلي عدم وجود عقد يحدد التزامات ومسئوليات كل منهم بوضوح .\n",
+          "binding_verified": true,
+          "retained_gap": "所提供的原文虽提到存在多个处理者时每一处理者受“所规定的全部义务”约束，但未提供这些被引用义务的具体内容；且原文后半句关于“无合同明确约定各自义务和责任”的表述存在 OCR 缺损，条件与法律后果不完整，无法据此形成完整且有依据的规则。",
+          "retained_issues": [
+            "所提供的原文虽提到存在多个处理者时每一处理者受“所规定的全部义务”约束，但未提供这些被引用义务的具体内容；且原文后半句关于“无合同明确约定各自义务和责任”的表述存在 OCR 缺损，条件与法律后果不完整，无法据此形成完整且有依据的规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        },
+        {
+          "attempt_index": 2,
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "(0):",
+          "page_start": 9,
+          "page_end": 14,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "9e84d4d569bd9029ca9760acb5fd9f07ed042390dfb2d32504fba6104d94d217",
+          "quote_start": 915,
+          "quote_end": 1288,
+          "quote": "تصرف قانونى\n‎Ss\n‎re dio ‏اى ذى‎\n‎Al jis : Cou)\n‏الأحوال إخطار جهات الأمن القومى بالوا\n‏يلعزم بموافا\n‏1:- وض ظبيعة الخرى أو ‎cage‏ و وأسبابه:والعدد التقريبى للبيانات\n\":- بيانات مسئول حماية البيانات الشخصية لديه +\n. ‏ر المحتملةإتليادث الخرق أو الانتهاك‎ y\nاءات المتخذة والمقترح تنفيذها لمواجهة هذا ال\nويكون الشخص الطبيعى المتحكم ‎UI)‏ هو المسئول عن تطبيق أحكام\nهذا القانون .\n",
+          "binding_verified": true,
+          "retained_gap": "所提供的两个原文单元均存在严重OCR残缺、混排与截断：单元1包含不完整短语和无法辨识的术语，无法确定其主体、条件、行为、对象及例外；单元2虽可见“自然人控制者负责适用本法规定”的片段，但前后文缺失，无法确认指代关系与完整法律含义。按覆盖约定，不能补字或猜测，故无法逐段完整转述并形成有依据的规则。",
+          "retained_issues": [
+            "所提供的两个原文单元均存在严重OCR残缺、混排与截断：单元1包含不完整短语和无法辨识的术语，无法确定其主体、条件、行为、对象及例外；单元2虽可见“自然人控制者负责适用本法规定”的片段，但前后文缺失，无法确认指代关系与完整法律含义。按覆盖约定，不能补字或猜测，故无法逐段完整转述并形成有依据的规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        }
+      ],
+      "retained_technical_error": null,
+      "retained_gap_note": "现有候选条款中涉及控制者和处理者义务的段落存在严重OCR缺损，无法在不猜测的情况下确认主体、条件、义务内容及例外，缺少可完整引用的依据。",
+      "human_review": null
+    },
+    {
+      "question_id": "S5-29",
+      "country_code": "EG",
+      "dimension_code": "D2",
+      "question": "儿童或敏感信息处理应注意什么？",
+      "state": "evidence_gap_retained",
+      "findings": [
+        {
+          "attempt_index": 0,
+          "clause_id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "(؟١):‏",
+          "page_start": 14,
+          "page_end": 15,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "ba064af0472c49c2e7404517370e186ba37b411e20b6a64ec6e9542c49e363c6",
+          "quote_start": 61,
+          "quote_end": 384,
+          "quote": "وفيما عدا الأحوال المصرح بها قانونًا ‎J ge‏ على موافقة كتابية وصريحة\nوفى حالة إجراء أى عملية مما ذكر تتعلق ببيانات الأطفال ‎٠‏ يلزم موافقة ولى الأمر .\nVO VWs Redd V0 ‏فى‎ (a) Se VA ‏العيو‎ = digas II Bay\nويجب ألا تكون مشاركة الطفل فى لعبة أو مسابقة أو أى نشاط آخر مشروطة بتقديم\nللطفل يويد على ما هو ضرورى للمشاركة فى ذلك .\n",
+          "binding_verified": true,
+          "retained_gap": "提供的两个原文单元均存在关键OCR残缺：第一段中的规范性动词/条件“J ge”及符号无法辨认；第二段开头以及“بتقديم للطفل يويد”等关键行为、对象和限定残缺。因此无法完整、忠实地转述儿童数据同意要求及参与活动条件，也不能补字或推断。",
+          "retained_issues": [
+            "提供的两个原文单元均存在关键OCR残缺：第一段中的规范性动词/条件“J ge”及符号无法辨认；第二段开头以及“بتقديم للطفل يويد”等关键行为、对象和限定残缺。因此无法完整、忠实地转述儿童数据同意要求及参与活动条件，也不能补字或推断。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        }
+      ],
+      "retained_technical_error": null,
+      "retained_gap_note": "缺少可完整读取的埃及个人数据保护法中儿童数据同意及敏感数据处理条款；候选儿童条款的规范性动词、条件、行为对象和限定内容OCR残缺，不能作为完整依据。",
+      "human_review": null
+    },
+    {
+      "question_id": "S5-30",
+      "country_code": "EG",
+      "dimension_code": "D3",
+      "question": "向境外传输个人数据是否存在限定例外？",
+      "state": "evidence_gap_retained",
+      "findings": [
+        {
+          "attempt_index": 0,
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "‎)١0(‏",
+          "page_start": 15,
+          "page_end": 23,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "4da24a9e2c6ca07a7e71447ef21bf590b8bac89ad2282827337ed34fdcc10811",
+          "quote_start": 0,
+          "quote_end": 452,
+          "quote": "مادة ‎)١0(‏ 4\nاستثناء من حكم |\n‎a‏\n‏الشخصية إلى دولة لا يتوافر ذ\n5 3\nوذلك فى الحالات الآتية :\n‎-١‏ المحافظة على حياة الشخص المعنى\n‎SS‏ وتوفير الرعاية الطبية أو العلاج\nأو إدارة الخدمات الصحية له .\n‏؟ - تنفيذ التزامات بما يضمن إثبات حق أو ممارسته أمام جهات العدالة أو الدفاع عنه .\n‎Eel 15‏ الدبو مكار اله إلى لابين ما\n‏\" - إبرام عقد ‎١‏ أو تنفيذ عقد مبرم بالفعل . أو سيتم إبرامه بين المسئول عن المعالجة\n‏الما تيي بنباية المسلجة العلفة..\nو الزام ل\n‎ih‏ . ",
+          "binding_verified": true,
+          "retained_gap": "提供的原文为阿拉伯语OCR片段，受损严重：第1单元中“استثناء من حكم”之后的适用条件及“إلى دولة لا يتوافر ذ...”处关键限定残缺，无法确定该例外所针对的跨境传输条件；第2单元仅有问号；第4至6单元含大量乱码，合同订立、履行及义务等表述的主语和条件不完整。因关键行为、限定和范围不确定，无法逐段完整转述，不能补字形成规则。",
+          "retained_issues": [
+            "提供的原文为阿拉伯语OCR片段，受损严重：第1单元中“استثناء من حكم”之后的适用条件及“إلى دولة لا يتوافر ذ...”处关键限定残缺，无法确定该例外所针对的跨境传输条件；第2单元仅有问号；第4至6单元含大量乱码，合同订立、履行及义务等表述的主语和条件不完整。因关键行为、限定和范围不确定，无法逐段完整转述，不能补字形成规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        },
+        {
+          "attempt_index": 1,
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "(0):",
+          "page_start": 9,
+          "page_end": 14,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "9e84d4d569bd9029ca9760acb5fd9f07ed042390dfb2d32504fba6104d94d217",
+          "quote_start": 14,
+          "quote_end": 432,
+          "quote": ")لأ\nمع مراعاة احكام المادة )¥\\\nBi cE REL nail A\n‏التنفيذية ووفقًا للحالات المشروعة والقان”!‎\n‏من المركز أو المتحكم أو من أى ذى صفة ب‎\n‏بنطاق عملية المعالجة وموضوعها وطبيعتها ونوع‎\nad ‏العرض اله‎\nت الشخصية واتفاقها وكفايتها مع\nوقكين المركز من التفتيش والرقابة للتأكد\n‎١‏ - الحصول على ترخيص أو تصريح من\n‎VY‏ - يلتزم المعالج خارج جمهورية مصر ‎mil‏ ن ممشل له فى جمهورية مصر العربية\n‏وذلك على ‎rl‏ الى عيب اللقحة السفيلية.\n",
+          "binding_verified": true,
+          "retained_gap": "所提供的原文OCR严重受损，关键主体、条件、许可机关及例外内容残缺，无法完整确定向境外传输个人数据是否存在限定例外，也无法形成完整合规路径规则。",
+          "retained_issues": [
+            "所提供的原文OCR严重受损，关键主体、条件、许可机关及例外内容残缺，无法完整确定向境外传输个人数据是否存在限定例外，也无法形成完整合规路径规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        }
+      ],
+      "retained_technical_error": null,
+      "retained_gap_note": "缺少可完整读取的关于向境外传输个人数据限定例外的原文，包括适用条件、例外情形及程序要求；候选条款片段中关键主体、条件和范围残缺，不能据此形成完整选证。",
+      "human_review": null
+    },
+    {
+      "question_id": "S5-31",
+      "country_code": "EG",
+      "dimension_code": "D7",
+      "question": "监管机关在什么情况下可以撤销许可？",
+      "state": "evidence_gap_retained",
+      "findings": [
+        {
+          "attempt_index": 0,
+          "clause_id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "(19):",
+          "page_start": 23,
+          "page_end": 25,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "9b0b0f549926537892866a3fd1ab3114aaa5d4289b7ad421092f35c762905218",
+          "quote_start": 0,
+          "quote_end": 316,
+          "quote": "مادة (19):\nيجوز للمركز إلغاء الترخيص أو الة\nمن الحالات الآتية :\n. ‏مخالفة شروط الترخيص أو التصريح أو الاعتماد‎ - ١\n‎i‏ الاعتماد بعد إصداره فى أى\n6 الجريدة الرسمية — ‎VA call‏ مكزر (ه) فى 18 يوليةاسنة .م\n؟ - عدم سداد رسوم تجديد الترخيص أو التصريح أو الاعتماد .\nلترخيص أو التصريح أو الاعتماد للغير دون موافقة المركز .\n",
+          "binding_verified": true,
+          "retained_gap": "无法完整转述：unit1 在“إلغاء الترخيص أو ...”之后的关键对象因 OCR 残缺而不明；unit2 存在多处乱码，导致违法条件或行为不完整；unit4 缺少谓语动词，无法确定是授予、转让还是其他行为。因此不能形成第19条撤销许可情形的完整规则。",
+          "retained_issues": [
+            "无法完整转述：unit1 在“إلغاء الترخيص أو ...”之后的关键对象因 OCR 残缺而不明；unit2 存在多处乱码，导致违法条件或行为不完整；unit4 缺少谓语动词，无法确定是授予、转让还是其他行为。因此不能形成第19条撤销许可情形的完整规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        }
+      ],
+      "retained_technical_error": null,
+      "retained_gap_note": "缺少可完整读取的撤销许可条款：aafd139d-6463-4fdb-a958-a0404c8bce19第19条 sentence 1 在“إلغاء الترخيص أو ...”之后的关键对象不明；sentence 2存在多处乱码，sentence 4缺少谓语动词，无法确定全部撤销情形。",
+      "human_review": null
+    },
+    {
+      "question_id": "S5-32",
+      "country_code": "EG",
+      "dimension_code": "D6",
+      "question": "未经许可处理个人数据的处罚依据在哪里？",
+      "state": "evidence_gap_retained",
+      "findings": [
+        {
+          "attempt_index": 0,
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": "‎(TV)‏",
+          "page_start": 26,
+          "page_end": 27,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "1569e15e854f3d3dd04884437223c9626b00b0927197f4ef516872c009d53093",
+          "quote_start": 0,
+          "quote_end": 520,
+          "quote": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل فى غير الأحوال المصرح بها قانونًا أو بدون موافقة الشخص المعنى بالبيانات .\nالجريدة الرسمية - العدد 74 مكرر (ه) فى ‎V0‏ يولية سنة ‎VV 78١‏\nوتكون العقوبة الحبس مدة لا تقل عن ستة شهور وبغرامة لا تقل عن ‎tle‏ ألف جنيه\nنى جنيه ‎ahs‏ بإحدى هاتين العقوبتين . إذا ارتكب ذلك مقابل الحصول على\n‎j‏ أو بقصد تغريض الشخص المعنى بالبيانات للخط ‎gh‏ الضرر .\n",
+          "binding_verified": true,
+          "retained_gap": "所提供的原文存在关键OCR残损：罚款最低/最高数额范围、个人数据的核心表述、手段表述、监禁与罚金的具体范围，以及加重情节中的获益或损害目的均不完整，无法在不补字的情况下完整转述处罚规则。",
+          "retained_issues": [
+            "所提供的原文存在关键OCR残损：罚款最低/最高数额范围、个人数据的核心表述、手段表述、监禁与罚金的具体范围，以及加重情节中的获益或损害目的均不完整，无法在不补字的情况下完整转述处罚规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        },
+        {
+          "attempt_index": 1,
+          "clause_id": "9a94c8f9-29b5-4140-bf38-67f3fad261f1",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": ")¥&(",
+          "page_start": 29,
+          "page_end": 30,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "97515f064908d1896c352855c2de458aa72773f965c8dc80d0bbf2a2397752f3",
+          "quote_start": 0,
+          "quote_end": 197,
+          "quote": "مادة )¥&( :\n‎Jy‏ عن|الإدارة الفعلية للشخص الاعتبارى المخالف بذات العقوبات المقررة\n‏¥\n‏مادة )24%( >\n‏يجوز للمتهم فى أ\n‏ويكون التصالح مع المركز فى الجنح المنصو\nالقانون فى أى حالة كانت عليها الدعوى .\n",
+          "binding_verified": true,
+          "retained_gap": "所提供的原文为阿拉伯文且OCR受损，条款编号与句子残缺，仅能辨认出涉及违法法人的实际管理者可能承担相同刑罚、以及在轻微犯罪中可与中心和解的片段；但主体、触发条件、行为对象、法律后果及例外均不完整，也无法确认该片段与未经许可处理个人数据相关，不能形成完整有依据的处罚规则。需补全该条款完整原文及与未经许可处理个人数据处罚直接相关的条款。",
+          "retained_issues": [
+            "所提供的原文为阿拉伯文且OCR受损，条款编号与句子残缺，仅能辨认出涉及违法法人的实际管理者可能承担相同刑罚、以及在轻微犯罪中可与中心和解的片段；但主体、触发条件、行为对象、法律后果及例外均不完整，也无法确认该片段与未经许可处理个人数据相关，不能形成完整有依据的处罚规则。需补全该条款完整原文及与未经许可处理个人数据处罚直接相关的条款。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        },
+        {
+          "attempt_index": 2,
+          "clause_id": "3a8dff06-455f-4295-9070-8023be9f7edf",
+          "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+          "document_id": "396f1228-8f8e-4751-9aef-b14e20d52a18",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "clause_number": ")+&(",
+          "page_start": 27,
+          "page_end": 28,
+          "text_source": "ocr",
+          "needs_review": true,
+          "review_status": "pending_review",
+          "legal_status": "unknown",
+          "source_text_sha256": "74b7f28cf762e078e6e45222f6c2bdc7f24213ab69d3e101df49e13938e095dd",
+          "quote_start": 56,
+          "quote_end": 177,
+          "quote": "ويعاقب بقرامة ل تقل عن خمسين ألف جد ل ##اوز خسمائة ألف:عنيه )3( وقعث\nالجريمة نتيجة لإهمال مسئول حماية البيانات الشخصية .\n",
+          "binding_verified": true,
+          "retained_gap": "所给引文OCR受损严重（如“بقرامة ل تقل”“جد ل ##اوز”“عنيه )3( وقعث”等），无法确定处罚主体、所引第(3)项犯罪的具体内容、罚金上下限的完整表述及币种；引文仅显示因个人数据保护负责人过失导致犯罪发生时可处罚金，未完整覆盖“未经许可处理个人数据”的处罚依据，不能据此形成完整规则。",
+          "retained_issues": [
+            "所给引文OCR受损严重（如“بقرامة ل تقل”“جد ل ##اوز”“عنيه )3( وقعث”等），无法确定处罚主体、所引第(3)项犯罪的具体内容、罚金上下限的完整表述及币种；引文仅显示因个人数据保护负责人过失导致犯罪发生时可处罚金，未完整覆盖“未经许可处理个人数据”的处罚依据，不能据此形成完整规则。"
+          ],
+          "runtime_accepted": false,
+          "human_review": null
+        }
+      ],
+      "retained_technical_error": null,
+      "retained_gap_note": "缺少可完整辨识的“未经许可处理个人数据”处罚条款：罚金最低和最高数额、监禁期限、犯罪主体、加重情节及与个人数据保护负责人过失相关的罚则均因OCR残损无法确认；现有材料不能形成处罚依据的完整选证。",
+      "human_review": null
+    }
+  ],
+  "unresolved_case_count": 6,
+  "input_case_count": 6,
+  "state": "retained_gap_audit",
+  "source_binding_checks": 12,
+  "new_model_calls": 0,
+  "new_model_tokens": 0,
+  "database_writes": 0,
+  "new_legal_conclusions": 0,
+  "new_human_approvals": 0,
+  "note": "仅重验既有失败记录与原文绑定，不更新模型评分、不修改原文或批准状态。"
+}
