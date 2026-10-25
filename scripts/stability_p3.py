@@ -51,6 +51,7 @@ async def run(args):
             first = next((t for t in task["step_traces"] if t["phase"] == "verification"), None)
             output = (first or {}).get("output_snapshot") or {}
             checks = output.get("verification_items") or []
+            readiness = output.get("readiness_items") or []
             initial_calls = [
                 c for t in task["step_traces"] if t["phase"] == "analysis" for c in t["tool_calls"]
             ]
@@ -59,8 +60,15 @@ async def run(args):
                     "task_id": task["id"],
                     "status": task["status"],
                     "workflow_version_id": task.get("workflow_version_id"),
-                    "first_evaluated": bool(checks),
-                    "first_failed": bool(output.get("problems")) if checks else None,
+                    "first_evaluated": bool(checks or readiness),
+                    "first_failed": bool(output.get("problems")) if checks or readiness else None,
+                    "first_quote_failed": any(not c["passed"] for c in checks) if checks else None,
+                    "first_missing_dimensions": [c["dimension_code"] for c in readiness
+                                                 if not c["has_findings"] or c["error"]],
+                    "retrieval_planning": [c["arguments"]["planning"]
+                                           for t in task["step_traces"] if t["phase"] == "retrieval"
+                                           for c in t["tool_calls"]
+                                           if c["arguments"].get("planning")],
                     "first_problems": output.get("problems", []),
                     "local_selection_retries": sum(
                         len(c["arguments"].get("selection_retries", [])) for c in initial_calls

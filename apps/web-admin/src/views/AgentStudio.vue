@@ -1586,7 +1586,7 @@ onUnmounted(() => {
 
             <div class="inspector-section">
               <div class="sec-title">
-                {{ !workflow?.executable ? '历史配置说明（不证明实际执行）' : selectedNode.node_type === 'analyst' ? '实际模型 System Prompt' : '执行说明（不发送给模型）' }}
+                {{ !workflow?.executable ? '历史配置说明（不证明实际执行）' : selectedNode.node_type === 'analyst' || selectedNode.runtime_settings?.semantic_planning === true ? '实际模型 System Prompt' : '执行说明（不发送给模型）' }}
                 <el-tag size="small" type="info">只读锁定</el-tag>
               </div>
               <el-input

@@ -202,8 +202,16 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
         "phase": "write_from_evidence",
         "dimension": {"code": dim_code, "title": dim_title},
         "business_fact": str(task.facts_json[finding["fact_key"]]),
+        "question": task_query(task.facts_json or {}, dim_code),
         "evidence": {"quote": result["quote"]},
         "output_schema": GroundedClaim.model_json_schema(),
+        "fidelity_checklist": [
+            "主体、代词和所有格必须相同，不能新增另一主体",
+            "规范性动词、行为对象、范围和全部例外保持一致",
+            "条文引用保留原文层级标记，不猜译法律层级",
+            "申报/许可/授权等术语有歧义时保留原词，不能自行认定性质",
+            "完整条件来自原文，核验进度或缺其他材料不是本条法律条件",
+        ],
     }
     # The model sees the same exclusive rule/gap contract that Pydantic enforces.
     message["output_schema"]["oneOf"] = [
@@ -462,6 +470,9 @@ def _verify_dimension(
     """核验一个维度的全部结论,把通过/失败写回 finding,并返回问题清单。"""
     by_id = {c.clause_id: c for c in cands}
     problems: list[str] = []
+    if cands and (result.get("error") or not result.get("findings")):
+        detail = result.get("error") or result.get("gaps") or "没有结论且没有具体原因"
+        problems.append(f"{dim_code}: 有候选但未形成可核验结论：{detail}")
     for f in result.get("findings", []):
         if not isinstance(f, dict):
             continue
@@ -571,19 +582,26 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
 
     async def retrieve():
         availability = await tb.check_source_availability()
-        dim_cands = {}
-        for code, _ in EIGHT_DIMENSIONS_SPEC:
-            dim_cands[code] = await tb.search_effective_clauses(
-                code,
-                top_k=runtime["node_mcp_retriever"]["top_k"],
-                query=task_query(task.facts_json or {}, code),
-                config=runtime["node_mcp_retriever"],
-            )
+        # check_source_availability populates the shared source cache first. The search
+        # calls below read that cache; no concurrent commands use the AsyncSession.
+        searched = await asyncio.gather(
+            *[
+                tb.search_effective_clauses(
+                    code,
+                    top_k=runtime["node_mcp_retriever"]["top_k"],
+                    query=task_query(task.facts_json or {}, code),
+                    config=runtime["node_mcp_retriever"],
+                )
+                for code, _ in EIGHT_DIMENSIONS_SPEC
+            ]
+        )
+        dim_cands = dict(zip((c for c, _ in EIGHT_DIMENSIONS_SPEC), searched, strict=True))
         all_cands = {c.clause_id: c for lst in dim_cands.values() for c in lst}
         await tb.query_kg_obligations(list(all_cands))
         await tb.verify_clause_effective_date(list(all_cands.values()))
         return availability, dim_cands
 
+    retrieval_started = time.perf_counter()
     availability, dim_cands = await asyncio.wait_for(
         retrieve(),
         timeout=runtime["node_mcp_retriever"]["timeout"],
@@ -604,7 +622,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         ),
         calls=step_calls,
         tokens=tb.retrieval_tokens,
-        duration_ms=sum(c.duration_ms for c in step_calls),
+        duration_ms=int((time.perf_counter() - retrieval_started) * 1000),
         inp={
             "country_code": cc,
             "dimensions": [code for code, _ in EIGHT_DIMENSIONS_SPEC],
@@ -713,12 +731,21 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         calls: list[ToolCall] = []
         problems: list[str] = []
         verification_items: list[dict[str, Any]] = []
+        readiness_items: list[dict[str, Any]] = []
         for code in codes:
-            r = results.get(code)
-            if not r or r.get("error"):
-                continue
+            r = results.get(code) or {}
             c0 = asyncio.get_event_loop().time()
             probs = _verify_dimension(code, r, dim_cands[code])
+            readiness_items.append(
+                {
+                    "dimension_code": code,
+                    "has_candidates": bool(dim_cands[code]),
+                    "has_findings": bool(r.get("findings")),
+                    "error": r.get("error"),
+                    "gap": r.get("gaps"),
+                    "passed": bool(r.get("findings")) and not r.get("error") and not probs,
+                }
+            )
             by_id = {c.clause_id: c for c in dim_cands[code]}
             for f in r.get("findings", []):
                 if not isinstance(f, dict):
@@ -751,7 +778,8 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                     tool_label=f"{code} 引用子串与数字核验",
                     arguments={"dimension": code, "findings": n},
                     result_summary=(
-                        f"{n - len(probs)}/{n} 条通过" + (f";{'; '.join(probs)}" if probs else "")
+                        f"{sum(bool(f.get('_ok')) for f in r.get('findings', []))}/{n} 条通过"
+                        + (f";{'; '.join(probs)}" if probs else "")
                     ),
                     duration_ms=int((asyncio.get_event_loop().time() - c0) * 1000),
                     verified=bool(n) and not probs,
@@ -787,6 +815,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                 "verified_failed_count": len(problems),
                 "problems": problems,
                 "verification_items": verification_items,
+                "readiness_items": readiness_items,
             },
         )
         return problems

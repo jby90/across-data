@@ -13,7 +13,7 @@ from app.analysis.retrieval_planner import RETRIEVAL_SYSTEM_PROMPT
 from app.core.config import get_settings
 from app.knowledge.history import snapshot
 
-RUNTIME_SCHEMA = "s5-planned-retrieval-v3"
+RUNTIME_SCHEMA = "s5-query-routes-v4"
 # Applicable fields only: deterministic nodes do not pretend to use LLM parameters.
 PARAMETERS = {
     "node_start": set(),
@@ -75,6 +75,7 @@ def baseline_nodes() -> list[dict]:
     )
     by_id["node_mcp_retriever"]["system_prompt"] = RETRIEVAL_SYSTEM_PROMPT
     by_id["node_mcp_retriever"]["model_name"] = get_settings().llm_model
+    by_id["node_mcp_retriever"]["model_provider"] = "OpenAI-compatible API（可选规划）；本地稀疏检索"
     analyst = by_id["node_dimension_analyst"]
     analyst["system_prompt"] = ANALYSIS_SYSTEM_PROMPT
     analyst["model_name"] = get_settings().llm_model

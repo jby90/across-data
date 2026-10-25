@@ -47,7 +47,7 @@ def write_report(result, path):
     ]
     for c in result["cases"]:
         lines.append(
-            f"|{c['question_id']}|{c['country_code']}|{c['dimension_code']}|{c['retrieval_hits']}/{c['retrieval_expected']}|{c['faithful_findings']}/{c['findings_total']}|{c['supported_findings']}/{c['judged_findings']}|{'有' if c['analysis_error'] or c['judge_error'] else '无'}| |"
+            f"|{c['question_id']}|{c['country_code']}|{c['dimension_code']}|{c['retrieval_hits']}/{c['retrieval_expected']}|{c['faithful_findings']}/{c['findings_total']}|{c['supported_findings']}/{c['judged_findings']}|{'有' if c['analysis_error'] or c['judge_error'] or c.get('retrieval_error') else '无'}| |"
         )
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")

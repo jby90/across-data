@@ -2,11 +2,12 @@
 
 import hashlib
 import re
+import unicodedata
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SELECTION_VERSION = "legal-units-v2"
+SELECTION_VERSION = "legal-units-v3"
 # Semicolons join legal lists to their chapeau; abbreviations must not split Art. / Sec.
 _BOUNDARY = re.compile(r"(?<=[.!?])(?:[ \t]+|\r?\n)|(?<=[。！？؟])\s*|\n[ \t]*\n")
 _ABBREVIATIONS = {"art", "arts", "sec", "secs", "no", "nos", "mr", "mrs", "dr"}
@@ -73,14 +74,20 @@ def select_legal_quote(text: str, sentence_ids: list[int]) -> dict:
     selected = select_quote(text, sentence_ids)
     catalog = sentence_catalog(text)
     first, last = sentence_ids[0] - 1, sentence_ids[-1] - 1
-    lead = catalog[first]["text"].lstrip()
+
+    def prefix(value):
+        # Directional formatting is invisible syntax, not a new source character.
+        # Only inspect through it; actual quote offsets/text stay untouched.
+        return "".join(c for c in value if unicodedata.category(c) != "Cf").lstrip()
+
+    lead = prefix(catalog[first]["text"])
     if first and _CHILD.match(lead):
         first -= 1
-        while first and _CHILD.match(catalog[first]["text"].lstrip()):
+        while first and _CHILD.match(prefix(catalog[first]["text"])):
             first -= 1  # nearest list chapeau; do not pull in unrelated earlier definitions
     if first and _QUALIFIER.match(lead):
         first -= 1
-    while last + 1 < len(catalog) and _QUALIFIER.match(catalog[last + 1]["text"].lstrip()):
+    while last + 1 < len(catalog) and _QUALIFIER.match(prefix(catalog[last + 1]["text"])):
         last += 1
     expanded = select_quote(text, list(range(first + 1, last + 2)))
     expanded["selected_sentence_ids"] = sentence_ids
