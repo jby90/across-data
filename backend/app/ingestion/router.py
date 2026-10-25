@@ -17,6 +17,8 @@ from app.ingestion.models import Clause, Document, DocumentVersion, LegalStatus,
 from app.ingestion.ocr import OcrEngine
 from app.ingestion.pipeline import assess_document_relevance, parse_version
 from app.ingestion.safety import holds_for_documents
+from app.ingestion.source_observations import registered_acquisition
+from app.knowledge.models import KnowledgeAuditRecord
 from app.sources.models import SourceSite
 
 router = APIRouter(prefix="/api/admin", tags=["documents"])
@@ -335,6 +337,15 @@ async def document_provenance(
     archive = ArchiveStore(get_settings().archive_dir)
     rows = []
     versions = (await _versions_by_doc(session, [doc.id])).get(doc.id, [])
+    receipts = (
+        await session.scalars(
+            select(KnowledgeAuditRecord).where(
+                KnowledgeAuditRecord.target_type == "documents",
+                KnowledgeAuditRecord.target_id == doc.id,
+                KnowledgeAuditRecord.action == "official_source_acquired",
+            )
+        )
+    ).all()
     for version in versions:
         error = None
         try:
@@ -361,6 +372,14 @@ async def document_provenance(
             if "upload" in steps
             else ("pipeline_fetch" if "download" in steps else "legacy_or_unrecorded")
         )
+        registered = [
+            receipt
+            for audit in receipts
+            if integrity_ok and (receipt := registered_acquisition(audit, version, doc)) is not None
+        ]
+        receipt = registered[0] if len({r["source_nature"] for r in registered}) == 1 else None
+        if acquisition == "legacy_or_unrecorded" and receipt is not None:
+            acquisition = "registered_download"
         rows.append(
             {
                 "version_id": str(version.id),
@@ -370,6 +389,7 @@ async def document_provenance(
                 "final_url": version.final_url,
                 "metadata_source": version.metadata_source,
                 "acquisition": acquisition,
+                "registered_download": receipt,
                 "pipeline_refetch_verified": "refetch" in steps,
                 "integrity_ok": integrity_ok,
                 "integrity_error": error,

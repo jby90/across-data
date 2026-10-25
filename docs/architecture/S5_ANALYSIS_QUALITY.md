@@ -83,7 +83,7 @@ python -m pytest -q backend/tests/test_analysis_p3.py backend/tests/review_s1_s2
 
 相应验证工具为 `scripts/eval_p3.py`、`stability_p3.py`、`summarize_s5_release.py`、`verify_s5_report_citations.py` 和 `verify_s5_preservation.py`。真实模型评测需进程环境中的密钥和账号；文档、Git 和评测结果中不得存储它们。
 
-## 官方来源候选与版本比较（后续 v45）
+## 官方来源候选与版本比较（v45 / v46）
 
 详见 [官方原文、版本消歧与 OCR 候选记录](../reviews/S5_OFFICIAL_SOURCES_20261025.md)。本轮使用 `remediation_s5_sources_20261025` / API `18009` / 管理端 `5189`，原 v44 数据和服务保留。
 
@@ -94,3 +94,7 @@ python -m pytest -q backend/tests/test_analysis_p3.py backend/tests/review_s1_s2
 OCR 重识别使用原图、逐词坐标、权重哈希和两个分割模式保存完整候选，不使用模型补字。两次 OCR 一致也不等于人工法律批准；本次结果存在差异，只追加未启用的修订提案，不能替换原条款或进入报告。
 
 `register_official_source_candidates.py` 仅向新隔离库登记已归档、robots 允许的来源，拒绝覆盖已有文档；`probe_ocr_source.py` 限页运行并拒绝覆盖旧探测；`verify_s5_preservation.py` 可传独立归档目录，基线按数据库 JSON 类型规范化后逐字段比较，仍拒绝 ID 错绑、重复和任何未留存的改写。
+
+v46 的 `legal-list-coverage-v8` 选证目录把明确引导语后的连续完整法律列表作为单一选证单元，六项选证上限不变；全部原文单元仍逐一覆盖并核对数字，条文边界不跨越。目录只是源文偏移的投影，不重写数据库条款或历史证据。
+
+文档详情的下载登记仅在归档完整性、文档/版本身份、来源 URL、robots 记录和审计哈希绑定后显示；显示来源性质不等于人工批准或现行法确认。对应的用户界面保持只读，无新增模型调用。

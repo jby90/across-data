@@ -4,6 +4,8 @@ A matching instrument key permits comparison only. It never proves that
 editions are equivalent, in force or approved by a human.
 """
 
+import hashlib
+import json
 from functools import lru_cache
 
 from bs4 import BeautifulSoup
@@ -55,3 +57,34 @@ def validate_observation(payload, version, document, source_text):
     if " ".join(item.source_excerpt.split()) not in " ".join(source_text.split()):
         raise ValueError("identity excerpt absent from the archived source")
     return item.country_code + ":" + item.instrument_key, item.instrument_role
+
+
+def registered_acquisition(audit, version, document):
+    """Read an archive-bound download receipt, never legal authenticity/approval."""
+    payload = audit.payload
+    if not isinstance(payload, dict):
+        return None
+    digest = hashlib.sha256(
+        json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()
+    ).hexdigest()
+    if (
+        audit.target_type != "documents"
+        or audit.target_id != document.id
+        or version.document_id != document.id
+        or audit.action != "official_source_acquired"
+        or audit.content_hash != digest
+        or payload.get("content_hash") != version.content_hash
+        or payload.get("source_url") != document.source_url
+        or payload.get("robots_permitted") is not True
+        or payload.get("human_review") is not None
+        or payload.get("source_nature")
+        not in {"official_publication", "statutory_body_republication"}
+    ):
+        return None
+    return {
+        "audit_id": str(audit.id),
+        "source_nature": payload["source_nature"],
+        "robots_note": payload.get("robots_note"),
+        "publisher_identity_url": payload.get("publisher_identity_url"),
+        "human_review": None,
+    }

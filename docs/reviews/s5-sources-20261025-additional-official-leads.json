@@ -1,0 +1,23 @@
+{
+  "discovery_page": "https://snaabble.com/blog/customer-data-protection-compliance",
+  "discovery_nature": "secondary_lead_only_not_legal_evidence",
+  "lead_link_malformed": "https://www.pdpc.gov.eg/assets/pdf-data/PDPL%20no.%20151%20of%202020%20%28ar",
+  "attempts": [
+    {
+      "url": "https://www.pdpc.gov.eg/assets/pdf-data/Executive%20Regulation.pdf",
+      "error_type": "BlockedError",
+      "reason": "robots.txt 不允许抓取或无法确认: https://www.pdpc.gov.eg/assets/pdf-data/Executive%20Regulation.pdf"
+    },
+    {
+      "url": "https://www.pdpc.gov.eg/assets/pdf-data/PDPL%20no.%20151%20of%202020%20%28ar",
+      "error_type": "BlockedError",
+      "reason": "robots.txt 不允许抓取或无法确认: https://www.pdpc.gov.eg/assets/pdf-data/PDPL%20no.%20151%20of%202020%20%28ar"
+    }
+  ],
+  "robots": {
+    "https://www.pdpc.gov.eg": "网络错误(ConnectError),无法确认规则,不抓取"
+  },
+  "ingested": false,
+  "model_calls": 0,
+  "human_review": null
+}

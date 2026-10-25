@@ -163,6 +163,7 @@ const provenance = ref<{
   versions: {
     version_id: string
     acquisition: string
+    registered_download?: { source_nature: string } | null
     integrity_ok: boolean
     pipeline_refetch_verified: boolean
   }[]
@@ -528,9 +529,16 @@ onMounted(async () => {
                 ? '采集流水线下载'
                 : p.acquisition === 'manual_upload'
                   ? '手工上传'
-                  : '历史迁移 / 记录不足'
+                  : p.acquisition === 'registered_download'
+                    ? '归档下载登记（已校验审计与原文哈希）'
+                    : '历史迁移 / 记录不足'
             }}{{ p.pipeline_refetch_verified ? ' · 已重新下载核对' : '' }}</span
           >
+          <span v-if="p.registered_download" style="margin-left: 12px">
+            {{ p.registered_download.source_nature === 'statutory_body_republication'
+              ? '法定机构转载；非原始公报，待核对'
+              : '登记为官方发布；真实性与法律状态待人工核对' }}
+          </span>
         </div>
         <div
           style="

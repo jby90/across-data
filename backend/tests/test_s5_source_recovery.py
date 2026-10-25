@@ -229,3 +229,51 @@ def test_spaced_header_is_boundary_detection_only_and_six_anchor_limit_stays():
                 risk_level="MEDIUM",
             )
         )
+
+
+@pytest.mark.parametrize("change", ["hash", "source", "robots", "approval", "nature", "audit"])
+def test_download_receipt_refuses_unbound_or_unverified_provenance(change):
+    import hashlib
+    import json
+    from types import SimpleNamespace
+
+    from app.ingestion.source_observations import registered_acquisition
+
+    doc = SimpleNamespace(id="doc", source_url="https://authority.example/original")
+    version = SimpleNamespace(document_id="doc", content_hash="a" * 64)
+    payload = dict(
+        content_hash="a" * 64,
+        source_url=doc.source_url,
+        robots_permitted=True,
+        human_review=None,
+        source_nature="statutory_body_republication",
+    )
+    audit = SimpleNamespace(
+        id="receipt",
+        target_type="documents",
+        target_id="doc",
+        action="official_source_acquired",
+        payload=payload,
+    )
+
+    def seal():
+        audit.content_hash = hashlib.sha256(
+            json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()
+        ).hexdigest()
+
+    seal()
+    assert registered_acquisition(audit, version, doc)["human_review"] is None
+    if change == "hash":
+        payload["content_hash"] = "b" * 64
+    if change == "source":
+        payload["source_url"] += "/other"
+    if change == "robots":
+        payload["robots_permitted"] = False
+    if change == "approval":
+        payload["human_review"] = "approved"
+    if change == "nature":
+        payload["source_nature"] = "secondary_article"
+    if change == "audit":
+        audit.target_id = "other-document"
+    seal()
+    assert registered_acquisition(audit, version, doc) is None

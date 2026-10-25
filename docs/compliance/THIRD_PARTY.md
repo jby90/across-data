@@ -23,6 +23,7 @@
 | pytesseract | Apache-2.0 | A | Tesseract 命令行封装 | 依赖 | 否 | — |
 | Tesseract OCR 5.5(外部程序) | Apache-2.0 | A | 扫描件 OCR,以独立进程调用,不链接进产品 | 独立进程 | 否 | — |
 | Tesseract 语言包 eng/ara/fra(tessdata_fast) | Apache-2.0 | A | OCR 语言模型,来源 github.com/tesseract-ocr/tessdata_fast;SHA-256:eng `7D4322BD…170B2`、ara `E3206D3D…3E729`、fra `CED03756…445CA` | 数据文件 | 否 | — |
+| Tesseract 阿语语言包 ara(tessdata_best) | Apache-2.0 | A | 仅作隔离 OCR 候选探测，未替换线上语言包；[官方仓库](https://github.com/tesseract-ocr/tessdata_best)，SHA-256 `ab9d157d8e38ca00e7e39c7d5363a5239e053f5b0dbdb3167dde9d8124335896`；来源与探测记录见 `docs/reviews/s5-sources-20261025-ocr-provenance.json` | 数据文件 | 否 | — |
 
 开发/测试:pytest、pytest-asyncio、httpx、ruff(均为宽松许可证)、pip-licenses(MIT)、pgserver(嵌入式 PostgreSQL,**仅测试**,不进入生产镜像;其内含 PostgreSQL 二进制,PostgreSQL License)。
 
