@@ -7,10 +7,12 @@ import time
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.analysis import retrieval_cache
 from app.analysis.llm import LlmUnavailableError, call_llm_json
 from app.analysis.retrieval import SparseIndex, terms
+from app.analysis.source_context import include_context_roots
 
-PLANNER_VERSION = "multilingual-plan-rerank-v5"
+PLANNER_VERSION = "source-context-cache-v6"
 _DEFINED_LEAD = re.compile(
     r'(?m)^[ \t]*[“"«][^”"»\n]{1,120}[”"»]\s+'
     r"(?:means\b|includes\b|refers to\b|désigne\b|signifie\b|يعني\b|تعني\b|يقصد\b|是指|指)",
@@ -51,15 +53,18 @@ class Ranking(BaseModel):
 def preview(candidate, queries: list[str]) -> str:
     """Unmodified source windows for ranking only; full source goes to the analyst."""
     text = candidate.text
-    if len(text) <= 1600:
+    if len(text) <= 1100:
         return text
     # Window selection must not silently splice a quotation. Explicit windows carry offsets.
-    windows = [(i, text[i : i + 700]) for i in range(0, len(text), 600)]
+    windows = [(i, text[i : i + 850]) for i in range(0, len(text), 650)]
     index = SparseIndex([window for _, window in windows])
     scores = index.scores(" ".join(queries))
-    best = sorted(range(len(windows)), key=lambda i: (-scores[i], windows[i][0]))[:2]
+    best = sorted(range(len(windows)), key=lambda i: (-scores[i], windows[i][0]))[:1]
     return json.dumps(
-        [{"start": windows[i][0], "text": windows[i][1]} for i in sorted({0, *best})],
+        [
+            {"start": 0, "text": text[:200]},
+            *[{"start": windows[i][0], "text": windows[i][1]} for i in best],
+        ],
         ensure_ascii=False,
     )
 
@@ -105,11 +110,33 @@ def heading_catalog(candidates, query, dimension, budget=16000):
     return selected
 
 
-async def planned_search(index, dimension, title, query, top_k, config):
+async def planned_search(index, dimension, title, query, top_k, config, *, cache_scope=None):
     started = time.perf_counter()
     tokens = requests = 0
     failures, ledger = [], []
     queries, heading_queries, pool = [], [], []
+    key = (
+        retrieval_cache.cache_key(
+            index, dimension, title, query, top_k, config, cache_scope, PLANNER_VERSION
+        )
+        if cache_scope
+        else None
+    )
+    cached = retrieval_cache.get(key) if key else None
+    if cached:
+        ids, original = cached
+        by_id = {c.clause_id: c for c in index.candidates}
+        return [(by_id[i], score) for i, score in ids], {
+            **original,
+            "cache_hit": True,
+            "cache_key": key,
+            "origin_tokens": original["tokens"],
+            "origin_requests": original["requests"],
+            "tokens": 0,
+            "requests": 0,
+            "ledger": [],
+            "elapsed_ms": 0,
+        }
 
     async def invoke(payload, schema, allowed_ids=None, top_k=None):
         nonlocal tokens, requests
@@ -244,7 +271,10 @@ async def planned_search(index, dimension, title, query, top_k, config):
                 raise ValueError("有候选但重排未选择任何ID；保留原稀疏路线，不假称法源为空")
             if len(ids) > top_k or len(ids) != len(set(ids)) or any(i not in by_id for i in ids):
                 raise ValueError("重排ID重复、超过top_k或不在候选池内")
-            return [(by_id[i], 1 / (n + 1)) for n, i in enumerate(ids)], {
+            scored = include_context_roots(
+                [(by_id[i], 1 / (n + 1)) for n, i in enumerate(ids)], index.candidates, top_k
+            )
+            audit = {
                 "version": PLANNER_VERSION,
                 "queries": queries,
                 "heading_queries": heading_queries,
@@ -254,7 +284,17 @@ async def planned_search(index, dimension, title, query, top_k, config):
                 "requests": requests,
                 "failures": failures,
                 "elapsed_ms": int((time.perf_counter() - started) * 1000),
+                "cache_hit": False,
+                "context_links": [
+                    {"clause_id": c.clause_id, "context_parent_id": c.context_parent_id}
+                    for c, _ in scored
+                    if c.context_parent_id
+                ],
             }
+            if key:
+                audit["cache_key"] = key
+                retrieval_cache.put(key, ([(c.clause_id, s) for c, s in scored], audit))
+            return scored, audit
     except (ValueError, TimeoutError, LlmUnavailableError) as exc:
         tokens += getattr(exc, "tokens", 0)
         failures.extend(getattr(exc, "failures", []))

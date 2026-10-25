@@ -182,7 +182,7 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
         next(n for n in cfg.nodes_json if n["node_id"] == "node_mcp_retriever")
     )
     started = time.perf_counter()
-    tb = ToolBox(session, question["country_code"])
+    tb = ToolBox(session, question["country_code"], cache_scope=str(actor_id))
     # Same retrieval as production; never inject expected IDs or answer keywords.
     candidates = await tb.search_effective_clauses(
         question["dimension_code"],

@@ -142,6 +142,8 @@ class ClauseCandidate:
     matched_keywords: list[str] = field(default_factory=list)
     heading: str = ""
     language: str = ""
+    section_path: str | None = None
+    context_parent_id: str | None = None
 
 
 @dataclass
@@ -210,9 +212,10 @@ def clause_relevance(candidate: ClauseCandidate, keywords: list[str]) -> tuple[f
 class ToolBox:
     """一次分析任务的工具箱;记录每次调用供「任务过程」展示。"""
 
-    def __init__(self, session: AsyncSession, country_code: str):
+    def __init__(self, session: AsyncSession, country_code: str, cache_scope: str | None = None):
         self.session = session
         self.country_code = country_code.upper()
+        self.cache_scope = cache_scope
         self._seq = 0
         self.calls: list[ToolCall] = []
         self._candidates_cache: list[ClauseCandidate] | None = None
@@ -312,9 +315,37 @@ class ToolBox:
                     legal_status=ver.legal_status,
                     heading=clause.heading or "",
                     language=clause.language or "",
+                    section_path=clause.section_path,
                     translated_text=tr.translated_text if tr else "",
                 )
             )
+        # Derive navigation links only from the immutable, hash-checked archive.
+        # No historical clause, translation, approval or citation is changed.
+        import asyncio
+
+        from app.analysis.source_context import fragment_links, source_drafts
+        from app.core.config import get_settings
+        from app.ingestion.archive import ArchiveStore
+
+        versions = {str(ver.id): ver for _, ver, _ in rows}
+        store = ArchiveStore(get_settings().archive_dir)
+        for version_id in {c.version_id for c in out}:
+            group = [c for c in out if c.version_id == version_id]
+            labels = {c.label for c in group if c.heading}
+            if not any(
+                c.heading and any(c.label.startswith(n + ".") for n in labels) for c in group
+            ):
+                continue
+            ver = versions[version_id]
+            try:
+                content = store.read(ver.archive_path)
+                drafts = await asyncio.to_thread(source_drafts, content, ver.mime_type)
+                links = fragment_links(group, drafts)
+                for c in group:
+                    c.context_parent_id = links.get(c.clause_id)
+            except (OSError, ValueError):
+                # Unavailable/ambiguous source cannot prove a link; retain independent IDs.
+                continue
         self._candidates_cache = out
         return out
 
@@ -371,6 +402,9 @@ class ToolBox:
                 query,
                 top_k,
                 config,
+                cache_scope=(self.country_code + ":" + self.cache_scope)
+                if self.cache_scope
+                else None,
             )
             self.retrieval_tokens += planning["tokens"]
         top = [
