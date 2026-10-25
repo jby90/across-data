@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "tasks_checked": 10,
+  "final_findings_checked": 235,
+  "source_sha256_and_offsets": true,
+  "document_and_version_identity": true,
+  "numeric_amount_date_checks": true,
+  "new_human_approvals": 0,
+  "note": "程序核验不是语义/法律适用人工确认；原评测中未获支持项保持未通过。"
+}

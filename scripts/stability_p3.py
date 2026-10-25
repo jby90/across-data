@@ -98,7 +98,9 @@ async def run(args):
                 json.dumps({"facts": FACTS, "runs": rows}, ensure_ascii=False, indent=2),
                 encoding="utf-8",
             )
-            print(json.dumps(rows[-1], ensure_ascii=False), flush=True)
+            # Full query/pool/output audit stays in JSON; avoid megabytes of console output.
+            print(json.dumps({k: v for k, v in rows[-1].items()
+                              if k != "retrieval_planning"}, ensure_ascii=False), flush=True)
 
 
 if __name__ == "__main__":

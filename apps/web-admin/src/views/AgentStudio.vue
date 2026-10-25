@@ -266,6 +266,7 @@ interface BenchmarkSummary {
     supported_findings: number
     analysis_error: string | null
     judge_error: string | null
+    retrieval_error?: string | null
   }>
 }
 
@@ -1948,6 +1949,7 @@ onUnmounted(() => {
     <!-- 展开查看当前对话工作流每个环节的产出抽屉 -->
     <el-drawer
       v-model="stageDeliverablesVisible"
+      append-to-body
       :title="`对话工作流全环节产出详情 · ${selectedTaskDetail?.conversation_code || ''}`"
       size="76%"
     >
@@ -2334,6 +2336,7 @@ onUnmounted(() => {
     <!-- 工程来源标注集：真实检索、逐字核验、独立模型审查，人工复核单列 -->
     <el-drawer
       v-model="benchmarkDrawerVisible"
+      append-to-body
       title="分析质量评测 · 五国 / 八维度"
       size="65%"
     >
@@ -2365,7 +2368,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <p data-testid="evaluation-completeness">已完成 {{ benchmarkData.completed_cases }}/{{ benchmarkData.total_cases }} 题 · 技术错误 {{ benchmarkData.technical_error_cases }} 题</p>
+          <p data-testid="evaluation-completeness">已完成 {{ benchmarkData.completed_cases }}/{{ benchmarkData.total_cases }} 题 · 出现过技术错误 {{ benchmarkData.technical_error_cases }} 题（含已恢复的尝试）</p>
           <p>其中 {{ benchmarkData.cases.filter(c => c.findings_total > 0).length }} 题有分析项（含拒绝/失败尝试）；无输出不算引文通过。</p>
 
           <el-table :data="benchmarkData.cases" border stripe size="small" style="margin-top: 16px">
@@ -2376,7 +2379,7 @@ onUnmounted(() => {
             <el-table-column label="期望条款" width="95"><template #default="{ row }">{{ row.retrieval_hits }}/{{ row.retrieval_expected }}</template></el-table-column>
             <el-table-column label="引文通过" width="95"><template #default="{ row }">{{ row.faithful_findings }}/{{ row.findings_total }}</template></el-table-column>
             <el-table-column label="Judge支持" width="100"><template #default="{ row }">{{ row.supported_findings }}/{{ row.judged_findings }}</template></el-table-column>
-            <el-table-column label="技术错误" min-width="180"><template #default="{ row }">{{ row.analysis_error || row.judge_error || '无' }}</template></el-table-column>
+            <el-table-column label="技术错误记录" min-width="180"><template #default="{ row }">{{ row.retrieval_error || row.analysis_error || row.judge_error || '无' }}</template></el-table-column>
           </el-table>
         </template>
       </div>

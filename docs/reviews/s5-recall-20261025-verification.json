@@ -1,0 +1,87 @@
+{
+  "backend_tests": 386,
+  "backend_failures": 0,
+  "backend_errors": 0,
+  "original_contract_counterexamples": 12,
+  "frontend_tests": 34,
+  "frontend_typecheck": "passed",
+  "frontend_build": "passed",
+  "active_workflow_version": 36,
+  "key_found_in_tracked_files": false,
+  "original_data_preservation": {
+    "passed": true,
+    "database": "remediation_s5_recall_20261025",
+    "old_rows_checked": 30022,
+    "old_tables_checked": 20,
+    "source_evidence_approval_overwrites": 0,
+    "legacy_execution_ids_backfilled": 0,
+    "archives_verified": 80,
+    "old_activation_only_changes_with_snapshots": [
+      29
+    ],
+    "additions": {
+      "agent_workflow_configs": 7,
+      "analysis_messages": 0,
+      "analysis_step_traces": 62,
+      "analysis_tasks": 10,
+      "clause_translations": 0,
+      "clauses": 0,
+      "crawl_runs": 0,
+      "document_versions": 0,
+      "documents": 0,
+      "glossary_terms": 0,
+      "kg_edges": 0,
+      "kg_nodes": 0,
+      "knowledge_audit_records": 174,
+      "knowledge_change_proposals": 0,
+      "organizations": 0,
+      "pipeline_events": 0,
+      "report_versions": 10,
+      "review_points": 0,
+      "source_sites": 0,
+      "users": 0
+    },
+    "active_workflows": [
+      {
+        "version_no": 36,
+        "runtime_schema_version": "s5-query-routes-v4"
+      }
+    ]
+  },
+  "backup_database_sha256": "01869a3e67578fd3a17b72fa0cf046489b5a0eea94dd7f24ec62fb035e10dc0b",
+  "human_review": "0/32 未经人工复核",
+  "browser_e2e": {
+    "passed": true,
+    "human_reviews_changed": 0,
+    "new_model_requests": 0,
+    "active_workflow_version": 36,
+    "completed_cases": 32,
+    "initial_harness_failure": "drawer preceded asynchronous evaluation response; harness now waits for loaded data",
+    "initial_visual_failure": "page-contained overlay clipped at narrow viewport; inspection drawers now append to body",
+    "drawer_bounds": {
+      "rect": {
+        "bottom": 884,
+        "height": 884,
+        "left": 0,
+        "right": 743,
+        "top": 0,
+        "width": 743,
+        "x": 0,
+        "y": 0
+      },
+      "viewport": 743
+    },
+    "final_status": "passed"
+  },
+  "report_citations": {
+    "passed": true,
+    "tasks_checked": 10,
+    "final_findings_checked": 235,
+    "source_sha256_and_offsets": true,
+    "document_and_version_identity": true,
+    "numeric_amount_date_checks": true,
+    "new_human_approvals": 0,
+    "note": "程序核验不是语义/法律适用人工确认；原评测中未获支持项保持未通过。"
+  },
+  "export_verification": "s5-recall-20261025-export-verification.json"
+}

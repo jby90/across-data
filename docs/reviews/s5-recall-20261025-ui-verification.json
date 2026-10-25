@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "human_reviews_changed": 0,
+  "new_model_requests": 0,
+  "active_workflow_version": 36,
+  "completed_cases": 32,
+  "initial_harness_failure": "drawer preceded asynchronous evaluation response; harness now waits for loaded data",
+  "initial_visual_failure": "page-contained overlay clipped at narrow viewport; inspection drawers now append to body",
+  "drawer_bounds": {
+    "rect": {
+      "bottom": 884,
+      "height": 884,
+      "left": 0,
+      "right": 743,
+      "top": 0,
+      "width": 743,
+      "x": 0,
+      "y": 0
+    },
+    "viewport": 743
+  },
+  "final_status": "passed"
+}

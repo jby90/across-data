@@ -1,0 +1,147 @@
+{
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "same_frozen_suite": true,
+  "before": {
+    "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+    "batch_id": "0e4f68fc-d47d-49eb-ba81-b902a0995e8b",
+    "retrieval_hits": 17,
+    "retrieval_expected": 32,
+    "recall_at_5": 0.53125,
+    "faithful_findings": 45,
+    "findings_total": 50,
+    "quote_fidelity": 0.9,
+    "supported_findings": 39,
+    "judged_findings": 45,
+    "fact_consistency": 0.8666666666666667,
+    "judge_coverage": 0.9,
+    "total_tokens": 338301,
+    "elapsed_seconds": 216.38246200000867,
+    "technical_error_cases": 0
+  },
+  "after": {
+    "workflow_version_id": "7b77c591-6a9b-4712-be17-b8c238b4efa1",
+    "batch_id": "9c215fc1-85a9-45ee-9ea9-3417c3ac3019",
+    "retrieval_hits": 31,
+    "retrieval_expected": 32,
+    "recall_at_5": 0.96875,
+    "faithful_findings": 74,
+    "findings_total": 80,
+    "quote_fidelity": 0.925,
+    "supported_findings": 66,
+    "judged_findings": 74,
+    "fact_consistency": 0.8918918918918919,
+    "judge_coverage": 0.925,
+    "total_tokens": 1100674,
+    "elapsed_seconds": 460.5474708999973,
+    "technical_error_cases": 1
+  },
+  "country_before": {
+    "SG": {
+      "hits": 1,
+      "expected": 8,
+      "supported": 14,
+      "judged": 14
+    },
+    "MA": {
+      "hits": 4,
+      "expected": 6,
+      "supported": 8,
+      "judged": 8
+    },
+    "TN": {
+      "hits": 2,
+      "expected": 6,
+      "supported": 6,
+      "judged": 9
+    },
+    "LB": {
+      "hits": 4,
+      "expected": 6,
+      "supported": 7,
+      "judged": 9
+    },
+    "EG": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 4,
+      "judged": 5
+    }
+  },
+  "country_after": {
+    "SG": {
+      "hits": 7,
+      "expected": 8,
+      "supported": 21,
+      "judged": 21
+    },
+    "MA": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 16,
+      "judged": 16
+    },
+    "TN": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 12,
+      "judged": 14
+    },
+    "LB": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 10,
+      "judged": 13
+    },
+    "EG": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 7,
+      "judged": 10
+    }
+  },
+  "final_supported_cases_before": 25,
+  "final_supported_cases_after": 27,
+  "stability_before": {
+    "runs": 10,
+    "status_counts": {
+      "completed": 9,
+      "failed": 1
+    },
+    "first_failed": 0,
+    "backtracks": {
+      "0": 10
+    },
+    "local_reselection_runs": 8,
+    "local_reselections": 11,
+    "local_grounding_failure_events": 8,
+    "tokens": 874145,
+    "elapsed_seconds": 362.9
+  },
+  "stability_after": {
+    "runs": 10,
+    "status_counts": {
+      "completed": 10
+    },
+    "first_failed": 1,
+    "backtracks": {
+      "0": 9,
+      "1": 1
+    },
+    "local_reselection_runs": 4,
+    "local_reselections": 4,
+    "local_grounding_failure_events": 4,
+    "tokens": 2582365,
+    "elapsed_seconds": 930.29
+  },
+  "remaining_unsupported_attempts": 8,
+  "remaining_unhit_expectations": 1,
+  "human_review_before_after": [
+    0,
+    0
+  ],
+  "final_generation_error_cases": [],
+  "final_no_verified_conclusion_cases": [
+    "S5-29",
+    "S5-30"
+  ]
+}

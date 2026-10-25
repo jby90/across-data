@@ -10,6 +10,8 @@ export async function verifyS5Ui(tab, baseUrl = 'http://127.0.0.1:5185') {
   await tab.playwright.getByRole('button', { name: '质量评测', exact: true }).waitFor({ state: 'visible' })
   await tab.playwright.getByRole('button', { name: '质量评测', exact: true }).click()
   await tab.playwright.getByRole('dialog', { name: '分析质量评测 · 五国 / 八维度' }).waitFor({ state: 'visible' })
+  // Opening the drawer precedes the asynchronous evaluation response.
+  await tab.playwright.getByTestId('evaluation-completeness').waitFor({ state: 'visible' })
   const snapshot = await tab.playwright.domSnapshot()
   assert.match(snapshot, /Recall@5/)
   assert.match(snapshot, /引文忠实度/)

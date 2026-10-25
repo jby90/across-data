@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "database": "remediation_s5_recall_20261025",
+  "old_rows_checked": 30022,
+  "old_tables_checked": 20,
+  "source_evidence_approval_overwrites": 0,
+  "legacy_execution_ids_backfilled": 0,
+  "archives_verified": 80,
+  "old_activation_only_changes_with_snapshots": [
+    29
+  ],
+  "additions": {
+    "agent_workflow_configs": 7,
+    "analysis_messages": 0,
+    "analysis_step_traces": 62,
+    "analysis_tasks": 10,
+    "clause_translations": 0,
+    "clauses": 0,
+    "crawl_runs": 0,
+    "document_versions": 0,
+    "documents": 0,
+    "glossary_terms": 0,
+    "kg_edges": 0,
+    "kg_nodes": 0,
+    "knowledge_audit_records": 174,
+    "knowledge_change_proposals": 0,
+    "organizations": 0,
+    "pipeline_events": 0,
+    "report_versions": 10,
+    "review_points": 0,
+    "source_sites": 0,
+    "users": 0
+  },
+  "active_workflows": [
+    {
+      "version_no": 36,
+      "runtime_schema_version": "s5-query-routes-v4"
+    }
+  ]
+}
