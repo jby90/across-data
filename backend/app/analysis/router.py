@@ -2,23 +2,31 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.analysis.benchmarks import run_retrieval_benchmarks
 from app.analysis.chat import PLACEHOLDER_COUNTRY, post_user_message, start_chat
+from app.analysis.events import append_event, stream_events, validate_reader
 from app.analysis.models import (
     AgentWorkflowConfig,
+    AnalysisEvent,
     AnalysisMessage,
     AnalysisStepTrace,
     AnalysisTask,
     ReportVersion,
 )
 from app.analysis.pipeline import launch_pipeline
-from app.analysis.report_exporter import build_report_docx, build_report_pdf
+from app.analysis.report_exporter import (
+    build_report_docx,
+    build_report_pdf,
+    build_report_zip,
+    export_filename,
+)
 from app.analysis.schemas import (
     AgentWorkflowConfigOut,
     AnalysisFindingOut,
@@ -110,6 +118,7 @@ async def _start(session: AsyncSession, task: AnalysisTask) -> None:
     except ValueError as exc:
         raise HTTPException(409, str(exc)) from exc
     task.status = "running"
+    await append_event(session, task, "phase_started", {"node_id": "node_start", "phase": "start"})
     await session.commit()
     await session.refresh(task)  # updated_at 由数据库更新,需刷新后才能同步读取
     factory = async_sessionmaker(session.bind, expire_on_commit=False)
@@ -964,71 +973,105 @@ async def diff_user_report_versions(
     )
 
 
-@user_router.get("/tasks/{task_id}/reports/{version_no}/export.docx")
-async def export_user_report_docx(
+@user_router.get("/tasks/{task_id}/reports/{version_no}/export.{ext}")
+async def export_user_report(
     task_id: uuid.UUID,
     version_no: int,
+    ext: Literal["docx", "pdf", "zip"],
     user: UserDep,
     session: SessionDep,
+    dimension: Literal["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8"] | None = None,
 ) -> Response:
     task = await session.get(AnalysisTask, task_id)
     if task is None or task.org_id != user.org_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
-    rv = (
-        await session.execute(
-            select(ReportVersion).where(
-                ReportVersion.task_id == task.id,
-                ReportVersion.version_no == version_no,
-            )
+        raise HTTPException(404, "合规分析任务不存在")
+    rv = await session.scalar(
+        select(ReportVersion).where(
+            ReportVersion.task_id == task.id, ReportVersion.version_no == version_no
         )
-    ).scalar_one_or_none()
+    )
     if rv is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
-
+        raise HTTPException(404, "报告版本不存在")
     if rv.status == "analysis_failed":
         raise HTTPException(409, "报告分析技术失败，不能导出为部分样稿，请重试分析")
     if await report_held_citation_ids(session, rv):
         raise HTTPException(409, "报告引用了来源绑定或页级解析待核对的条款，请核查后重新分析再导出")
-    docx_bytes = build_report_docx(task, rv)
-    filename = f"cyshuhe_{task.country_code}_8dim_report_v{version_no}.docx"
+    if ext == "zip" and dimension:
+        raise HTTPException(400, "ZIP 包含整份与八个维度，请勿同时指定单个维度")
+    codes = {d["dimension_code"] for d in rv.dimensions_json or []}
+    if dimension and dimension not in codes:
+        raise HTTPException(404, "该报告版本没有此维度")
+    if ext == "zip" and not {f"D{i}" for i in range(1, 9)} <= codes:
+        raise HTTPException(409, "历史报告未保存全部八个维度，不能伪造拆分文件")
+    data = (
+        build_report_zip(task, rv)
+        if ext == "zip"
+        else build_report_docx(task, rv, dimension)
+        if ext == "docx"
+        else build_report_pdf(task, rv, dimension)
+    )
+    media = {
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "pdf": "application/pdf",
+        "zip": "application/zip",
+    }
     return Response(
-        content=docx_bytes,
-        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        data,
+        media_type=media[ext],
+        headers={
+            "Content-Disposition": 'attachment; filename="'
+            + export_filename(task, rv, ext, dimension) + '"',
+            "Cache-Control": "private, no-store",
+        },
     )
 
 
-@user_router.get("/tasks/{task_id}/reports/{version_no}/export.pdf")
-async def export_user_report_pdf(
+def _event_cursor(last_event_id):
+    try:
+        value = int(last_event_id or "0")
+        if not 0 <= value <= 9223372036854775807:
+            raise ValueError
+        return value
+    except ValueError as exc:
+        raise HTTPException(400, "Last-Event-ID 不合法") from exc
+
+
+@user_router.get("/tasks/{task_id}/events")
+async def user_task_events(
     task_id: uuid.UUID,
-    version_no: int,
+    request: Request,
     user: UserDep,
     session: SessionDep,
-) -> Response:
-    task = await session.get(AnalysisTask, task_id)
-    if task is None or task.org_id != user.org_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
-    rv = (
-        await session.execute(
-            select(ReportVersion).where(
-                ReportVersion.task_id == task.id,
-                ReportVersion.version_no == version_no,
-            )
-        )
-    ).scalar_one_or_none()
-    if rv is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
+    last_event_id: str | None = Header(default=None, alias="Last-Event-ID"),
+):
+    cursor = _event_cursor(last_event_id)
+    await validate_reader(session, user, task_id)
+    engine = session.bind
+    await session.rollback()  # No request transaction/connection held by a long-lived stream.
+    return StreamingResponse(
+        stream_events(request, engine, user, cursor, task_id),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
+    )
 
-    if rv.status == "analysis_failed":
-        raise HTTPException(409, "报告分析技术失败，不能导出为部分样稿，请重试分析")
-    if await report_held_citation_ids(session, rv):
-        raise HTTPException(409, "报告引用了来源绑定或页级解析待核对的条款，请核查后重新分析再导出")
-    pdf_bytes = build_report_pdf(task, rv)
-    filename = f"cyshuhe_{task.country_code}_8dim_report_v{version_no}.pdf"
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+
+@admin_router.get("/events")
+async def admin_task_events(
+    request: Request,
+    admin: AdminOrReviewerDep,
+    session: SessionDep,
+    last_event_id: str | None = Header(default=None, alias="Last-Event-ID"),
+):
+    cursor = _event_cursor(last_event_id)
+    await validate_reader(session, admin)
+    if last_event_id is None:
+        cursor = await session.scalar(select(func.max(AnalysisEvent.id))) or 0
+    engine = session.bind
+    await session.rollback()
+    return StreamingResponse(
+        stream_events(request, engine, admin, cursor),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
     )
 
 

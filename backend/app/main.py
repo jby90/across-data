@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,11 +22,20 @@ from app.knowledge.router import (
 from app.sources.router import router as sites_router
 
 
+@asynccontextmanager
+async def _lifespan(_app):
+    yield
+    from app.analysis.events import close_hubs
+
+    await close_hubs()
+
+
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
         title="车研数合 API",
         version="0.1.0",
+        lifespan=_lifespan,
         # 生产环境不暴露交互式文档
         docs_url="/api/docs" if settings.env == "dev" else None,
         redoc_url=None,
@@ -35,7 +46,7 @@ def create_app() -> FastAPI:
         allow_origins=settings.cors_origins,
         allow_credentials=False,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
-        allow_headers=["Authorization", "Content-Type"],
+        allow_headers=["Authorization", "Content-Type", "Last-Event-ID"],
     )
 
     @app.get("/api/health", tags=["system"])
@@ -51,6 +62,7 @@ def create_app() -> FastAPI:
     app.include_router(knowledge_user_router)
     app.include_router(analysis_admin_router)
     app.include_router(analysis_user_router)
+
     return app
 
 

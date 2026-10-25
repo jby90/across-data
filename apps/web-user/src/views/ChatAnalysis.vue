@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
+import { startProgressStream, type StreamState } from '@cyshuhe/shared'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { api } from '../api'
 import KgForceGraph, {
@@ -61,6 +62,7 @@ interface Citation {
 }
 
 interface Dimension {
+  findings?: Finding[]
   dimension_code: string
   dimension_title: string
   status: string
@@ -219,6 +221,9 @@ const diffVisible = ref(false)
 const diffData = ref<DiffPayload | null>(null)
 
 const status = computed(() => detail.value?.status ?? '')
+const progressState = ref<StreamState>('idle')
+let progressStream: {close: () => void} | undefined
+let progressRefresh: ReturnType<typeof setTimeout> | undefined
 const lastAssistant = computed(() => {
   const list = detail.value?.messages.filter((m) => m.role === 'assistant') ?? []
   return list[list.length - 1]
@@ -238,6 +243,7 @@ const report = computed<ReportVersion | null>(() => {
   const list = detail.value?.report_versions ?? []
   return list.find((r) => r.version_no === reportVersionNo.value) ?? list[0] ?? null
 })
+const versionFindings = computed(() => report.value?.dimensions.flatMap(d => d.findings || []) || [])
 const inputPlaceholder = computed(() => {
   if (status.value === 'running') return '多智能体分析进行中,请稍候…'
   if (status.value === 'awaiting_user_facts') return '请回答分析中的业务追问；不确定可以如实说明'
@@ -375,15 +381,41 @@ function onEnter(ev: KeyboardEvent) {
 
 let timer: number | undefined
 async function poll() {
+  if (progressState.value === 'live') return
+  await refreshProgress()
+}
+async function refreshProgress() {
   if (detail.value?.status !== 'running') return
+  const id = detail.value.id
   try {
-    apply(await api.get<TaskDetail>(`/api/analysis/tasks/${detail.value.id}`))
+    const next = await api.get<TaskDetail>(`/api/analysis/tasks/${id}`)
+    if (detail.value?.id !== id) return
+    apply(next)
     await refreshTasks()
     scrollBottom()
   } catch {
     /* 下一轮重试 */
   }
 }
+
+watch(() => [detail.value?.id, detail.value?.status], () => {
+  progressStream?.close()
+  clearTimeout(progressRefresh)
+  progressRefresh = undefined
+  if (!detail.value || detail.value.status !== 'running') return
+  progressStream = startProgressStream({
+    url: `/api/analysis/tasks/${detail.value.id}/events`, token: api.token,
+    onState: state => { progressState.value = state },
+    onUnauthorized: () => { api.setToken(null); window.location.assign('/login') },
+    onEvent: event => {
+      if (event.type === 'connected' || progressRefresh !== undefined) return
+      progressRefresh = setTimeout(() => {
+        progressRefresh = undefined
+        void refreshProgress()
+      }, 80)
+    },
+  })
+})
 
 watch(
   () => [detail.value?.messages.length, detail.value?.step_traces.length, detail.value?.status],
@@ -453,7 +485,7 @@ async function openDiff() {
   }
 }
 
-async function download(ext: 'docx' | 'pdf') {
+async function download(ext: 'docx' | 'pdf' | 'zip', dimension?: string) {
   if (!detail.value || !report.value) return
   if (report.value.source_integrity_alerts?.length) {
     ElMessage.error('报告引用的原文来源异常，已停止导出，请核实来源后重新分析')
@@ -461,7 +493,7 @@ async function download(ext: 'docx' | 'pdf') {
   }
   try {
     const ver = report.value.version_no
-    const res = await fetch(`/api/analysis/tasks/${detail.value.id}/reports/${ver}/export.${ext}`, {
+    const res = await fetch(`/api/analysis/tasks/${detail.value.id}/reports/${ver}/export.${ext}${dimension ? '?dimension=' + encodeURIComponent(dimension) : ''}`, {
       headers: { Authorization: `Bearer ${api.token()}` },
     })
     if (!res.ok) throw new Error(`导出失败 (${res.status})`)
@@ -469,7 +501,7 @@ async function download(ext: 'docx' | 'pdf') {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `cyshuhe_${detail.value.country_code}_8dim_report_v${ver}.${ext}`
+    a.download = `cyshuhe_${detail.value.country_code}_${dimension || '8dim'}_report_v${ver}.${ext}`
     a.click()
     URL.revokeObjectURL(url)
     ElMessage.success(`已导出 ${ext.toUpperCase()} 报告 (v${ver})`)
@@ -503,6 +535,8 @@ onMounted(async () => {
   timer = window.setInterval(poll, 2000)
 })
 onUnmounted(() => {
+  progressStream?.close()
+  clearTimeout(progressRefresh)
   if (timer !== undefined) window.clearInterval(timer)
 })
 </script>
@@ -612,6 +646,7 @@ onUnmounted(() => {
           <div v-if="status === 'running'" class="card progress" data-testid="progress-card">
             <div class="card-title">
               <span data-testid="task-running-tag">多智能体分析进行中…</span>
+              <span data-testid="progress-transport">{{ progressState === 'live' ? '实时推送' : '轮询回退' }}</span>
               <el-tag size="small" type="primary">已完成 {{ detail.step_traces.length }} 步</el-tag>
             </div>
             <div
@@ -710,6 +745,8 @@ onUnmounted(() => {
                       >Word 文档</el-dropdown-item
                     ><el-dropdown-item data-testid="btn-export-pdf" @click="download('pdf')"
                       >PDF 文档</el-dropdown-item
+                    ><el-dropdown-item data-testid="btn-export-zip" @click="download('zip')"
+                      >整份与八章 Word 压缩包</el-dropdown-item
                     ></el-dropdown-menu
                   ></template
                 ></el-dropdown
@@ -741,6 +778,10 @@ onUnmounted(() => {
                     {{ RISK_LABEL[d.risk_level] || d.risk_level }}
                   </el-tag>
                 </template>
+                <div style="display:flex;gap:8px;margin:8px 0 12px">
+                  <el-button size="small" :data-testid="`export-${d.dimension_code}-docx`" @click="download('docx', d.dimension_code)">导出本章 Word</el-button>
+                  <el-button size="small" :data-testid="`export-${d.dimension_code}-pdf`" @click="download('pdf', d.dimension_code)">导出本章 PDF</el-button>
+                </div>
                 <el-alert
                   v-if="d.missing_gap_note"
                   type="warning"
@@ -778,11 +819,12 @@ onUnmounted(() => {
                 title="合规判定矩阵(业务事实 | 适用条款 | 合规义务 | 风险等级 | 判断依据)"
               >
                 <el-table
-                  :data="detail.findings"
+                  :data="versionFindings"
                   border
                   size="small"
                   data-testid="compliance-findings-table"
                 >
+                  <template #empty>该版本未保存判定矩阵快照，请查阅各章引用。</template>
                   <el-table-column prop="business_fact" label="业务事实" min-width="140" />
                   <el-table-column label="适用条款" min-width="170">
                     <template #default="{ row }">

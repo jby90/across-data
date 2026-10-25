@@ -19,6 +19,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.analysis.events import append_event, trace_events
 from app.analysis.evidence_selection import (
     AnalysisResponse,
     CoveredClaim,
@@ -156,11 +157,24 @@ async def _add_trace(
         1 for c in calls if not c.tool_name.startswith("llm.")
     )
     task.updated_at = datetime.now(UTC)
+    await session.flush()
+    await trace_events(session, task, tr)
     if commit:
         await session.commit()
     else:
         await session.flush()
     return tr
+
+
+async def _phase_started(session, task, node, phase):
+    task.updated_at = datetime.now(UTC)
+    await append_event(
+        session,
+        task,
+        "phase_started",
+        {"node_id": node, "phase": phase, "workflow_version_id": str(task.workflow_version_id)},
+    )
+    await session.commit()
 
 
 def _candidate_payload(c: ClauseCandidate, retained=None, fact_keys=None) -> dict:
@@ -975,6 +989,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     tb = ToolBox(session, cc, cache_scope=str(task.org_id or task.created_by))
 
     # ---- 1. 信息采集与追问 ----
+    await _phase_started(session, task, "node_fact_collector", "fact_check")
     t0 = time.perf_counter()
     score, missing = evaluate_fact_sufficiency(cc, task.facts_json or {})
     pending = sum(1 for m in missing if not m["is_fulfilled"])
@@ -1027,6 +1042,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         return
 
     # ---- 2. 检索 ----
+    await _phase_started(session, task, "node_mcp_retriever", "retrieval")
     mark = len(tb.calls)
     run_codes = (
         set(checkpoint["resume_dimensions"]) if resume else dict(EIGHT_DIMENSIONS_SPEC).keys()
@@ -1140,6 +1156,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     )
 
     # ---- 3. 分析(8 个维度并行调用模型) ----
+    await _phase_started(session, task, "node_dimension_analyst", "analysis")
     dim_titles = dict(EIGHT_DIMENSIONS_SPEC)
     results: dict[str, dict[str, Any]] = copy.deepcopy(retained_results)
     active = [code for code, _ in EIGHT_DIMENSIONS_SPEC if code in run_codes and dim_cands[code]]
@@ -1230,6 +1247,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
 
     # ---- 4. 核验(程序化子串/数字校验) ----
     async def _verify_round(codes: list[str], phase: str) -> list[str]:
+        await _phase_started(session, task, "node_citation_verifier", phase)
         v0 = asyncio.get_event_loop().time()
         calls: list[ToolCall] = []
         problems: list[str] = []
@@ -1419,6 +1437,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
         problems = problems2
 
     # ---- 5. 编制 ----
+    await _phase_started(session, task, "node_report_compiler", "compilation")
     rv, cited_versions, full = await asyncio.wait_for(
         _compile(session, task, tb, results, dim_cands, dim_titles),
         timeout=runtime["node_report_compiler"]["timeout"],
@@ -1574,6 +1593,7 @@ async def _compile(
                 if levels
                 else "PENDING_VERIFICATION",
                 "content_markdown": body,
+                "findings": [f for f in findings if f["dimension_code"] == code],
                 "key_recommendations": [
                     "核对并落实：" + str(f.get("obligation") or "") for f in good
                 ],
@@ -1679,6 +1699,7 @@ async def _update_linkage(
     runtime: dict[str, dict],
 ) -> None:
     # ---- 6. 修订联动 ----
+    await _phase_started(session, task, "node_update_linkage", "update_linkage")
     l0 = asyncio.get_event_loop().time()
     linkage_enabled = runtime["node_update_linkage"]["enabled"]
     stale = (
@@ -1738,4 +1759,10 @@ async def _update_linkage(
     task.analysis_checkpoint_json = {}
     task.pending_user_facts_json = []
     task.updated_at = datetime.now(UTC)
+    await append_event(
+        session,
+        task,
+        "failed" if task.status == "failed" else "completed",
+        {"status": task.status, "report_version": rv.version_no},
+    )
     await session.commit()

@@ -237,6 +237,7 @@ class ReportCitationOut(BaseModel):
 
 
 class ReportDimensionOut(BaseModel):
+    findings: list[dict[str, Any]] = Field(default_factory=list)
     gap_kind: str | None = None
     dimension_code: str  # D1..D8
     dimension_title: str

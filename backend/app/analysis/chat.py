@@ -149,6 +149,10 @@ async def add_message(
         )
     )
     await session.flush()
+    from app.analysis.events import append_event
+
+    task = await session.get(AnalysisTask, task_id)
+    await append_event(session, task, "task_changed", {"reason": "message_added"})
 
 
 async def _ask(session: AsyncSession, task: AnalysisTask, slot: str, prefix: str = "") -> None:

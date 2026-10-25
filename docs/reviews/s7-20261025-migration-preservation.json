@@ -1,0 +1,29 @@
+{
+  "migration": "0018",
+  "tables": {
+    "knowledge_audit_records": 15260,
+    "analysis_step_traces": 654,
+    "clauses": 2744,
+    "clause_translations": 3464,
+    "document_versions": 81,
+    "crawl_runs": 58,
+    "glossary_terms": 14,
+    "documents": 81,
+    "kg_edges": 5259,
+    "kg_nodes": 2419,
+    "analysis_tasks": 98,
+    "agent_workflow_configs": 46,
+    "knowledge_change_proposals": 473,
+    "report_versions": 99,
+    "review_points": 4,
+    "organizations": 1,
+    "pipeline_events": 202,
+    "source_sites": 21,
+    "users": 4,
+    "analysis_messages": 25
+  },
+  "compared_old_rows": 31007,
+  "differences": [],
+  "new_events": 0,
+  "source_database_migrated": false
+}

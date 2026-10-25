@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { startProgressStream, type StreamState } from '@cyshuhe/shared'
 import { api } from '../api'
 import { useAuth } from '../auth'
 import {
@@ -504,6 +505,29 @@ async function resetLayout() {
 
 // 实时轮询与对话工作流历史管理状态
 const autoPollEnabled = ref(true)
+const progressState = ref<StreamState>('idle')
+let progressStream: {close: () => void} | undefined
+let progressRefresh: ReturnType<typeof setTimeout> | undefined
+
+function connectLiveEvents() {
+  progressStream?.close()
+  clearTimeout(progressRefresh)
+  progressRefresh = undefined
+  if (!autoPollEnabled.value) return
+  progressStream = startProgressStream({
+    url: '/api/admin/agent-studio/events', token: api.token,
+    onState: state => { progressState.value = state },
+    onUnauthorized: () => { api.setToken(null); window.location.assign('/login') },
+    onEvent: event => {
+      if (progressRefresh !== undefined) return
+      progressRefresh = setTimeout(() => {
+        progressRefresh = undefined
+        void pollLiveWorkflows()
+      }, 120)
+    },
+  })
+}
+watch(autoPollEnabled, connectLiveEvents)
 const autoFollowRunning = ref(true)
 const conversationHistoryVisible = ref(false)
 const historyFilterStatus = ref<string>('')
@@ -988,10 +1012,15 @@ onMounted(() => {
   })
   for (const element of nodeElements.values()) nodeObserver.observe(element)
   loadStudioData()
-  pollTimer = window.setInterval(pollLiveWorkflows, 2000)
+  connectLiveEvents()
+  pollTimer = window.setInterval(() => {
+    if (progressState.value !== 'live') void pollLiveWorkflows()
+  }, 2000)
 })
 
 onUnmounted(() => {
+  progressStream?.close()
+  clearTimeout(progressRefresh)
   cancelDrag()
   nodeObserver?.disconnect()
   nodeElements.clear()
@@ -1140,6 +1169,9 @@ onUnmounted(() => {
           等待业务事实: {{ awaitingFactTasks.length }} 个
         </el-tag>
         <el-tag size="small" type="info"> 累计对话工作流: {{ tasks.length }} 条 </el-tag>
+        <el-tag size="small" type="info" data-testid="admin-progress-transport">
+          {{ progressState === 'live' ? '实时推送' : '轮询回退' }}
+        </el-tag>
 
         <template v-if="runningTasks.length > 0">
           <div class="live-running-pills">
