@@ -137,3 +137,46 @@ def test_observation_version_document_binding_is_mandatory():
     version.document_id = "another-document"
     with pytest.raises(ValueError):
         validate_observation(data, version, document, "Original instrument identity.")
+
+
+@pytest.mark.parametrize(
+    "first,second",
+    [
+        ("PART IV / Division I", "Part 4 / Division 1"),
+        ("CHAPTER XII", "Chapter 12"),
+        ("PART IX / Division II", "Part 9 / Division 2"),
+    ],
+)
+def test_structural_roman_and_decimal_ordinals_can_be_compared(first, second):
+    a, b = row("one", "doc-1", section=first), row("two", "doc-2", section=second)
+    assert len(include_source_alternatives([(a, 1)], [a, b], 5)) == 2
+    assert a.section_path == first
+
+
+def test_unknown_or_invalid_structural_name_is_not_guessed():
+    from app.analysis.source_alternatives import section_key
+
+    assert section_key("PART IIX") != section_key("Part 8")
+    assert section_key("CIVIL LAW") == "civil law"
+
+
+def test_republished_source_notice_survives_api_and_shared_export_reference():
+    from app.analysis.report_exporter import _clause_ref
+    from app.analysis.schemas import ReportCitationOut
+    from app.analysis.source_alternatives import source_notice
+
+    cite = ReportCitationOut(
+        citation_tag="[D2-C1]",
+        document_title="Original official title",
+        clause_number="19",
+        quote_original="Original legal clause remains unchanged.",
+        quote_zh="待核对译文",
+        review_status="pending_review",
+        version_id="v",
+        source_nature="statutory_body_republication",
+        source_notice=source_notice("statutory_body_republication"),
+    )
+    assert "非原始公报" in _clause_ref(cite.model_dump())
+    assert (
+        cite.document_title == "Original official title" and cite.review_status == "pending_review"
+    )

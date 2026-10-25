@@ -148,6 +148,7 @@ class ClauseCandidate:
     instrument_identity: str = ""
     instrument_role: str = ""
     text_source: str = "text_layer"
+    source_nature: str = "unclassified"
 
 
 @dataclass
@@ -374,12 +375,16 @@ class ToolBox:
                     continue
                 source = await asyncio.to_thread(observation_text, blob, version.mime_type)
                 identity = validate_observation(payload, version, document, source)
-                verified.setdefault(str(version.id), set()).add(identity)
+                verified.setdefault(str(version.id), set()).add(
+                    (*identity, payload["source_nature"])
+                )
             except (OSError, ValueError, ParseError):
                 continue
         for c in out:
             if len(verified.get(c.version_id, set())) == 1:
-                c.instrument_identity, c.instrument_role = next(iter(verified[c.version_id]))
+                c.instrument_identity, c.instrument_role, c.source_nature = next(
+                    iter(verified[c.version_id])
+                )
         for version_id in {c.version_id for c in out}:
             group = [c for c in out if c.version_id == version_id]
             labels = {c.label for c in group if c.heading}

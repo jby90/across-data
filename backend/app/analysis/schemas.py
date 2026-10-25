@@ -151,6 +151,9 @@ class FollowUpQuestionOut(BaseModel):
 
 
 class AnalysisFindingOut(BaseModel):
+    version_id: str | None = None
+    source_nature: str = "unclassified"
+    source_notice: str = ""
     selected_sentence_ids: list[int] = Field(default_factory=list)
     anchor_quote_start: int | None = None
     anchor_quote_end: int | None = None
@@ -206,6 +209,9 @@ class AnalysisStepTraceOut(BaseModel):
 
 
 class ReportCitationOut(BaseModel):
+    version_id: str | None = None
+    source_nature: str = "unclassified"
+    source_notice: str = ""
     selected_sentence_ids: list[int] = Field(default_factory=list)
     anchor_quote_start: int | None = None
     anchor_quote_end: int | None = None

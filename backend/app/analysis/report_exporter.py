@@ -44,7 +44,11 @@ def _w_tc(text: str, bold: bool = False, shade: str | None = None) -> str:
 
 
 def _clause_ref(f: dict) -> str:
-    return f"{f.get('document_title', '')} {f.get('clause_number', '')} (v{f.get('version_no', 1)})"
+    notice = f"；{f['source_notice']}" if f.get("source_notice") else ""
+    return (
+        f"{f.get('document_title', '')} {f.get('clause_number', '')} "
+        f"(v{f.get('version_no', 1)}){notice}"
+    )
 
 
 def build_report_docx(task: AnalysisTask, rv: ReportVersion) -> bytes:

@@ -34,6 +34,7 @@ from app.analysis.evidence_selection import (
 from app.analysis.llm import LlmResult, LlmUnavailableError, call_llm_json
 from app.analysis.models import AgentWorkflowConfig, AnalysisStepTrace, AnalysisTask, ReportVersion
 from app.analysis.retrieval import task_query
+from app.analysis.source_alternatives import source_notice
 from app.analysis.tools import (
     ClauseCandidate,
     ToolBox,
@@ -178,6 +179,7 @@ def _candidate_payload(c: ClauseCandidate, retained=None, fact_keys=None) -> dic
         "source_url": c.source_url,
         "version_id": c.version_id,
         "version_no": c.version_no,
+        "source_nature": c.source_nature,
         "legal_status": c.legal_status,
         "instrument_identity_for_comparison_only": c.instrument_identity or None,
         "version_contract": "不同来源/版本保持独立，不得合并引文；未知时效不能认定现行有效。",
@@ -1291,6 +1293,9 @@ async def _compile(
                     "clause_number": cand.label,
                     "version_no": cand.version_no,
                     "source_url": cand.source_url,
+                    "version_id": cand.version_id,
+                    "source_nature": cand.source_nature,
+                    "source_notice": source_notice(cand.source_nature),
                     "quote_original": str(f["quote"]),
                     "quote_zh": str(f.get("quote_zh") or "(未提供译文)"),
                     "review_status": cand.review_status,
@@ -1312,6 +1317,8 @@ async def _compile(
                 }
             )
             lines.append(f"- {tag} {f.get('obligation', '')}(风险:{risk})")
+            if source_notice(cand.source_nature):
+                lines.append(f"  来源说明：{source_notice(cand.source_nature)}。")
             cited_versions.setdefault(cand.version_id, set()).add(code)
             findings.append(
                 {
@@ -1324,6 +1331,9 @@ async def _compile(
                     "clause_number": cand.label,
                     "version_no": cand.version_no,
                     "source_url": cand.source_url,
+                    "version_id": cand.version_id,
+                    "source_nature": cand.source_nature,
+                    "source_notice": source_notice(cand.source_nature),
                     "compliance_obligation": str(f.get("obligation") or ""),
                     "risk_level": risk,
                     "basis_quote": str(f["quote"]),

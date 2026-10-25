@@ -17,7 +17,22 @@ def equivalent(key, before, after):
     return before == after
 
 
-async def verify(baseline, output, database):
+def baseline_rows(rows, json_columns):
+    if isinstance(rows, dict):
+        assert all(str(row["id"]) == key for key, row in rows.items())
+        rows = list(rows.values())
+    normalized = []
+    for row in rows:
+        values = dict(row)
+        for key in json_columns:
+            if isinstance(values.get(key), str):
+                values[key] = json.loads(values[key])
+        normalized.append(values)
+    assert len({str(r["id"]) for r in normalized}) == len(normalized)
+    return normalized
+
+
+async def verify(baseline, output, database, archive_directory=None):
     if not database.startswith("remediation_"):
         raise ValueError("Only isolated remediation databases are allowed")
     before = json.loads(baseline.read_text(encoding="utf-8"))
@@ -41,6 +56,15 @@ async def verify(baseline, output, database):
                 snapshots.append(payload)
             for table, rows in before.items():
                 assert re.fullmatch(r"[a-z_]+", table)
+                json_columns = [
+                    r["column_name"]
+                    for r in await conn.fetch(
+                        """SELECT column_name FROM information_schema.columns WHERE
+                    table_schema='public' AND table_name=$1 AND data_type IN ('json','jsonb')""",
+                        table,
+                    )
+                ]
+                rows = baseline_rows(rows, json_columns)
                 current = {
                     str(item["id"]): item
                     for row in await conn.fetch(
@@ -74,7 +98,8 @@ async def verify(baseline, output, database):
                         ), "activation must have original snapshot"
                         activation_changes.append(old["version_no"])
             archive_root = Path(
-                "C:/Users/Jin/.cyshuhe-dev/remediation_20261023/archive"
+                archive_directory
+                or "C:/Users/Jin/.cyshuhe-dev/remediation_20261023/archive"
             ).resolve()
             for row in await conn.fetch(
                 "SELECT archive_path,content_hash FROM document_versions"
@@ -89,6 +114,7 @@ async def verify(baseline, output, database):
                 FROM agent_workflow_configs WHERE is_active""")
             result = {
                 "passed": True,
+                "baseline_sha256": hashlib.sha256(baseline.read_bytes()).hexdigest(),
                 "database": database,
                 "old_rows_checked": checked,
                 "old_tables_checked": len(before),
@@ -112,5 +138,6 @@ if __name__ == "__main__":
     parser.add_argument("--baseline", type=Path, required=True)
     parser.add_argument("--json", type=Path, required=True)
     parser.add_argument("--database", default="remediation_s5_20261024")
+    parser.add_argument("--archive-root", type=Path)
     args = parser.parse_args()
-    asyncio.run(verify(args.baseline, args.json, args.database))
+    asyncio.run(verify(args.baseline, args.json, args.database, args.archive_root))

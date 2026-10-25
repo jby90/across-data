@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "baseline_sha256": "944ffe52167cac3377b899dc47b8b52f520fdf48308e07be4b1ac6587a3cb92c",
+  "database": "remediation_s5_sources_20261025",
+  "old_rows_checked": 30755,
+  "old_tables_checked": 20,
+  "source_evidence_approval_overwrites": 0,
+  "legacy_execution_ids_backfilled": 0,
+  "archives_verified": 81,
+  "old_activation_only_changes_with_snapshots": [],
+  "additions": {
+    "agent_workflow_configs": 0,
+    "analysis_messages": 0,
+    "analysis_step_traces": 0,
+    "analysis_tasks": 0,
+    "clause_translations": 0,
+    "clauses": 137,
+    "crawl_runs": 0,
+    "document_versions": 1,
+    "documents": 1,
+    "glossary_terms": 0,
+    "kg_edges": 0,
+    "kg_nodes": 0,
+    "knowledge_audit_records": 6,
+    "knowledge_change_proposals": 1,
+    "organizations": 0,
+    "pipeline_events": 1,
+    "report_versions": 0,
+    "review_points": 0,
+    "source_sites": 1,
+    "users": 0
+  },
+  "active_workflows": [
+    {
+      "version_no": 44,
+      "runtime_schema_version": "s5-source-support-v6"
+    }
+  ]
+}
