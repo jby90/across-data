@@ -141,6 +141,7 @@ class ClauseCandidate:
     score: float = 0.0
     matched_keywords: list[str] = field(default_factory=list)
     heading: str = ""
+    language: str = ""
 
 
 @dataclass
@@ -216,6 +217,7 @@ class ToolBox:
         self.calls: list[ToolCall] = []
         self._candidates_cache: list[ClauseCandidate] | None = None
         self._index: ClauseIndex | None = None
+        self.retrieval_tokens = 0
 
     def _record(
         self,
@@ -309,6 +311,7 @@ class ToolBox:
                     review_status=tr.review_status if tr else "pending_review",
                     legal_status=ver.legal_status,
                     heading=clause.heading or "",
+                    language=clause.language or "",
                     translated_text=tr.translated_text if tr else "",
                 )
             )
@@ -346,6 +349,7 @@ class ToolBox:
         keywords: list[str] | None = None,
         top_k: int = 5,
         query: str | None = None,
+        config: dict | None = None,
     ) -> list[ClauseCandidate]:
         started = time.perf_counter()
         kws = [k.lower() for k in (keywords or DIMENSION_KEYWORDS.get(dimension, []))]
@@ -356,6 +360,19 @@ class ToolBox:
 
         dimension_title = dict(EIGHT_DIMENSIONS_SPEC).get(dimension, "")
         scored = self._index.rank(" ".join(kws) + " " + dimension_title, query)
+        planning = {}
+        if config and config.get("semantic_planning") and self._index.candidates:
+            from app.analysis.retrieval_planner import planned_search
+
+            scored, planning = await planned_search(
+                self._index,
+                " ".join(kws) + " " + dimension_title,
+                dimension_title,
+                query,
+                top_k,
+                config,
+            )
+            self.retrieval_tokens += planning["tokens"]
         top = [
             ClauseCandidate(
                 **{
@@ -375,11 +392,12 @@ class ToolBox:
                 "top_k": top_k,
                 "query": query,
                 "retrieval_version": RETRIEVAL_VERSION,
+                "planning": planning,
             },
             f"命中 {len(scored)} 条,取前 {len(top)} 条: "
             + ("; ".join(f"{t.document_title[:24]} {t.label}" for t in top) or "无"),
             started,
-            verified=bool(top),
+            verified=bool(top) and not planning.get("error"),
         )
         return top
 

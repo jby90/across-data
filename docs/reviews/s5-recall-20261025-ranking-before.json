@@ -1,0 +1,2946 @@
+[
+  {
+    "q": "S5-01",
+    "question": "企业车联网数据处理是否受一般数据保护法约束？",
+    "dim": "D1",
+    "country": "SG",
+    "expected": {
+      "id": "9885ae7b-34d8-4109-9f7b-ee7cc8fe2ef8",
+      "title": "Personal Data Protection Act 2012",
+      "label": "4",
+      "heading": "Application of Act",
+      "first": "Application of Act\n4.—(1) Parts 3, 4, 5, 6, 6A and 6B do not impose any obligation\non —\n(a) any individual acting in a personal or domestic capacity;\n(b) any employee acting in the",
+      "zh": "本法适用\n4.—(1) 第3、4、5、6、6A和6B部分不对以下主体施加任何义务——\n(a) 任何以个人或家庭身份行事的个人；\n(b) 任何在受雇于某组织的雇佣过程中行事的雇员；\n(c) 任何公共机构；或\n(d) 为本条规定之目的所规定的任何其他组织或个人数据，或组织类别或个人数据类别。\n[40/2020]\n(2) 第3、4、5、6部分（第24条和第25条除外）、第6A部分（第26C(3)(a)条",
+      "channel_ranks": [
+        25,
+        9,
+        411,
+        856
+      ]
+    },
+    "top": [
+      {
+        "id": "d5d8fcfd-a190-4b4f-80b7-78829289b72e",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "3.20",
+        "heading": "",
+        "first": "Public agencies are excluded from the application of the Data Protection Provisions.\nOrganisations that provide services to public agencies may either have obligations\nunder the PD",
+        "zh": "公共机构被排除在数据保护条款的适用范围之外。\n向公共机构提供服务的组织可能作为数据控制者或数据中介机构承担《个人数据保护法》下的义务。\n数据中介机构\n《个人数据保护法》将数据中介机构定义为“代表另一组织处理个人数据但不包括该另一组织雇员的组织”。与上述对雇员的排除一致，数据中介机构不包括雇员。\n数据中介机构的义务\n《个人数据保护法》规定，数据中介机构依据以书面形式证明或订立的合同，代表另一组织并为",
+        "channel_ranks": [
+          102,
+          19,
+          3,
+          11
+        ]
+      },
+      {
+        "id": "9a845dcd-c7e0-4249-9456-0fee86b3ca9b",
+        "title": "Personal Data Protection Act 2012 - Personal Data Protection Regulations 2014",
+        "label": "9",
+        "heading": "Requirements for transfer",
+        "first": "Requirements for transfer\n9.––(1) For the purposes of section 26 of the Act, a transferring\norganisation must, before transferring an individual’s personal data\nto a country or ter",
+        "zh": "转移要求\n9.––(1) 就本法第26条而言，转移组织在将个人的个人数据转移至新加坡以外的国家或地区之前，必须——\n(a) 采取适当步骤，确保转移组织在转移后的个人数据仍由其占有或控制期间，就该转移后的个人数据遵守本法第III至VI部分；以及\n(b) 采取适当步骤，查明该新加坡以外国家或地区内的个人数据接收方（如有）是否受具有法律约束力的义务（依照第10条）约束，并确保其受该等义务约束，以为转移后",
+        "channel_ranks": [
+          34,
+          916,
+          9,
+          9
+        ]
+      },
+      {
+        "id": "dd3ec147-106e-4eb3-a116-24a4f42a8778",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "21.1",
+        "heading": "",
+        "first": "21.1 In data protection, the concept of accountability refers to how an organisation\ndischarges its responsibility for personal data in its possession or which it has control\nover8",
+        "zh": "21.1 在数据保护中，问责制的概念是指组织如何履行其对所持有或控制的个人数据的责任83。这可能包括组织能够确定收集、使用或披露个人数据的目的，或处理数据的方式和手段的情形。这一问责制的一般概念规定于《个人数据保护法》第3部分“关于个人数据保护与问责的一般规则”之中，并以《个人数据保护法》第3部分第11(2)条为前提，该条规定：“组织对其持有或控制下的个人数据负责。”",
+        "channel_ranks": [
+          341,
+          69,
+          5,
+          3
+        ]
+      },
+      {
+        "id": "4d29a055-d5f0-47bc-b126-bf579bdc35ed",
+        "title": "Personal Data Protection Act 2012",
+        "label": "0.1",
+        "heading": "目录(自动识别)",
+        "first": "9. Administration Body\n10. Co-operation agreements\nPART III\nGENERAL RULES WITH RESPECT TO\nPROTECTION OF PERSONAL DATA\n11. Compliance with Act\n12. Policies and practices\nPersonal Da",
+        "zh": "9. 行政机构\n10. 合作协议\n第三部分\n关于个人数据保护的一般规则\n11. 遵守本法\n12. 政策与实践\n个人数据保护法案\n法案编号 24/2012。\n2012年9月10日首次宣读。\n2012年个人数据保护法\n（2012年第 号）\n条文编排\n第一部分\n初步\n条文\n1. 简称与生效\n2. 释义\n3. 目的\n4. 本法适用\n第二部分\n个人数据保护委员会\n与行政管理\n5. 个人数据保护委员会\n6. ",
+        "channel_ranks": [
+          15,
+          836,
+          18,
+          8
+        ]
+      },
+      {
+        "id": "a4d8176f-7b61-4c72-8b08-0fc8d72a1be8",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "2.4",
+        "heading": "",
+        "first": "deal with the administration of the PDPA and certain preliminary and general\nmatters. The Commission may issue further advisory guidelines addressing such\nmatters.",
+        "zh": "处理《个人数据保护法》的实施以及某些初步和一般性事项。委员会可发布进一步的咨询指南处理该等事项。",
+        "channel_ranks": [
+          1200,
+          697,
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-02",
+    "question": "车外影像能间接识别个人时如何判断个人数据？",
+    "dim": "D2",
+    "country": "SG",
+    "expected": {
+      "id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc",
+      "title": "Personal Data Protection Act 2012",
+      "label": "2",
+      "heading": "Interpretation",
+      "first": "Interpretation\n2.—(1) In this Act, unless the context otherwise requires —\n“advisory committee” means an advisory committee appointed\nunder section 7;\n“Appeal Committee” means a Da",
+      "zh": "释义\n2.—(1) 在本法中，除上下文另有要求外——\n“咨询委员会”指根据第7条任命的咨询委员会；\n“上诉委员会”指根据第48P(4)条并结合第七附表组建的数据保护上诉委员会；\n“上诉小组”指根据第48P(1)条设立的数据保护上诉小组；\n“授权人员”，就本法任何条文下任何权力、职能或职责的行使或履行而言，指根据《2016年信息通信媒体发展局法》第38条获转授该条文下该权力、职能或职责的人；\n“管理",
+      "channel_ranks": [
+        139,
+        643,
+        932,
+        931
+      ]
+    },
+    "top": [
+      {
+        "id": "e86d4068-399f-45a5-adff-1f078a78fc2c",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "16.9",
+        "heading": "",
+        "first": "16.9 The Commission recognises that organisations may derive personal data from the\nraw personal data collected either directly from the individual or from third party\nsources. In ",
+        "zh": "16.9 委员会认识到，组织可能从直接向个人收集或从第三方来源收集的原始个人数据中衍生出个人数据。在此类情况下，组织应确保在进行进一步处理之前，原始个人数据在实质上是准确的，并确保处理的准确性（例如，从输入数据范围计算得出的平均值和中位数是准确的）。若衍生数据涉及依据预定义类别和画像对个人进行分组或标注，组织应确保在数据处理阶段准确适用分类和选择标准（即业务规则）。\n17 保护义务",
+        "channel_ranks": [
+          11,
+          3,
+          14,
+          10
+        ]
+      },
+      {
+        "id": "c1c54055-20a8-45df-a4b3-3094a42dd96c",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "20.9",
+        "heading": "",
+        "first": "20.9 As a good practice, organisations should establish clear procedures for complying\nwith the DBN Obligation when entering into service agreements or contractual\narrangements wit",
+        "zh": "20.9 作为良好实践，各组织在与数据中介机构订立服务协议或合同安排时，应建立明确的程序以遵守DBN义务。这些协议应考虑与数据处理相关的因素，例如所涉个人数据的数量和类型、数据处理的类型和范围，以及数据泄露可能导致的潜在57损害。数据中介机构代表公共机构并为公共机构的目的处理个人数据的，如果该数据中介机构有理由相信与该个人数据相关的数据泄露已经发生，还必须在不无故拖延的情况下通知该公共机构数据泄露",
+        "channel_ranks": [
+          354,
+          425,
+          4,
+          2
+        ]
+      },
+      {
+        "id": "22e9c070-a7fd-40e5-9595-79a1e05223ae",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "3.4",
+        "heading": "",
+        "first": "individuals; and (b) can individuals be identified from this set of information or other\ninformation they have access to. In general, organisations should avoid making\nassessments ",
+        "zh": "个人；以及(b)能否从这组信息或其可访问的其他信息中识别出个人。一般而言，组织应避免进行抽象评估。以下段落列出了委员会在确定个人数据时的一些考量因素。\n数据集中的数据元素数量及其他信息的可获得性\n经验法则是，数据集中应至少包含两个数据元素，才能识别出个人。有时，可能需要超过两个数据元素才能识别出个人。这在很大程度上取决于数据元素的具体性和性质。例如，姓名与身份证号码的组合通常足以识别个人，但电子邮",
+        "channel_ranks": [
+          115,
+          245,
+          2,
+          36
+        ]
+      },
+      {
+        "id": "5831b62e-2d6d-4829-8840-ff490bb3962b",
+        "title": "Personal Data Protection Act 2012",
+        "label": "4",
+        "heading": "",
+        "first": "4. Paragraph 1(q) shall not apply unless —\n(a) the research purpose cannot reasonably be accomplished without the\npersonal data being provided in an individually identifiable form;",
+        "zh": "4. 除非符合以下条件，否则第1(q)段不适用——\n(a) 若不提供可单独识别个人身份形式的个人数据，研究目的便无法合理实现；\n(b) 组织寻求个人同意披露个人数据不可行；\n(c) 个人数据不会被用于联系个人以请求其参与研究；\n(d) 将个人数据与其他信息关联不会对个人数据所识别的个人造成损害，且关联所产生的利益明显符合公共利益；以及\n(e) 个人数据将被披露至的组织已签署协议，承诺遵守——\n(i",
+        "channel_ranks": [
+          116,
+          442,
+          9,
+          5
+        ]
+      },
+      {
+        "id": "5c291ff6-5a0f-4c5c-9af5-756a55099986",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "15.11",
+        "heading": "",
+        "first": "15.11 The PDPA does not expressly state that an access request be accompanied by a\nreason for making the request. However, an organisation should ask the applicant to\nbe more speci",
+        "zh": "15.11 PDPA并未明确规定访问请求须附具提出请求的理由。但是，组织应要求申请人更具体地说明其需要何种类型的个人数据、个人数据被收集的时间与日期，以便于处理该访问请求，或用以确定该请求是否属于PDPA第21(3)条项下的某项禁止情形或第五附表29中的任何例外。在评估访问请求时，组织应考虑申请人访问请求的目的，从而确定应提供个人数据访问的适当方式和形式。例如，组织可决定向个人提供视频录像中的快照",
+        "channel_ranks": [
+          70,
+          591,
+          5,
+          32
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-03",
+    "question": "向境外研发中心传输遥测与个人数据前须满足什么？",
+    "dim": "D3",
+    "country": "SG",
+    "expected": {
+      "id": "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+      "title": "Personal Data Protection Act 2012",
+      "label": "26",
+      "heading": "Transfer of personal data outside Singapore",
+      "first": "Transfer of personal data outside Singapore\n26.—(1) An organisation must not transfer any personal data to a\ncountry or territory outside Singapore except in accordance with\nrequir",
+      "zh": "个人数据跨境传输至新加坡境外\n26.—(1) 组织不得将任何个人数据传输至新加坡以外的国家或地区，除非依照本法规定的要求进行，以确保组织对如此传输的个人数据提供与本法所规定的保护相当的保护标准。\n(2) 委员会可应任何组织的申请，以书面通知豁免该组织遵守依据第(1)款所规定、就该组织进行的个人数据跨境传输适用的任何要求。\n(3) 第(2)款下的豁免——\n(a) 可在委员会以书面指定的此类条件约束下",
+      "channel_ranks": [
+        6,
+        2,
+        35,
+        15
+      ]
+    },
+    "top": [
+      {
+        "id": "abc976bc-7df5-449b-85b1-57eb6bd33001",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "19.4",
+        "heading": "",
+        "first": "19.4 The Personal Data Protection Regulations 2021 specify the conditions under which\nan organisation may transfer personal data overseas. In essence, an organisation\nmay transfer ",
+        "zh": "19.4 《2021年个人数据保护条例》规定了组织向境外传输个人数据的条件。实质上，组织在满足以下条件时可以向境外传输个人数据：其已采取适当措施，确保境外接收方受具有法律约束力的义务或特定认证的约束，从而为所传输的个人数据提供与《个人数据保护法》相当的保护标准。",
+        "channel_ranks": [
+          9,
+          23,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "c9ab0ba5-ceda-4608-82dd-424bd4b29cdf",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "19.1",
+        "heading": "",
+        "first": "19.1 Section 26 of the PDPA limits the ability of organisations to transfer personal data to\nanother organisation outside Singapore in circumstances where it relinquishes\npossessio",
+        "zh": "19.1 《个人数据保护法》第26条限制组织在放弃对个人数据的占有或直接控制的情况下，将个人数据传输给新加坡境外另一组织的能力。此类情形包括将个人数据传输给同一集团内的另一公司用于集中化公司职能，或传输给数据中介机构用于数据处理。在传输或位于境外的个人数据仍由组织占有或控制的情况下，该组织必须遵守所有数据保护规定。此类情形包括：员工携带客户名单于其笔记本电脑上出国旅行；组织在境外拥有或租赁并运营用",
+        "channel_ranks": [
+          18,
+          16,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "8b2ffa30-640a-4f8d-be0e-8eead6120fe6",
+        "title": "The Transfer Limitation Obligation chapter 19 historical guidance",
+        "label": "19.2",
+        "heading": "",
+        "first": "19.2 Regulations issued under the PDPA will specify the conditions under which an\norganisation may transfer personal data overseas. In essence, an organisation may\ntransfer persona",
+        "zh": "19.2 根据《个人数据保护法》发布的条例将规定组织可以跨境传输个人数据的条件。本质上，组织在满足以下条件时可以将个人数据传输至境外：该组织已采取适当措施，确保在其占有或控制期间，对于所传输的个人数据将遵守《数据保护条款》；并且，如果个人数据被传输给位于新加坡以外国家或地区的接收方，该接收方须受具有法律强制执行力的义务约束，为所传输的个人数据提供与《个人数据保护法》下相当的保护标准。在这方面，具有",
+        "channel_ranks": [
+          12,
+          7,
+          8,
+          4
+        ]
+      },
+      {
+        "id": "8ccf531d-b7c8-4863-b558-03f9373bcdeb",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "3.23",
+        "heading": "",
+        "first": "the purposes of another organisation, the data intermediary is required to notify the\norganisation without undue delay from the time it has credible grounds to believe\nthat the dat",
+        "zh": "为另一组织的目的，数据中介机构须自其有可信理由相信数据泄露已发生之时起，在无不当迟延的情况下通知该组织。对于数据中介机构代表该组织并为该组织的目的进行的任何处理，该组织仍应对任何违反《数据保护条款》的行为承担责任3。\n\n个人数据跨境传输\n\n当一组织聘用数据中介机构代表其并为自身目的处理个人数据时，该组织有责任就任何个人数据跨境传输遵守传输限制义务。无论个人数据是由该组织传输给境外数据中介机构，还是",
+        "channel_ranks": [
+          3,
+          4,
+          7,
+          24
+        ]
+      },
+      {
+        "id": "9d04d66a-0087-4109-86a0-8c18515058ff",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "19.8.2",
+        "heading": "",
+        "first": "(including personal data such as his identification details, blood type, allergies,\nand existing medical conditions) to the overseas hospital so that John can\nreceive medical treat",
+        "zh": "（包括其身份识别信息、血型、过敏情况及现有医疗状况等个人数据）传输至境外医院，以便John能够接受医疗治疗。在此情况下，John的个人数据传输将符合传输限制义务，因为向境外医院披露该等数据是为应对威胁John生命、健康或安全的紧急情况所必需（依据PDPA第一附表第1部分第2段），且John的家庭医生已采取合理措施确保所传输的个人数据不会被接收方用于或披露用于任何其他目的。\n示例：\nJKL公司在新加",
+        "channel_ranks": [
+          16,
+          35,
+          6,
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-04",
+    "question": "采集车主语音前是否需要同意？",
+    "dim": "D4",
+    "country": "SG",
+    "expected": {
+      "id": "c50844a4-1198-4110-9b2c-558610419b20",
+      "title": "Personal Data Protection Act 2012",
+      "label": "13",
+      "heading": "Consent required",
+      "first": "Consent required\n13. An organisation must not, on or after 2 July 2014, collect, use or\ndisclose personal data about an individual unless —\n(a) the individual gives, or is deemed t",
+      "zh": "须经同意\n13. 组织不得在2014年7月2日或之后收集、使用或披露关于个人的个人数据，除非——\n(a) 该个人根据本法就其收集、使用或披露（视情况而定）作出同意，或被视作已作出同意；或\n(b) 未经该个人同意而收集、使用或披露（视情况而定）是本法或任何其他成文法所要求或授权的。",
+      "channel_ranks": [
+        100,
+        9,
+        371,
+        233
+      ]
+    },
+    "top": [
+      {
+        "id": "b23c9b98-a65f-41af-a749-6ff4e074e80e",
+        "title": "Personal Data Protection Act 2012",
+        "label": "46",
+        "heading": "Consent",
+        "first": "Consent\n46.—(1) A person must not, as a condition for supplying goods,\nservices, land, interest or opportunity, require a subscriber or user of a\nSingapore telephone number to give",
+        "zh": "同意\n46.—(1) 任何人不得作为提供商品、服务、土地、权益或机会的条件，要求新加坡电话号码的订户或用户同意向该新加坡电话号码或任何其他新加坡电话号码发送指定信息，超出为该订户或用户提供该等商品、服务、土地、权益或机会所合理需要的范围；在此情形下给予的任何同意均非有效给予。\n(2) 如果某人获取或试图获取同意，以向新加坡电话号码发送指定信息——\n(a) 通过就发送该指定信息提供虚假或误导性信息；",
+        "channel_ranks": [
+          17,
+          4,
+          9,
+          3
+        ]
+      },
+      {
+        "id": "559f90a9-7054-4a02-8f57-bd2832986151",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "15.34",
+        "heading": "",
+        "first": "15.34 One of the prohibitions, section 21(3)(c), requires that an organisation must not\nprovide access to the personal data or other information under section 21(1) where\nthe provi",
+        "zh": "15.34 其中一项禁止规定，即第21(3)(c)条，要求组织不得在第21(1)条下提供对个人数据或其他信息的访问，如果提供个人数据或其他信息可合理预期会揭示另一名个人的个人数据。该禁止规定不适用于提出请求的个人的任何用户活动数据43或任何用户提供的数据，尽管此类数据包含另一名个人的个人数据。尽管组织不需要在用户活动数据或提供的数据中遮蔽或删除这些其他个人的个人数据，组织仍应考虑21(3)中的其他",
+        "channel_ranks": [
+          31,
+          164,
+          7,
+          7
+        ]
+      },
+      {
+        "id": "66e22222-e862-45ee-8a56-1073cd6ce6e4",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "4.93",
+        "heading": "",
+        "first": "Where an organisation wishes to use or disclose personal data for purposes which it\nhas not yet informed the individual or for which it has not yet obtained the\nindividual’s consen",
+        "zh": "组织希望将个人数据用于其尚未告知个人或尚未取得个人同意的目的，或披露个人数据用于该等目的时，组织须告知个人该等目的并取得同意（“通知”与“同意义务”）。\n在确定是否可在未取得新的同意的情况下将个人数据用于特定目的或披露个人数据用于特定目的时，组织应确定：\na) 该目的是否属于相关个人最初获告知的目的范围之内，例如，该目的是否属于组织为个人提供现有业务关系服务之范围；\nb) 依据 PDPA 第 15",
+        "channel_ranks": [
+          6,
+          15,
+          15,
+          34
+        ]
+      },
+      {
+        "id": "5e6f8ed8-74cb-45ac-84c6-5a1577d9ca2c",
+        "title": "Road Traffic Act - Road Traffic (Autonomous Motor Vehicles) Rules 2017",
+        "label": "17.1",
+        "heading": "Data collection from data recorder",
+        "first": "(c)\t speed of the vehicle (with the data recorder operating at a\nfrequency of at least 2 Hz);\n(d)\t the status of the vehicle, including whether the vehicle\nis operating manually, i",
+        "zh": "(c)\t车辆速度（数据记录装置以至少2 Hz的频率运行）；\n(d)\t车辆状态，包括车辆是否处于人工操作、自动驾驶模式、人工自动驾驶模式或远程操作模式；\n(e)\t自动驾驶模式期间按接管类型划分的操作员接管历史；\n(f)\t传感器数据；\n(g)\t由以下设备采集的摄像头或视频影像——\n(i)\t内部朝向摄像头（采集车内任何人员、方向盘及前挡风玻璃的部分区域）；以及\n(ii)\t外部前向和后向摄像头。\n(5) ",
+        "channel_ranks": [
+          548,
+          437,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+        "title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations",
+        "label": "25",
+        "heading": "",
+        "first": "25. In respect of any non-compliance of the vehicle with the Road Traffic Act or its\nsubsidiary legislation, the Applicant must provide information of any such non￾compliance by fi",
+        "zh": "25. 对于车辆不符合《道路交通法》或其附属立法的任何情形，申请人必须通过在表格 AV03：各车辆型号详情中，在《道路交通法》附属立法合规声明部分填写并提供附加细节，提供任何此类不合规情形的信息。\n(L) 车辆安全标准",
+        "channel_ranks": [
+          243,
+          179,
+          5,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-05",
+    "question": "个人数据可以无限期保存吗？",
+    "dim": "D5",
+    "country": "SG",
+    "expected": {
+      "id": "623a4ec2-ad56-456c-929d-311cf8e5f293",
+      "title": "Personal Data Protection Act 2012",
+      "label": "25",
+      "heading": "Retention of personal data",
+      "first": "Retention of personal data\n25. An organisation must cease to retain its documents containing\npersonal data, or remove the means by which the personal data can be\nassociated with pa",
+      "zh": "个人数据的保留\n25. 组织必须在合理推定以下情形时，停止保留其包含个人数据的文件，或移除可将该个人数据与特定个人相关联的手段——\n(a) 保留该个人数据已不再能实现收集该个人数据的目的；且\n(b) 保留已不再为法律或商业目的所必需。",
+      "channel_ranks": [
+        5,
+        4,
+        513,
+        377
+      ]
+    },
+    "top": [
+      {
+        "id": "e12c5bd9-b910-43b8-8b97-5019725af0e2",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "18.2",
+        "heading": "",
+        "first": "18.2 The Retention Limitation Obligation prevents organisations from retaining personal\ndata in perpetuity where it does not have legal or business reasons to do so. Holding\nperson",
+        "zh": "18.2 保留限制义务防止组织在没有法律或商业理由的情况下永久保留个人数据。无限期持有个人数据会增加违反数据保护规定的风险。然而，由于每个组织都有其特定的业务需求，保留限制义务并未规定组织可以保留个人数据的固定期限。相反，组织可以合法保留个人数据的期限，是根据合理性标准进行评估的，同时考虑到收集个人数据的目的以及保留个人数据可能必要的其他法律或商业目的。",
+        "channel_ranks": [
+          10,
+          6,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "4193d701-47d1-4e11-9cd4-c8b0ae944035",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "4.42",
+        "heading": "",
+        "first": "obligation to provide, upon request, access to the individual’s personal data in its\npossession or control and information to the individual about the ways in which his\npersonal da",
+        "zh": "有义务应请求提供个人访问其持有或控制的个人数据，并向个人提供有关其个人数据可能已被披露的方式的信息。因此，个人可以查明其个人数据可能已被披露给哪些其他组织，并直接向这些其他组织发出撤回同意的通知。\n尽管个人可以撤回对其个人数据的收集、使用或披露的同意，但《个人数据保护法》（PDPA）并不要求组织应请求删除或销毁个人的个人数据。组织可以根据《数据保护条款》在其文件和记录中保留个人数据。有关此方面的更",
+        "channel_ranks": [
+          2,
+          37,
+          12,
+          3
+        ]
+      },
+      {
+        "id": "a2f2ab42-5126-44ab-b837-22b66dd6b200",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "15.41",
+        "heading": "",
+        "first": "15.41 However, organisations should generally be mindful not to unnecessarily preserve\npersonal data “just in case” to meet possible access requests, and should not retain\npersonal",
+        "zh": "15.41 但是，组织通常应注意，不要为了应对可能的查阅请求而“以防万一”不必要地保存个人数据，并且在无业务或法律目的时不应无限期保留个人数据。在拒绝查阅请求后保存个人数据",
+        "channel_ranks": [
+          41,
+          150,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "1f365a8d-f84c-4b82-8f9b-fb34a6903878",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "18.9",
+        "heading": "",
+        "first": "18.9 Where there is no longer a need for an organisation to retain personal data, it must\ntake prompt action to ensure it does not hold such personal data in either one of the\ntwo ",
+        "zh": "18.9 当组织不再需要保留个人数据时，其必须迅速采取行动，确保不以《个人数据保护法》（PDPA）规定的两种方式之一持有该等个人数据。也就是说，组织可以停止保留包含个人数据的文件，或者可以移除使个人数据能够与特定个人相关联的手段（即对数据进行匿名化处理）。",
+        "channel_ranks": [
+          17,
+          10,
+          28,
+          15
+        ]
+      },
+      {
+        "id": "6563286a-c737-4170-983e-81ffb0a4217f",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "18.1",
+        "heading": "",
+        "first": "18.1 Section 25 of the PDPA requires an organisation to cease to retain its documents\ncontaining personal data, or remove the means by which the personal data can be\nassociated wit",
+        "zh": "18.1 《个人数据保护法》第25条要求，一旦可以合理推定收集该个人数据的目的已不再通过保留该个人数据而得以实现，且保留该个人数据对于法律或商业目的而言已不再必要，组织即须停止保留其包含个人数据的文件，或删除可将该个人数据与特定个人相关联的手段。本指南将该停止保留个人数据的义务称为保留限制义务。\n个人数据可保留多长时间",
+        "channel_ranks": [
+          3,
+          2,
+          37,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-06",
+    "question": "违法处理个人数据的财务处罚条款在哪里？",
+    "dim": "D6",
+    "country": "SG",
+    "expected": {
+      "id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+      "title": "Personal Data Protection Act 2012",
+      "label": "48J",
+      "heading": "Financial penalties",
+      "first": "Financial penalties\n48J.—(1) Subject to subsection (2), the Commission may, if it is\nsatisfied that —\n(a) an organisation has intentionally or negligently\ncontravened any provision",
+      "zh": "财务处罚\n48J.—(1) 除第(2)款另有规定外，委员会如信纳——\n(a) 某机构已故意或疏忽违反第3、4、5、6、6A或6B部的任何条文；或\n(b) 某人已故意或疏忽违反——\n(i) 第9部的任何条文；或\n(ii) 第48B(1)条，\n则可藉书面通知，要求该机构或该人（视属何情况而定）缴付财务处罚。\n[40/2020]\n(2) 第(1)款不适用于违反本法任何条文而该违反行为属本法所订罪行的情况",
+      "channel_ranks": [
+        3,
+        2,
+        1,
+        2
+      ]
+    },
+    "top": [
+      {
+        "id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+        "title": "Personal Data Protection Act 2012",
+        "label": "48J",
+        "heading": "Financial penalties",
+        "first": "Financial penalties\n48J.—(1) Subject to subsection (2), the Commission may, if it is\nsatisfied that —\n(a) an organisation has intentionally or negligently\ncontravened any provision",
+        "zh": "财务处罚\n48J.—(1) 除第(2)款另有规定外，委员会如信纳——\n(a) 某机构已故意或疏忽违反第3、4、5、6、6A或6B部的任何条文；或\n(b) 某人已故意或疏忽违反——\n(i) 第9部的任何条文；或\n(ii) 第48B(1)条，\n则可藉书面通知，要求该机构或该人（视属何情况而定）缴付财务处罚。\n[40/2020]\n(2) 第(1)款不适用于违反本法任何条文而该违反行为属本法所订罪行的情况",
+        "channel_ranks": [
+          3,
+          2,
+          1,
+          2
+        ]
+      },
+      {
+        "id": "5fceb016-2474-4089-85aa-5da5db5db501",
+        "title": "Personal Data Protection Act 2012 - Personal Data Protection (Enforcement) (Amendment) Regulations 2022",
+        "label": "10A",
+        "heading": "FINANCIAL PENALTIES Maximum amount of financial penalties",
+        "first": "FINANCIAL PENALTIES\nMaximum amount of financial penalties\n10A.—(1) The maximum amount prescribed for the purposes\nof section 48J(3) of the Act is —\n(a) in the case of a contraventi",
+        "zh": "财务处罚\n财务处罚的最高金额\n10A.—(1) 为本法第48J(3)条之目的所规定的最高金额为——\n(a) 对于年营业额在新加坡超过$10 million的组织在2022年10月1日或之后实施的违反行为——该组织在新加坡的年营业额的10%；以及\n(b) 在任何其他情况下——$1 million。\n(2) 为本法第48J(4)条之目的所规定的最高金额为——\n1 S 768/2022\n(a) 对于个人",
+        "channel_ranks": [
+          2,
+          1,
+          8,
+          4
+        ]
+      },
+      {
+        "id": "87b7fbf3-b7e7-4e89-806d-8cceaa3f5582",
+        "title": "Personal Data Protection Act 2012",
+        "label": "48J.2",
+        "heading": "Financial penalties",
+        "first": "on the organisation or person (as the case may be),\nincluding the ability of the organisation or person to\ncontinue the usual activities of the organisation or person;\n(j) any othe",
+        "zh": "对组织或人员（视情况而定），\n包括该组织或人员继续其日常活动的能力；\n(j) 任何其他可能相关的事项。\n[40/2020]\n个人数据保护\n发出指示及施加财务处罚的程序",
+        "channel_ranks": [
+          16,
+          5,
+          4,
+          5
+        ]
+      },
+      {
+        "id": "76c52d39-e304-4a44-be4f-28f079fc6d4d",
+        "title": "Personal Data Protection Act 2012 - Personal Data Protection (Appeal) Regulations 2021",
+        "label": "17",
+        "heading": "Suspension of effect of appealable decision",
+        "first": "Suspension of effect of appealable decision\n17. On the application of a party or of its own initiative, the Appeal\nCommittee may suspend, in whole or in part, the effect of the\napp",
+        "zh": "可上诉决定效力的中止\n17. 经一方申请或主动发起，上诉委员会可全部或部分中止被上诉的可上诉决定的效力（财务处罚的实施除外）——\n(a) 在上诉期间；或\n(b) 若可上诉决定依据该法第48Q(5)(a)条发回委员会，直至委员会就该事项作出指示或决定。",
+        "channel_ranks": [
+          19,
+          101,
+          10,
+          9
+        ]
+      },
+      {
+        "id": "c1c54055-20a8-45df-a4b3-3094a42dd96c",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "20.9",
+        "heading": "",
+        "first": "20.9 As a good practice, organisations should establish clear procedures for complying\nwith the DBN Obligation when entering into service agreements or contractual\narrangements wit",
+        "zh": "20.9 作为良好实践，各组织在与数据中介机构订立服务协议或合同安排时，应建立明确的程序以遵守DBN义务。这些协议应考虑与数据处理相关的因素，例如所涉个人数据的数量和类型、数据处理的类型和范围，以及数据泄露可能导致的潜在57损害。数据中介机构代表公共机构并为公共机构的目的处理个人数据的，如果该数据中介机构有理由相信与该个人数据相关的数据泄露已经发生，还必须在不无故拖延的情况下通知该公共机构数据泄露",
+        "channel_ranks": [
+          null,
+          null,
+          3,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-07",
+    "question": "数据合规负责人任命与车联网企业准备有关吗？",
+    "dim": "D7",
+    "country": "SG",
+    "expected": {
+      "id": "c52be03e-14e1-4ed4-bd2e-a63a1d210296",
+      "title": "Personal Data Protection Act 2012",
+      "label": "11",
+      "heading": "Compliance with Act",
+      "first": "Compliance with Act\n11.—(1) In meeting its responsibilities under this Act, an\norganisation must consider what a reasonable person would\nconsider appropriate in the circumstances.\n",
+      "zh": "遵守本法\n11.—(1) 在履行本法规定的职责时，组织必须考虑一个合理的人在有关情况下会认为适当的是什么。\n(2) 组织对其拥有或控制的个人数据负责。\n(3) 组织必须指定一名或多名个人负责确保该组织遵守本法。\n(4) 根据第(3)款指定的个人可将该指定所赋予的责任转授予另一名个人。\n(5) 组织必须向公众提供根据第(3)款指定的个人或根据第(4)款转授的个人中至少一人的业务联系信息。\n(5A) ",
+      "channel_ranks": [
+        532,
+        null,
+        44,
+        19
+      ]
+    },
+    "top": [
+      {
+        "id": "ce6b5392-dbb0-477b-8f52-e9e6d9c69c00",
+        "title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations",
+        "label": "27",
+        "heading": "",
+        "first": "27. The Applicant must submit the vehicle component standard compliance form in Form\nAV03: Details of Each Vehicle Model, under the section Compliance with Vehicle\nSafety Standards",
+        "zh": "27. 申请人必须在表格AV03：各车辆型号详情中“符合车辆安全标准”部分提交车辆部件标准合规表，以证明该车辆在适用情况下已符合国际公认的车辆安全标准。该表格应包含由车辆制造商发布或声明的主要车辆部件的合规标准清单。必须提供适当的文件/测试报告/认证，以证明该车辆符合所规定的任何车辆安全标准项目。",
+        "channel_ranks": [
+          68,
+          112,
+          4,
+          4
+        ]
+      },
+      {
+        "id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+        "title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations",
+        "label": "25",
+        "heading": "",
+        "first": "25. In respect of any non-compliance of the vehicle with the Road Traffic Act or its\nsubsidiary legislation, the Applicant must provide information of any such non￾compliance by fi",
+        "zh": "25. 对于车辆不符合《道路交通法》或其附属立法的任何情形，申请人必须通过在表格 AV03：各车辆型号详情中，在《道路交通法》附属立法合规声明部分填写并提供附加细节，提供任何此类不合规情形的信息。\n(L) 车辆安全标准",
+        "channel_ranks": [
+          89,
+          null,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "ae0363ad-7e7d-4dce-88f2-d7c3ebe466b2",
+        "title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations",
+        "label": "24",
+        "heading": "",
+        "first": "24. The Applicant must ensure that the vehicle that will be used in the Trial comply with all\nlaws relating to it (including without limitation laws relating to the construction, w",
+        "zh": "24. 申请人必须确保将用于试验的车辆遵守所有相关法律（包括但不限于与自动驾驶车辆所属车辆类别的构造、重量和设备有关的法律），或者已就该等法律取得必要的豁免或宽免。对于任何不符合适用法律的情况，将采取执法行动。《道路交通法》（第276章）下可能涉及的附属立法示例包括：\n《道路交通（机动车辆、构造和使用）规则》\n《道路交通（机动车辆、照明）规则》\n《道路交通（机动车辆、后部和侧面标记）规则》\n《道路",
+        "channel_ranks": [
+          356,
+          115,
+          3,
+          7
+        ]
+      },
+      {
+        "id": "a6b4cbb1-7ea2-49cb-ae19-158f7daa0778",
+        "title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations",
+        "label": "6",
+        "heading": "",
+        "first": "6. Prior to trialling in autonomous mode on any public road, please ensure that:\na) each AV has a mechanism to engage and disengage the autonomous technology\nthat is easily accessi",
+        "zh": "6. 在公共道路上进行自动驾驶模式测试前，请确保：\na) 每辆自动驾驶车辆配备有使操作员易于接触的启动和解除自动驾驶技术的机制；\nb) 每辆自动驾驶车辆在车厢内设有视觉指示器，以表明自动驾驶技术何时启用；\nc) 每辆自动驾驶车辆装有一套系统，能够在检测到技术故障（包括通信中断）时，通过视觉和音频警报安全提醒操作员接管车辆控制；\n1 公证翻译是指由合格 translator 提供的英文翻译，例如该国",
+        "channel_ranks": [
+          49,
+          24,
+          16,
+          17
+        ]
+      },
+      {
+        "id": "c2e198cd-ec42-4707-96f2-ae94feee51bc",
+        "title": "Personal Data Protection Act 2012",
+        "label": "4",
+        "heading": "",
+        "first": "4. The disclosure of personal data about any individual to any officer of a\nprescribed law enforcement agency, upon production of written authorisation\nsigned by the head or direct",
+        "zh": "4. 在出示由该订明执法机构的负责人或主管或同等职级人员签署的书面授权，证明该个人数据为该人员履行职能或职责所必需的情况下，向该订明执法机构的任何人员披露关于任何个人的个人数据。",
+        "channel_ranks": [
+          481,
+          null,
+          6,
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-08",
+    "question": "应如何防止车联网数据被未经授权访问？",
+    "dim": "D8",
+    "country": "SG",
+    "expected": {
+      "id": "26aee55a-dc11-42b5-adc2-34e28765be74",
+      "title": "Personal Data Protection Act 2012",
+      "label": "24",
+      "heading": "Protection of personal data",
+      "first": "Protection of personal data\n24. An organisation must protect personal data in its possession or\nunder its control by making reasonable security arrangements to\nprevent —\n(a) unauth",
+      "zh": "个人数据的保护\n24. 组织必须通过作出合理的安全安排，保护其占有或控制的个人数据，以防止——\n(a) 未经授权的访问、收集、使用、披露、复制、修改或处置，或类似风险；以及\n(b) 存储个人数据的任何存储介质或设备的丢失。\n[40/2020]",
+      "channel_ranks": [
+        112,
+        null,
+        6,
+        4
+      ]
+    },
+    "top": [
+      {
+        "id": "c9fb7efd-b689-4f26-9165-6b729880e0b1",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "17.1",
+        "heading": "",
+        "first": "17.1 Section 24 of the PDPA requires an organisation to make reasonable security\narrangements to protect personal data in its possession or under its control in order\nto prevent (a",
+        "zh": "17.1 《个人数据保护法》第24条要求组织作出合理的安全安排，以保护其持有或控制的个人数据，从而防止(a)未经授权的访问、收集、使用、披露、复制、修改或处置，或类似风险；以及(b)存储个人数据的任何存储介质或设备的丢失。组织保护个人数据的此项义务在本指引中称为保护义务。",
+        "channel_ranks": [
+          22,
+          12,
+          10,
+          8
+        ]
+      },
+      {
+        "id": "fd83b508-690f-4597-b805-33c89e6bbf2d",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "20.21",
+        "heading": "",
+        "first": "20.21 If an organisation is unable to determine the actual number of affected individuals\nin a data breach, the organisation should notify the Commission when it has reason\nto beli",
+        "zh": "20.21 如果组织无法确定数据泄露中受影响个人的实际数量，则当组织有理由相信受影响个人数量至少为500时，应通知委员会。此数量可基于对数据泄露的初步评估所得出的估计数量。组织可在确定受影响个人的实际数量后，随后向委员会更新该实际数量。\n示例：未经授权访问包含客户资料的数据库\n在线零售商店的IT管理员发现其客户数据库遭到未经授权访问。该数据库包含客户的姓名、会员编号、联系信息及其当前忠诚度积分余额",
+        "channel_ranks": [
+          127,
+          null,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "db6cb693-12c4-442f-8be8-754b0ecef288",
+        "title": "Personal Data Protection Act 2012",
+        "label": "26A",
+        "heading": "Interpretation of this Part",
+        "first": "Interpretation of this Part\n26A. In this Part, unless the context otherwise requires —\n“affected individual” means any individual to whom any\npersonal data affected by a data breac",
+        "zh": "本部分的解释\n26A. 在本部分中，除上下文另有所指外——\n“受影响个人”指任何个人，受数据泄露影响的任何个人数据与该个人相关；\n“数据泄露”，就个人数据而言，指——\n(a) 未经授权访问、收集、使用、披露、复制、修改或处置个人数据；或\n(b) 任何存储有个人数据的存储介质或设备丢失，且在该等情形下，对该个人数据的未经授权访问、收集、使用、披露、\n个人数据保护\n复制、修改或处置很可能发生。\n[40",
+        "channel_ranks": [
+          147,
+          null,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+        "title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations",
+        "label": "25",
+        "heading": "",
+        "first": "25. In respect of any non-compliance of the vehicle with the Road Traffic Act or its\nsubsidiary legislation, the Applicant must provide information of any such non￾compliance by fi",
+        "zh": "25. 对于车辆不符合《道路交通法》或其附属立法的任何情形，申请人必须通过在表格 AV03：各车辆型号详情中，在《道路交通法》附属立法合规声明部分填写并提供附加细节，提供任何此类不合规情形的信息。\n(L) 车辆安全标准",
+        "channel_ranks": [
+          21,
+          1,
+          23,
+          19
+        ]
+      },
+      {
+        "id": "09f8319e-2420-49d3-98a7-74326a021f50",
+        "title": "Advisory Guidelines on Key Concepts in the PDPA",
+        "label": "4.2",
+        "heading": "",
+        "first": "security arrangements to prevent (i) unauthorised access, collection, use,\ndisclosure, copying, modification or disposal, or similar risks; and (ii) the loss\nof any storage medium ",
+        "zh": "安全安排，以防止(i)未经授权的访问、收集、使用、披露、复制、修改或处置，或类似风险；以及(ii)存储个人数据的任何存储介质或设备的丢失。\ng) 保留限制义务（PDPA第25条）：当合理认为(i)收集个人数据的目的不再通过保留个人数据来实现；且(ii)出于法律或商业目的不再需要保留时，组织必须停止保留包含个人数据的文件，或移除个人数据可与特定个人相关联的手段。\nh) 传输限制义务（PDPA第26条",
+        "channel_ranks": [
+          4,
+          20,
+          32,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-09",
+    "question": "平台处理车辆用户信息适用何种范围？",
+    "dim": "D1",
+    "country": "MA",
+    "expected": {
+      "id": "d3bd4a57-58f2-445d-940c-aa8d4831e71b",
+      "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+      "label": "2",
+      "heading": "",
+      "first": "Article 2\n1- La présente loi s’applique au traitement des données à caractère personnel,\nautomatisé en tout ou en partie, ainsi qu’au traitement non automatisé de\ndonnées à caractè",
+      "zh": "第2条\n1- 本法适用于全部或部分自动化的个人数据处理，以及包含或旨在载入手工档案中的个人数据的非自动化处理；\n2- 本法适用于符合上述第1款定义的个人数据处理：\na) 当该处理由负责人在摩洛哥领土上设立的自然人或法人实施时。在摩洛哥领土上，在设施框架内开展活动的处理负责人，无论其法律形式如何，均视为在该领土上设立；\nb) 当负责人未在摩洛哥领土上设立，但为个人数据处理目的，使用位于摩洛哥领土上的",
+      "channel_ranks": [
+        2,
+        48,
+        24,
+        11
+      ]
+    },
+    "top": [
+      {
+        "id": "f3e72f00-5854-4c76-8601-b1444809c124",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "26",
+        "heading": "",
+        "first": "Article 26\nLe responsable du traitement de données à caractère personnel, ainsi que les\npersonnes qui, dans l’exercice de leurs fonctions, ont connaissance de données à\ncaractère p",
+        "zh": "第26条\n个人数据处理负责人，以及在履行职务过程中知悉已处理个人数据的人员，均负有遵守职业秘密的义务，即使在其停止履行职务之后亦同，具体依刑法规定的条款为准。\n上述第一款的规定并不免除提供信息的义务，该义务系依照适用于相关档案的法律规定或者依照普通法立法而产生。\n第四章\n个人数据保护国家控制委员会\n第一节——设立、权力与职权",
+        "channel_ranks": [
+          6,
+          26,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "6005a4b2-5089-486f-83de-6767b204f0e9",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "18",
+        "heading": "",
+        "first": "Article 18\nL’obligation de déclaration ne s’applique pas aux traitements ayant pour seul objet la\ntenue d’un registre qui est, en vertu de dispositions législatives ou réglementair",
+        "zh": "第18条\n申报义务不适用于仅为建立登记簿而进行的处理，该登记簿依据法律法规的规定，旨在向公众提供信息，并可供公众或任何证明具有合法利益的人查阅。\n但在这种情况下，必须指定一名数据处理负责人，其身份应予公开并通知国家委员会，且该负责人应就本法第二章规定的条款对相关当事人负责。\n免于申报的处理负责人必须向任何提出请求的人告知有关处理名称和目的、负责人身份、所处理的数据、数据接收方以及必要时拟向交换方传",
+        "channel_ranks": [
+          4,
+          11,
+          6,
+          4
+        ]
+      },
+      {
+        "id": "c9b7418e-295f-4a4d-93ff-367ceefa169d",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "2.3",
+        "heading": "Traitement ultérieur de données à caractère personnel",
+        "first": "ART. 38. — En application de l’article 7 de la loi n° 09-08,\ntoute personne justifiant de son identité, a le droit d’être\ninformée, sur les données la concernant faisant l’objet d’",
+        "zh": "第38条——依据第09-08号法律第7条，任何证明其身份的人，有权就涉及本人的、作为处理对象的数据获得信息，既可以直接向数据处理负责人提出，也可以向该负责人发送一份经签名并注明日期的书面信息访问请求，无论采用何种载体：\n书面请求应包含：姓、名、出生日期，以及身份证复印件。\n信息访问请求还应包含以下内容，且以请求人掌握该等信息为限：\n1) 与数据有关的所有相关要素，诸如数据的性质、知悉该等数据处理的",
+        "channel_ranks": [
+          42,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "c2970107-ac76-41a6-8070-2d858059defb",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "4.2",
+        "heading": "Du droit d’opposition",
+        "first": "informations prévues à l’article 44 du présent décret, les mesures\nou le dispositif destinés à garantir un niveau de protection\nsuffisant de la vie privée ainsi que des libertés et",
+        "zh": "本法令第44条规定的信息，旨在保证对私人生活以及个人的自由和基本权利提供充分保护的措施或机制。\n关于转移授权，CNDP依据上述第09-08号法律及其实施文本规定的、规范授权的程序作出决定。\n第49条——本法令第46、47和48条提及的任何信息修改，必须在8个工作日内告知CNDP。\n第50条——在企业集团内部或向多个接收方针对相同数据类别和相同目的进行的转移，可以作出共同申报。\n第5744号——14",
+        "channel_ranks": [
+          36,
+          35,
+          3,
+          3
+        ]
+      },
+      {
+        "id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "4.1",
+        "heading": "Du droit d’opposition",
+        "first": "protection suffisant au sens de l’article 43 de la loi n° 09-08\nsusvisée doivent contenir, les indications suivantes :\n1) les nom et adresse de la personne communiquant les\ndonnées",
+        "zh": "上述第 09-08 号法律第 43 条意义上的充分保护必须包含以下说明：\n1) 数据提供人的姓名和地址；\n2) 数据接收人的姓名和地址；\n3) 文件的名称和完整描述；\n4) 被转移的个人数据的类别；\n5) 相关个人及其大致人数；\n6) 接收人进行数据处理的目的；\n7) 拟进行的转移方式和频率；\n8) 首次转移的日期。\n第47条——当根据上述第 09-08 号法律第 44 条，处理负责人计划将个人数",
+        "channel_ranks": [
+          15,
+          6,
+          7,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-10",
+    "question": "处理个人数据前是否需要同意？",
+    "dim": "D4",
+    "country": "MA",
+    "expected": {
+      "id": "6d475ef3-d53e-48b5-8210-319292473271",
+      "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+      "label": "4",
+      "heading": "",
+      "first": "Article 4\nLe traitement des données, à caractère personnel ne peut être effectué que si la\npersonne concernée a indubitablement donné son consentement à l’opération ou à\nl’ensemble",
+      "zh": "第4条\n个人数据的处理，仅在相关个人已明确同意拟进行的操作或全部操作时，方可进行。\n作为处理对象的个人数据，仅可为与让与人和受让人职能直接相关的目的，并在相关个人事先同意的条件下，才能告知第三人。\n但是，在下列情形下处理为必要时，不要求取得该同意：\na) 遵守相关个人或处理责任人应承担的法定义务；\nb) 履行相关个人作为一方当事人的合同，或应其请求采取的合同前措施；\nc) 保护相关个人的重大利益，",
+      "channel_ranks": [
+        1,
+        1,
+        12,
+        6
+      ]
+    },
+    "top": [
+      {
+        "id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "premier.2",
+        "heading": "",
+        "first": "6- « sous-traitant » : la personne physique ou morale, l’autorité publique, le\nservice ou tout autre organisme qui traite des données à caractère\npersonnel pour le compte du respon",
+        "zh": "6- “数据处理者”：代表数据控制者处理个人数据的自然人、法人、公共机关、服务部门或任何其他机构；\n7- “第三方”：除相关个人、数据控制者、数据处理者以及直接受数据控制者或数据处理者授权处理数据的个人之外的自然人、法人、公共机关、服务部门或任何其他机构；\n8- “接收方”：接收数据告知的自然人、法人、公共机关、服务部门或任何其他机构，无论其是否为第三方。在法律规定的框架内可能接收数据告知的机构，",
+        "channel_ranks": [
+          2,
+          14,
+          1,
+          3
+        ]
+      },
+      {
+        "id": "2845ca09-e7be-4994-a105-7a10b93029a4",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "10",
+        "heading": "",
+        "first": "Article 10\nInterdiction de la prospection directe\nEst interdite la prospection directe au moyen d’un automate d’appel, d’un télécopieur\nou d’un courrier électronique ou d’un moyen ",
+        "zh": "第10条\n禁止直接营销\n禁止通过自动呼叫装置、传真机或电子邮件，或者使用任何形式利用自然人联系方式的同性质技术手段，向未事先表示同意通过该手段接收直接营销的自然人进行直接营销。\n为适用本条，同意系指任何自由、具体且知情的意思表示，自然人通过该表示同意将其个人数据用于直接营销目的。\n直接营销系指发送任何旨在直接或间接推销商品、服务或推销销售商品或提供服务者的形象的信息。\n但是，如果收件人的联系方式是",
+        "channel_ranks": [
+          13,
+          12,
+          3,
+          2
+        ]
+      },
+      {
+        "id": "6d475ef3-d53e-48b5-8210-319292473271",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "4",
+        "heading": "",
+        "first": "Article 4\nLe traitement des données, à caractère personnel ne peut être effectué que si la\npersonne concernée a indubitablement donné son consentement à l’opération ou à\nl’ensemble",
+        "zh": "第4条\n个人数据的处理，仅在相关个人已明确同意拟进行的操作或全部操作时，方可进行。\n作为处理对象的个人数据，仅可为与让与人和受让人职能直接相关的目的，并在相关个人事先同意的条件下，才能告知第三人。\n但是，在下列情形下处理为必要时，不要求取得该同意：\na) 遵守相关个人或处理责任人应承担的法定义务；\nb) 履行相关个人作为一方当事人的合同，或应其请求采取的合同前措施；\nc) 保护相关个人的重大利益，",
+        "channel_ranks": [
+          1,
+          1,
+          12,
+          6
+        ]
+      },
+      {
+        "id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "4.1",
+        "heading": "Du droit d’opposition",
+        "first": "protection suffisant au sens de l’article 43 de la loi n° 09-08\nsusvisée doivent contenir, les indications suivantes :\n1) les nom et adresse de la personne communiquant les\ndonnées",
+        "zh": "上述第 09-08 号法律第 43 条意义上的充分保护必须包含以下说明：\n1) 数据提供人的姓名和地址；\n2) 数据接收人的姓名和地址；\n3) 文件的名称和完整描述；\n4) 被转移的个人数据的类别；\n5) 相关个人及其大致人数；\n6) 接收人进行数据处理的目的；\n7) 拟进行的转移方式和频率；\n8) 首次转移的日期。\n第47条——当根据上述第 09-08 号法律第 44 条，处理负责人计划将个人数",
+        "channel_ranks": [
+          29,
+          3,
+          4,
+          14
+        ]
+      },
+      {
+        "id": "9f926914-d84e-423d-9fc6-7f9cccec86dd",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "6",
+        "heading": "",
+        "first": "Article 6\nLimites au droit à l’information\nL’obligation d’information prévue à l’article 5 ci-dessus n’est pas applicable :\na) aux données à caractère personnel dont la collecte et",
+        "zh": "第6条\n信息权的限制\n上述第5条规定的信息义务不适用于：\na) 为国防、国家内外安全、预防或镇压犯罪所必需而收集和处理个人数据；\nb) 当告知相关个人被证明不可能时，特别是为统计、历史或科学目的处理个人数据的情形。在此情况下，处理负责人有义务通知委员会无法告知相关个人，并向其说明该不可能性的理由；\nc) 如果立法明确规定个人数据的登记或传输；\nd) 仅出于新闻、艺术或文学目的进行的个人数据处理。",
+        "channel_ranks": [
+          14,
+          15,
+          8,
+          7
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-11",
+    "question": "车辆位置数据应遵守何种留存原则？",
+    "dim": "D5",
+    "country": "MA",
+    "expected": {
+      "id": "a18e376b-7228-48d4-b282-4f7fcb92c8f7",
+      "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+      "label": "3",
+      "heading": "",
+      "first": "Article 3\n1- Les données à caractère personnel doivent être :\na) traitées loyalement et licitement ;\nb) collectées pour des finalités déterminées explicites et légitimes, et ne pas",
+      "zh": "第3条\n1- 个人数据必须：\na) 以正当、合法的方式处理；\nb) 为确定、明确且合法的目的收集，且后续不得以与目的不相容的方式处理；\nc) 相对于其被收集以及后续被处理的目的而言，适当、相关且不过度；\nd) 准确，并在必要时更新。必须采取一切合理措施，使相对于其被收集以及后续被处理的目的而言不准确或不完整的数据被删除或更正；\ne) 以能够识别相关个人的形式保存，保存时间不超过实现其被收集以及后续",
+      "channel_ranks": [
+        6,
+        39,
+        21,
+        55
+      ]
+    },
+    "top": [
+      {
+        "id": "c2970107-ac76-41a6-8070-2d858059defb",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "4.2",
+        "heading": "Du droit d’opposition",
+        "first": "informations prévues à l’article 44 du présent décret, les mesures\nou le dispositif destinés à garantir un niveau de protection\nsuffisant de la vie privée ainsi que des libertés et",
+        "zh": "本法令第44条规定的信息，旨在保证对私人生活以及个人的自由和基本权利提供充分保护的措施或机制。\n关于转移授权，CNDP依据上述第09-08号法律及其实施文本规定的、规范授权的程序作出决定。\n第49条——本法令第46、47和48条提及的任何信息修改，必须在8个工作日内告知CNDP。\n第50条——在企业集团内部或向多个接收方针对相同数据类别和相同目的进行的转移，可以作出共同申报。\n第5744号——14",
+        "channel_ranks": [
+          12,
+          2,
+          7,
+          3
+        ]
+      },
+      {
+        "id": "f3e72f00-5854-4c76-8601-b1444809c124",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "26",
+        "heading": "",
+        "first": "Article 26\nLe responsable du traitement de données à caractère personnel, ainsi que les\npersonnes qui, dans l’exercice de leurs fonctions, ont connaissance de données à\ncaractère p",
+        "zh": "第26条\n个人数据处理负责人，以及在履行职务过程中知悉已处理个人数据的人员，均负有遵守职业秘密的义务，即使在其停止履行职务之后亦同，具体依刑法规定的条款为准。\n上述第一款的规定并不免除提供信息的义务，该义务系依照适用于相关档案的法律规定或者依照普通法立法而产生。\n第四章\n个人数据保护国家控制委员会\n第一节——设立、权力与职权",
+        "channel_ranks": [
+          48,
+          23,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "2845ca09-e7be-4994-a105-7a10b93029a4",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "10",
+        "heading": "",
+        "first": "Article 10\nInterdiction de la prospection directe\nEst interdite la prospection directe au moyen d’un automate d’appel, d’un télécopieur\nou d’un courrier électronique ou d’un moyen ",
+        "zh": "第10条\n禁止直接营销\n禁止通过自动呼叫装置、传真机或电子邮件，或者使用任何形式利用自然人联系方式的同性质技术手段，向未事先表示同意通过该手段接收直接营销的自然人进行直接营销。\n为适用本条，同意系指任何自由、具体且知情的意思表示，自然人通过该表示同意将其个人数据用于直接营销目的。\n直接营销系指发送任何旨在直接或间接推销商品、服务或推销销售商品或提供服务者的形象的信息。\n但是，如果收件人的联系方式是",
+        "channel_ranks": [
+          27,
+          70,
+          2,
+          5
+        ]
+      },
+      {
+        "id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "23",
+        "heading": "",
+        "first": "Article 23\n1- Le responsable du traitement doit mettre en œuvre les mesures techniques et\norganisationnelles appropriées pour protéger les données à caractère personnel\ncontre la d",
+        "zh": "第23条\n1- 数据控制者必须实施适当的技术和组织措施，保护个人数据免遭意外或非法销毁、意外丢失、篡改、传播或未经授权访问，尤其是在处理包含网络中的数据传输时，并免遭任何其他形式的非法处理。考虑到技术发展水平及实施成本，这些措施必须确保与处理所呈现的风险及受保护数据的性质相适应的适当安全水平；\n2- 当处理系为其账户实施时，数据控制者必须选择能够就与将要进行的处理有关的技术和组织安全措施提供充分保",
+        "channel_ranks": [
+          1,
+          3,
+          6,
+          48
+        ]
+      },
+      {
+        "id": "c9b7418e-295f-4a4d-93ff-367ceefa169d",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "2.3",
+        "heading": "Traitement ultérieur de données à caractère personnel",
+        "first": "ART. 38. — En application de l’article 7 de la loi n° 09-08,\ntoute personne justifiant de son identité, a le droit d’être\ninformée, sur les données la concernant faisant l’objet d’",
+        "zh": "第38条——依据第09-08号法律第7条，任何证明其身份的人，有权就涉及本人的、作为处理对象的数据获得信息，既可以直接向数据处理负责人提出，也可以向该负责人发送一份经签名并注明日期的书面信息访问请求，无论采用何种载体：\n书面请求应包含：姓、名、出生日期，以及身份证复印件。\n信息访问请求还应包含以下内容，且以请求人掌握该等信息为限：\n1) 与数据有关的所有相关要素，诸如数据的性质、知悉该等数据处理的",
+        "channel_ranks": [
+          43,
+          30,
+          4,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-12",
+    "question": "向境外云平台传输个人数据的保护条件是什么？",
+    "dim": "D3",
+    "country": "MA",
+    "expected": {
+      "id": "3fc6861e-286a-471b-83a9-40fa4633b9c1",
+      "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+      "label": "43",
+      "heading": "",
+      "first": "Article 43\nLe responsable d’un traitement ne peut transférer des données à caractère personnel\nvers un Etat étranger que si cet Etat assure un niveau de protection suffisant de la ",
+      "zh": "第43条\n个人数据处理负责人只有在外国对私人生活以及个人在相关数据所涉及或可能涉及的处理方面的基本自由和权利确保充分保护水平时，方可向该国转移个人数据。\n一国所确保的保护水平是否充分，尤其根据该国现行规定、该国实施的安全措施、处理本身的特征（如处理目的和期限）以及所处理数据的性质、来源和目的地加以评估。\n国家委员会制定符合上述第1款和第2款所定标准的国家名单。",
+      "channel_ranks": [
+        9,
+        31,
+        6,
+        3
+      ]
+    },
+    "top": [
+      {
+        "id": "86c35695-9944-422a-b837-f30c95738cd5",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "60",
+        "heading": "",
+        "first": "Article 60\nEst puni d’un emprisonnement de trois mois à un an et d’une amende de 20.000 à\n200.000 DH ou de l’une de ces deux peines seulement, quiconque effectue un\ntransfert de do",
+        "zh": "第60条\n任何人违反本法第43条和第44条的规定，向外国传输个人数据的，处三个月至一年监禁并处20.000至200.000 DH罚金，或仅处其中一种刑罚。",
+        "channel_ranks": [
+          1,
+          7,
+          5,
+          1
+        ]
+      },
+      {
+        "id": "91bfec96-3e74-4614-8206-d2eab4cbaaa3",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "24",
+        "heading": "",
+        "first": "Article 24\n1- Les responsables du traitement des données sensibles ou relatives à la santé\ndoivent prendre les mesures appropriées pour :\na) empêcher l’accès de toute personne non ",
+        "zh": "第24条\n1- 敏感数据或健康相关数据的处理负责人必须采取适当措施以：\na) 防止任何未经授权的人员进入用于处理这些数据的设施（设施入口控制）；\nb) 防止数据载体被未经授权的人员读取、复制、修改或移除（数据载体控制）；\nc) 防止未经授权地录入，以及防止对已录入的个人数据进行未经授权的知悉、修改或删除（录入控制）；\nd) 防止自动化数据处理系统通过数据传输设施被未经授权的人员使用（使用控制）；\n",
+        "channel_ranks": [
+          6,
+          14,
+          1,
+          11
+        ]
+      },
+      {
+        "id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "4.1",
+        "heading": "Du droit d’opposition",
+        "first": "protection suffisant au sens de l’article 43 de la loi n° 09-08\nsusvisée doivent contenir, les indications suivantes :\n1) les nom et adresse de la personne communiquant les\ndonnées",
+        "zh": "上述第 09-08 号法律第 43 条意义上的充分保护必须包含以下说明：\n1) 数据提供人的姓名和地址；\n2) 数据接收人的姓名和地址；\n3) 文件的名称和完整描述；\n4) 被转移的个人数据的类别；\n5) 相关个人及其大致人数；\n6) 接收人进行数据处理的目的；\n7) 拟进行的转移方式和频率；\n8) 首次转移的日期。\n第47条——当根据上述第 09-08 号法律第 44 条，处理负责人计划将个人数",
+        "channel_ranks": [
+          5,
+          29,
+          2,
+          6
+        ]
+      },
+      {
+        "id": "3fc6861e-286a-471b-83a9-40fa4633b9c1",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "43",
+        "heading": "",
+        "first": "Article 43\nLe responsable d’un traitement ne peut transférer des données à caractère personnel\nvers un Etat étranger que si cet Etat assure un niveau de protection suffisant de la ",
+        "zh": "第43条\n个人数据处理负责人只有在外国对私人生活以及个人在相关数据所涉及或可能涉及的处理方面的基本自由和权利确保充分保护水平时，方可向该国转移个人数据。\n一国所确保的保护水平是否充分，尤其根据该国现行规定、该国实施的安全措施、处理本身的特征（如处理目的和期限）以及所处理数据的性质、来源和目的地加以评估。\n国家委员会制定符合上述第1款和第2款所定标准的国家名单。",
+        "channel_ranks": [
+          9,
+          31,
+          6,
+          3
+        ]
+      },
+      {
+        "id": "157d8a76-3b75-4f6c-ad11-7e9e642e3ffb",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "4",
+        "heading": "Du droit d’opposition",
+        "first": "Section 4. - Du droit d’opposition\nART. 43, Lorsque des données à caractère personnel sont\ncollectées par écrit auprès de la personne concemée, le\nresponsable du traitement demande",
+        "zh": "第4节——反对权\n第43条 当个人数据通过书面方式向相关个人收集时，数据处理负责人应在用于收集数据的支持文件上询问该相关个人是否希望行使第09-08号上述法律第9条规定的反对权。\n相关个人必须能够在其答复最终确认之前表达其选择。\n第44条——当个人数据并非通过书面方式向相关个人收集时，数据处理负责人应在收集结束前询问该相关个人是否希望行使反对权。在此情况下，数据处理负责人必须保留相关个人曾有机会行",
+        "channel_ranks": [
+          4,
+          28,
+          3,
+          29
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-13",
+    "question": "处理危害公共秩序时监管机关可采取什么措施？",
+    "dim": "D6",
+    "country": "MA",
+    "expected": {
+      "id": "71169f5b-b69e-425b-ba04-e3c805b48363",
+      "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+      "label": "51",
+      "heading": "",
+      "first": "Article 51\nSans préjudice des sanctions pénales, lorsqu’il apparaît, à la suite de la mise en\nœuvre du traitement objet de la déclaration ou de l’autorisation prévue à l’article 12",
+      "zh": "第51条\n在不影响刑事处罚的情况下，当实施本法第12条所规定的申报或授权所涉处理之后，发现该处理危害安全或公共秩序，或者违反道德和善良风俗时，全国委员会可立即根据情况撤回申报回执或授权。",
+      "channel_ranks": [
+        4,
+        4,
+        1,
+        1
+      ]
+    },
+    "top": [
+      {
+        "id": "71169f5b-b69e-425b-ba04-e3c805b48363",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "51",
+        "heading": "",
+        "first": "Article 51\nSans préjudice des sanctions pénales, lorsqu’il apparaît, à la suite de la mise en\nœuvre du traitement objet de la déclaration ou de l’autorisation prévue à l’article 12",
+        "zh": "第51条\n在不影响刑事处罚的情况下，当实施本法第12条所规定的申报或授权所涉处理之后，发现该处理危害安全或公共秩序，或者违反道德和善良风俗时，全国委员会可立即根据情况撤回申报回执或授权。",
+        "channel_ranks": [
+          4,
+          4,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "58",
+        "heading": "",
+        "first": "Article 58\nEst puni d’un emprisonnement de trois mois à un an et d’une amende de 20.000 à\n200.000 DH ou de l’une de ces deux peines seulement, quiconque aura procédé ou\nfait procéd",
+        "zh": "第58条\n任何人实施或指使他人实施个人数据处理，但未采取上文第23条和第24条规定的旨在保护数据安全的措施的，处3个月至1年监禁，并处20.000至200.000迪拉姆罚金，或仅处以上述两项处罚中的一项。",
+        "channel_ranks": [
+          1,
+          3,
+          7,
+          6
+        ]
+      },
+      {
+        "id": "a922bc44-ad6a-4d0e-bf42-2286c46522b8",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "27",
+        "heading": "",
+        "first": "Article 27\nIl est institué auprès du Premier ministre une Commission nationale de contrôle de la\nprotection des données à caractère personnel, chargée de mettre en œuvre et de\nveil",
+        "zh": "第27条\n在首相身边设立个人数据保护国家监督委员会，负责实施并监督对本法的规定及为实施本法而制定的文本的遵守。\n为此，该委员会负责：\nA- 提出意见：\n1- 就其受理的涉及个人数据处理的法律草案或法律提案或规章草案，向政府或议会提出意见；\n2- 就设立涉及为预防和惩治犯罪与违法行为而收集和处理的个人数据的档案的规章草案，向主管机关提出意见；在此情况下，所征求的意见相当于申报；\n3- 就涉及建立和处",
+        "channel_ranks": [
+          35,
+          17,
+          3,
+          7
+        ]
+      },
+      {
+        "id": "c2970107-ac76-41a6-8070-2d858059defb",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "4.2",
+        "heading": "Du droit d’opposition",
+        "first": "informations prévues à l’article 44 du présent décret, les mesures\nou le dispositif destinés à garantir un niveau de protection\nsuffisant de la vie privée ainsi que des libertés et",
+        "zh": "本法令第44条规定的信息，旨在保证对私人生活以及个人的自由和基本权利提供充分保护的措施或机制。\n关于转移授权，CNDP依据上述第09-08号法律及其实施文本规定的、规范授权的程序作出决定。\n第49条——本法令第46、47和48条提及的任何信息修改，必须在8个工作日内告知CNDP。\n第50条——在企业集团内部或向多个接收方针对相同数据类别和相同目的进行的转移，可以作出共同申报。\n第5744号——14",
+        "channel_ranks": [
+          14,
+          2,
+          14,
+          5
+        ]
+      },
+      {
+        "id": "58916f40-cef0-4c0d-8773-6c7a603d8b59",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "premier.1",
+        "heading": "",
+        "first": "rapprochement ou l’interconnexion, ainsi que le verrouillage, l’effacement ou\nla destruction ;\n3- « données sensibles » : données à caractère personnel qui révèlent l’origine\nracia",
+        "zh": "比对或互联，以及锁定、擦除或销毁；\n3- “敏感数据”：揭示相关人员的种族或民族出身、政治观点、宗教或哲学信仰或工会归属，或与其健康有关（包括其遗传数据）的个人数据；\n4- “个人数据文件”（“文件”）：任何按确定标准可访问的结构化个人数据集合，无论该集合是集中式、分散式，还是按功能或地理方式分布，例如档案、数据库、普查文件；\n5- “处理负责人”：单独或与他人共同确定个人数据处理目的和方式的自然",
+        "channel_ranks": [
+          17,
+          5,
+          5,
+          68
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-14",
+    "question": "企业如何保护传输中的数据？",
+    "dim": "D8",
+    "country": "MA",
+    "expected": {
+      "id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+      "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+      "label": "23",
+      "heading": "",
+      "first": "Article 23\n1- Le responsable du traitement doit mettre en œuvre les mesures techniques et\norganisationnelles appropriées pour protéger les données à caractère personnel\ncontre la d",
+      "zh": "第23条\n1- 数据控制者必须实施适当的技术和组织措施，保护个人数据免遭意外或非法销毁、意外丢失、篡改、传播或未经授权访问，尤其是在处理包含网络中的数据传输时，并免遭任何其他形式的非法处理。考虑到技术发展水平及实施成本，这些措施必须确保与处理所呈现的风险及受保护数据的性质相适应的适当安全水平；\n2- 当处理系为其账户实施时，数据控制者必须选择能够就与将要进行的处理有关的技术和组织安全措施提供充分保",
+      "channel_ranks": [
+        2,
+        null,
+        1,
+        1
+      ]
+    },
+    "top": [
+      {
+        "id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "23",
+        "heading": "",
+        "first": "Article 23\n1- Le responsable du traitement doit mettre en œuvre les mesures techniques et\norganisationnelles appropriées pour protéger les données à caractère personnel\ncontre la d",
+        "zh": "第23条\n1- 数据控制者必须实施适当的技术和组织措施，保护个人数据免遭意外或非法销毁、意外丢失、篡改、传播或未经授权访问，尤其是在处理包含网络中的数据传输时，并免遭任何其他形式的非法处理。考虑到技术发展水平及实施成本，这些措施必须确保与处理所呈现的风险及受保护数据的性质相适应的适当安全水平；\n2- 当处理系为其账户实施时，数据控制者必须选择能够就与将要进行的处理有关的技术和组织安全措施提供充分保",
+        "channel_ranks": [
+          2,
+          null,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "c2970107-ac76-41a6-8070-2d858059defb",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "4.2",
+        "heading": "Du droit d’opposition",
+        "first": "informations prévues à l’article 44 du présent décret, les mesures\nou le dispositif destinés à garantir un niveau de protection\nsuffisant de la vie privée ainsi que des libertés et",
+        "zh": "本法令第44条规定的信息，旨在保证对私人生活以及个人的自由和基本权利提供充分保护的措施或机制。\n关于转移授权，CNDP依据上述第09-08号法律及其实施文本规定的、规范授权的程序作出决定。\n第49条——本法令第46、47和48条提及的任何信息修改，必须在8个工作日内告知CNDP。\n第50条——在企业集团内部或向多个接收方针对相同数据类别和相同目的进行的转移，可以作出共同申报。\n第5744号——14",
+        "channel_ranks": [
+          3,
+          1,
+          12,
+          5
+        ]
+      },
+      {
+        "id": "f3e72f00-5854-4c76-8601-b1444809c124",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "26",
+        "heading": "",
+        "first": "Article 26\nLe responsable du traitement de données à caractère personnel, ainsi que les\npersonnes qui, dans l’exercice de leurs fonctions, ont connaissance de données à\ncaractère p",
+        "zh": "第26条\n个人数据处理负责人，以及在履行职务过程中知悉已处理个人数据的人员，均负有遵守职业秘密的义务，即使在其停止履行职务之后亦同，具体依刑法规定的条款为准。\n上述第一款的规定并不免除提供信息的义务，该义务系依照适用于相关档案的法律规定或者依照普通法立法而产生。\n第四章\n个人数据保护国家控制委员会\n第一节——设立、权力与职权",
+        "channel_ranks": [
+          5,
+          null,
+          6,
+          2
+        ]
+      },
+      {
+        "id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+        "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "label": "58",
+        "heading": "",
+        "first": "Article 58\nEst puni d’un emprisonnement de trois mois à un an et d’une amende de 20.000 à\n200.000 DH ou de l’une de ces deux peines seulement, quiconque aura procédé ou\nfait procéd",
+        "zh": "第58条\n任何人实施或指使他人实施个人数据处理，但未采取上文第23条和第24条规定的旨在保护数据安全的措施的，处3个月至1年监禁，并处20.000至200.000迪拉姆罚金，或仅处以上述两项处罚中的一项。",
+        "channel_ranks": [
+          8,
+          null,
+          5,
+          4
+        ]
+      },
+      {
+        "id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+        "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+        "label": "4.1",
+        "heading": "Du droit d’opposition",
+        "first": "protection suffisant au sens de l’article 43 de la loi n° 09-08\nsusvisée doivent contenir, les indications suivantes :\n1) les nom et adresse de la personne communiquant les\ndonnées",
+        "zh": "上述第 09-08 号法律第 43 条意义上的充分保护必须包含以下说明：\n1) 数据提供人的姓名和地址；\n2) 数据接收人的姓名和地址；\n3) 文件的名称和完整描述；\n4) 被转移的个人数据的类别；\n5) 相关个人及其大致人数；\n6) 接收人进行数据处理的目的；\n7) 拟进行的转移方式和频率；\n8) 首次转移的日期。\n第47条——当根据上述第 09-08 号法律第 44 条，处理负责人计划将个人数",
+        "channel_ranks": [
+          34,
+          null,
+          4,
+          10
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-15",
+    "question": "哪些车主信息构成个人数据？",
+    "dim": "D2",
+    "country": "TN",
+    "expected": {
+      "id": "c298f1b4-5305-48f4-b7b2-704807f5a7a7",
+      "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+      "label": "4",
+      "heading": "Au sens de la présente loi, on entend par données à caractère personnel toutes les",
+      "first": "Art. 4 : Au sens de la présente loi, on entend par données à caractère personnel toutes les\ninformations quelle que soit leur origine ou leur forme et qui permettent directement ou",
+      "zh": "第4条：在本法意义上，个人数据指无论其来源或形式如何，能够直接或间接识别自然人身份或使其可被识别的所有信息，但与公共生活相关的信息或法律视为如此的信息除外。\n\n第5条：被视为可识别的自然人，是指能够通过若干数据或符号直接或间接被识别的人，这些数据或符号特别涉及其身份、身体、生理、遗传、心理、社会、经济或文化特征。",
+      "channel_ranks": [
+        1,
+        1,
+        17,
+        9
+      ]
+    },
+    "top": [
+      {
+        "id": "15e74606-a6b0-486a-8d37-e05f183beb50",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "23",
+        "heading": "Le responsable du traitement, le sous-traitant et leurs agents, même après la fin du traitement",
+        "first": "Art. 23 : Le responsable du traitement, le sous-traitant et leurs agents, même après la fin du traitement\nou la perte de leur qualité, doivent préserver la confidentialité des donn",
+        "zh": "第23条：数据控制者、数据处理者(法文原词)及其代理人，即使在处理结束或丧失其身份之后，也必须对个人数据和已处理的信息保密，但相关当事人已书面同意传播的除外，或现行立法规定的情形除外。",
+        "channel_ranks": [
+          14,
+          73,
+          6,
+          5
+        ]
+      },
+      {
+        "id": "c298f1b4-5305-48f4-b7b2-704807f5a7a7",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "4",
+        "heading": "Au sens de la présente loi, on entend par données à caractère personnel toutes les",
+        "first": "Art. 4 : Au sens de la présente loi, on entend par données à caractère personnel toutes les\ninformations quelle que soit leur origine ou leur forme et qui permettent directement ou",
+        "zh": "第4条：在本法意义上，个人数据指无论其来源或形式如何，能够直接或间接识别自然人身份或使其可被识别的所有信息，但与公共生活相关的信息或法律视为如此的信息除外。\n\n第5条：被视为可识别的自然人，是指能够通过若干数据或符号直接或间接被识别的人，这些数据或符号特别涉及其身份、身体、生理、遗传、心理、社会、经济或文化特征。",
+        "channel_ranks": [
+          1,
+          1,
+          17,
+          9
+        ]
+      },
+      {
+        "id": "fbcbb070-7a26-4aed-bdbe-6ba8cd44222e",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "79",
+        "heading": "",
+        "first": "Art. 79 :\n Il est interdit au président de l’Instance et à ses membres d’avoir, directement, des intérêts\ndans toute entreprise qui exerce ses activités dans le domaine du traiteme",
+        "zh": "第79条：\n禁止该机构主席及其成员在任何以自动化或人工方式从事个人数据处理活动的企业中直接拥有利益。",
+        "channel_ranks": [
+          89,
+          92,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "2bc7c1e1-c315-4bad-8305-381c0b832a27",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "38",
+        "heading": "La demande d’accès est présentée par la personne concernée ou ses héritiers ou son tuteur par",
+        "first": "Art. 38 : La demande d’accès est présentée par la personne concernée ou ses héritiers ou son tuteur par\nécrit ou par n’importe quel moyen laissant une trace écrite. La personne con",
+        "zh": "第38条：查阅请求由相关个人或其继承人或者其监护人通过书面或任何留有书面痕迹的方式提出。相关个人、其继承人或者其监护人可同样方式请求获取数据副本，期限自该请求之日起不超过一个月。\n如数据控制者或数据处理者拒绝允许相关个人、其继承人或者其监护人查阅所要求的个人数据，或推迟查阅该等数据，或拒绝向其提供该等数据的副本，相关个人、其继承人或者其监护人可在自拒绝之日起最长一个月的期限内向该机构提出请求。\n该",
+        "channel_ranks": [
+          34,
+          5,
+          9,
+          13
+        ]
+      },
+      {
+        "id": "404014b1-cad7-4904-acb1-8bddfde89a57",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "96",
+        "heading": "",
+        "first": "Art. 96 :\nEst puni d’une amende de cinq mille dinars, quiconque :\n- entrave le travail de l’Instance Nationale de Protection des Données à Caractère Personnel en\nl’empêchant d’effe",
+        "zh": "第96条：\n凡有下列行为者，处以五千第纳尔罚款：\n- 妨碍个人数据保护国家机构的工作，阻止其进行调查或拒绝提供所需文件；\n- 恶意向该机构传播或故意向相关个人通知不准确的信息。",
+        "channel_ranks": [
+          78,
+          100,
+          2,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-16",
+    "question": "处理个人数据前应办理什么手续？",
+    "dim": "D7",
+    "country": "TN",
+    "expected": {
+      "id": "3f961886-5bb3-401c-be0e-a9ed6835676a",
+      "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+      "label": "7",
+      "heading": "Toute opération de traitement des données à caractère personnel est soumise à une déclaration",
+      "first": "Art. 7 : Toute opération de traitement des données à caractère personnel est soumise à une déclaration\npréalable déposée au siège de l’Instance nationale de protection des données ",
+      "zh": "第7条：任何个人数据处理操作均须事先向国家个人数据保护机构总部提交申报，凭收据或通过挂号信并附回执或任何留有书面痕迹的其他方式通知。\n申报由数据处理责任人或其法定代表人进行。\n申报不免除对第三方的责任。\n提交申报的条件和程序由法令规定。\n该机构在提交申报之日起1个月内未对个人数据处理提出异议，即视为接受。",
+      "channel_ranks": [
+        1,
+        1,
+        29,
+        24
+      ]
+    },
+    "top": [
+      {
+        "id": "61514193-a67c-4ca8-aeea-443ce50a0078",
+        "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+        "label": "第2页",
+        "heading": "",
+        "first": "التدابير المتخذة للحفاظ على سرية المعطيات وأمانهاء\n‎Gly -‏ قواعد البيانات التى للمسؤول عن المعالجة ربط بينى معهاء\n‏. الالتزام بمباشرة معالجة المعطيات الشخصية وفق المقتضيات\nالواجبة ",
+        "zh": "为维护数据的保密性和安全性所采取的措施\nGly - 处理负责人的数据库之间的连接。\n承诺依照法律规定的必要要求直接处理个人数据。\n声明具备本法第22条规定的条件。\n如上述数据发生任何变更，必须获得机构许可。\n许可申请由处理负责人或其法定代表提交。\n许可不免除对第三方的责任。\n提交许可申请的条件和程序由法令规定。\n个人数据处理负责人及其义务\n第9条 个人数据处理应在尊重人的尊严、私人生活和公共自由的",
+        "channel_ranks": [
+          10,
+          11,
+          2,
+          3
+        ]
+      },
+      {
+        "id": "ad8de395-2a39-459b-bf74-0956e4cadc42",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "90",
+        "heading": "Est puni d’un an d’emprisonnement et d’une amende de cinq mille dinars, quiconque :",
+        "first": "Art. 90 : Est puni d’un an d’emprisonnement et d’une amende de cinq mille dinars, quiconque :\n - effectue intentionnellement un traitement des données à caractère personnel sans pr",
+        "zh": "第90条：凡有下列情形之一者，处1年监禁并科五千第纳尔罚金：\n- 故意对个人数据进行处理，未提交第7条规定的申报，或未取得本法第15条和第69条规定的许可，或在处理被禁止或许可被撤销后继续进行处理；\n- 传播与健康有关的个人数据，尽管本法第65条第二款所述机构已作出禁止；\n- 未经该机构许可向国外转移个人数据；\n- 在本法规定的情形下，未经相关个人同意或该机构同意，通报个人数据。",
+        "channel_ranks": [
+          4,
+          9,
+          6,
+          4
+        ]
+      },
+      {
+        "id": "cb785147-f2dd-4edd-a00d-815b2364d07b",
+        "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+        "label": "0.1",
+        "heading": "",
+        "first": "الاطلاع عليها وكذلك جميع العمليات المتعلقة باستغلال قواعد البيانات\nأو الفهارس أو السجلات أو البطاقات أو بالربط البينى؛\n. البطاقة : مجموعة من المعطيات الشخصية المنظمة والمجمعة\nوالتي",
+        "zh": "查阅该等资料以及涉及利用数据库、索引、登记册、卡片或进行互联的所有操作；\n卡片：一组有组织并汇集起来的个人数据，可依据特定标准访问，并能够识别；\n利害关系人：其个人数据成为处理对象的每一自然人；\n（1）准备性工作：\n众议院于2004年7月21日会议审议并同意。\n第2084页\n突尼斯共和国官方公报——2004年7月30日\n处理负责人：确定个人数据处理目的和方式的每一自然人或法人；\n第三方：每一自然人",
+        "channel_ranks": [
+          11,
+          null,
+          3,
+          36
+        ]
+      },
+      {
+        "id": "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+        "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+        "label": "2.2",
+        "heading": "",
+        "first": "‏الفصل 28 . لا يمكن معالجة معطيات شخصية متعلقة بطفل إلا بعد\nالحصول على موافقة وليه وإذن قاضي الأسرة.\n‏ويمكن لقاضي الأسرة أن يأذن بالمعالجة ولو دون موافقة الولي إذا\n‏ولقاضي الأسرة ا",
+        "zh": "第28条 只有在取得儿童监护人的同意并经家庭法官许可后，方可处理与儿童相关的个人数据。家庭法官可在未取得监护人同意的情况下许可处理，家庭法官可随时撤回该许可。\n\n第29条 如果个人数据的处理明显有利于当事人，且无法与其联系，或取得其同意需要付出繁重努力，或法律或当事人作为一方的协议要求处理个人数据，则无需取得当事人同意。\n\n第30条 对以特定方式或特定目的处理个人数据的同意，不延伸至其他方式或目的",
+        "channel_ranks": [
+          31,
+          15,
+          13,
+          15
+        ]
+      },
+      {
+        "id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "8",
+        "heading": "Dans les cas où la présente loi exige l’obtention d’une autorisation de l’Instance pour le",
+        "first": "Art. 8 : Dans les cas où la présente loi exige l’obtention d’une autorisation de l’Instance pour le\ntraitement des données à caractère personnel, la demande d’autorisation doit com",
+        "zh": "第8条：在本法要求为个人数据处理取得该机构授权的情形下，授权申请尤其应包括以下信息：\n- 处理责任人的姓、名和住所；如处理责任人为法人，其公司名称、注册住所及其法定代表人的身份。\n- 个人数据所涉及的相关个人的身份及其住所。\n- 处理的目的及其规范。\n- 处理的类别、处理地点和处理日期。\n- 拟处理的个人数据及其来源。\n- 鉴于其职能可能知悉这些数据的人员或机关。\n- 作为处理对象的个人数据的接收",
+        "channel_ranks": [
+          7,
+          16,
+          15,
+          39
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-17",
+    "question": "采集车辆用户资料应如何确定目的？",
+    "dim": "D4",
+    "country": "TN",
+    "expected": {
+      "id": "da860a72-090f-4df3-b568-c168d1fc2bb8",
+      "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+      "label": "10",
+      "heading": "La collecte des données à caractère personnel ne peut être effectuée que pour des finalités",
+      "first": "Art. 10 : La collecte des données à caractère personnel ne peut être effectuée que pour des finalités\nlicites, déterminées et explicites.",
+      "zh": "第10条：个人数据的收集仅可为合法、确定且明确的目的进行。",
+      "channel_ranks": [
+        null,
+        null,
+        11,
+        11
+      ]
+    },
+    "top": [
+      {
+        "id": "b74b20bc-2242-41d4-bed2-232e90125d9f",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "30",
+        "heading": "Le consentement au traitement des données à caractère personnel sous une forme déterminée",
+        "first": "Art. 30 : Le consentement au traitement des données à caractère personnel sous une forme déterminée\nou pour une finalité déterminée ne s’applique pas aux autres formes ou finalités",
+        "zh": "第30条：对以特定形式或为特定目的处理个人数据的同意，不适用于其他形式或目的。\n禁止将个人数据处理用于广告目的，除非相关个人、其继承人或其监护人作出明确且特别的同意。就此作出的同意受一般法律规则约束。\n当相关个人为儿童时，适用本法第28条的规定。",
+        "channel_ranks": [
+          12,
+          2,
+          4,
+          3
+        ]
+      },
+      {
+        "id": "b58f9117-5240-409a-b728-6a626d5a4997",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "49",
+        "heading": "",
+        "first": "Art. 49 :\n Les données à caractère personnel traitées pour des finalités particulières peuvent être\ncommuniquées en vue d’être traitées une autre fois pour des fins historiques ou ",
+        "zh": "第49条：\n为特定目的处理的个人数据，可在获得当事人、其继承人或其监护人同意以及国家个人数据保护机构授权的条件下，为历史或科学目的再次处理而予以传输。\n该机构视情况决定删除可能识别当事人的数据或予以保留。\n当事人为儿童时，适用本法第28条的规定。",
+        "channel_ranks": [
+          6,
+          20,
+          9,
+          4
+        ]
+      },
+      {
+        "id": "cb785147-f2dd-4edd-a00d-815b2364d07b",
+        "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+        "label": "0.1",
+        "heading": "",
+        "first": "الاطلاع عليها وكذلك جميع العمليات المتعلقة باستغلال قواعد البيانات\nأو الفهارس أو السجلات أو البطاقات أو بالربط البينى؛\n. البطاقة : مجموعة من المعطيات الشخصية المنظمة والمجمعة\nوالتي",
+        "zh": "查阅该等资料以及涉及利用数据库、索引、登记册、卡片或进行互联的所有操作；\n卡片：一组有组织并汇集起来的个人数据，可依据特定标准访问，并能够识别；\n利害关系人：其个人数据成为处理对象的每一自然人；\n（1）准备性工作：\n众议院于2004年7月21日会议审议并同意。\n第2084页\n突尼斯共和国官方公报——2004年7月30日\n处理负责人：确定个人数据处理目的和方式的每一自然人或法人；\n第三方：每一自然人",
+        "channel_ranks": [
+          66,
+          51,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+        "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+        "label": "2.2",
+        "heading": "",
+        "first": "‏الفصل 28 . لا يمكن معالجة معطيات شخصية متعلقة بطفل إلا بعد\nالحصول على موافقة وليه وإذن قاضي الأسرة.\n‏ويمكن لقاضي الأسرة أن يأذن بالمعالجة ولو دون موافقة الولي إذا\n‏ولقاضي الأسرة ا",
+        "zh": "第28条 只有在取得儿童监护人的同意并经家庭法官许可后，方可处理与儿童相关的个人数据。家庭法官可在未取得监护人同意的情况下许可处理，家庭法官可随时撤回该许可。\n\n第29条 如果个人数据的处理明显有利于当事人，且无法与其联系，或取得其同意需要付出繁重努力，或法律或当事人作为一方的协议要求处理个人数据，则无需取得当事人同意。\n\n第30条 对以特定方式或特定目的处理个人数据的同意，不延伸至其他方式或目的",
+        "channel_ranks": [
+          1,
+          8,
+          16,
+          8
+        ]
+      },
+      {
+        "id": "074d0e23-0d0c-4a1a-a109-bdee864c1bd6",
+        "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+        "label": "4.1",
+        "heading": "",
+        "first": "أى وليه الكتابية والصريحة إذا كان في الإحالة تحقيق لمصلحتهم\nالحيوية أو إذا كانت المعطيات ضرورية لإجراء بحوث ودراسات تاريخية\nأو علمية أو ضرورية لتنفيذ اتفاق يكون المعني بالأمر طرفا ",
+        "zh": "或其监护人的书面和明确同意，如果转交是为了实现其重大利益，或者如果数据对于开展历史或科学研究是必要的，或者对于执行相关当事人作为一方的协议是必要的，条件是接收方承诺提供保护个人数据及相关权利所必需的保障，依照机构确定的规定，并保证不将其用于转交目的以外的目的。\n如果相关当事人是儿童，则适用本法第28条的规定。\n第48条 许可申请应在相关当事人拒绝将其个人数据转交给第三方之日起不超过一个月的期限内提",
+        "channel_ranks": [
+          57,
+          55,
+          5,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-18",
+    "question": "长期存储的车主信息应满足什么质量原则？",
+    "dim": "D5",
+    "country": "TN",
+    "expected": {
+      "id": "b77b769e-8e4f-487d-9073-f548e906c466",
+      "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+      "label": "11",
+      "heading": "Les données à caractère personnel doivent être traitées loyalement, et dans la limite nécessaire",
+      "first": "Art. 11 : Les données à caractère personnel doivent être traitées loyalement, et dans la limite nécessaire\nau regard des finalités pour lesquelles elles ont été collectées. Le resp",
+      "zh": "第11条：个人数据必须合法处理，且限于为实现其收集目的所必要的范围内。处理责任人还应确保该等数据准确、精确并及时更新。",
+      "channel_ranks": [
+        73,
+        67,
+        62,
+        61
+      ]
+    },
+    "top": [
+      {
+        "id": "6e8d81e1-c268-4837-a0fa-aa4e89661eda",
+        "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+        "label": "3.1",
+        "heading": "",
+        "first": "بالأمر ‎gi‏ ورثته أو وليه أن يطلبوا بنفس الطريقة تسلم نسخة من\nالمعطيات في أجل لا يتجاوز الشهر من تاريخ طلبها.\nوفي صورة رفض المسؤول عن المعالجة أو المناول تمكين المعني\nبالأمر أو ورث",
+        "zh": "根据第61号命令，数据主体、其继承人（‎gi‏）或监护人可依同样方式，请求在自提出请求之日起不超过1个月的期限内，获取数据副本。\n如数据处理负责人或处理者拒绝让数据主体、其继承人（‎sl‏）或监护人查阅所请求的个人数据，或推迟向其提供该等数据，或未向其交付数据副本，则数据主体、其继承人（‎ol‏）或监护人应在自拒绝之日起最迟1个月的期限内，向主管机构提出请求。\n查阅所请求的信息、或交付其副本、或对",
+        "channel_ranks": [
+          9,
+          17,
+          5,
+          8
+        ]
+      },
+      {
+        "id": "2bc7c1e1-c315-4bad-8305-381c0b832a27",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "38",
+        "heading": "La demande d’accès est présentée par la personne concernée ou ses héritiers ou son tuteur par",
+        "first": "Art. 38 : La demande d’accès est présentée par la personne concernée ou ses héritiers ou son tuteur par\nécrit ou par n’importe quel moyen laissant une trace écrite. La personne con",
+        "zh": "第38条：查阅请求由相关个人或其继承人或者其监护人通过书面或任何留有书面痕迹的方式提出。相关个人、其继承人或者其监护人可同样方式请求获取数据副本，期限自该请求之日起不超过一个月。\n如数据控制者或数据处理者拒绝允许相关个人、其继承人或者其监护人查阅所要求的个人数据，或推迟查阅该等数据，或拒绝向其提供该等数据的副本，相关个人、其继承人或者其监护人可在自拒绝之日起最长一个月的期限内向该机构提出请求。\n该",
+        "channel_ranks": [
+          12,
+          30,
+          8,
+          15
+        ]
+      },
+      {
+        "id": "4ac63298-ca3a-4182-82c4-1734cf3ca241",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "22",
+        "heading": "",
+        "first": "Art. 22 :\n Sans préjudice des lois et règlements en vigueur, la personne physique ou le représentant\nlégal de la personne morale désirant effectuer le traitement des données à cara",
+        "zh": "第22条：\n在不影响现行法律和法规的前提下，希望进行个人数据处理的自然人或法人代表及其工作人员必须满足以下条件：\n- 具有突尼斯国籍。\n- 居住在突尼斯。\n- 无犯罪记录。\n这些条件同样适用于数据处理者及其工作人员。",
+        "channel_ranks": [
+          85,
+          59,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "fbcbb070-7a26-4aed-bdbe-6ba8cd44222e",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "79",
+        "heading": "",
+        "first": "Art. 79 :\n Il est interdit au président de l’Instance et à ses membres d’avoir, directement, des intérêts\ndans toute entreprise qui exerce ses activités dans le domaine du traiteme",
+        "zh": "第79条：\n禁止该机构主席及其成员在任何以自动化或人工方式从事个人数据处理活动的企业中直接拥有利益。",
+        "channel_ranks": [
+          95,
+          80,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "8",
+        "heading": "Dans les cas où la présente loi exige l’obtention d’une autorisation de l’Instance pour le",
+        "first": "Art. 8 : Dans les cas où la présente loi exige l’obtention d’une autorisation de l’Instance pour le\ntraitement des données à caractère personnel, la demande d’autorisation doit com",
+        "zh": "第8条：在本法要求为个人数据处理取得该机构授权的情形下，授权申请尤其应包括以下信息：\n- 处理责任人的姓、名和住所；如处理责任人为法人，其公司名称、注册住所及其法定代表人的身份。\n- 个人数据所涉及的相关个人的身份及其住所。\n- 处理的目的及其规范。\n- 处理的类别、处理地点和处理日期。\n- 拟处理的个人数据及其来源。\n- 鉴于其职能可能知悉这些数据的人员或机关。\n- 作为处理对象的个人数据的接收",
+        "channel_ranks": [
+          3,
+          4,
+          20,
+          10
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-19",
+    "question": "将数据传往海外须办理什么授权？",
+    "dim": "D3",
+    "country": "TN",
+    "expected": {
+      "id": "ac0987cd-0c8d-4673-a08d-745ea822caeb",
+      "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+      "label": "52",
+      "heading": "Dans tous les cas, l’obtention de l’autorisation de l’Instance pour effectuer le transfert des",
+      "first": "Art. 52 : Dans tous les cas, l’obtention de l’autorisation de l’Instance pour effectuer le transfert des\ndonnées à caractère personnel vers l’étranger est obligatoire.\n L’Instance ",
+      "zh": "第52条：在任何情况下，为向境外转移个人数据而取得该机构授权均为强制要求。\n该机构应自提出申请之日起最长1个月内就该授权申请作出决定。\n当拟转移的个人数据涉及儿童时，申请应提交家庭法官。\n第五章\n关于若干特殊处理类别\n第一节——公共机构对个人数据的处理",
+      "channel_ranks": [
+        1,
+        1,
+        23,
+        20
+      ]
+    },
+    "top": [
+      {
+        "id": "4a79eabc-164b-4864-b4f5-82acd6945351",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "63",
+        "heading": "Le traitement des données à caractère personnel relatives à la santé ne peut être mis en œuvre",
+        "first": "Art. 63 : Le traitement des données à caractère personnel relatives à la santé ne peut être mis en œuvre\nque par des médecins ou des personnes soumises, en raison de leur fonction,",
+        "zh": "第63条：与健康有关的个人数据的处理，仅可由医生或因其职务而负有保守职业秘密义务的人员实施。\n医生可将其持有的个人数据传达给个人或机构，但须基于个人数据保护国家机构的授权。\n该机构必须在自提交申请之日起最长1个月的期限内对授权申请作出裁定。",
+        "channel_ranks": [
+          15,
+          60,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "8",
+        "heading": "Dans les cas où la présente loi exige l’obtention d’une autorisation de l’Instance pour le",
+        "first": "Art. 8 : Dans les cas où la présente loi exige l’obtention d’une autorisation de l’Instance pour le\ntraitement des données à caractère personnel, la demande d’autorisation doit com",
+        "zh": "第8条：在本法要求为个人数据处理取得该机构授权的情形下，授权申请尤其应包括以下信息：\n- 处理责任人的姓、名和住所；如处理责任人为法人，其公司名称、注册住所及其法定代表人的身份。\n- 个人数据所涉及的相关个人的身份及其住所。\n- 处理的目的及其规范。\n- 处理的类别、处理地点和处理日期。\n- 拟处理的个人数据及其来源。\n- 鉴于其职能可能知悉这些数据的人员或机关。\n- 作为处理对象的个人数据的接收",
+        "channel_ranks": [
+          9,
+          5,
+          8,
+          9
+        ]
+      },
+      {
+        "id": "abd7720d-d30e-40be-bc6c-48be331cc640",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "81",
+        "heading": "",
+        "first": "Art. 81 :\n L’instance peut décider après audition du responsable du traitement ou du sous-traitant de\nretirer l’autorisation ou d’interdire le traitement s’il a porté atteinte aux ",
+        "zh": "第81条：\n在听取数据控制者或数据处理者的陈述后，主管机关可决定撤销授权或禁止处理，前提是该处理违反了本法规定的义务。\n撤销授权或禁止处理的程序由法令规定。",
+        "channel_ranks": [
+          11,
+          51,
+          6,
+          3
+        ]
+      },
+      {
+        "id": "7de2887a-3c2c-4e61-8487-4d7cb42b7e1d",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "28",
+        "heading": "Le traitement des données à caractère personnel qui concerne un enfant ne peut s’effectuer",
+        "first": "Art. 28 : Le traitement des données à caractère personnel qui concerne un enfant ne peut s’effectuer\nqu’après l’obtention du consentement de son tuteur et de l’autorisation du juge",
+        "zh": "第28条：涉及儿童的个人数据处理，仅在获得其监护人同意及家事法官授权后方可进行。\n家事法官在儿童最高利益需要时，即使未获监护人同意，亦可命令进行数据处理。\n家事法官可随时撤销其授权。",
+        "channel_ranks": [
+          14,
+          74,
+          4,
+          5
+        ]
+      },
+      {
+        "id": "ad8de395-2a39-459b-bf74-0956e4cadc42",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "90",
+        "heading": "Est puni d’un an d’emprisonnement et d’une amende de cinq mille dinars, quiconque :",
+        "first": "Art. 90 : Est puni d’un an d’emprisonnement et d’une amende de cinq mille dinars, quiconque :\n - effectue intentionnellement un traitement des données à caractère personnel sans pr",
+        "zh": "第90条：凡有下列情形之一者，处1年监禁并科五千第纳尔罚金：\n- 故意对个人数据进行处理，未提交第7条规定的申报，或未取得本法第15条和第69条规定的许可，或在处理被禁止或许可被撤销后继续进行处理；\n- 传播与健康有关的个人数据，尽管本法第65条第二款所述机构已作出禁止；\n- 未经该机构许可向国外转移个人数据；\n- 在本法规定的情形下，未经相关个人同意或该机构同意，通报个人数据。",
+        "channel_ranks": [
+          2,
+          68,
+          9,
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-20",
+    "question": "如何防止第三方擅自更改或查看数据？",
+    "dim": "D8",
+    "country": "TN",
+    "expected": {
+      "id": "6049572a-1552-4ed2-b5f6-69fc3a6c47c0",
+      "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+      "label": "18",
+      "heading": "",
+      "first": "Art. 18 :\nToute personne qui effectue, personnellement ou par une tierce personne, le traitement des\ndonnées à caractère personnel est tenue à l’égard des personnes concernées de p",
+      "zh": "第18条：\n任何亲自或通过第三方处理个人数据的人，对相关当事人负有义务，采取一切必要预防措施，确保该等数据的安全，并防止第三方未经相关当事人授权而修改、篡改或查阅该等数据。",
+      "channel_ranks": [
+        24,
+        null,
+        1,
+        1
+      ]
+    },
+    "top": [
+      {
+        "id": "fbcbb070-7a26-4aed-bdbe-6ba8cd44222e",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "79",
+        "heading": "",
+        "first": "Art. 79 :\n Il est interdit au président de l’Instance et à ses membres d’avoir, directement, des intérêts\ndans toute entreprise qui exerce ses activités dans le domaine du traiteme",
+        "zh": "第79条：\n禁止该机构主席及其成员在任何以自动化或人工方式从事个人数据处理活动的企业中直接拥有利益。",
+        "channel_ranks": [
+          11,
+          1,
+          6,
+          3
+        ]
+      },
+      {
+        "id": "6049572a-1552-4ed2-b5f6-69fc3a6c47c0",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "18",
+        "heading": "",
+        "first": "Art. 18 :\nToute personne qui effectue, personnellement ou par une tierce personne, le traitement des\ndonnées à caractère personnel est tenue à l’égard des personnes concernées de p",
+        "zh": "第18条：\n任何亲自或通过第三方处理个人数据的人，对相关当事人负有义务，采取一切必要预防措施，确保该等数据的安全，并防止第三方未经相关当事人授权而修改、篡改或查阅该等数据。",
+        "channel_ranks": [
+          24,
+          null,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "f9628f8e-a16b-4c74-a062-558a40652235",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "42",
+        "heading": "La personne concernée, ses héritiers ou son tuteur, a le droit de s’opposer à tout moment au",
+        "first": "Art. 42 La personne concernée, ses héritiers ou son tuteur, a le droit de s’opposer à tout moment au\ntraitement des données à caractère personnel le concernant pour des raisons val",
+        "zh": "第42条 数据主体、其继承人或者其监护人，有权基于有效、正当且严肃的理由，随时反对对其个人数据进行处理，但法律规定或者义务性质要求进行处理的情形除外。\n此外，数据主体、其继承人或者其监护人，有权反对将其个人数据提供给第三方以用于广告目的进行利用。\n反对立即中止处理。",
+        "channel_ranks": [
+          8,
+          null,
+          9,
+          5
+        ]
+      },
+      {
+        "id": "e9f0ded9-c38d-49e0-bdd1-0f406a12209b",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "19",
+        "heading": "",
+        "first": "Art. 19 :\n Les précautions prévues à l’article 18 de la présente loi doivent :\n - empêcher que les équipements et les installations utilisés dans le traitement des données à\ncaract",
+        "zh": "第19条：\n本法第18条规定的预防措施必须：\n- 防止用于处理个人数据的设备和设施被置于未经授权的人员能够访问的条件或场所；\n- 防止数据载体被未经授权的人员读取、复制、修改或移动；\n- 防止任何数据被未经授权地引入信息系统，以及防止已记录数据被任何知悉、删除或抹除；\n- 防止信息处理系统被未经授权的人员使用；\n- 保证能够事后核实曾访问信息系统的人员身份、已引入系统的数据、引入的时间以及实施引入",
+        "channel_ranks": [
+          39,
+          null,
+          5,
+          2
+        ]
+      },
+      {
+        "id": "f453649e-f22b-49c5-adb9-04da1fda3bed",
+        "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "label": "21",
+        "heading": "Le responsable du traitement et le sous-traitant doivent corriger, compléter, modifier ou",
+        "first": "Art. 21 : Le responsable du traitement et le sous-traitant doivent corriger, compléter, modifier ou\nmettre à jour les fichiers dont ils disposent, et effacer les données à caractèr",
+        "zh": "第21条：数据控制者和数据处理者必须更正、补充、修改或更新其持有的文件，并在知悉这些数据不准确或不完整时，删除这些文件中的个人数据。\n在此情况下，数据控制者和数据处理者必须通知相关当事人以及数据的合法受益人，其先前收到的个人数据所作的任何修改。\n通知应在修改之日起2个月内，通过附回执的挂号信或任何留有书面痕迹的方式作出。",
+        "channel_ranks": [
+          28,
+          3,
+          17,
+          14
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-21",
+    "question": "自动与非自动车辆数据处理是否都在范围内？",
+    "dim": "D1",
+    "country": "LB",
+    "expected": {
+      "id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+      "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "label": "٨٥",
+      "heading": "",
+      "first": "المادة ٨٥:\nتطبق الأحكام الواردة في هذا الباب علـى جميـع المعالجـات الآليـة وغيـر الآليـة للبيانـات ذات الطـابع\nالشخصي. لكنها لا تطبق علـى المعالجـات المتعلقـة بالنشـاطات الشخصـية ا",
+      "zh": "第85条：\n本章规定适用于所有自动化或非自动化个人数据处理。但本章规定不适用于专为满足个人需求而进行的个人活动数据处理。不得通过协议违反本章中有关数据主体权利及数据处理责任人义务的规定。亦不得援引任何相反协议、任何相反条款或任何单方承诺。",
+      "channel_ranks": [
+        4,
+        22,
+        1,
+        1
+      ]
+    },
+    "top": [
+      {
+        "id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٨٥",
+        "heading": "",
+        "first": "المادة ٨٥:\nتطبق الأحكام الواردة في هذا الباب علـى جميـع المعالجـات الآليـة وغيـر الآليـة للبيانـات ذات الطـابع\nالشخصي. لكنها لا تطبق علـى المعالجـات المتعلقـة بالنشـاطات الشخصـية ا",
+        "zh": "第85条：\n本章规定适用于所有自动化或非自动化个人数据处理。但本章规定不适用于专为满足个人需求而进行的个人活动数据处理。不得通过协议违反本章中有关数据主体权利及数据处理责任人义务的规定。亦不得援引任何相反协议、任何相反条款或任何单方承诺。",
+        "channel_ranks": [
+          4,
+          22,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "4280eee6-7e8e-4370-96da-278467023b15",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٨٧",
+        "heading": "",
+        "first": "المادة ٨٧:\nع\nّ\nُجم\nت البيانات ذات الطابع الشخصي بأمانة ولأهداف مشروعة ومحددة وصريحة .\nيجـب أن تكـون البيانـات ملائمـة وغيـر مت جـاوزة للأهـداف المعلنـة، وأن تكـون صـحيحة وكاملـة وأ",
+        "zh": "第87条：\n个人数据应以诚信、合法、明确、具体的目的进行处理。\n数据应当适当且不超出所声明的目的，应当准确且完整，并在必要范围内保持更新。\n后续不得将这些数据处理用于与所声明目的不相符的目的，但为统计、历史或科学研究目的处理数据的情况除外。",
+        "channel_ranks": [
+          16,
+          19,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٩",
+        "heading": "",
+        "first": "المادة ٩٩:\nلكـل صـاحب البيانـات ذات الطـابع الشخصـي أو لأي مـن ورثتـه الحـق فـي الاسـتعلام مـن المسـؤول\n عن معالجة البيانات ذات الطـابع الشخصـي لمعرفـة مـا إذا كانـت هـذه البيانـات",
+        "zh": "第99条：\n个人数据主体或其任何继承人有权向个人数据处理负责人查询其个人数据是否正在被处理。\n个人数据处理负责人应应个人数据主体或其任何继承人的请求，向其交付一份属于其的数据副本。\n如果这些数据是编码、压缩或加密的，则必须向个人数据主体或其任何继承人提供一份可理解的副本。\n个人数据主体或其任何继承人还有权要求个人数据处理负责人，按照上述第二款规定的条件，向其提供以下附加信息：\n处理目的、类别、来源",
+        "channel_ranks": [
+          12,
+          16,
+          4,
+          4
+        ]
+      },
+      {
+        "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١.2",
+        "heading": "",
+        "first": ":(Données à caractère personnel/Personal Data)الشخصي الطابع ذات البيانات\nهي جميع أنواع المعلومات المتعلقة بشخص طبيعي التـي ّ تمكـن مـن التعريـف بـه، علـى نحـو مب اشـر\nأو غير مباشر،",
+        "zh": "个人数据（Données à caractère personnel/Personal Data）：系指与自然人有关的、能够直接或间接识别该自然人的一切类型信息，包括通过比较多来源信息或信息交叉比对的方式。\n个人数据处理（Traitement des Données à caractère personnel/Processing of Personal Data）：系指对该等数据实施的任何操作或",
+        "channel_ranks": [
+          1,
+          1,
+          6,
+          18
+        ]
+      },
+      {
+        "id": "28a2c53f-283c-4e6c-b84c-02b9c47dff98",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٤",
+        "heading": "",
+        "first": "المادة ٩٤:\n لا يتوجب التقدم بأي تصريح أو طلب أي ترخيص لمعالجة بيانات تذا طابع شخصي في الحـالات\nالتالية :\n١ - في المعالجات التي يجريها أشخاص الحق العام كل في نطاق صلاحياته .\n٢ - فـي",
+        "zh": "第94条：\n对于具有个人性质的数据的处理，在下列情况下，无需提交任何声明或申请任何许可：\n1 - 在公共权利人在其各自权限范围内进行的处理中。\n2 - 在非营利协会为正常、合法履行其任务而维护其成员及与其交易者的专门记录的情况下。\n3 - 在根据法律或监管规定为告知公众而维护专门记录的处理中，任何有合法利益的人或多人均可查阅该记录。\n4 - 在教育机构为机构特定的教育或行政目的而处理中小学生和学生",
+        "channel_ranks": [
+          7,
+          5,
+          7,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-22",
+    "question": "车主数据收集应说明哪些目的？",
+    "dim": "D4",
+    "country": "LB",
+    "expected": {
+      "id": "4280eee6-7e8e-4370-96da-278467023b15",
+      "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "label": "٨٧",
+      "heading": "",
+      "first": "المادة ٨٧:\nع\nّ\nُجم\nت البيانات ذات الطابع الشخصي بأمانة ولأهداف مشروعة ومحددة وصريحة .\nيجـب أن تكـون البيانـات ملائمـة وغيـر مت جـاوزة للأهـداف المعلنـة، وأن تكـون صـحيحة وكاملـة وأ",
+      "zh": "第87条：\n个人数据应以诚信、合法、明确、具体的目的进行处理。\n数据应当适当且不超出所声明的目的，应当准确且完整，并在必要范围内保持更新。\n后续不得将这些数据处理用于与所声明目的不相符的目的，但为统计、历史或科学研究目的处理数据的情况除外。",
+      "channel_ranks": [
+        null,
+        null,
+        1,
+        1
+      ]
+    },
+    "top": [
+      {
+        "id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١٠١",
+        "heading": "",
+        "first": "المادة ١٠١ :\nيحق لصاحب البيانات ذات الطابع الشخصي أو لأي من ورثته أن يطلب من المسؤول عن معالجة\n هذه البيانات، تصحيحها او كمالها وتحديثها ومحوها، والتي تكون غير صحيحة أو ناقصة أو مل",
+        "zh": "第101条：\n个人数据的所有者或其任何继承人有权要求个人数据处理负责人更正、补全、更新和删除该等数据，即不准确、不完整、含糊不清、已过期、不符合处理目的，或禁止处理、收集、使用、保存或传输的数据。\n如果作为更正请求标的的个人数据已发送给第三人，其处理负责人必须将依据其所有者或其任何继承人请求而对该等数据作出的修改告知该第三人。\n个人数据处理负责人应基于其所有者或其任何继承人的请求，免费执行所要求的",
+        "channel_ranks": [
+          10,
+          8,
+          4,
+          3
+        ]
+      },
+      {
+        "id": "8cfea491-9d6e-412f-a503-cf2b21a6bbcb",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٢",
+        "heading": "",
+        "first": "المادة ٩٢:\nلكـل شـخص طبيعــي الحـق فـي الا راعتــ ض ، لأسـباب مشــروعة، أمـام المسـؤول عــن المعالجـة علــى\nتجميع البيانات ذات الطابع الشخصي الخاصة به ومعالجتها، بما في ذلك التجميع",
+        "zh": "第92条：\n每个自然人有权基于合法理由，向处理负责人反对收集和处理其个人数据，包括为商业推广目的而进行的收集和处理。\n但该人有权在下列两种情形下行使反对权：\n1 - 如果数据处理负责人依法有义务收集数据。\n2 - 如果其已同意处理其个人数据。",
+        "channel_ranks": [
+          28,
+          23,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "21cff2ce-868d-416c-984f-0a4f716edfdb",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٨٨",
+        "heading": "",
+        "first": "المادة ٨٨:\nعلى المسؤو ل عن معالجة البيانات ذات الطابع الشخصـي أو ممثلـه إعـلام الأشـخاص الـذين تسـتقى\nمنهم البيانات ذات الطابع الشخصي بما يلي :\n١ - هوية المسؤول عن المعالجة أو هوية",
+        "zh": "第88条：\n处理个人数据的负责人或其代表必须告知向其收集个人数据的人员以下事项：\n1 - 处理负责人的身份或其代表的身份。\n2 - 处理目的。\n3 - 回答所提问题的强制性或选择性性质。\n4 - 不回答可能产生的后果。\n5 - 数据将被发送给的人员。\n6 - 访问和更正信息的权利以及为此准备的手段。\n用于收集数据的表格必须包含对本条第1款所确定信息的明确、清晰指引。\n\n第89条：\n当个人数据并非从",
+        "channel_ranks": [
+          12,
+          18,
+          6,
+          5
+        ]
+      },
+      {
+        "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١.2",
+        "heading": "",
+        "first": ":(Données à caractère personnel/Personal Data)الشخصي الطابع ذات البيانات\nهي جميع أنواع المعلومات المتعلقة بشخص طبيعي التـي ّ تمكـن مـن التعريـف بـه، علـى نحـو مب اشـر\nأو غير مباشر،",
+        "zh": "个人数据（Données à caractère personnel/Personal Data）：系指与自然人有关的、能够直接或间接识别该自然人的一切类型信息，包括通过比较多来源信息或信息交叉比对的方式。\n个人数据处理（Traitement des Données à caractère personnel/Processing of Personal Data）：系指对该等数据实施的任何操作或",
+        "channel_ranks": [
+          5,
+          4,
+          7,
+          18
+        ]
+      },
+      {
+        "id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٩",
+        "heading": "",
+        "first": "المادة ٩٩:\nلكـل صـاحب البيانـات ذات الطـابع الشخصـي أو لأي مـن ورثتـه الحـق فـي الاسـتعلام مـن المسـؤول\n عن معالجة البيانات ذات الطـابع الشخصـي لمعرفـة مـا إذا كانـت هـذه البيانـات",
+        "zh": "第99条：\n个人数据主体或其任何继承人有权向个人数据处理负责人查询其个人数据是否正在被处理。\n个人数据处理负责人应应个人数据主体或其任何继承人的请求，向其交付一份属于其的数据副本。\n如果这些数据是编码、压缩或加密的，则必须向个人数据主体或其任何继承人提供一份可理解的副本。\n个人数据主体或其任何继承人还有权要求个人数据处理负责人，按照上述第二款规定的条件，向其提供以下附加信息：\n处理目的、类别、来源",
+        "channel_ranks": [
+          34,
+          27,
+          3,
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-23",
+    "question": "个人数据可以超出申报期间保存吗？",
+    "dim": "D5",
+    "country": "LB",
+    "expected": {
+      "id": "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+      "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "label": "٩٠",
+      "heading": "",
+      "first": "المادة ٩٠:\n لا يكـون حفـظ البيانـات ذات الطـابع الشخصـي مشـروعاً إلا خـلال الفتـرة المبينـة فـي التصـريح عـن\nيرخ المعالجة أو رراقال في الذي ص\nّ\nبها .",
+      "zh": "第90条：保存具有个人性质的数据，仅在关于处理日期的声明所载明的期间内或其所声明的期限内，方为合法。",
+      "channel_ranks": [
+        6,
+        35,
+        4,
+        4
+      ]
+    },
+    "top": [
+      {
+        "id": "4280eee6-7e8e-4370-96da-278467023b15",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٨٧",
+        "heading": "",
+        "first": "المادة ٨٧:\nع\nّ\nُجم\nت البيانات ذات الطابع الشخصي بأمانة ولأهداف مشروعة ومحددة وصريحة .\nيجـب أن تكـون البيانـات ملائمـة وغيـر مت جـاوزة للأهـداف المعلنـة، وأن تكـون صـحيحة وكاملـة وأ",
+        "zh": "第87条：\n个人数据应以诚信、合法、明确、具体的目的进行处理。\n数据应当适当且不超出所声明的目的，应当准确且完整，并在必要范围内保持更新。\n后续不得将这些数据处理用于与所声明目的不相符的目的，但为统计、历史或科学研究目的处理数据的情况除外。",
+        "channel_ranks": [
+          24,
+          16,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٩",
+        "heading": "",
+        "first": "المادة ٩٩:\nلكـل صـاحب البيانـات ذات الطـابع الشخصـي أو لأي مـن ورثتـه الحـق فـي الاسـتعلام مـن المسـؤول\n عن معالجة البيانات ذات الطـابع الشخصـي لمعرفـة مـا إذا كانـت هـذه البيانـات",
+        "zh": "第99条：\n个人数据主体或其任何继承人有权向个人数据处理负责人查询其个人数据是否正在被处理。\n个人数据处理负责人应应个人数据主体或其任何继承人的请求，向其交付一份属于其的数据副本。\n如果这些数据是编码、压缩或加密的，则必须向个人数据主体或其任何继承人提供一份可理解的副本。\n个人数据主体或其任何继承人还有权要求个人数据处理负责人，按照上述第二款规定的条件，向其提供以下附加信息：\n处理目的、类别、来源",
+        "channel_ranks": [
+          21,
+          13,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٠",
+        "heading": "",
+        "first": "المادة ٩٠:\n لا يكـون حفـظ البيانـات ذات الطـابع الشخصـي مشـروعاً إلا خـلال الفتـرة المبينـة فـي التصـريح عـن\nيرخ المعالجة أو رراقال في الذي ص\nّ\nبها .",
+        "zh": "第90条：保存具有个人性质的数据，仅在关于处理日期的声明所载明的期间内或其所声明的期限内，方为合法。",
+        "channel_ranks": [
+          6,
+          35,
+          4,
+          4
+        ]
+      },
+      {
+        "id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١٠١",
+        "heading": "",
+        "first": "المادة ١٠١ :\nيحق لصاحب البيانات ذات الطابع الشخصي أو لأي من ورثته أن يطلب من المسؤول عن معالجة\n هذه البيانات، تصحيحها او كمالها وتحديثها ومحوها، والتي تكون غير صحيحة أو ناقصة أو مل",
+        "zh": "第101条：\n个人数据的所有者或其任何继承人有权要求个人数据处理负责人更正、补全、更新和删除该等数据，即不准确、不完整、含糊不清、已过期、不符合处理目的，或禁止处理、收集、使用、保存或传输的数据。\n如果作为更正请求标的的个人数据已发送给第三人，其处理负责人必须将依据其所有者或其任何继承人请求而对该等数据作出的修改告知该第三人。\n个人数据处理负责人应基于其所有者或其任何继承人的请求，免费执行所要求的",
+        "channel_ranks": [
+          22,
+          14,
+          3,
+          3
+        ]
+      },
+      {
+        "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١.2",
+        "heading": "",
+        "first": ":(Données à caractère personnel/Personal Data)الشخصي الطابع ذات البيانات\nهي جميع أنواع المعلومات المتعلقة بشخص طبيعي التـي ّ تمكـن مـن التعريـف بـه، علـى نحـو مب اشـر\nأو غير مباشر،",
+        "zh": "个人数据（Données à caractère personnel/Personal Data）：系指与自然人有关的、能够直接或间接识别该自然人的一切类型信息，包括通过比较多来源信息或信息交叉比对的方式。\n个人数据处理（Traitement des Données à caractère personnel/Processing of Personal Data）：系指对该等数据实施的任何操作或",
+        "channel_ranks": [
+          2,
+          32,
+          5,
+          11
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-24",
+    "question": "健康或遗传数据有何特殊限制？",
+    "dim": "D2",
+    "country": "LB",
+    "expected": {
+      "id": "467af361-5577-4df4-ab74-1a0dd0eda162",
+      "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "label": "٩١",
+      "heading": "",
+      "first": "المادة ٩١:\nُمنـع\nي جمـع البيانـات ذات الطـابع الشخصـي أو معالجتهـا، إذا كانـت تكشـف، بصـورة مباشـرة أو غيـر\nمباشرة، عن الحالة الصحية أو الهوية أو ثيةراو ال الحياة الجنسية للشخص الم",
+      "zh": "第91条：\n禁止收集或处理具有个人性质的数据，如果这些数据直接或间接揭示相关人员的健康状况、身份或性生活。\n在下列情形下，本禁止不适用：\n1 - 当相关人员已将这些数据置于公众可获取范围，或明确同意处理这些数据，除非存在法律禁令。\n2 - 当数据的收集或处理对于健康职业成员作出医学诊断或提供医学治疗属必要。\n3 - 在法庭上证明或行使辩护权时。\n4 - 在根据本法第97条规定获得许可的情况下。",
+      "channel_ranks": [
+        14,
+        9,
+        2,
+        2
+      ]
+    },
+    "top": [
+      {
+        "id": "4280eee6-7e8e-4370-96da-278467023b15",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٨٧",
+        "heading": "",
+        "first": "المادة ٨٧:\nع\nّ\nُجم\nت البيانات ذات الطابع الشخصي بأمانة ولأهداف مشروعة ومحددة وصريحة .\nيجـب أن تكـون البيانـات ملائمـة وغيـر مت جـاوزة للأهـداف المعلنـة، وأن تكـون صـحيحة وكاملـة وأ",
+        "zh": "第87条：\n个人数据应以诚信、合法、明确、具体的目的进行处理。\n数据应当适当且不超出所声明的目的，应当准确且完整，并在必要范围内保持更新。\n后续不得将这些数据处理用于与所声明目的不相符的目的，但为统计、历史或科学研究目的处理数据的情况除外。",
+        "channel_ranks": [
+          11,
+          7,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٩",
+        "heading": "",
+        "first": "المادة ٩٩:\nلكـل صـاحب البيانـات ذات الطـابع الشخصـي أو لأي مـن ورثتـه الحـق فـي الاسـتعلام مـن المسـؤول\n عن معالجة البيانات ذات الطـابع الشخصـي لمعرفـة مـا إذا كانـت هـذه البيانـات",
+        "zh": "第99条：\n个人数据主体或其任何继承人有权向个人数据处理负责人查询其个人数据是否正在被处理。\n个人数据处理负责人应应个人数据主体或其任何继承人的请求，向其交付一份属于其的数据副本。\n如果这些数据是编码、压缩或加密的，则必须向个人数据主体或其任何继承人提供一份可理解的副本。\n个人数据主体或其任何继承人还有权要求个人数据处理负责人，按照上述第二款规定的条件，向其提供以下附加信息：\n处理目的、类别、来源",
+        "channel_ranks": [
+          8,
+          4,
+          3,
+          3
+        ]
+      },
+      {
+        "id": "467af361-5577-4df4-ab74-1a0dd0eda162",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩١",
+        "heading": "",
+        "first": "المادة ٩١:\nُمنـع\nي جمـع البيانـات ذات الطـابع الشخصـي أو معالجتهـا، إذا كانـت تكشـف، بصـورة مباشـرة أو غيـر\nمباشرة، عن الحالة الصحية أو الهوية أو ثيةراو ال الحياة الجنسية للشخص الم",
+        "zh": "第91条：\n禁止收集或处理具有个人性质的数据，如果这些数据直接或间接揭示相关人员的健康状况、身份或性生活。\n在下列情形下，本禁止不适用：\n1 - 当相关人员已将这些数据置于公众可获取范围，或明确同意处理这些数据，除非存在法律禁令。\n2 - 当数据的收集或处理对于健康职业成员作出医学诊断或提供医学治疗属必要。\n3 - 在法庭上证明或行使辩护权时。\n4 - 在根据本法第97条规定获得许可的情况下。",
+        "channel_ranks": [
+          14,
+          9,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٨٥",
+        "heading": "",
+        "first": "المادة ٨٥:\nتطبق الأحكام الواردة في هذا الباب علـى جميـع المعالجـات الآليـة وغيـر الآليـة للبيانـات ذات الطـابع\nالشخصي. لكنها لا تطبق علـى المعالجـات المتعلقـة بالنشـاطات الشخصـية ا",
+        "zh": "第85条：\n本章规定适用于所有自动化或非自动化个人数据处理。但本章规定不适用于专为满足个人需求而进行的个人活动数据处理。不得通过协议违反本章中有关数据主体权利及数据处理责任人义务的规定。亦不得援引任何相反协议、任何相反条款或任何单方承诺。",
+        "channel_ranks": [
+          13,
+          10,
+          4,
+          4
+        ]
+      },
+      {
+        "id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١٠١",
+        "heading": "",
+        "first": "المادة ١٠١ :\nيحق لصاحب البيانات ذات الطابع الشخصي أو لأي من ورثته أن يطلب من المسؤول عن معالجة\n هذه البيانات، تصحيحها او كمالها وتحديثها ومحوها، والتي تكون غير صحيحة أو ناقصة أو مل",
+        "zh": "第101条：\n个人数据的所有者或其任何继承人有权要求个人数据处理负责人更正、补全、更新和删除该等数据，即不准确、不完整、含糊不清、已过期、不符合处理目的，或禁止处理、收集、使用、保存或传输的数据。\n如果作为更正请求标的的个人数据已发送给第三人，其处理负责人必须将依据其所有者或其任何继承人请求而对该等数据作出的修改告知该第三人。\n个人数据处理负责人应基于其所有者或其任何继承人的请求，免费执行所要求的",
+        "channel_ranks": [
+          9,
+          5,
+          6,
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-25",
+    "question": "企业开始收集个人资料前要向谁申报？",
+    "dim": "D7",
+    "country": "LB",
+    "expected": {
+      "id": "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+      "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "label": "٩٥",
+      "heading": "",
+      "first": "المادة ٩٥:\nباستثناء الإعفاءات المنصوص عليها في المادة السابقة، يجـب علـى مـن يرغـب بجمـع البيانـات ذات\nالطــابع الشخصــي ومعالجتهــا، إعــلام وزارة الاقتصــاد والتجــارة بموجــب تص",
+      "zh": "第95条：\n除前条规定的豁免外，凡希望收集和处理具有个人性质的数据者，必须通过依照规定程序的申报告知经济与贸易部，以换取收据。",
+      "channel_ranks": [
+        9,
+        7,
+        5,
+        4
+      ]
+    },
+    "top": [
+      {
+        "id": "6c0f4d5a-1762-4f65-a2c5-279761750925",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١٠٦",
+        "heading": "",
+        "first": "المادة ١٠٦ :\nيعاقب راغبال مة من مليون ليـرة لبنانيـة إلـى ثلاثـين مليـون ليـرة لبنانيـة وبـالحبس مـن ثلاثـة أشـهر حتـى\nثلاث سنوات أو بإحدى هاتين العقوبتين :\n - كـل مـن أقـدم علـى م",
+        "zh": "第106条：\n处1,000,000黎巴嫩镑至30,000,000黎巴嫩镑罚金和3个月至3年监禁，或处上述两项刑罚中的任一项：\n- 凡未经提交申报，或未在根据本编第三章规定开始其工作前取得事先许可，而处理个人数据者。\n- 凡未遵守根据本编第二章规定所定规则而收集或处理个人数据者。\n- 凡即使因过失，向无权查阅作为处理对象的个人性质信息的人员披露该等信息者。",
+        "channel_ranks": [
+          3,
+          14,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٥",
+        "heading": "",
+        "first": "المادة ٩٥:\nباستثناء الإعفاءات المنصوص عليها في المادة السابقة، يجـب علـى مـن يرغـب بجمـع البيانـات ذات\nالطــابع الشخصــي ومعالجتهــا، إعــلام وزارة الاقتصــاد والتجــارة بموجــب تص",
+        "zh": "第95条：\n除前条规定的豁免外，凡希望收集和处理具有个人性质的数据者，必须通过依照规定程序的申报告知经济与贸易部，以换取收据。",
+        "channel_ranks": [
+          9,
+          7,
+          5,
+          4
+        ]
+      },
+      {
+        "id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١٠١",
+        "heading": "",
+        "first": "المادة ١٠١ :\nيحق لصاحب البيانات ذات الطابع الشخصي أو لأي من ورثته أن يطلب من المسؤول عن معالجة\n هذه البيانات، تصحيحها او كمالها وتحديثها ومحوها، والتي تكون غير صحيحة أو ناقصة أو مل",
+        "zh": "第101条：\n个人数据的所有者或其任何继承人有权要求个人数据处理负责人更正、补全、更新和删除该等数据，即不准确、不完整、含糊不清、已过期、不符合处理目的，或禁止处理、收集、使用、保存或传输的数据。\n如果作为更正请求标的的个人数据已发送给第三人，其处理负责人必须将依据其所有者或其任何继承人请求而对该等数据作出的修改告知该第三人。\n个人数据处理负责人应基于其所有者或其任何继承人的请求，免费执行所要求的",
+        "channel_ranks": [
+          18,
+          28,
+          8,
+          7
+        ]
+      },
+      {
+        "id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٩",
+        "heading": "",
+        "first": "المادة ٩٩:\nلكـل صـاحب البيانـات ذات الطـابع الشخصـي أو لأي مـن ورثتـه الحـق فـي الاسـتعلام مـن المسـؤول\n عن معالجة البيانات ذات الطـابع الشخصـي لمعرفـة مـا إذا كانـت هـذه البيانـات",
+        "zh": "第99条：\n个人数据主体或其任何继承人有权向个人数据处理负责人查询其个人数据是否正在被处理。\n个人数据处理负责人应应个人数据主体或其任何继承人的请求，向其交付一份属于其的数据副本。\n如果这些数据是编码、压缩或加密的，则必须向个人数据主体或其任何继承人提供一份可理解的副本。\n个人数据主体或其任何继承人还有权要求个人数据处理负责人，按照上述第二款规定的条件，向其提供以下附加信息：\n处理目的、类别、来源",
+        "channel_ranks": [
+          34,
+          31,
+          9,
+          8
+        ]
+      },
+      {
+        "id": "4492beb2-cde2-4a70-9078-947e7e1453aa",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٦",
+        "heading": "",
+        "first": "المادة ٩٦:\nيجب أن يتضمن التصريح م\nّ\nالمقد إلى وزارة الإقتصاد والتجارة وفق المادة السابقة، المعلومات التالية :\n١ - غايات المعالجة .\n٢ - البيانات ذات الطابع الشخصي موضوع المعالجة ومص",
+        "zh": "第96条：\n根据前一条向经济与贸易部提交的申报中必须包含以下信息：\n1. 处理目的。\n2. 作为处理对象的个人数据及其来源。\n3. 相关人员的类别。\n4. 可获知数据的第三方或其类别。\n5. 数据保留期限。\n6. 处理负责人的身份和地址。\n7. 若处理负责人居住在黎巴嫩境外，其代表的身份和地址。\n8. 负责实施处理的机构或机构。\n9. 行使访问权的个人或机构及行使方式。\n10. 分包商或次级承包商",
+        "channel_ranks": [
+          26,
+          13,
+          13,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-26",
+    "question": "可否完全依靠自动处理作出个人评价决定？",
+    "dim": "D8",
+    "country": "LB",
+    "expected": {
+      "id": "80349556-bd83-4c65-b262-46184f494235",
+      "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "label": "٨٦",
+      "heading": "",
+      "first": "المادة ٨٦:\nلكـــل شـــخص الحـــق فـــي الاطـــلاع والا راعتـــ ض أمـــام المســـؤول عـــن معالجـــة البيانـــات ذات الطـــابع\nالشخصــي علــى المعلومــات والتحاليــل المســتعملة فــ",
+      "zh": "第86条：\n每个人都有权向个人数据处理负责人查阅与其有关的自动化处理中所使用并对其援引的信息与分析，并提出异议。\n任何需要对人的行为进行评价的司法或行政程序，不得仅以旨在确定个人特征或评估其人格某些方面的自动化数据处理为依据。\n第二章：\n个人性质信息的收集及其处理",
+      "channel_ranks": [
+        null,
+        null,
+        1,
+        1
+      ]
+    },
+    "top": [
+      {
+        "id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١٠١",
+        "heading": "",
+        "first": "المادة ١٠١ :\nيحق لصاحب البيانات ذات الطابع الشخصي أو لأي من ورثته أن يطلب من المسؤول عن معالجة\n هذه البيانات، تصحيحها او كمالها وتحديثها ومحوها، والتي تكون غير صحيحة أو ناقصة أو مل",
+        "zh": "第101条：\n个人数据的所有者或其任何继承人有权要求个人数据处理负责人更正、补全、更新和删除该等数据，即不准确、不完整、含糊不清、已过期、不符合处理目的，或禁止处理、收集、使用、保存或传输的数据。\n如果作为更正请求标的的个人数据已发送给第三人，其处理负责人必须将依据其所有者或其任何继承人请求而对该等数据作出的修改告知该第三人。\n个人数据处理负责人应基于其所有者或其任何继承人的请求，免费执行所要求的",
+        "channel_ranks": [
+          12,
+          null,
+          3,
+          5
+        ]
+      },
+      {
+        "id": "f2fca2be-cf05-4b26-93aa-f171e0e4fcdc",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١٢٦",
+        "heading": "",
+        "first": "المادة ١٢٦ :\nللنيابــة العامــة تقريــر وقــف خــدمات إلكترونيــة أو حجــب مواقــع الكترونيــة أو تجميــد حســابات عليهــا\nبصورة مؤقتة لمدة أقصاها ثلاثين يوماً قابلة للتجديد مرة وا",
+        "zh": "第126条：\n检察院有权决定暂停电子服务、封锁网站或冻结相关账户，临时期限最长为30日，可续期一次并附说明理由，该措施在指定期限届满后当然失效。\n预审法官或受理案件的主管法院可作出同样决定，临时执行至案件终审判决作出之时。司法机构在出现新的可资考量情形时，亦可撤回其决定。预审法官和法院关于暂停电子服务、封锁网站或冻结相关账户的决定，可按照关于释放程序的适用规则和期限提起上诉。",
+        "channel_ranks": [
+          9,
+          10,
+          21,
+          15
+        ]
+      },
+      {
+        "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١.2",
+        "heading": "",
+        "first": ":(Données à caractère personnel/Personal Data)الشخصي الطابع ذات البيانات\nهي جميع أنواع المعلومات المتعلقة بشخص طبيعي التـي ّ تمكـن مـن التعريـف بـه، علـى نحـو مب اشـر\nأو غير مباشر،",
+        "zh": "个人数据（Données à caractère personnel/Personal Data）：系指与自然人有关的、能够直接或间接识别该自然人的一切类型信息，包括通过比较多来源信息或信息交叉比对的方式。\n个人数据处理（Traitement des Données à caractère personnel/Processing of Personal Data）：系指对该等数据实施的任何操作或",
+        "channel_ranks": [
+          14,
+          null,
+          10,
+          11
+        ]
+      },
+      {
+        "id": "b3cf2404-4048-4628-ac26-42041e621557",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "١٠٣",
+        "heading": "",
+        "first": "المادة ١٠٣ :\nعنـدما تتعلـق المعالجـات بـأمن الدولـة الـداخلي أو الخـارجي، لا يمكـن إطـلاع صـاحب البيانـات ذات\nالطابع الشخصي على بياناته موضوع المعالجة اإذ كان ذلك يعرض غاياتهـا أو ",
+        "zh": "第103条：\n当处理活动涉及国内或国外国家安全时，不得让具有个人性质的数据的所有人查阅作为处理对象的其数据，如果这样做会使其处理目的或国内或国外国家安全面临危险。",
+        "channel_ranks": [
+          1,
+          null,
+          19,
+          20
+        ]
+      },
+      {
+        "id": "4492beb2-cde2-4a70-9078-947e7e1453aa",
+        "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "label": "٩٦",
+        "heading": "",
+        "first": "المادة ٩٦:\nيجب أن يتضمن التصريح م\nّ\nالمقد إلى وزارة الإقتصاد والتجارة وفق المادة السابقة، المعلومات التالية :\n١ - غايات المعالجة .\n٢ - البيانات ذات الطابع الشخصي موضوع المعالجة ومص",
+        "zh": "第96条：\n根据前一条向经济与贸易部提交的申报中必须包含以下信息：\n1. 处理目的。\n2. 作为处理对象的个人数据及其来源。\n3. 相关人员的类别。\n4. 可获知数据的第三方或其类别。\n5. 数据保留期限。\n6. 处理负责人的身份和地址。\n7. 若处理负责人居住在黎巴嫩境外，其代表的身份和地址。\n8. 负责实施处理的机构或机构。\n9. 行使访问权的个人或机构及行使方式。\n10. 分包商或次级承包商",
+        "channel_ranks": [
+          13,
+          null,
+          17,
+          16
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-27",
+    "question": "收集和披露个人数据应满足什么条件？",
+    "dim": "D4",
+    "country": "EG",
+    "expected": {
+      "id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+      "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "label": "(؟):",
+      "heading": "",
+      "first": "مادة (؟):\nلا يجوز جمع البيانات الشخصية أو معا أو الإفصاح عنها أو إفشائها بأى\nوسيلة من الوسائل إلا بمؤافقة ضريخة من اله ‎call‏ بالببياتات : أو فى الأخوال\nالمصرح بها قانونًا .\nالجريد",
+      "zh": "第（？）条：\n不得以任何方式收集个人数据，或将其汇集，或披露或泄露，除非获得数据主体通过 call 作出的明确同意，或属于法律许可的情形。\n官方公报——第 VA 号，第（ه）部分，于 V0 年 7 月 Vi VV。\n数据主体享有下列权利：\n访问或获取其位于任何持有人、控制者或处理者处的个人数据。\n反对保留其个人数据或处理该数据超过为其规定的期限。\n法律2以及收集、处理、保存和保障这些数据的程序、控",
+      "channel_ranks": [
+        8,
+        15,
+        1,
+        1
+      ]
+    },
+    "top": [
+      {
+        "id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(؟):",
+        "heading": "",
+        "first": "مادة (؟):\nلا يجوز جمع البيانات الشخصية أو معا أو الإفصاح عنها أو إفشائها بأى\nوسيلة من الوسائل إلا بمؤافقة ضريخة من اله ‎call‏ بالببياتات : أو فى الأخوال\nالمصرح بها قانونًا .\nالجريد",
+        "zh": "第（？）条：\n不得以任何方式收集个人数据，或将其汇集，或披露或泄露，除非获得数据主体通过 call 作出的明确同意，或属于法律许可的情形。\n官方公报——第 VA 号，第（ه）部分，于 V0 年 7 月 Vi VV。\n数据主体享有下列权利：\n访问或获取其位于任何持有人、控制者或处理者处的个人数据。\n反对保留其个人数据或处理该数据超过为其规定的期限。\n法律2以及收集、处理、保存和保障这些数据的程序、控",
+        "channel_ranks": [
+          8,
+          15,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "236c2408-328e-4bde-9469-c574eee9721f",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "‎(TV)‏",
+        "heading": "2",
+        "first": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل ف",
+        "zh": "第（TV）2条\n凡持有、控制或处理、收集、处理、披露、提供或以任何方式交易个人数据，且未经法律许可或未经数据主体同意者，处以不低于十万埃及镑、不超过5百万埃及镑的罚金。\n官方公报——第74号增刊（ه），于V0年7月VV 78١\n如实施上述行为以获取利益或意图使数据主体遭受损害，则处以不低于六个月监禁及不低于tle千埃及镑、不超过ahs千埃及镑的罚金，或二者之一。\n本法任何类似规定\ngps本法。",
+        "channel_ranks": [
+          22,
+          16,
+          2,
+          3
+        ]
+      },
+      {
+        "id": "a0aa4715-be1c-475c-9674-c9843707e9df",
+        "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+        "label": "第15页",
+        "heading": "",
+        "first": "بالحصول على تصريح من الجهاز وفقا\n يجوز للجهات الحكومية الحصول على خدمات انترنت االشياء من احد الشركات المرخص لها بتقديم خدمات انترنت\nاألشياء للغير وذلك بغرض تقديم الخدمات للمستخدم",
+        "zh": "依照主管机关规定取得主管机关许可。\n政府机关可为向最终用户提供服务之目的，从获准向他人提供物联网服务的公司之一获取物联网服务；在此情况下，物联网服务提供者须就每个政府机关的每个应用取得主管机关的事先批准。\n7-2-4 一般条件\n申请上述任何许可的公司，须向主管机关提交申请，且该申请应满足主管机关规定的所有要求以及本框架中列明的各项要求，并尤其应具备下列条件：\n- 申请公司应为依照埃及法律设立的埃及",
+        "channel_ranks": [
+          14,
+          5,
+          5,
+          4
+        ]
+      },
+      {
+        "id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "‎)١0(‏",
+        "heading": "4",
+        "first": "مادة ‎)١0(‏ 4\nاستثناء من حكم |\n‎a‏\n‏الشخصية إلى دولة لا يتوافر ذ\n5 3\nوذلك فى الحالات الآتية :\n‎-١‏ المحافظة على حياة الشخص المعنى\n‎SS‏ وتوفير الرعاية الطبية أو العلاج\nأو إدارة الخد",
+        "zh": "第10条 4\n作为对……规定的例外，将个人数据转移至不具备……的国家，5 3，在下列情形下：\n1 - 维护数据主体的生命，并提供医疗护理或治疗，或为其管理卫生服务。\n15 - ……\n- 执行义务，以确保在司法机构面前证明或行使权利，或为其辩护。\n- 缔结1项合同，或执行已实际缔结的合同，或该合同将由处理责任人……之间缔结。\n- 对另一国根据其现行有效立法……的义务。\n- 控制者之间或与控制者……处",
+        "channel_ranks": [
+          9,
+          6,
+          6,
+          7
+        ]
+      },
+      {
+        "id": "d0969f10-d8b5-4a81-80bc-7c5f47ead87a",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "第1页",
+        "heading": "",
+        "first": "seta\nassis nics\nهيه ‘\nالثمن ؛ جنيهات\nالصادر فى ‎VE‏ ذى القعدة سنة ‎١54١‏ ه\nSp Uk SRE MEE\nقانون رقم )10 لسنة ‎٠١٠١‏\n‎Lol‏ قانون حماية البيانات الشخصية\nى الجرائم المنصوص\nو خارجها . أ",
+        "zh": "个人数据保护法\n价格；埃及镑\n发布于伊历1541年11月VE\n第10号法，0101年\n个人数据保护法\n规定的犯罪及其境外实施，或如果\n1 - 个人数据\n用于个人使用 8\n2 - 个人数据，官方或执行法律文本\n2 - 个人数据用于媒体目的，条件是真实、准确，且不得用于任何目的 0 ig，且不影响规范新闻和媒体的立法。\n5 - 与司法笔录、调查和司法诉讼有关的个人数据。\n国家安全机关持有的个人数据，以",
+        "channel_ranks": [
+          7,
+          null,
+          3,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-28",
+    "question": "控制者和处理者有哪些保护职责？",
+    "dim": "D8",
+    "country": "EG",
+    "expected": {
+      "id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+      "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "label": "(0):",
+      "heading": "9",
+      "first": "مادة (0): 9\n. )لأ\nمع مراعاة احكام المادة )¥\\\nBi cE REL nail A\n‏التنفيذية ووفقًا للحالات المشروعة والقان”!‎\n‏من المركز أو المتحكم أو من أى ذى صفة ب‎\n‏بنطاق عملية المعالجة وموضوعها و",
+      "zh": "第(0)条：9\n在遵守第……条规定的条件下，并依照本法执行条例以及合法情形……\n从控制者或任何具有……身份者……\n在数据处理过程的范围、主题、性质、种类……\n……个人数据及其协议和充分性……\n……使控制者能够进行检查和监督，以确认……\n1 - 获得……许可或批准\n2 - 位于阿拉伯埃及共和国境外的处理者承诺……其在阿拉伯埃及共和国的代表……\n……个人数据。\n官方公报 - 第……期增刊(ه)于 18",
+      "channel_ranks": [
+        3,
+        6,
+        2,
+        1
+      ]
+    },
+    "top": [
+      {
+        "id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(0):",
+        "heading": "9",
+        "first": "مادة (0): 9\n. )لأ\nمع مراعاة احكام المادة )¥\\\nBi cE REL nail A\n‏التنفيذية ووفقًا للحالات المشروعة والقان”!‎\n‏من المركز أو المتحكم أو من أى ذى صفة ب‎\n‏بنطاق عملية المعالجة وموضوعها و",
+        "zh": "第(0)条：9\n在遵守第……条规定的条件下，并依照本法执行条例以及合法情形……\n从控制者或任何具有……身份者……\n在数据处理过程的范围、主题、性质、种类……\n……个人数据及其协议和充分性……\n……使控制者能够进行检查和监督，以确认……\n1 - 获得……许可或批准\n2 - 位于阿拉伯埃及共和国境外的处理者承诺……其在阿拉伯埃及共和国的代表……\n……个人数据。\n官方公报 - 第……期增刊(ه)于 18",
+        "channel_ranks": [
+          3,
+          6,
+          2,
+          1
+        ]
+      },
+      {
+        "id": "d0969f10-d8b5-4a81-80bc-7c5f47ead87a",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "第1页",
+        "heading": "",
+        "first": "seta\nassis nics\nهيه ‘\nالثمن ؛ جنيهات\nالصادر فى ‎VE‏ ذى القعدة سنة ‎١54١‏ ه\nSp Uk SRE MEE\nقانون رقم )10 لسنة ‎٠١٠١‏\n‎Lol‏ قانون حماية البيانات الشخصية\nى الجرائم المنصوص\nو خارجها . أ",
+        "zh": "个人数据保护法\n价格；埃及镑\n发布于伊历1541年11月VE\n第10号法，0101年\n个人数据保护法\n规定的犯罪及其境外实施，或如果\n1 - 个人数据\n用于个人使用 8\n2 - 个人数据，官方或执行法律文本\n2 - 个人数据用于媒体目的，条件是真实、准确，且不得用于任何目的 0 ig，且不影响规范新闻和媒体的立法。\n5 - 与司法笔录、调查和司法诉讼有关的个人数据。\n国家安全机关持有的个人数据，以",
+        "channel_ranks": [
+          8,
+          5,
+          3,
+          13
+        ]
+      },
+      {
+        "id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "‎)١0(‏",
+        "heading": "4",
+        "first": "مادة ‎)١0(‏ 4\nاستثناء من حكم |\n‎a‏\n‏الشخصية إلى دولة لا يتوافر ذ\n5 3\nوذلك فى الحالات الآتية :\n‎-١‏ المحافظة على حياة الشخص المعنى\n‎SS‏ وتوفير الرعاية الطبية أو العلاج\nأو إدارة الخد",
+        "zh": "第10条 4\n作为对……规定的例外，将个人数据转移至不具备……的国家，5 3，在下列情形下：\n1 - 维护数据主体的生命，并提供医疗护理或治疗，或为其管理卫生服务。\n15 - ……\n- 执行义务，以确保在司法机构面前证明或行使权利，或为其辩护。\n- 缔结1项合同，或执行已实际缔结的合同，或该合同将由处理责任人……之间缔结。\n- 对另一国根据其现行有效立法……的义务。\n- 控制者之间或与控制者……处",
+        "channel_ranks": [
+          2,
+          3,
+          6,
+          17
+        ]
+      },
+      {
+        "id": "30a1c729-9f96-4921-b2f9-ad9a2a86b015",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "‎)١0(‏.1",
+        "heading": "4",
+        "first": "التحقق من شروط حركة ‎SRM MLL‏ “#راتخاذ القرارات) ‎ba‏ 46\nتنظيم المؤقرات وورش العمل والدوراتا\nالوعى والتثقيف للأفراد والجهات حول حقوقهم فيما\nتقديم جميع أنواع الخبرة:والاأسجشارات\nوعل",
+        "zh": "核查SRM MLL运动条件“#决策）ba 46\n组织会议、研讨会和课程\n提高个人和机构对其权利的认识和教育，关于\n提供所有类型的经验和咨询：\n特别是调查机关和司法机关。\n与机构缔结协议、谅解备忘录、协调、合作和交换经验\nS Alan 根据此事项规定的规则和程序。\n与更新Ok Lol保护相关的，符合部门活动\n确定其成员的财务待遇，由……决定\n董事会有权从其成员中组建\n某些任务，董事会有权授权主席……",
+        "channel_ranks": [
+          6,
+          null,
+          4,
+          32
+        ]
+      },
+      {
+        "id": "6eb25602-ac44-4971-b42a-27583cc2e458",
+        "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+        "label": "第6页",
+        "heading": "",
+        "first": "ثانيا: خدمات انترنت االشياء ً\nإنترنت األشياء (IoT (هو مصطلح شامل يتضمن جميع االجهزة و المكونات المادية والرقمية والنظم والتي تتصل بغرض االستفادة\nمن البيانات التي يتم جمعها بواسطة أ",
+        "zh": "第二：物联网服务\n物联网（IoT）是一个涵盖性术语，包括所有设备、物理和数字组件及系统，这些设备、组件和系统相互连接，以利用由传感器以及集成在机器和其他物理物体中的执行器所收集的数据，然后通过通信网络共享这些数据，从而可对其进行处理并用于不同目的；鉴于M2M应用和服务涉及设备彼此连接的过程，因此M2M应用和服务被视为物联网应用和服务的一部分。\n1-2 物联网服务系统组件（IoT价值链）：\n物联网系",
+        "channel_ranks": [
+          12,
+          7,
+          19,
+          14
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-29",
+    "question": "儿童或敏感信息处理应注意什么？",
+    "dim": "D2",
+    "country": "EG",
+    "expected": {
+      "id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+      "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "label": "(؟١):‏",
+      "heading": "",
+      "first": "مادة (؟١):‏\n‎a‏\n‏يحظر على المتحكم\nشخ ‎Ee oe ee oe‏\nمنالمركز.\nوفيما عدا الأحوال المصرح بها قانونًا ‎J ge‏ على موافقة كتابية وصريحة\nوفى حالة إجراء أى عملية مما ذكر تتعلق ببيانات الأط",
+      "zh": "第(？1)条：\na\n禁止控制者\nشخ Ee oe ee oe\n从中心。\n除法律许可的情形外 J ge 须取得书面且明确的同意。\n在实施任何上述涉及儿童数据的处理时 0 须取得监护人同意。\nVO VWs Redd V0 فى (a) Se VA العيو = digas II Bay\n儿童参与游戏、竞赛或其他任何活动，不得以向儿童提供 يويد 为条件；仅限于参与该活动所必需者。\nبير 以及本法",
+      "channel_ranks": [
+        20,
+        15,
+        1,
+        1
+      ]
+    },
+    "top": [
+      {
+        "id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(0):",
+        "heading": "9",
+        "first": "مادة (0): 9\n. )لأ\nمع مراعاة احكام المادة )¥\\\nBi cE REL nail A\n‏التنفيذية ووفقًا للحالات المشروعة والقان”!‎\n‏من المركز أو المتحكم أو من أى ذى صفة ب‎\n‏بنطاق عملية المعالجة وموضوعها و",
+        "zh": "第(0)条：9\n在遵守第……条规定的条件下，并依照本法执行条例以及合法情形……\n从控制者或任何具有……身份者……\n在数据处理过程的范围、主题、性质、种类……\n……个人数据及其协议和充分性……\n……使控制者能够进行检查和监督，以确认……\n1 - 获得……许可或批准\n2 - 位于阿拉伯埃及共和国境外的处理者承诺……其在阿拉伯埃及共和国的代表……\n……个人数据。\n官方公报 - 第……期增刊(ه)于 18",
+        "channel_ranks": [
+          12,
+          8,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(؟١):‏",
+        "heading": "",
+        "first": "مادة (؟١):‏\n‎a‏\n‏يحظر على المتحكم\nشخ ‎Ee oe ee oe‏\nمنالمركز.\nوفيما عدا الأحوال المصرح بها قانونًا ‎J ge‏ على موافقة كتابية وصريحة\nوفى حالة إجراء أى عملية مما ذكر تتعلق ببيانات الأط",
+        "zh": "第(？1)条：\na\n禁止控制者\nشخ Ee oe ee oe\n从中心。\n除法律许可的情形外 J ge 须取得书面且明确的同意。\n在实施任何上述涉及儿童数据的处理时 0 须取得监护人同意。\nVO VWs Redd V0 فى (a) Se VA العيو = digas II Bay\n儿童参与游戏、竞赛或其他任何活动，不得以向儿童提供 يويد 为条件；仅限于参与该活动所必需者。\nبير 以及本法",
+        "channel_ranks": [
+          20,
+          15,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "266409bc-969b-4d6b-9291-b86cdac6c42f",
+        "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+        "label": "3.1",
+        "heading": "",
+        "first": "يقصد بها البرمجيات والمعدات Hardware / Software التى تستخدم في ادارة االجهزة والمستشعرات المتصلة بها\nو معالجة البيانات المجمعة وتحليلها، وتعتبر المنصة هى الطبقة األساسية التي تستخد",
+        "zh": "指用于管理设备及与其连接的传感器、处理和分析所收集数据的软件和硬件（Hardware/Software）；平台被视为基础层，各种物联网应用建立于其上。\n\n10. 物联网连接服务（IoT connectivity）：\n指将物连接到经许可的公共通信网络的服务，该服务由获准建立物联网通信网络的许可方提供给埃及共和国境内提出请求的用户。\n\n11. 最终用户（End User）：\n指使用本框架所涉服务或从中",
+        "channel_ranks": [
+          2,
+          3,
+          9,
+          5
+        ]
+      },
+      {
+        "id": "77458678-4dc2-406e-9902-368507541a66",
+        "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+        "label": "第4页",
+        "heading": "",
+        "first": ".1 الجهاز/المرخص:\nيقصد به الجهاز القومي لتنظيم االتصاالت.\n.2 مقدمي خدمات التليفون المحمول:\nيقصد بها الشركات المرخص لها من قبل الجهاز بتقديم خدمات المحمول داخل جمهورية مصر العربية.\n",
+        "zh": "1. 机构/许可方：指国家电信监管局。\n2. 移动电话服务提供商：指获机构许可在阿拉伯埃及共和国境内提供移动服务的公司。\n3. 机器对机器（M2M）服务：指设备彼此连接并传输数据的服务，无论有线还是无线。\n4. 物联网（IoT）服务：指基于使用技术手段实现物与物之间自动通信以交换数据、分析、处理并向用户提供的服务，同时考虑到“物”是指任何被赋予数字/电子身份以使其能够进行通信的实体物体，例如冰箱、",
+        "channel_ranks": [
+          1,
+          11,
+          10,
+          6
+        ]
+      },
+      {
+        "id": "d0969f10-d8b5-4a81-80bc-7c5f47ead87a",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "第1页",
+        "heading": "",
+        "first": "seta\nassis nics\nهيه ‘\nالثمن ؛ جنيهات\nالصادر فى ‎VE‏ ذى القعدة سنة ‎١54١‏ ه\nSp Uk SRE MEE\nقانون رقم )10 لسنة ‎٠١٠١‏\n‎Lol‏ قانون حماية البيانات الشخصية\nى الجرائم المنصوص\nو خارجها . أ",
+        "zh": "个人数据保护法\n价格；埃及镑\n发布于伊历1541年11月VE\n第10号法，0101年\n个人数据保护法\n规定的犯罪及其境外实施，或如果\n1 - 个人数据\n用于个人使用 8\n2 - 个人数据，官方或执行法律文本\n2 - 个人数据用于媒体目的，条件是真实、准确，且不得用于任何目的 0 ig，且不影响规范新闻和媒体的立法。\n5 - 与司法笔录、调查和司法诉讼有关的个人数据。\n国家安全机关持有的个人数据，以",
+        "channel_ranks": [
+          7,
+          6,
+          3,
+          33
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-30",
+    "question": "向境外传输个人数据是否存在限定例外？",
+    "dim": "D3",
+    "country": "EG",
+    "expected": {
+      "id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+      "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "label": "‎)١0(‏",
+      "heading": "4",
+      "first": "مادة ‎)١0(‏ 4\nاستثناء من حكم |\n‎a‏\n‏الشخصية إلى دولة لا يتوافر ذ\n5 3\nوذلك فى الحالات الآتية :\n‎-١‏ المحافظة على حياة الشخص المعنى\n‎SS‏ وتوفير الرعاية الطبية أو العلاج\nأو إدارة الخد",
+      "zh": "第10条 4\n作为对……规定的例外，将个人数据转移至不具备……的国家，5 3，在下列情形下：\n1 - 维护数据主体的生命，并提供医疗护理或治疗，或为其管理卫生服务。\n15 - ……\n- 执行义务，以确保在司法机构面前证明或行使权利，或为其辩护。\n- 缔结1项合同，或执行已实际缔结的合同，或该合同将由处理责任人……之间缔结。\n- 对另一国根据其现行有效立法……的义务。\n- 控制者之间或与控制者……处",
+      "channel_ranks": [
+        17,
+        19,
+        3,
+        2
+      ]
+    },
+    "top": [
+      {
+        "id": "d0969f10-d8b5-4a81-80bc-7c5f47ead87a",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "第1页",
+        "heading": "",
+        "first": "seta\nassis nics\nهيه ‘\nالثمن ؛ جنيهات\nالصادر فى ‎VE‏ ذى القعدة سنة ‎١54١‏ ه\nSp Uk SRE MEE\nقانون رقم )10 لسنة ‎٠١٠١‏\n‎Lol‏ قانون حماية البيانات الشخصية\nى الجرائم المنصوص\nو خارجها . أ",
+        "zh": "个人数据保护法\n价格；埃及镑\n发布于伊历1541年11月VE\n第10号法，0101年\n个人数据保护法\n规定的犯罪及其境外实施，或如果\n1 - 个人数据\n用于个人使用 8\n2 - 个人数据，官方或执行法律文本\n2 - 个人数据用于媒体目的，条件是真实、准确，且不得用于任何目的 0 ig，且不影响规范新闻和媒体的立法。\n5 - 与司法笔录、调查和司法诉讼有关的个人数据。\n国家安全机关持有的个人数据，以",
+        "channel_ranks": [
+          5,
+          3,
+          1,
+          3
+        ]
+      },
+      {
+        "id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(0):",
+        "heading": "9",
+        "first": "مادة (0): 9\n. )لأ\nمع مراعاة احكام المادة )¥\\\nBi cE REL nail A\n‏التنفيذية ووفقًا للحالات المشروعة والقان”!‎\n‏من المركز أو المتحكم أو من أى ذى صفة ب‎\n‏بنطاق عملية المعالجة وموضوعها و",
+        "zh": "第(0)条：9\n在遵守第……条规定的条件下，并依照本法执行条例以及合法情形……\n从控制者或任何具有……身份者……\n在数据处理过程的范围、主题、性质、种类……\n……个人数据及其协议和充分性……\n……使控制者能够进行检查和监督，以确认……\n1 - 获得……许可或批准\n2 - 位于阿拉伯埃及共和国境外的处理者承诺……其在阿拉伯埃及共和国的代表……\n……个人数据。\n官方公报 - 第……期增刊(ه)于 18",
+        "channel_ranks": [
+          10,
+          5,
+          2,
+          1
+        ]
+      },
+      {
+        "id": "e0db79b7-bcf8-459d-94a9-8ccdd6933c99",
+        "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+        "label": "9.1",
+        "heading": "",
+        "first": " يجوز للمستخدم إنشاء منصة انترنت األشياء إلستخدامه الخاص وربطها بشبكته الخاصة مع االلتزام بعدم ربط\nهذه الشبكات مع الشبكات العامة PLMN ,PSTN و/او مع شبكات االنترنت Internet و/أو شب",
+        "zh": "- 用户可创建物联网平台供其自用，并将其连接至其专用网络，同时须承诺不将这些网络与公共网络PLMN、PSTN和/或互联网Internet网络和/或数据传输网络连接；该局出具书面同意的情形除外。\n- 不得将物联网服务相关流量传输至阿拉伯埃及共和国境外，或使用用于在阿拉伯埃及共和国境外提供物联网服务的网络组件中的任何部分；该局出具书面同意的情形除外。\n- 短距离网络（WPAN）、无线局域网（WLAN）",
+        "channel_ranks": [
+          2,
+          1,
+          7,
+          4
+        ]
+      },
+      {
+        "id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(؟):",
+        "heading": "",
+        "first": "مادة (؟):\nلا يجوز جمع البيانات الشخصية أو معا أو الإفصاح عنها أو إفشائها بأى\nوسيلة من الوسائل إلا بمؤافقة ضريخة من اله ‎call‏ بالببياتات : أو فى الأخوال\nالمصرح بها قانونًا .\nالجريد",
+        "zh": "第（？）条：\n不得以任何方式收集个人数据，或将其汇集，或披露或泄露，除非获得数据主体通过 call 作出的明确同意，或属于法律许可的情形。\n官方公报——第 VA 号，第（ه）部分，于 V0 年 7 月 Vi VV。\n数据主体享有下列权利：\n访问或获取其位于任何持有人、控制者或处理者处的个人数据。\n反对保留其个人数据或处理该数据超过为其规定的期限。\n法律2以及收集、处理、保存和保障这些数据的程序、控",
+        "channel_ranks": [
+          6,
+          10,
+          5,
+          5
+        ]
+      },
+      {
+        "id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "‎)١0(‏",
+        "heading": "4",
+        "first": "مادة ‎)١0(‏ 4\nاستثناء من حكم |\n‎a‏\n‏الشخصية إلى دولة لا يتوافر ذ\n5 3\nوذلك فى الحالات الآتية :\n‎-١‏ المحافظة على حياة الشخص المعنى\n‎SS‏ وتوفير الرعاية الطبية أو العلاج\nأو إدارة الخد",
+        "zh": "第10条 4\n作为对……规定的例外，将个人数据转移至不具备……的国家，5 3，在下列情形下：\n1 - 维护数据主体的生命，并提供医疗护理或治疗，或为其管理卫生服务。\n15 - ……\n- 执行义务，以确保在司法机构面前证明或行使权利，或为其辩护。\n- 缔结1项合同，或执行已实际缔结的合同，或该合同将由处理责任人……之间缔结。\n- 对另一国根据其现行有效立法……的义务。\n- 控制者之间或与控制者……处",
+        "channel_ranks": [
+          17,
+          19,
+          3,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-31",
+    "question": "监管机关在什么情况下可以撤销许可？",
+    "dim": "D7",
+    "country": "EG",
+    "expected": {
+      "id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+      "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "label": "(19):",
+      "heading": "",
+      "first": "مادة (19):\nيجوز للمركز إلغاء الترخيص أو الة\nمن الحالات الآتية :\n. ‏مخالفة شروط الترخيص أو التصريح أو الاعتماد‎ - ١\n‎i‏ الاعتماد بعد إصداره فى أى\n6 الجريدة الرسمية — ‎VA call‏ مكزر ",
+      "zh": "第(19)条：\n中心可在下列情形之一撤销许可证、许可或认证：\n1- 违反许可证、许可或认证的条件。\ni 在认证签发后于任何……\n6 官方公报——VA call 中心(ه)于18 يوليه سنة .م\n？- 未缴纳许可证、许可或认证的续期费用。\n未经中心同意将许可证、许可或认证转让给第三方。\n控制者或处理者。\n第(1)条：\n中心应有特别预算，依照中心条例规定的规则并按统一财务制度规则，以经济实体",
+      "channel_ranks": [
+        1,
+        1,
+        6,
+        2
+      ]
+    },
+    "top": [
+      {
+        "id": "a0aa4715-be1c-475c-9674-c9843707e9df",
+        "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+        "label": "第15页",
+        "heading": "",
+        "first": "بالحصول على تصريح من الجهاز وفقا\n يجوز للجهات الحكومية الحصول على خدمات انترنت االشياء من احد الشركات المرخص لها بتقديم خدمات انترنت\nاألشياء للغير وذلك بغرض تقديم الخدمات للمستخدم",
+        "zh": "依照主管机关规定取得主管机关许可。\n政府机关可为向最终用户提供服务之目的，从获准向他人提供物联网服务的公司之一获取物联网服务；在此情况下，物联网服务提供者须就每个政府机关的每个应用取得主管机关的事先批准。\n7-2-4 一般条件\n申请上述任何许可的公司，须向主管机关提交申请，且该申请应满足主管机关规定的所有要求以及本框架中列明的各项要求，并尤其应具备下列条件：\n- 申请公司应为依照埃及法律设立的埃及",
+        "channel_ranks": [
+          10,
+          4,
+          2,
+          1
+        ]
+      },
+      {
+        "id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(19):",
+        "heading": "",
+        "first": "مادة (19):\nيجوز للمركز إلغاء الترخيص أو الة\nمن الحالات الآتية :\n. ‏مخالفة شروط الترخيص أو التصريح أو الاعتماد‎ - ١\n‎i‏ الاعتماد بعد إصداره فى أى\n6 الجريدة الرسمية — ‎VA call‏ مكزر ",
+        "zh": "第(19)条：\n中心可在下列情形之一撤销许可证、许可或认证：\n1- 违反许可证、许可或认证的条件。\ni 在认证签发后于任何……\n6 官方公报——VA call 中心(ه)于18 يوليه سنة .م\n？- 未缴纳许可证、许可或认证的续期费用。\n未经中心同意将许可证、许可或认证转让给第三方。\n控制者或处理者。\n第(1)条：\n中心应有特别预算，依照中心条例规定的规则并按统一财务制度规则，以经济实体",
+        "channel_ranks": [
+          1,
+          1,
+          6,
+          2
+        ]
+      },
+      {
+        "id": "6920f564-9dcd-4f0c-88ce-0f6001cf402f",
+        "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+        "label": "第20页",
+        "heading": "",
+        "first": " تلتزم الشركة الحاصلة على الترخيص بكافة القوانين المنظمة لتركيب المحطات القاعدية وحدود تعرض المواطنين\nلإلشعاع الكهرومغناطيسي.\n تلتزم الشركة الحاصلة على الترخيص بموافاة الجهاز بقا",
+        "zh": "持牌公司应遵守规范基站安装以及公民暴露于电磁辐射限值的所有法律。\n持牌公司应向主管机关提供其网络的月度数据库，其中包含附件(1)中指定的数据以及主管机关对其所作的任何修改。\n持牌公司应在主管机关要求时停止使用以次要基础使用的频率，期限为主管机关根据其认为合适的情况所确定的期限。\n持牌公司应遵守主管机关发布的技术规则和规范及其任何更新，以跟上通信领域的最新发展，同时考虑世界无线电和频谱大会的成果。\n",
+        "channel_ranks": [
+          4,
+          7,
+          12,
+          5
+        ]
+      },
+      {
+        "id": "561bd1c4-9ce2-4443-8433-b491e5df5df9",
+        "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+        "label": "17.1",
+        "heading": "",
+        "first": "وتعامالت مستخدمى الخدمة المتعاقدين معه لمدة سنة ميالدية وأن يضعها تحت تصرف الجهاز أو من يفوضه في\nذلك وأن يسمح لهم باالطالع عليها وأخذ أي بيانات يروها ضرورية والزمة.\n يلتزم مقدم خد",
+        "zh": "以及与其签约的服务用户一个日历年内的交易往来，并将其置于主管机关或其就此授权的人员支配之下，允许他们查阅并获取其认为必要和必需的任何数据。\n- 物联网服务提供商承诺，除非获得各相关机构为此目的所需的批准，否则不得将物联网服务用于视觉监控业务（监控设备和摄像头）；物联网服务提供商还承诺采取一切必要措施确保实现上述要求。\n- 被许可方承诺不向用户提供定位服务，并且被许可方承诺，除非事先获得许可方书面同",
+        "channel_ranks": [
+          14,
+          6,
+          9,
+          10
+        ]
+      },
+      {
+        "id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(0):",
+        "heading": "9",
+        "first": "مادة (0): 9\n. )لأ\nمع مراعاة احكام المادة )¥\\\nBi cE REL nail A\n‏التنفيذية ووفقًا للحالات المشروعة والقان”!‎\n‏من المركز أو المتحكم أو من أى ذى صفة ب‎\n‏بنطاق عملية المعالجة وموضوعها و",
+        "zh": "第(0)条：9\n在遵守第……条规定的条件下，并依照本法执行条例以及合法情形……\n从控制者或任何具有……身份者……\n在数据处理过程的范围、主题、性质、种类……\n……个人数据及其协议和充分性……\n……使控制者能够进行检查和监督，以确认……\n1 - 获得……许可或批准\n2 - 位于阿拉伯埃及共和国境外的处理者承诺……其在阿拉伯埃及共和国的代表……\n……个人数据。\n官方公报 - 第……期增刊(ه)于 18",
+        "channel_ranks": [
+          5,
+          null,
+          3,
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "q": "S5-32",
+    "question": "未经许可处理个人数据的处罚依据在哪里？",
+    "dim": "D6",
+    "country": "EG",
+    "expected": {
+      "id": "236c2408-328e-4bde-9469-c574eee9721f",
+      "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "label": "‎(TV)‏",
+      "heading": "2",
+      "first": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل ف",
+      "zh": "第（TV）2条\n凡持有、控制或处理、收集、处理、披露、提供或以任何方式交易个人数据，且未经法律许可或未经数据主体同意者，处以不低于十万埃及镑、不超过5百万埃及镑的罚金。\n官方公报——第74号增刊（ه），于V0年7月VV 78١\n如实施上述行为以获取利益或意图使数据主体遭受损害，则处以不低于六个月监禁及不低于tle千埃及镑、不超过ahs千埃及镑的罚金，或二者之一。\n本法任何类似规定\ngps本法。",
+      "channel_ranks": [
+        5,
+        2,
+        5,
+        3
+      ]
+    },
+    "top": [
+      {
+        "id": "236c2408-328e-4bde-9469-c574eee9721f",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "‎(TV)‏",
+        "heading": "2",
+        "first": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل ف",
+        "zh": "第（TV）2条\n凡持有、控制或处理、收集、处理、披露、提供或以任何方式交易个人数据，且未经法律许可或未经数据主体同意者，处以不低于十万埃及镑、不超过5百万埃及镑的罚金。\n官方公报——第74号增刊（ه），于V0年7月VV 78١\n如实施上述行为以获取利益或意图使数据主体遭受损害，则处以不低于六个月监禁及不低于tle千埃及镑、不超过ahs千埃及镑的罚金，或二者之一。\n本法任何类似规定\ngps本法。",
+        "channel_ranks": [
+          5,
+          2,
+          5,
+          3
+        ]
+      },
+      {
+        "id": "26aa86d7-ac41-485b-bd3a-66d050a16789",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": ")80(",
+        "heading": ">",
+        "first": "مادة )80( >\nولا تجاوز مليونى ‎ace‏ أو بإحدى هاتين ‎RR RI‏ كل من منع أحد العاملين بالمركز\nمن يتمتعون بصفة الضبطية القضائية من أداء عمله .\nYS ‏ع‎ Rg V0 ‏فى‎ (a) (Se VA ‏الزسعية = الع",
+        "zh": "第80条：凡阻止中心工作人员中享有司法警察身份者履行其职责的，处以不超过两百万的处罚或这两种处罚之一（0）。",
+        "channel_ranks": [
+          1,
+          1,
+          9,
+          6
+        ]
+      },
+      {
+        "id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(0):",
+        "heading": "9",
+        "first": "مادة (0): 9\n. )لأ\nمع مراعاة احكام المادة )¥\\\nBi cE REL nail A\n‏التنفيذية ووفقًا للحالات المشروعة والقان”!‎\n‏من المركز أو المتحكم أو من أى ذى صفة ب‎\n‏بنطاق عملية المعالجة وموضوعها و",
+        "zh": "第(0)条：9\n在遵守第……条规定的条件下，并依照本法执行条例以及合法情形……\n从控制者或任何具有……身份者……\n在数据处理过程的范围、主题、性质、种类……\n……个人数据及其协议和充分性……\n……使控制者能够进行检查和监督，以确认……\n1 - 获得……许可或批准\n2 - 位于阿拉伯埃及共和国境外的处理者承诺……其在阿拉伯埃及共和国的代表……\n……个人数据。\n官方公报 - 第……期增刊(ه)于 18",
+        "channel_ranks": [
+          9,
+          null,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "(؟):",
+        "heading": "",
+        "first": "مادة (؟):\nلا يجوز جمع البيانات الشخصية أو معا أو الإفصاح عنها أو إفشائها بأى\nوسيلة من الوسائل إلا بمؤافقة ضريخة من اله ‎call‏ بالببياتات : أو فى الأخوال\nالمصرح بها قانونًا .\nالجريد",
+        "zh": "第（？）条：\n不得以任何方式收集个人数据，或将其汇集，或披露或泄露，除非获得数据主体通过 call 作出的明确同意，或属于法律许可的情形。\n官方公报——第 VA 号，第（ه）部分，于 V0 年 7 月 Vi VV。\n数据主体享有下列权利：\n访问或获取其位于任何持有人、控制者或处理者处的个人数据。\n反对保留其个人数据或处理该数据超过为其规定的期限。\n法律2以及收集、处理、保存和保障这些数据的程序、控",
+        "channel_ranks": [
+          10,
+          null,
+          2,
+          5
+        ]
+      },
+      {
+        "id": "3cab5628-a7a7-4bba-b49f-944e759ebd23",
+        "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+        "label": "‎(TY)‏",
+        "heading": "",
+        "first": "مادة ‎(TY)‏ :\nمع عدم الإخلال ‎BL‏ فى اللجوء إلى ‎DI‏\nولكل ذى صفة ومصلحة مباشرة حق الشكوى فىا\n‎١‏ - انتهاك حق حماية البيانات الشخصية أو الإخلال به .\n5 الجريدة الرسمية-العدو ‎VA‏ مكز",
+        "zh": "第(TY)条：\n在不影响 BL 诉诸 DI 的情况下，\n凡具有资格和直接利益者，均有权就下列事项提出投诉：\n1 - 侵犯个人数据保护权或违反该权利。\n5 官方公报——第 VA 期（ه）于 V0 年7月。\n？ - 阻止数据相关人行使权利。\nhol, y 关于控制者处的个人数据保护负责人\n03 向其提交的请求。\n向中心 ye 就此采取必要措施。\n3\n第(0？)条 !2\n在不影响……的情况下\nDEY! ",
+        "channel_ranks": [
+          4,
+          null,
+          3,
+          11
+        ]
+      }
+    ]
+  }
+]

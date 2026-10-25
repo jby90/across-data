@@ -69,7 +69,8 @@ def aggregate(cases):
         "human_review_status": f"0/{count} 未经人工复核",
         "total_tokens": sum(c["tokens"] for c in cases),
         "technical_error_cases": sum(
-            bool(c.get("analysis_error") or c.get("judge_error")) for c in cases
+            bool(c.get("analysis_error") or c.get("judge_error") or c.get("retrieval_error"))
+            for c in cases
         ),
         "local_reselection_cases": sum(
             bool(c.get("model_call", {}).get("arguments", {}).get("selection_retries"))
@@ -119,6 +120,9 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
     config = execution_settings(
         next(n for n in cfg.nodes_json if n["node_id"] == "node_dimension_analyst")
     )
+    retrieval_config = execution_settings(
+        next(n for n in cfg.nodes_json if n["node_id"] == "node_mcp_retriever")
+    )
     started = time.perf_counter()
     tb = ToolBox(session, question["country_code"])
     # Same retrieval as production; never inject expected IDs or answer keywords.
@@ -126,6 +130,7 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
         question["dimension_code"],
         top_k=5,
         query=task_query(question["facts"], question["dimension_code"]),
+        config=retrieval_config,
     )
     expected = question["expected_clauses"]
     hits = sum(
@@ -176,7 +181,7 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
     ]
     judgments = []
     judge_error = None
-    tokens = result.get("tokens", 0)
+    tokens = result.get("tokens", 0) + tb.retrieval_tokens
     if judge_input:
         try:
             judged = await call_llm_json(
@@ -219,6 +224,16 @@ async def evaluate_case(session, question_id, batch_id, actor_id):
         "retrieval_version": RETRIEVAL_VERSION,
         "model": config["model"],
         "model_call": model_call,
+        "retrieval_calls": [c.as_dict() for c in tb.calls],
+        "retrieval_tokens": tb.retrieval_tokens,
+        "retrieval_error": next(
+            (
+                c.arguments["planning"]["error"]
+                for c in tb.calls
+                if c.arguments.get("planning", {}).get("error")
+            ),
+            None,
+        ),
         "retrieval_expected": len(expected),
         "retrieval_hits": hits,
         "source_drift": drift,

@@ -9,15 +9,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.analysis.models import AgentWorkflowConfig, AnalysisTask
 from app.analysis.prompts import ANALYSIS_SYSTEM_PROMPT
+from app.analysis.retrieval_planner import RETRIEVAL_SYSTEM_PROMPT
 from app.core.config import get_settings
 from app.knowledge.history import snapshot
 
-RUNTIME_SCHEMA = "s5-grounded-rules-v2"
+RUNTIME_SCHEMA = "s5-planned-retrieval-v3"
 # Applicable fields only: deterministic nodes do not pretend to use LLM parameters.
 PARAMETERS = {
     "node_start": set(),
     "node_fact_collector": set(),
-    "node_mcp_retriever": {"top_k", "timeout"},
+    "node_mcp_retriever": {"top_k", "timeout", "semantic_planning", "temperature"},
     "node_dimension_analyst": {"temperature", "timeout"},
     "node_citation_verifier": {"max_backtrack_rounds"},
     "node_report_compiler": {"timeout"},
@@ -29,6 +30,7 @@ class NodeExecutionSettings(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
 
     enabled: bool = True
+    semantic_planning: bool = False
     model: str | None = Field(
         default=None, min_length=1, max_length=128, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:/-]*$"
     )
@@ -64,12 +66,15 @@ def baseline_nodes() -> list[dict]:
     retriever.pop("temperature", None)
     retriever.pop("only_effective_versions", None)
     retriever.update(
-        top_k=5, timeout=150.0, exclude_held_sources=True, unknown_status_is_not_verified=True
+        top_k=5,
+        timeout=150.0,
+        semantic_planning=False,
+        temperature=0.0,
+        exclude_held_sources=True,
+        unknown_status_is_not_verified=True,
     )
-    by_id["node_mcp_retriever"]["system_prompt"] = (
-        "确定性检索：限定目标国家，核对归档完整性，隔离错绑来源和待核对解析；"
-        "排除明确失效版本，未知法律状态如实标注，不能视为已确认现行有效。"
-    )
+    by_id["node_mcp_retriever"]["system_prompt"] = RETRIEVAL_SYSTEM_PROMPT
+    by_id["node_mcp_retriever"]["model_name"] = get_settings().llm_model
     analyst = by_id["node_dimension_analyst"]
     analyst["system_prompt"] = ANALYSIS_SYSTEM_PROMPT
     analyst["model_name"] = get_settings().llm_model
@@ -84,7 +89,7 @@ def baseline_nodes() -> list[dict]:
 
 def execution_settings(node: dict) -> dict:
     params = {key: node["parameters"][key] for key in PARAMETERS[node["node_id"]]}
-    if node["node_id"] == "node_dimension_analyst":
+    if node["node_id"] in ("node_dimension_analyst", "node_mcp_retriever"):
         if not all(
             isinstance(node.get(key), str) and node[key].strip()
             for key in ("model_name", "system_prompt")
@@ -121,7 +126,7 @@ def validate_graph(nodes, edges) -> list[dict]:
         if node.keys() != base.keys():
             raise ValueError(f"{nid}: 不允许增加或删除节点字段")
         mutable = {"parameters", "readonly_locked"}
-        if nid == "node_dimension_analyst":
+        if nid in ("node_dimension_analyst", "node_mcp_retriever"):
             mutable |= {"model_name", "system_prompt"}
         for key in base.keys() - mutable:
             if node[key] != base[key]:

@@ -577,6 +577,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                 code,
                 top_k=runtime["node_mcp_retriever"]["top_k"],
                 query=task_query(task.facts_json or {}, code),
+                config=runtime["node_mcp_retriever"],
             )
         all_cands = {c.clause_id: c for lst in dim_cands.values() for c in lst}
         await tb.query_kg_obligations(list(all_cands))
@@ -602,6 +603,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             "现行状态未经官方核实的版本不视为已确认现行有效。"
         ),
         calls=step_calls,
+        tokens=tb.retrieval_tokens,
         duration_ms=sum(c.duration_ms for c in step_calls),
         inp={
             "country_code": cc,
