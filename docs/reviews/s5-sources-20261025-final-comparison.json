@@ -1,0 +1,195 @@
+{
+  "frozen_suite_unchanged": true,
+  "independent_judge_prompt_unchanged": true,
+  "v44": {
+    "batch_id": "b8620716-d6f0-47cc-abe6-7e5b60303d23",
+    "retrieval_hits": 31,
+    "retrieval_expected": 32,
+    "faithful_findings": 56,
+    "findings_total": 75,
+    "supported_findings": 56,
+    "judged_findings": 56,
+    "total_tokens": 1282616,
+    "technical_error_cases": 0,
+    "human_review_count": 0,
+    "elapsed_seconds": 699.1407145999838,
+    "retrieval_tokens": 610865,
+    "cases_with_supported_final_findings": 26,
+    "cases_without_supported_final_findings": [
+      "S5-24",
+      "S5-27",
+      "S5-28",
+      "S5-29",
+      "S5-31",
+      "S5-32"
+    ],
+    "supported_does_not_certify_question_completeness": true
+  },
+  "v45": {
+    "batch_id": "34c24ffc-2716-4153-b0d8-dfa0f8603d48",
+    "retrieval_hits": 32,
+    "retrieval_expected": 32,
+    "faithful_findings": 60,
+    "findings_total": 76,
+    "supported_findings": 58,
+    "judged_findings": 60,
+    "total_tokens": 1316542,
+    "technical_error_cases": 1,
+    "human_review_count": 0,
+    "elapsed_seconds": 648.2502087000175,
+    "retrieval_tokens": 597875,
+    "cases_with_supported_final_findings": 25,
+    "cases_without_supported_final_findings": [
+      "S5-22",
+      "S5-27",
+      "S5-28",
+      "S5-29",
+      "S5-30",
+      "S5-31",
+      "S5-32"
+    ],
+    "supported_does_not_certify_question_completeness": true
+  },
+  "v46": {
+    "batch_id": "62620731-d335-4dd6-8614-8d8cb56ac0f6",
+    "retrieval_hits": 32,
+    "retrieval_expected": 32,
+    "faithful_findings": 63,
+    "findings_total": 82,
+    "supported_findings": 61,
+    "judged_findings": 63,
+    "total_tokens": 1343482,
+    "technical_error_cases": 0,
+    "human_review_count": 0,
+    "elapsed_seconds": 586.0289289999928,
+    "retrieval_tokens": 596599,
+    "cases_with_supported_final_findings": 26,
+    "cases_without_supported_final_findings": [
+      "S5-27",
+      "S5-28",
+      "S5-29",
+      "S5-30",
+      "S5-31",
+      "S5-32"
+    ],
+    "supported_does_not_certify_question_completeness": true
+  },
+  "v45_reports_integration_only": {
+    "runs": [
+      {
+        "task_id": "eb13dd4f-dbcf-4d93-9e39-7fc569db8126",
+        "status": "completed",
+        "tokens": 346452,
+        "retrieval_tokens": 149534,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 131.81,
+        "first_failed": false
+      },
+      {
+        "task_id": "dfa02018-8921-45df-8081-c4497a24e262",
+        "status": "completed",
+        "tokens": 209849,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 101.35,
+        "first_failed": false
+      },
+      {
+        "task_id": "9ae4403e-8222-4c76-baa9-8a685acdd476",
+        "status": "completed",
+        "tokens": 210782,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 111.54,
+        "first_failed": false
+      }
+    ],
+    "statuses": {
+      "completed": 3
+    },
+    "backtrack_distribution": {
+      "0": 3
+    },
+    "first_failed": 0,
+    "known_tokens": 767083,
+    "elapsed_seconds": 344.7,
+    "cache_hits": 16,
+    "retrieval_tokens": 149534,
+    "planning_requests": 16
+  },
+  "v46_report_integration_only": {
+    "runs": [
+      {
+        "task_id": "4691f108-d449-435c-bd28-f0aac3f79401",
+        "status": "completed",
+        "tokens": 324844,
+        "retrieval_tokens": 146355,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 121.93,
+        "first_failed": false
+      }
+    ],
+    "statuses": {
+      "completed": 1
+    },
+    "backtrack_distribution": {
+      "0": 1
+    },
+    "first_failed": 0,
+    "known_tokens": 324844,
+    "elapsed_seconds": 121.93,
+    "cache_hits": 0,
+    "retrieval_tokens": 146355,
+    "planning_requests": 16
+  },
+  "v45_first_three_tokens_delta_vs_v44_first_three": 0.08379499134611978,
+  "v46_cold_report_tokens_delta_vs_v44_first": -0.019321104684160262,
+  "cold_eval_tokens_delta_vs_v44": 0.047454577207831417,
+  "engineering_total_known_tokens": 3751951,
+  "source_recovery_model_calls": 0,
+  "final_attempt_judge": {
+    "yes": 59,
+    "total": 59,
+    "note": "附加诊断；不替代包含失败尝试的61/63总指标"
+  },
+  "judge_non_yes_attempts": [
+    {
+      "question_id": "S5-01",
+      "judgment": {
+        "index": 0,
+        "reason": "核心定义及(a)被支持；但(b)将原文“has or is likely to have access”（拥有或可能有权访问）译为“拥有或可能拥有”，遗漏/改变了“access”这一条件，未完整支持。",
+        "supported": "partial"
+      },
+      "runtime_accepted": false,
+      "final_findings_offset": 1,
+      "finding_index": 0,
+      "clause_id": "fb446163-2596-40e1-94df-6ce4a77ba06c",
+      "human_review": null
+    },
+    {
+      "question_id": "S5-04",
+      "judgment": {
+        "index": 0,
+        "reason": "大部分内容与引文对应，但 conclusion 将引文中的“by an organisation”写成“向组织”，改变了收集、使用或披露的主体/方向，故未完全支持。",
+        "supported": "partial"
+      },
+      "runtime_accepted": false,
+      "final_findings_offset": 1,
+      "finding_index": 0,
+      "clause_id": "1793c90f-11e5-40ae-b5cf-d6e3c717cf64",
+      "human_review": null
+    }
+  ],
+  "recovered_supported_cases": [
+    "S5-24"
+  ],
+  "newly_without_supported_cases": [
+    "S5-30"
+  ],
+  "note": "至少一条获支持不代表完整回答或法律准确率；拒答不是通过；3+1次集成不是10次稳定性或20并发验证。",
+  "human_review": null
+}

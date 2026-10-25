@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "regression_tests": 476,
+  "original_counterexamples": 12,
+  "ruff_app_tests": "passed",
+  "pnpm_typecheck_both_frontends": "passed",
+  "license_gate_packages": 263,
+  "browser_cua_readonly_passed": true,
+  "human_review_count": 0,
+  "old_rows_preserved": 30755,
+  "old_tables_preserved": 20,
+  "source_evidence_approval_overwrites": 0,
+  "archive_hashes_verified": 81,
+  "final_eval_batch": "62620731-d335-4dd6-8614-8d8cb56ac0f6",
+  "workflow_version_id": "7dff5fe7-1396-4000-b982-8f32eeb0d054",
+  "api_port": 18009,
+  "admin_port": 5189,
+  "secret_scan_files": 16,
+  "secret_scan_matches": 0,
+  "evaluation_code_commit": "1b1c44b",
+  "presentation_provenance_commit": "ac38a7a",
+  "limitations": [
+    "Egypt official access/OCR gaps remain",
+    "No human legal review",
+    "No 20 concurrent report load test",
+    "No new ten-run stability cohort",
+    "Final backup catalog checked; final full restore not repeated"
+  ]
+}

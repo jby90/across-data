@@ -1,0 +1,29 @@
+{
+  "tasks": 1,
+  "first_verification_runs": 1,
+  "evaluated_runs": 1,
+  "first_failed_runs": 0,
+  "first_failure_rate_percent": 0.0,
+  "no_evidence_checked_runs": 0,
+  "preceding_analysis_failed_runs": 0,
+  "reason_counts": {},
+  "reason_percent_of_categorized_entries": {},
+  "backtrack_count_distribution": {
+    "0": 1
+  },
+  "task_status_distribution": {
+    "completed": 1
+  },
+  "partial_sample_rate_percent": 0.0,
+  "details": [
+    {
+      "task_id": "4691f108-d449-435c-bd28-f0aac3f79401",
+      "trace_id": "ee8e0b80-031e-4d71-8c45-28e7376a809f",
+      "seq_no": 4,
+      "evaluated": true,
+      "first_verification_failed": false,
+      "problem_entries": 0
+    }
+  ],
+  "note": "原因允许多标签；没有实际核验结论的轨迹不计作首轮通过。历史乱码归为无法分类，不能推测。"
+}

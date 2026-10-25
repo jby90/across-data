@@ -1,0 +1,1131 @@
+{
+  "facts": {
+    "exterior_video_and_gnss": "采集8路环视视频与GNSS；车端模糊人脸与车牌后回传",
+    "cross_border_mechanism": "传输至中国研发中心，已签数据处理协议并完成评估",
+    "consent_and_notice": "车机弹窗明示同意，车身告示，已任命本地数据保护官",
+    "retention_and_blackbox": "黑匣子留存3年；常规个人数据180天后销毁",
+    "local_admission_and_safety_operator": "已提交路测准入申请，配备安全员与保险"
+  },
+  "runs": [
+    {
+      "task_id": "4691f108-d449-435c-bd28-f0aac3f79401",
+      "status": "completed",
+      "workflow_version_id": "7dff5fe7-1396-4000-b982-8f32eeb0d054",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_quote_failed": false,
+      "first_missing_dimensions": [],
+      "retrieval_planning": [
+        {
+          "ledger": [
+            {
+              "phase": "plan",
+              "output": {
+                "queries": [
+                  "cross-border transfer personal data",
+                  "transfer personal data outside Singapore",
+                  "requirements for transfer personal data",
+                  "legally enforceable obligations transfer",
+                  "data processing agreement transfer",
+                  "assessment before transfer personal data"
+                ],
+                "heading_queries": [
+                  "Requirements for transfer",
+                  "Transfer of personal data outside Singapore",
+                  "Legally enforceable obligations"
+                ]
+              },
+              "attempt": 1
+            },
+            {
+              "phase": "rank",
+              "output": {
+                "clause_ids": [
+                  "4c8728ec-0394-4aaf-a51c-e5e5026c12db",
+                  "8fcf851f-af2d-4daa-8254-5ec6cdf8bb4f",
+                  "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+                  "abc976bc-7df5-449b-85b1-57eb6bd33001",
+                  "cc77912d-00ae-446d-8fc5-6737f8850de2"
+                ]
+              },
+              "attempt": 1
+            }
+          ],
+          "tokens": 19187,
+          "queries": [
+            "cross-border transfer personal data",
+            "transfer personal data outside Singapore",
+            "requirements for transfer personal data",
+            "legally enforceable obligations transfer",
+            "data processing agreement transfer",
+            "assessment before transfer personal data"
+          ],
+          "version": "source-identity-comparison-v8",
+          "failures": [],
+          "pool_ids": [
+            "810c6070-50bc-4974-b6b4-7e74872fe146",
+            "e9c72032-1eb0-45af-91cb-04967dff76bd",
+            "d323c794-47c4-404a-95dd-3fa67a9ef149",
+            "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+            "e38138c4-a3e1-40f5-89c6-50f0947b1d3b",
+            "d4d50138-4e75-4d3b-b57f-9345ce44df70",
+            "4c8728ec-0394-4aaf-a51c-e5e5026c12db",
+            "5dd8447d-30e5-4630-a3da-76926ad01b79",
+            "c9ab0ba5-ceda-4608-82dd-424bd4b29cdf",
+            "9a845dcd-c7e0-4249-9456-0fee86b3ca9b",
+            "70eb1a34-537d-4e1a-aef8-bece6c867908",
+            "1373589f-2a2c-40d4-8140-72af16175ad2",
+            "5d9962f3-514e-4e43-80ba-211bdb68f482",
+            "8ccf531d-b7c8-4863-b558-03f9373bcdeb",
+            "a8eb8529-ac41-4f78-a8b4-fb63cf2f59cc",
+            "c4368a59-512b-4282-b60b-2ae3a0498360",
+            "8fcf851f-af2d-4daa-8254-5ec6cdf8bb4f",
+            "cc77912d-00ae-446d-8fc5-6737f8850de2",
+            "82a1882a-77ed-48fe-b546-74e51ccc8797",
+            "5ad7b9a8-703b-48ac-9176-735fe6e3afcd",
+            "6f9a5152-9971-43d1-99fb-49bd793047bd",
+            "0a94b26b-6210-4db3-9845-4f0a44f9ef7a",
+            "649c4c3d-c27c-4878-be8b-235122a373c4",
+            "00aefae1-3219-415a-9b9a-b5131b094623",
+            "39965289-943c-470b-9121-35032927ea68",
+            "65a77cec-bdbc-4e0a-8bdc-e7154a919cdc",
+            "e9b00fa1-2d19-4b15-ba9a-4e32cc24d3b4",
+            "da644084-5f14-486a-9c6b-0c86647e3fee",
+            "852a8b72-47d8-4d02-81dc-57e22c1eefeb",
+            "f399e05a-a42b-44af-9094-7a2bd8a78061",
+            "abc976bc-7df5-449b-85b1-57eb6bd33001",
+            "94df11d7-af13-40be-8191-091a7e4ff118",
+            "8ed195d3-8e1b-41dc-9b50-c279b1763f39",
+            "bff528b3-8f9d-4195-a12d-cfd3040a5701",
+            "9741c8a6-b9fd-47de-90fb-1e678af0610e",
+            "6d793141-0f69-4955-876d-f5105ba56890",
+            "4ced6f46-0963-4e9f-a94d-384e56fb9788",
+            "3151089e-c867-4718-9278-bd4ca03210b1",
+            "5dbc0061-73d0-4c65-b985-cc7f219cf651",
+            "30a06eb7-1320-44ee-ab02-6d27f005549e"
+          ],
+          "requests": 2,
+          "cache_hit": false,
+          "cache_key": "0dd1d4efe478f1963c3aa3732060d8bfd0e3e963d715ac87159c03e49b1b5b7f",
+          "elapsed_ms": 34046,
+          "context_links": [],
+          "heading_queries": [
+            "Requirements for transfer",
+            "Transfer of personal data outside Singapore",
+            "Legally enforceable obligations"
+          ],
+          "local_fill_count": 0,
+          "model_ranked_count": 5,
+          "graph_search_vocabulary": [
+            {
+              "hints": "written contract clearly specifies B's obligations and responsibilities\n书面合同明确数据处理者义务与责任",
+              "clause_id": "6d793141-0f69-4955-876d-f5105ba56890",
+              "legal_evidence": false
+            },
+            {
+              "hints": "Personal Data\nnecessary to respond to an emergency that threatens the life, health or safety\n个人数据(Personal Data)\n紧急情况数据处理必要性豁免",
+              "clause_id": "4ced6f46-0963-4e9f-a94d-384e56fb9788",
+              "legal_evidence": false
+            },
+            {
+              "hints": "transmit under section 26H(2)\n数据可携传输义务",
+              "clause_id": "3151089e-c867-4718-9278-bd4ca03210b1",
+              "legal_evidence": false
+            },
+            {
+              "hints": "transferred personal data\n跨境传输的个人数据",
+              "clause_id": "5dbc0061-73d0-4c65-b985-cc7f219cf651",
+              "legal_evidence": false
+            },
+            {
+              "hints": "bound by an agreement\n签订约束性协议义务",
+              "clause_id": "30a06eb7-1320-44ee-ab02-6d27f005549e",
+              "legal_evidence": false
+            }
+          ],
+          "source_comparison_slots": []
+        },
+        {
+          "ledger": [
+            {
+              "phase": "plan",
+              "output": {
+                "queries": [
+                  "personal data definition",
+                  "anonymised information definition",
+                  "video image personal data",
+                  "location data personal data",
+                  "data in transit definition",
+                  "anonymised information re-identification"
+                ],
+                "heading_queries": [
+                  "Definition",
+                  "“personal data” means",
+                  "“anonymised information” means",
+                  "“data in transit” means",
+                  "“use and disclosure information” means",
+                  "Unauthorised re-identification of anonymised information"
+                ]
+              },
+              "attempt": 1
+            },
+            {
+              "phase": "rank",
+              "output": {
+                "clause_ids": [
+                  "fb446163-2596-40e1-94df-6ce4a77ba06c",
+                  "17644d95-51d1-4341-8b89-2873e9e8ffd4",
+                  "37ab3dd4-dbb6-424a-88a5-b1e78b04b7de",
+                  "a139c87f-9bbc-415b-9976-f15711b78d27",
+                  "e94da426-ce6b-4089-9e38-a31047b5916b"
+                ]
+              },
+              "attempt": 1
+            }
+          ],
+          "tokens": 19222,
+          "queries": [
+            "personal data definition",
+            "anonymised information definition",
+            "video image personal data",
+            "location data personal data",
+            "data in transit definition",
+            "anonymised information re-identification"
+          ],
+          "version": "source-identity-comparison-v8",
+          "failures": [],
+          "pool_ids": [
+            "1cabd4ab-1e00-42a6-bff6-ec9d5f1ea88e",
+            "58025b28-87c5-4ad8-bda6-cbbb1d5698b9",
+            "41d46a1a-5398-4502-be9c-fc311635146f",
+            "1f2ee8a4-5b14-4801-aeec-64b8d8e8ed53",
+            "6d1ad60b-f1a1-4520-92b5-507361626e29",
+            "d0c9b082-b240-45c1-bc92-13be123c4392",
+            "feeb01b5-0aae-4797-b29a-c500fe7558a7",
+            "a139c87f-9bbc-415b-9976-f15711b78d27",
+            "17644d95-51d1-4341-8b89-2873e9e8ffd4",
+            "f85aaf79-5914-47f0-88d8-0d2b8ececd6e",
+            "92a54732-5525-4334-97f0-8bbca7f61b99",
+            "30c8ebfc-764f-4004-9ce8-3f9db2761c46",
+            "7e7b8ba3-607b-4e46-954c-85ef9c65b36a",
+            "f986049f-0b71-482e-b22a-999ea28336fd",
+            "fb446163-2596-40e1-94df-6ce4a77ba06c",
+            "5d9962f3-514e-4e43-80ba-211bdb68f482",
+            "c397e2cf-f5c1-4c3a-8589-d9206c7a3f04",
+            "1373589f-2a2c-40d4-8140-72af16175ad2",
+            "5e6f8ed8-74cb-45ac-84c6-5a1577d9ca2c",
+            "37ab3dd4-dbb6-424a-88a5-b1e78b04b7de",
+            "56d7f990-cd7a-4792-aefa-cb9b4ce80198",
+            "f4026be2-6a29-4571-a6e8-57e9ec730f79",
+            "3da6c9ba-b8af-4aea-ad24-9b58fe5a43a2",
+            "d44d3eef-26bc-41c2-8294-9299b21794e9",
+            "46d85eb5-a09f-4f47-86e9-dbc49f3f80d7",
+            "e5192836-e4da-4b11-9271-d1a7ddc405fb",
+            "82e289d3-f2e3-40e8-b1bd-6caab9437e1c",
+            "d1d840fc-2f00-4de0-bb5a-9a1ed5df5806",
+            "d1c1ed0b-bc91-4f3e-9770-cbda4e8a6f42",
+            "01ee050d-03bb-4121-a220-97af40503228",
+            "e94da426-ce6b-4089-9e38-a31047b5916b",
+            "0de71ed8-91b2-44d2-8928-af7c8b8f31f2",
+            "96a02684-a25f-40d3-a114-f20c0240918d",
+            "bd77582c-abec-4481-b5b5-73c3073f924f",
+            "11258cb4-a99d-4f71-aa54-e8e8b86df371",
+            "8f974dd1-d670-41cd-afe7-6dc3e8ecc0ff",
+            "9fb8268d-4ad4-42a7-8682-789393bd7f30",
+            "2729eabb-be71-4ae3-9b1f-e100b5b74d8a",
+            "ce00dd9c-87a6-4302-9016-558491e8895e",
+            "58990e73-67ec-48e9-9b57-18029bf6ccbf"
+          ],
+          "requests": 2,
+          "cache_hit": false,
+          "cache_key": "72b9fcf7307683c4d5b2751303c1a2392b3e01cdb4b74d1cf6bc3f2a11680c8a",
+          "elapsed_ms": 35801,
+          "context_links": [
+            {
+              "clause_id": "fb446163-2596-40e1-94df-6ce4a77ba06c",
+              "context_parent_id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc"
+            }
+          ],
+          "heading_queries": [
+            "Definition",
+            "“personal data” means",
+            "“anonymised information” means",
+            "“data in transit” means",
+            "“use and disclosure information” means",
+            "Unauthorised re-identification of anonymised information"
+          ],
+          "local_fill_count": 0,
+          "model_ranked_count": 5,
+          "graph_search_vocabulary": [
+            {
+              "hints": "seal shall not be broken without prior approval from LTA\nsealed at any LTA-authorised inspection centres\n不得破坏密封义务\n车牌密封义务",
+              "clause_id": "58990e73-67ec-48e9-9b57-18029bf6ccbf",
+              "legal_evidence": false
+            }
+          ],
+          "source_comparison_slots": [
+            {
+              "clause_id": "1a4812eb-60be-493c-a820-75560ac3a371",
+              "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Acts%20Supplement/25.pdf",
+              "version_id": "d0d016b9-ab0d-4682-bfbe-91db025a0584",
+              "human_review": null,
+              "instrument_identity": "SG:pdpa-2012",
+              "same_legal_effect_confirmed": false
+            }
+          ]
+        },
+        {
+          "ledger": [
+            {
+              "phase": "plan",
+              "output": {
+                "queries": [
+                  "Singapore data protection law overview",
+                  "personal data protection scope",
+                  "application data protection Act",
+                  "cross-border transfer personal data",
+                  "territorial scope data protection",
+                  "data protection regulatory framework"
+                ],
+                "heading_queries": [
+                  "Application of Act",
+                  "Protection of personal data",
+                  "Transfer of personal data outside Singapore",
+                  "Interpretation and application of this Part",
+                  "Personal Data Protection Commission",
+                  "Functions of Commission"
+                ]
+              },
+              "attempt": 1
+            },
+            {
+              "phase": "rank",
+              "output": {
+                "clause_ids": [
+                  "9885ae7b-34d8-4109-9f7b-ee7cc8fe2ef8",
+                  "7e7b8ba3-607b-4e46-954c-85ef9c65b36a",
+                  "a88152cb-b004-4bce-82a0-84c8c3d2ee7a",
+                  "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+                  "cdaadda9-e82e-4dd0-be68-c86405d6f8af"
+                ]
+              },
+              "attempt": 1
+            }
+          ],
+          "tokens": 17948,
+          "queries": [
+            "Singapore data protection law overview",
+            "personal data protection scope",
+            "application data protection Act",
+            "cross-border transfer personal data",
+            "territorial scope data protection",
+            "data protection regulatory framework"
+          ],
+          "version": "source-identity-comparison-v8",
+          "failures": [],
+          "pool_ids": [
+            "7e7b8ba3-607b-4e46-954c-85ef9c65b36a",
+            "f267817d-0b18-48ff-975e-a5f4360c7fdb",
+            "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+            "d4d50138-4e75-4d3b-b57f-9345ce44df70",
+            "26aee55a-dc11-42b5-adc2-34e28765be74",
+            "d5d8fcfd-a190-4b4f-80b7-78829289b72e",
+            "cdaadda9-e82e-4dd0-be68-c86405d6f8af",
+            "33d28436-1211-41d9-bb18-5258c1529182",
+            "d323c794-47c4-404a-95dd-3fa67a9ef149",
+            "79878245-0eb3-4d06-a51f-6428c5f1588d",
+            "810c6070-50bc-4974-b6b4-7e74872fe146",
+            "b228c086-96d2-425c-b184-87d1a247d8a3",
+            "4f655cc8-8e9b-4b21-87b9-01b8637a382c",
+            "9885ae7b-34d8-4109-9f7b-ee7cc8fe2ef8",
+            "a88152cb-b004-4bce-82a0-84c8c3d2ee7a",
+            "5161c684-9e5e-4602-97c0-d6013ecc331d",
+            "f301bf64-ef3d-4290-8f16-dd2f33c3e8b1",
+            "e9c72032-1eb0-45af-91cb-04967dff76bd",
+            "1373589f-2a2c-40d4-8140-72af16175ad2",
+            "03e83e4b-49e2-477c-ac80-d0f002c63ef7",
+            "7af0f6dd-f927-4daa-a38f-44512aec0fa6",
+            "81c75f60-d13f-4952-a80b-b59023037943",
+            "a11b0146-dcee-432f-8de3-a54ac521980d",
+            "498d7387-aabd-437d-bfff-71f5723206a2",
+            "9dec1e31-dbd0-4961-a49c-15c2ed054d1e",
+            "ae0d9480-a0cf-4251-9f3a-14536964b671",
+            "ac7f3a7a-a73b-483f-979a-e6256e03e1fb",
+            "bc8d3d31-6ca6-4157-a37e-5c4f53190dfa",
+            "2e029b13-443d-4d14-b545-0d7ea2793f4b",
+            "e92ab80b-61a9-46cb-ab53-9964727e6af0",
+            "28f09028-bb14-4524-8915-34bf64310fea",
+            "d89ff1f5-bf6f-4191-86c2-a79375c5d378",
+            "efb80b8f-55a4-45da-aaa2-0ead0705bd0e",
+            "abc976bc-7df5-449b-85b1-57eb6bd33001",
+            "b35583c0-e362-464e-ba53-f9919bbc8d12",
+            "cf62e706-dabe-437e-9041-88879d75fc37",
+            "a02c6d14-9aa0-4fd6-b253-e926528f635c",
+            "ca93a31a-1711-485d-956c-23577f82d8f0",
+            "5e6f8ed8-74cb-45ac-84c6-5a1577d9ca2c",
+            "9e0ed939-2671-4f4d-a55e-95d7bb65104d"
+          ],
+          "requests": 2,
+          "cache_hit": false,
+          "cache_key": "80a2915dc96761c86f910576a597cbe08d6d5042478c0665aa4efc00adc9b17c",
+          "elapsed_ms": 36286,
+          "context_links": [],
+          "heading_queries": [
+            "Application of Act",
+            "Protection of personal data",
+            "Transfer of personal data outside Singapore",
+            "Interpretation and application of this Part",
+            "Personal Data Protection Commission",
+            "Functions of Commission"
+          ],
+          "local_fill_count": 0,
+          "model_ranked_count": 5,
+          "graph_search_vocabulary": [
+            {
+              "hints": "actively monitor the operation of the AV and to take control of the AV immediately\nensure that the AV comply with all traffic regulations and statutory speed limit(s)\n主动监控并随时接管义务\n确保遵守交通法规和限速义务",
+              "clause_id": "cf62e706-dabe-437e-9041-88879d75fc37",
+              "legal_evidence": false
+            },
+            {
+              "hints": "Personal Data\napplicable data\n个人数据(Personal Data)\n适用数据（个人数据）",
+              "clause_id": "a02c6d14-9aa0-4fd6-b253-e926528f635c",
+              "legal_evidence": false
+            },
+            {
+              "hints": "accx\naccy\nheading\nlongitude\n横向加速度数据\n纵向加速度数据\n车辆当前位置经度数据\n车辆朝向数据",
+              "clause_id": "ca93a31a-1711-485d-956c-23577f82d8f0",
+              "legal_evidence": false
+            },
+            {
+              "hints": "data collected from the data recorder\n数据记录器数据",
+              "clause_id": "5e6f8ed8-74cb-45ac-84c6-5a1577d9ca2c",
+              "legal_evidence": false
+            },
+            {
+              "hints": "brake\npark_brake\nsteering_wheel_angle\n制动器输出数据\n方向盘角度数据\n驻车制动状态数据",
+              "clause_id": "9e0ed939-2671-4f4d-a55e-95d7bb65104d",
+              "legal_evidence": false
+            }
+          ],
+          "source_comparison_slots": []
+        },
+        {
+          "ledger": [
+            {
+              "phase": "plan",
+              "output": {
+                "queries": [
+                  "express consent personal data",
+                  "notification of purpose personal data",
+                  "data protection officer appointment",
+                  "consent required personal data",
+                  "provision of consent",
+                  "deemed consent notification"
+                ],
+                "heading_queries": [
+                  "Consent required",
+                  "Provision of consent",
+                  "Notification of purpose",
+                  "Deemed consent by notification",
+                  "Consent",
+                  "Withdrawal of consent"
+                ]
+              },
+              "attempt": 1
+            },
+            {
+              "phase": "rank",
+              "output": {
+                "clause_ids": [
+                  "1793c90f-11e5-40ae-b5cf-d6e3c717cf64",
+                  "c50844a4-1198-4110-9b2c-558610419b20",
+                  "31cdf32a-7b82-4fe9-a143-28f3e9ee78b6",
+                  "97d828c5-f91c-436f-b014-5143a1f0de54",
+                  "1fa9c447-48c3-4e7b-8f79-972693f164cb"
+                ]
+              },
+              "attempt": 1
+            }
+          ],
+          "tokens": 19995,
+          "queries": [
+            "express consent personal data",
+            "notification of purpose personal data",
+            "data protection officer appointment",
+            "consent required personal data",
+            "provision of consent",
+            "deemed consent notification"
+          ],
+          "version": "source-identity-comparison-v8",
+          "failures": [],
+          "pool_ids": [
+            "1793c90f-11e5-40ae-b5cf-d6e3c717cf64",
+            "1fa9c447-48c3-4e7b-8f79-972693f164cb",
+            "58e0b7d1-5d38-432c-9d18-0ff2bce96fc0",
+            "5e7d9642-01f4-4cae-b94e-89dd818cf99e",
+            "555c235d-0928-44da-b308-bf031bbba5f0",
+            "a02f50a9-2010-4f39-ba52-781eddd3e809",
+            "9102323e-1a5d-455a-979d-de8a23ed2683",
+            "b23c9b98-a65f-41af-a749-6ff4e074e80e",
+            "c50844a4-1198-4110-9b2c-558610419b20",
+            "93da47ec-f67c-46fd-8657-315588bf083e",
+            "284369b1-04e9-4b28-9cf8-402637c69690",
+            "2624eb39-5f1d-4b81-8d6f-23fd43d62ec4",
+            "a5e050d9-326c-4b23-ae5b-862d33adf4b6",
+            "5f226021-80d2-4af9-95d9-612ae5cbbfc6",
+            "3507cc1e-86cc-4f4b-a127-0c9a22910b51",
+            "eb62a0c6-6c79-43fd-8be9-6fe2d11db65e",
+            "31cdf32a-7b82-4fe9-a143-28f3e9ee78b6",
+            "d6a444ab-6069-4201-a36c-5f8a9d714bbe",
+            "12fd3965-a6e7-47b3-bfc4-617c0daf565e",
+            "bf911206-9422-4a22-875e-bcf2687bcbf9",
+            "9dec1e31-dbd0-4961-a49c-15c2ed054d1e",
+            "3e5f14dc-3682-413a-8edf-9ca441b0ea88",
+            "58025b28-87c5-4ad8-bda6-cbbb1d5698b9",
+            "9d52fd5b-dc19-4822-92a1-0a02ec9a55d1",
+            "85bc26b6-92c2-4cb6-9977-23a77e1f5216",
+            "161be34d-b098-439a-b951-f5050536509b",
+            "79cca951-117a-4d10-be13-74be11928be2",
+            "2be0aa0a-1253-410e-9b36-3d945e668093",
+            "12749934-a521-405d-b3c4-4e92acfe9dd5",
+            "b32f6aaa-4ba4-4442-8ebb-51e64b7d62d4",
+            "e3ab3e4a-2f51-4526-abae-a7e2b1b7b455",
+            "c14343c5-0a2d-4fc6-b692-5ee8dbc2c64c",
+            "aa441a55-14b9-4efb-aa4d-d3330be7d731",
+            "9cbbeaa3-75f9-4649-a5b8-a5d11277fa9c",
+            "9442a4bd-40f1-4345-aac1-2812cec7bf0c",
+            "97d828c5-f91c-436f-b014-5143a1f0de54",
+            "cdaadda9-e82e-4dd0-be68-c86405d6f8af",
+            "b6911558-b272-4e5b-bf6c-d30c43943eb0",
+            "365f5fef-ba6d-490f-8499-601e2306c0f3",
+            "0562484e-6c7c-4cde-b970-9ea7bc727f4e"
+          ],
+          "requests": 2,
+          "cache_hit": false,
+          "cache_key": "a7fa425c1bcd7ec5bc0f357758daedc38fdf095d9a68e00efd5abd9d5389c4df",
+          "elapsed_ms": 40697,
+          "context_links": [],
+          "heading_queries": [
+            "Consent required",
+            "Provision of consent",
+            "Notification of purpose",
+            "Deemed consent by notification",
+            "Consent",
+            "Withdrawal of consent"
+          ],
+          "local_fill_count": 0,
+          "model_ranked_count": 5,
+          "graph_search_vocabulary": [
+            {
+              "hints": "Organisations should ensure that individuals appointed as a DPO are trained and certified\n数据保护官培训与认证义务",
+              "clause_id": "97d828c5-f91c-436f-b014-5143a1f0de54",
+              "legal_evidence": false
+            },
+            {
+              "hints": "The Consent Obligation\ncomply with the Data Protection Provisions\n同意义务\n遵守数据保护条款义务",
+              "clause_id": "cdaadda9-e82e-4dd0-be68-c86405d6f8af",
+              "legal_evidence": false
+            },
+            {
+              "hints": "protection of personal data\n死者个人数据保护义务",
+              "clause_id": "b6911558-b272-4e5b-bf6c-d30c43943eb0",
+              "legal_evidence": false
+            },
+            {
+              "hints": "comply with all the Data Protection Provisions\n遵守数据保护规定",
+              "clause_id": "365f5fef-ba6d-490f-8499-601e2306c0f3",
+              "legal_evidence": false
+            },
+            {
+              "hints": "comply with all Data Protection Provisions\n遵守全部数据保护条款义务",
+              "clause_id": "0562484e-6c7c-4cde-b970-9ea7bc727f4e",
+              "legal_evidence": false
+            }
+          ],
+          "source_comparison_slots": [
+            {
+              "clause_id": "58e0b7d1-5d38-432c-9d18-0ff2bce96fc0",
+              "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Acts%20Supplement/25.pdf",
+              "version_id": "d0d016b9-ab0d-4682-bfbe-91db025a0584",
+              "human_review": null,
+              "instrument_identity": "SG:pdpa-2012",
+              "same_legal_effect_confirmed": false
+            },
+            {
+              "clause_id": "93da47ec-f67c-46fd-8657-315588bf083e",
+              "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Acts%20Supplement/25.pdf",
+              "version_id": "d0d016b9-ab0d-4682-bfbe-91db025a0584",
+              "human_review": null,
+              "instrument_identity": "SG:pdpa-2012",
+              "same_legal_effect_confirmed": false
+            }
+          ]
+        },
+        {
+          "ledger": [
+            {
+              "phase": "plan",
+              "output": {
+                "queries": [
+                  "personal data retention period",
+                  "personal data destruction period",
+                  "personal data storage duration",
+                  "preservation copies personal data",
+                  "prescribed duration personal data retention",
+                  "data recorder retention period"
+                ],
+                "heading_queries": [
+                  "Retention of personal data",
+                  "Preservation of copies of personal data",
+                  "Prescribed duration for section 43(1) of Act",
+                  "Prescribed duration for section 43(2)(a) of Act",
+                  "Prescribed period for section 43(2)(b) of Act",
+                  "Prescribed period for section 47(3) of Act"
+                ]
+              },
+              "attempt": 1
+            },
+            {
+              "phase": "rank",
+              "output": {
+                "clause_ids": [
+                  "1cdf56b5-efe8-43a0-8ffb-8256cae7e637",
+                  "152e4de8-d71c-4fe4-9fdd-ca5cf39b8fab",
+                  "623a4ec2-ad56-456c-929d-311cf8e5f293",
+                  "e12c5bd9-b910-43b8-8b97-5019725af0e2",
+                  "6563286a-c737-4170-983e-81ffb0a4217f"
+                ]
+              },
+              "attempt": 1
+            }
+          ],
+          "tokens": 17519,
+          "queries": [
+            "personal data retention period",
+            "personal data destruction period",
+            "personal data storage duration",
+            "preservation copies personal data",
+            "prescribed duration personal data retention",
+            "data recorder retention period"
+          ],
+          "version": "source-identity-comparison-v8",
+          "failures": [],
+          "pool_ids": [
+            "1cdf56b5-efe8-43a0-8ffb-8256cae7e637",
+            "90fd28d0-805c-43a8-9b59-d4f32e6e5f6d",
+            "8f58cb3a-64de-41bf-b86a-e34055ccd6bd",
+            "623a4ec2-ad56-456c-929d-311cf8e5f293",
+            "113ab480-0aeb-4cf7-9b5e-db4becc319ef",
+            "d4721f1d-dcde-4b94-ac64-d062f3c16079",
+            "30c8ebfc-764f-4004-9ce8-3f9db2761c46",
+            "d08827cc-3c89-468c-bde3-01830548de5e",
+            "1d935903-915a-4b13-a528-dd0cbd4fa26c",
+            "336b4421-00e3-4cba-a010-2e79cc824b25",
+            "e12c5bd9-b910-43b8-8b97-5019725af0e2",
+            "3395cfff-7620-4313-b558-df5239d91dbd",
+            "26aee55a-dc11-42b5-adc2-34e28765be74",
+            "45ea3778-3787-4146-b671-2be072e25d64",
+            "9ba8bf4e-9abd-4b2b-b189-bcbc95930486",
+            "ea9ff802-5f66-4836-ae6e-7b999f553c63",
+            "062cba65-6f2a-4aa5-9d97-1900e3131e39",
+            "dc8016df-445b-4956-8a91-d2c17ac55250",
+            "9e279601-620e-4b63-b149-0e819824a5b3",
+            "152e4de8-d71c-4fe4-9fdd-ca5cf39b8fab",
+            "371d8d18-9947-4f08-b6e2-356a238608fd",
+            "a463ccb6-29bf-46e2-aa29-cacb94d4dc8a",
+            "1c2eac81-312c-4738-a9bd-9312ad1c0a9a",
+            "93d8567d-9a7f-40b9-b0a4-733642fdf79d",
+            "4c298b66-3698-4fa2-9801-9ebb010d7ae3",
+            "cdd40c54-6853-47fa-b15f-01d101ee60c2",
+            "b241c02b-f65e-456d-a3e6-64d55fe9618f",
+            "357ae35d-2bb9-4f4e-86d4-aa005a01ae7a",
+            "dd4d6bfa-f47d-42d3-b870-a564c1e735d2",
+            "c9ab0ba5-ceda-4608-82dd-424bd4b29cdf",
+            "28f09028-bb14-4524-8915-34bf64310fea",
+            "7adad445-1235-4896-acea-77d837a294e1",
+            "023f9af0-69cf-4b7f-b2a5-cb84935370af",
+            "7e7b8ba3-607b-4e46-954c-85ef9c65b36a",
+            "fd8a1b46-70f7-46c0-aa1a-fbebf4822317",
+            "6563286a-c737-4170-983e-81ffb0a4217f",
+            "88345e28-b0ff-4cdb-a2fd-ee388dfb880d",
+            "99d10a00-d568-4dc5-9dd1-513a9c480cb9",
+            "dd45144d-b082-461b-b8bd-7ca9a90bfa01",
+            "db07f8d2-5419-4d49-8f0f-bf80c0f1bedd"
+          ],
+          "requests": 2,
+          "cache_hit": false,
+          "cache_key": "3bf5b60cd9b6f6421120e5dd2adbe744b558b562fb0bab9a08a0c93d6c5fad32",
+          "elapsed_ms": 44209,
+          "context_links": [],
+          "heading_queries": [
+            "Retention of personal data",
+            "Preservation of copies of personal data",
+            "Prescribed duration for section 43(1) of Act",
+            "Prescribed duration for section 43(2)(a) of Act",
+            "Prescribed period for section 43(2)(b) of Act",
+            "Prescribed period for section 47(3) of Act"
+          ],
+          "local_fill_count": 0,
+          "model_ranked_count": 5,
+          "graph_search_vocabulary": [
+            {
+              "hints": "black box/recorder data\n黑匣子/记录器数据",
+              "clause_id": "99d10a00-d568-4dc5-9dd1-513a9c480cb9",
+              "legal_evidence": false
+            },
+            {
+              "hints": "LTA may also require the applicant to keep the black box data relating to any accident/incident involving the approved vehicle beyond the specified period\nblack box data\nkeep the black box data throughout the duration of the Trial period and for at least 3 years after the expiry of the Trial period\n事故相关数据延长留存义务\n黑匣子数据\n黑匣子数据留存义务",
+              "clause_id": "1cdf56b5-efe8-43a0-8ffb-8256cae7e637",
+              "legal_evidence": false
+            },
+            {
+              "hints": "2014年7月2日前收集的个人数据\npersonal data collected before 2 July 2014",
+              "clause_id": "bc0b2b1c-02f7-439a-9ed5-99d478275b40",
+              "legal_evidence": false
+            },
+            {
+              "hints": "equipped with a separate mechanism, for example, an event data recorder or black box to capture and record information of the Trial which shall be in operation at all times\nevent data recorder or black box\n事件数据记录器/黑匣子安装与持续运行义务\n事件数据记录器/黑匣子数据",
+              "clause_id": "dd45144d-b082-461b-b8bd-7ca9a90bfa01",
+              "legal_evidence": false
+            },
+            {
+              "hints": "Personal Data\ncease to retain the documents containing personal data\n个人数据(Personal Data)\n停止留存个人数据义务",
+              "clause_id": "db07f8d2-5419-4d49-8f0f-bf80c0f1bedd",
+              "legal_evidence": false
+            }
+          ],
+          "source_comparison_slots": []
+        },
+        {
+          "ledger": [
+            {
+              "phase": "plan",
+              "output": {
+                "queries": [
+                  "autonomous motor vehicle trial application",
+                  "road testing approval requirements",
+                  "safety operator autonomous vehicle",
+                  "liability insurance autonomous vehicle",
+                  "security in lieu of liability insurance",
+                  "authorisation conditions application materials"
+                ],
+                "heading_queries": [
+                  "Application to carry out use of autonomous motor vehicle",
+                  "Conditions of authorisation",
+                  "Liability insurance",
+                  "Depositing security with Authority in lieu of liability insurance",
+                  "Form and validity of authorisation",
+                  "Authorisation"
+                ]
+              },
+              "attempt": 1
+            },
+            {
+              "phase": "rank",
+              "output": {
+                "clause_ids": [
+                  "babb8eda-4f51-4b03-a84b-33ed6166572a",
+                  "fc09227f-3af0-4bef-8391-0035b40cf7e2",
+                  "9a2b88bb-1ef7-4022-a06c-0aa3d621b479",
+                  "cf62e706-dabe-437e-9041-88879d75fc37",
+                  "4a68af63-3af9-49a0-affb-778f1863a382"
+                ]
+              },
+              "attempt": 1
+            }
+          ],
+          "tokens": 16700,
+          "queries": [
+            "autonomous motor vehicle trial application",
+            "road testing approval requirements",
+            "safety operator autonomous vehicle",
+            "liability insurance autonomous vehicle",
+            "security in lieu of liability insurance",
+            "authorisation conditions application materials"
+          ],
+          "version": "source-identity-comparison-v8",
+          "failures": [],
+          "pool_ids": [
+            "8057c5b0-3243-44c6-ad2a-3dbf15edccc8",
+            "fc09227f-3af0-4bef-8391-0035b40cf7e2",
+            "d7af72b7-0b56-4f6b-9ff2-3b462d24e0e2",
+            "d87bc6e8-adf5-4d92-b25a-b0610e1c4d84",
+            "9a2b88bb-1ef7-4022-a06c-0aa3d621b479",
+            "cf62e706-dabe-437e-9041-88879d75fc37",
+            "f990ed6d-bc6a-42d7-ace4-32fd00509cef",
+            "78438514-780b-43f8-8fd3-44a495cb5561",
+            "4597a23a-cb41-4521-af20-a54cb55925c1",
+            "babb8eda-4f51-4b03-a84b-33ed6166572a",
+            "13c20bec-b87a-444b-a1a7-5d231ab8c78e",
+            "370f767a-9f1c-497b-950c-48a4fc15f6bc",
+            "39006052-d76b-42a3-8d17-07c41b07d99a",
+            "5123bd94-ed32-412c-92db-9e7de7287f97",
+            "6850aada-3218-4b17-928f-ac05604c511d",
+            "22fc782e-8ee8-4e1a-8cc5-471da8c16551",
+            "46a4baff-37e3-4de5-b24e-9a1ac42c061f",
+            "cc4900be-8344-4a37-9d49-3106821ec0bc",
+            "f85aaf79-5914-47f0-88d8-0d2b8ececd6e",
+            "6873e73a-ef22-4b06-a078-29f33df3aaf7",
+            "302422fe-bf2e-4760-a35f-76fe2f68f23d",
+            "1c189839-d04d-4137-8f76-9ed6c2f37ac1",
+            "8529017d-a8cd-4034-ac38-aa2cb18b83ca",
+            "58990e73-67ec-48e9-9b57-18029bf6ccbf",
+            "a6b4cbb1-7ea2-49cb-ae19-158f7daa0778",
+            "dd45144d-b082-461b-b8bd-7ca9a90bfa01",
+            "ce6b5392-dbb0-477b-8f52-e9e6d9c69c00",
+            "f956622c-daf8-4f67-bbf7-ef3a2a839969",
+            "c3d69b5b-fcb6-47f5-8b21-a7d37c11bf0b",
+            "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+            "4a68af63-3af9-49a0-affb-778f1863a382",
+            "1add3bb9-8638-464a-9a21-09ef5ee41149",
+            "dd29d23f-b286-410b-a5dc-40ea3c900d47",
+            "c5eff2fa-67f6-42f9-bc6a-e46ea69ac600",
+            "279584a9-ab22-4afe-9de6-5b5061860e01",
+            "d43c8bbd-83df-4190-a33f-364db74c438b",
+            "65e2fc6f-de3d-4f6a-b934-7b915e811262",
+            "04fabe4f-dd60-4552-b312-4e8f1b519cfc",
+            "f80269a5-c793-4027-9238-f948f7c73e08",
+            "ded60ce1-5ead-415f-a2de-a3511e9eb5a9"
+          ],
+          "requests": 2,
+          "cache_hit": false,
+          "cache_key": "bdeb0101c818ae4c34e5c6af4ee9280b0fe91ad14c2d2ffcbea3c57288c73f6e",
+          "elapsed_ms": 46010,
+          "context_links": [],
+          "heading_queries": [
+            "Application to carry out use of autonomous motor vehicle",
+            "Conditions of authorisation",
+            "Liability insurance",
+            "Depositing security with Authority in lieu of liability insurance",
+            "Form and validity of authorisation",
+            "Authorisation"
+          ],
+          "local_fill_count": 0,
+          "model_ranked_count": 5,
+          "graph_search_vocabulary": [
+            {
+              "hints": "complete and submit Form AV04: Application for Driverless Deployment\nmust have an on-board AV Operator\n无人驾驶部署申请提交义务\n试验车辆配备车载自动驾驶操作员义务",
+              "clause_id": "04fabe4f-dd60-4552-b312-4e8f1b519cfc",
+              "legal_evidence": false
+            },
+            {
+              "hints": "provide to LTA written confirmation from the insurer\nwritten confirmation from the insurer\n保险人书面确认\n提供保险人书面确认义务",
+              "clause_id": "9a2b88bb-1ef7-4022-a06c-0aa3d621b479",
+              "legal_evidence": false
+            },
+            {
+              "hints": "must be filed with the Secretary with the appropriate fee specified in the Schedule\n传票申请提交与缴费义务",
+              "clause_id": "f80269a5-c793-4027-9238-f948f7c73e08",
+              "legal_evidence": false
+            },
+            {
+              "hints": "LTA will notify successful applicants in writing\n自动驾驶车辆测试书面通知与授权准入",
+              "clause_id": "ded60ce1-5ead-415f-a2de-a3511e9eb5a9",
+              "legal_evidence": false
+            },
+            {
+              "hints": "ensure that the liability insurance is in force at all times\nissued by an insurer who ... is lawfully carrying on an insurance business in Singapore\n保险承保人新加坡合法经营义务\n责任保险全程有效义务",
+              "clause_id": "babb8eda-4f51-4b03-a84b-33ed6166572a",
+              "legal_evidence": false
+            }
+          ],
+          "source_comparison_slots": []
+        },
+        {
+          "ledger": [
+            {
+              "phase": "plan",
+              "output": {
+                "queries": [
+                  "offence classification",
+                  "penalty standards",
+                  "financial penalties amount",
+                  "regulatory enforcement mechanism",
+                  "corporate liability offences",
+                  "composition of offences"
+                ],
+                "heading_queries": [
+                  "Offences and penalties",
+                  "General penalties",
+                  "Financial penalties",
+                  "Composition of offences",
+                  "Offences by corporations",
+                  "Power to give directions"
+                ]
+              },
+              "attempt": 1
+            },
+            {
+              "phase": "rank",
+              "output": {
+                "clause_ids": [
+                  "1a1abbe2-96f6-45c9-a285-4ac0eebfa063",
+                  "08f06c29-c1f0-412b-9a6d-e2f979f66ed2",
+                  "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+                  "5fceb016-2474-4089-85aa-5da5db5db501",
+                  "d2fcefae-bc49-4d24-9cb5-03173270a25e"
+                ]
+              },
+              "attempt": 1
+            }
+          ],
+          "tokens": 19053,
+          "queries": [
+            "offence classification",
+            "penalty standards",
+            "financial penalties amount",
+            "regulatory enforcement mechanism",
+            "corporate liability offences",
+            "composition of offences"
+          ],
+          "version": "source-identity-comparison-v8",
+          "failures": [],
+          "pool_ids": [
+            "8efa3be1-0399-43d1-90a4-a831dcdb8a30",
+            "1a1abbe2-96f6-45c9-a285-4ac0eebfa063",
+            "6e050d3e-46b4-4529-8611-307f81ad1236",
+            "08f06c29-c1f0-412b-9a6d-e2f979f66ed2",
+            "201231f8-5fa6-45d1-a508-087dd4bf8877",
+            "854f6f95-d5c3-48a5-b467-1ddcbfe4af46",
+            "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+            "abff7d99-2d26-4d64-9787-b12a6a762810",
+            "589343ea-17d6-4bea-a8c6-57684b3072b1",
+            "c18a63ba-bbfb-4802-8e7a-aa0c27b3ee43",
+            "51387365-33d0-4455-87ac-c55867a63ea3",
+            "5fceb016-2474-4089-85aa-5da5db5db501",
+            "c2d4e442-2e68-4a02-b18f-1a5c9e7b3251",
+            "87b7fbf3-b7e7-4e89-806d-8cceaa3f5582",
+            "d1a393ea-21d4-453c-826f-44c9ced168d2",
+            "23919c17-37bd-4499-8579-d1d063253067",
+            "d2fcefae-bc49-4d24-9cb5-03173270a25e",
+            "6daa2e34-8bcf-456a-8ff7-c1150cf083c6",
+            "ce6b5392-dbb0-477b-8f52-e9e6d9c69c00",
+            "00c0b8c2-c814-479d-85cd-f322bd2e514e",
+            "7e21ff76-43e8-462d-a64c-59a2f24e8a5c",
+            "c8ee51b6-3175-450b-9418-32ecee3a3424",
+            "c176ab2f-9cbe-48f1-bdf1-a0d97d2b2e8d",
+            "ef9efbb7-386b-4d32-963f-7cd7be5d2bd9",
+            "2fcfce13-0c29-459b-add8-da4d32725cc4",
+            "6e401f6f-05ca-4c99-9075-4b812de6a0f2",
+            "a5aa8a97-3435-4151-87da-a731bcb213bc",
+            "0f7da30d-e09c-4a1b-8eb4-3d325408a525",
+            "9269e471-6464-4291-92ff-3c1c7dd3082d",
+            "2a9f7f50-c045-45a7-bfdc-1ff05e1db903",
+            "b4567c32-8d3e-4dff-bf14-7d052523139b",
+            "da7cdb89-8293-4a36-83b0-0b97e575ef42",
+            "7168a9a3-ceec-42e9-9a13-4852ce6e34fa",
+            "3f4153a3-1be5-4a27-be2b-53048c5154a3",
+            "f057aa54-cfd2-469b-ba21-b3ce5c3aa196",
+            "5f226021-80d2-4af9-95d9-612ae5cbbfc6",
+            "28146193-6bdb-45c3-bd9c-f77bc5247a72",
+            "3198e21e-9242-4a33-884a-7dd1745b698d",
+            "41a5463c-7b8e-4987-aa4a-efaddf07dcb4",
+            "aa441a55-14b9-4efb-aa4d-d3330be7d731"
+          ],
+          "requests": 2,
+          "cache_hit": false,
+          "cache_key": "7f0948efaee513a12b5670e81bbbc981a18b6a751b1eaaaf2104ecf870adb5be",
+          "elapsed_ms": 47065,
+          "context_links": [
+            {
+              "clause_id": "1a1abbe2-96f6-45c9-a285-4ac0eebfa063",
+              "context_parent_id": "8efa3be1-0399-43d1-90a4-a831dcdb8a30"
+            }
+          ],
+          "heading_queries": [
+            "Offences and penalties",
+            "General penalties",
+            "Financial penalties",
+            "Composition of offences",
+            "Offences by corporations",
+            "Power to give directions"
+          ],
+          "local_fill_count": 0,
+          "model_ranked_count": 5,
+          "graph_search_vocabulary": [
+            {
+              "hints": "Personal Data\ndeemed consent by notification\n个人数据(Personal Data)\n通知视为同意机制",
+              "clause_id": "5f226021-80d2-4af9-95d9-612ae5cbbfc6",
+              "legal_evidence": false
+            },
+            {
+              "hints": "put in place monitoring mechanisms and process controls\n建立监控机制与流程控制义务",
+              "clause_id": "28146193-6bdb-45c3-bd9c-f77bc5247a72",
+              "legal_evidence": false
+            },
+            {
+              "hints": "financial penalty\nmust give written notice to the organisation or person concerned\n作出指示或施加经济处罚前书面通知义务\n经济处罚",
+              "clause_id": "3198e21e-9242-4a33-884a-7dd1745b698d",
+              "legal_evidence": false
+            },
+            {
+              "hints": "Liability of employers for acts of employees\n雇主对雇员行为承担责任",
+              "clause_id": "41a5463c-7b8e-4987-aa4a-efaddf07dcb4",
+              "legal_evidence": false
+            },
+            {
+              "hints": "Deemed consent by conduct\nPersonal Data\n个人数据(Personal Data)\n推定同意（行为）",
+              "clause_id": "aa441a55-14b9-4efb-aa4d-d3330be7d731",
+              "legal_evidence": false
+            }
+          ],
+          "source_comparison_slots": [
+            {
+              "clause_id": "201231f8-5fa6-45d1-a508-087dd4bf8877",
+              "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Acts%20Supplement/25.pdf",
+              "version_id": "d0d016b9-ab0d-4682-bfbe-91db025a0584",
+              "human_review": null,
+              "instrument_identity": "SG:pdpa-2012",
+              "same_legal_effect_confirmed": false
+            }
+          ]
+        },
+        {
+          "ledger": [
+            {
+              "phase": "plan",
+              "output": {
+                "queries": [
+                  "compliance remediation plan",
+                  "corrective action compliance",
+                  "compliance programme implementation",
+                  "regulatory compliance audit",
+                  "compliance policies practices",
+                  "voluntary undertaking compliance"
+                ],
+                "heading_queries": [
+                  "Compliance with Act",
+                  "Non-compliance and errors",
+                  "Directions for non-compliance",
+                  "Policies and practices",
+                  "Voluntary undertakings",
+                  "Advisory guidelines"
+                ]
+              },
+              "attempt": 1
+            },
+            {
+              "phase": "rank",
+              "output": {
+                "clause_ids": [
+                  "f11e19e5-9d1d-4a69-b018-e240e540542d",
+                  "c52be03e-14e1-4ed4-bd2e-a63a1d210296",
+                  "20f6a34c-24f4-43f2-a483-c2dcbbe05cea",
+                  "348ea466-461e-47d7-8755-1e898a900109",
+                  "28146193-6bdb-45c3-bd9c-f77bc5247a72"
+                ]
+              },
+              "attempt": 1
+            }
+          ],
+          "tokens": 16731,
+          "queries": [
+            "compliance remediation plan",
+            "corrective action compliance",
+            "compliance programme implementation",
+            "regulatory compliance audit",
+            "compliance policies practices",
+            "voluntary undertaking compliance"
+          ],
+          "version": "source-identity-comparison-v8",
+          "failures": [],
+          "pool_ids": [
+            "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+            "348ea466-461e-47d7-8755-1e898a900109",
+            "aff54bde-77ad-4252-8ee9-b815573245be",
+            "f6e69852-7188-4185-922f-9adcb08c55ef",
+            "f2f83df1-70b3-4c9b-ba50-39ad3bb5b79c",
+            "c52be03e-14e1-4ed4-bd2e-a63a1d210296",
+            "3198e21e-9242-4a33-884a-7dd1745b698d",
+            "20f6a34c-24f4-43f2-a483-c2dcbbe05cea",
+            "991a4bd3-3124-4a7d-a601-63abab76b562",
+            "f11e19e5-9d1d-4a69-b018-e240e540542d",
+            "02135800-2d08-404a-aa06-80f71294c526",
+            "28146193-6bdb-45c3-bd9c-f77bc5247a72",
+            "bc8d3d31-6ca6-4157-a37e-5c4f53190dfa",
+            "497acb9b-2e97-4f8f-ae23-86c7b980e0db",
+            "08b9f240-397d-49b6-853d-365ecf0c5ecb",
+            "dcf8dcbc-efc4-4041-abec-a441d299d879",
+            "571c6974-8000-4f84-8b00-ef8606d80dbe",
+            "b17688e7-a6f1-472b-98a2-8bacbf953153",
+            "09f8319e-2420-49d3-98a7-74326a021f50",
+            "2a8418f1-a43f-4919-ad41-cffe83f0686f",
+            "a8720892-03d1-447c-a8b4-15791d04915f",
+            "4e9e32e5-7bb1-4b9f-996d-722ad06805ca",
+            "de003dae-c6d0-444c-b8c4-beb29cbd07a1",
+            "c07926cb-ca08-43cc-b5b3-af2e13bbb069",
+            "ce6b5392-dbb0-477b-8f52-e9e6d9c69c00",
+            "3d1aff63-987b-41bc-b973-dbf1453b0d4e",
+            "0a94b26b-6210-4db3-9845-4f0a44f9ef7a",
+            "ef9efbb7-386b-4d32-963f-7cd7be5d2bd9",
+            "7f175cd0-4351-4baf-a007-5d900d9340da",
+            "c1c54055-20a8-45df-a4b3-3094a42dd96c",
+            "751b155d-4e3c-42dc-a53b-9e44591715f8",
+            "4f492e73-5106-4fe6-bd91-efeb46ac688a",
+            "53e5cf68-04ae-47f7-8bb2-31058a42326c",
+            "077c0fc9-e85e-49f3-8cae-246529d1b81b",
+            "ee1fd5f8-75f4-4623-98cb-0b2e7469fc2d",
+            "f23084d0-a897-425a-abdc-4d63da7a7e3b",
+            "f8c53777-79bc-4ef0-9cc3-f3ce85184f90",
+            "151f553e-1907-4e86-88f5-5832609b97e9",
+            "6850aada-3218-4b17-928f-ac05604c511d",
+            "c2d4e442-2e68-4a02-b18f-1a5c9e7b3251"
+          ],
+          "requests": 2,
+          "cache_hit": false,
+          "cache_key": "2af0d382a4db2f01d8ce9be3f9b8046cf41de53d4ae77deeb24a9676fc06b98b",
+          "elapsed_ms": 49492,
+          "context_links": [],
+          "heading_queries": [
+            "Compliance with Act",
+            "Non-compliance and errors",
+            "Directions for non-compliance",
+            "Policies and practices",
+            "Voluntary undertakings",
+            "Advisory guidelines"
+          ],
+          "local_fill_count": 0,
+          "model_ranked_count": 5,
+          "graph_search_vocabulary": [
+            {
+              "hints": "Section 43(2)(b) of the principal Act\nSection 43A of the principal Act\n第43(2)(b)条合规义务\n第43A条合规义务",
+              "clause_id": "f8c53777-79bc-4ef0-9cc3-f3ce85184f90",
+              "legal_evidence": false
+            },
+            {
+              "hints": "information of any such non-compliance\nprovide information of any such non-compliance\n不合规信息申报义务\n车辆不合规信息",
+              "clause_id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+              "legal_evidence": false
+            },
+            {
+              "hints": "Section 43(1) or 44\nSection 45\nspecified message\n向新加坡电话号码发送指定讯息的合规义务\n拨打语音电话发送指定讯息的合规义务\n指定讯息",
+              "clause_id": "151f553e-1907-4e86-88f5-5832609b97e9",
+              "legal_evidence": false
+            },
+            {
+              "hints": "These Rules\nautonomous motor vehicle\n本规则项下合规义务\n自动驾驶机动车",
+              "clause_id": "6850aada-3218-4b17-928f-ac05604c511d",
+              "legal_evidence": false
+            },
+            {
+              "hints": "compliance with the requirements under this Act\nfinancial penalty\n本法合规义务\n财务罚则",
+              "clause_id": "c2d4e442-2e68-4a02-b18f-1a5c9e7b3251",
+              "legal_evidence": false
+            }
+          ],
+          "source_comparison_slots": []
+        }
+      ],
+      "first_problems": [],
+      "local_selection_retries": 0,
+      "local_grounding_failures": 1,
+      "backtrack_count": 0,
+      "tokens": 324844,
+      "elapsed_seconds": 121.93,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    }
+  ]
+}

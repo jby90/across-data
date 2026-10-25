@@ -1,0 +1,12 @@
+{
+  "backup_directory": "C:\\Users\\Jin\\.cyshuhe-dev\\backups\\20261025-S5-sources-final",
+  "database_sha256": "a01d165ac2663bf5e7a2b4604196a8263a4072c24c1c882860c632b21b922cfc",
+  "tables": 21,
+  "versions": 81,
+  "catalog_valid": true,
+  "ocr_probe_files": 161,
+  "ocr_probe_bytes": 49254879,
+  "ocr_probe_manifest_sha256": "b6a10111984d82babb442e146a8966decef7d56f4f9549721238a2213996ad10",
+  "baseline_sha256": "944ffe52167cac3377b899dc47b8b52f520fdf48308e07be4b1ac6587a3cb92c",
+  "note": "一致性快照与备份目录校验通过；本次未再次完整恢复最终备份。"
+}

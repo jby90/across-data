@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "human_reviews_changed": 0,
+  "new_model_requests": 0,
+  "base_url": "http://127.0.0.1:5189",
+  "workflow_version_id": "7dff5fe7-1396-4000-b982-8f32eeb0d054",
+  "evaluation_batch": "62620731-d335-4dd6-8614-8d8cb56ac0f6",
+  "provenance_download_registered": true,
+  "statutory_republication_notice": true,
+  "human_reviewed": false,
+  "note": "CUA只读手点：国别/文件目录、新旧来源、详情来源与哈希、执行版本、质量看板；未运行会执行审批且硬编码旧端口的旧Playwright手点脚本。"
+}
