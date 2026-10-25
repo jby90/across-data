@@ -237,7 +237,7 @@ async def _ground_selection(task, dim_code, dim_title, finding, candidates, conf
                     model=config["model"],
                     temperature=config["temperature"],
                     timeout=config["timeout"],
-                    max_tokens=2000,
+                    max_tokens=6000,
                 )
             tokens += response.total_tokens
             requests += response.request_attempts
@@ -368,7 +368,9 @@ async def _analyse_dimension(
                 return finding
 
             grounded = await asyncio.gather(*[ground_one(f) for f in validated.findings])
-            refused = [f for f in grounded if f.get("_generation_gap")]
+            refused = [
+                f for f in grounded if f.get("_generation_gap") or f.get("_generation_error")
+            ]
             if refused and attempts < _attempt_budget:
                 # Reuse the existing two-selection-attempt budget, not a new retry loop.
                 # A source-limited refusal goes back to the selector with its actual reason.
@@ -380,8 +382,13 @@ async def _analyse_dimension(
                     cands,
                     [
                         *(feedback or []),
-                        "上次所选证据无法支持完整规则，请重新选择完整依据；不能补字或放宽核验。",
-                        *[f["clause_id"] + ": " + f["_generation_gap"] for f in refused],
+                        "上次依据生成未通过，请按具体原因重新选择完整依据；不能补字或放宽核验。",
+                        *[
+                            f["clause_id"]
+                            + ": "
+                            + (f.get("_generation_gap") or f["_generation_error"])
+                            for f in refused
+                        ],
                     ],
                     config,
                     _attempt_budget=_attempt_budget - attempts,
@@ -393,7 +400,9 @@ async def _analyse_dimension(
                     request_attempts=request_attempts + call.arguments["request_attempts"],
                     failures=failures + call.arguments.get("failures", []),
                     grounding_calls=grounding_ledger + call.arguments["grounding_calls"],
-                    selection_retries=[{"reason": "source_limited_refusal", "findings": grounded}],
+                    selection_retries=[
+                        {"reason": "source_or_generation_validation", "findings": grounded}
+                    ],
                 )
                 call.duration_ms = int((time.perf_counter() - started) * 1000)
                 call.result_summary += (

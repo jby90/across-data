@@ -1,0 +1,317 @@
+{
+  "batch_id": "cf146a22-66e8-41e0-a05e-8549809dbaf8",
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "country_metrics": {
+    "SG": {
+      "hits": 7,
+      "expected": 8,
+      "supported": 18,
+      "judged": 18
+    },
+    "MA": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 11,
+      "judged": 12
+    },
+    "TN": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 17,
+      "judged": 17
+    },
+    "LB": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 11,
+      "judged": 12
+    },
+    "EG": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 4,
+      "judged": 7
+    }
+  },
+  "misses": [
+    {
+      "question_id": "S5-02",
+      "country": "SG",
+      "expected": {
+        "clause_id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "2",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Interpretation\n2.—(1) In this Act, unless the context otherwise requires —\n“advisory committee” means an advisory committee appointed\nunder section 7;\n“Appeal Committee” means a Data Protection Appeal\nCommittee constituted under section 48P(4), read with the\nSeventh Schedule;\n“Appeal Panel” means the Data Protection Appeal Panel\nestablished by section 48P(1);\n“authorised officer”, in relation to the exercise of any power or\nperformance of any function or duty under any provision of\nthis Act, means a person to whom the exercise of that power\nor ",
+        "source_text_sha256": "960d2647c931964c56c0fb471a695b04dd39be948766951c040aae356bc48f8c"
+      },
+      "stage": "candidate_generation",
+      "same_title_number_other_identity": [],
+      "queries": [
+        "personal data definition identifiable",
+        "indirect identification personal data",
+        "video images personal data",
+        "vehicle camera data personal data",
+        "anonymised information re-identification",
+        "identifiability image data"
+      ],
+      "heading_queries": [
+        "Definition",
+        "Definitions",
+        "Interpretation",
+        "Unauthorised re-identification of anonymised information",
+        "Data collection from data recorder",
+        "Protection of personal data"
+      ],
+      "note": "同标题条号不等于已确认同一版本；标注疑点只能人工核查，不改评分"
+    }
+  ],
+  "unsupported": [
+    {
+      "question_id": "S5-11",
+      "verdict": {
+        "index": 0,
+        "reason": "第2点和第3点被引文完整支持；但结论将“应采取一切合理措施”并入e)项，称其用于确保个人数据以可识别形态保存，而引文中该措施句针对的是不准确或不完整数据的删除或更正，e)项本身只规定保存形态和期限，故e)部分不完全忠实。",
+        "supported": "partial"
+      },
+      "clause_id": "a18e376b-7228-48d4-b282-4f7fcb92c8f7",
+      "conclusion": "e) 应采取一切合理措施，确保个人数据以允许识别相关人员的形态保存，保存期限不超过实现收集目的及后续处理目的所必需；2- 应数据控制者请求且存在正当利益时，Commission nationale（国家委员会）可授权为历史、统计或科学目的在 e) 所述期限之后保存个人数据；3- 数据控制者负责确保遵守前述规定，并受 Commission nationale 监督。",
+      "quote": "Toutes les mesures raisonnables\ndoivent être prises, pour que les données inexactes ou incomplètes, au\nregard des finalités pour lesquelles elles, sont collectées et pour lesquelles\nelles sont traitées ultérieurement, soient effacées ou rectifiées ;\ne) conservées sous, une forme permettant l’identification des personnes\nconcernées pendant une durée n’excédant pas celle nécessaire à la\nréalisation des finalités pour lesquelles elles sont collectées et pour\nlesquelles elles sont traitées ultérieurement.\n2- Sur demande du responsable du traitement et, s’il existe un intérêt légitime, la\nCommission nationale peut autoriser la conservation de données, à caractère\npersonnel à des fins historiques, statistique, ou scientifique au-delà de la période,\ncitée au e) du paragraphe précédent ;\n3- Il incombe au responsable du traitement d’assurer le respect des dispositions des\nparagraphes qui précèdent, sous le contrôle de la Commission nationale."
+    },
+    {
+      "question_id": "S5-24",
+      "verdict": {
+        "index": 4,
+        "reason": "引文第97条第3项还包括身份（الهوية）相关数据，结论仅提健康状况或性生活，范围不完整。",
+        "supported": "partial"
+      },
+      "clause_id": "34c103a5-3777-455e-899b-c02a3c6c142d",
+      "conclusion": "第٩٧条第٣项规定：涉及个人健康状况或性生活的个人数据处理，须依公共卫生部长发布的决定取得许可（原文用语为 الترخيص）。",
+      "quote": "المادة ٩٧:\nتخضع للترخيص معالجات البيانات ذات الطابع الشخصي المتعلقة :\n١ - بــالأمن الخــارجي والــداخلي للدولــة بموجــب رراقــ مشــترك يصــدر عــن وزيــري الــدفاع الــوطني\nوالداخلية والبلديات .\n٢ - ئم راجبال الجزائية وبالدعاوى القضائية بمختلف أنواعها بموجب رراق يصدر عن وزير العدل .\n٣ - بالحـــالات الصـــحية أو بالهويـــة راو ال ثيـــة أو بالحيـــاة الجنســـية للأشـــخاص بموجـــب رراقـــ يصـــدر\n عن وزير الصحة العامة .\n"
+    },
+    {
+      "question_id": "S5-27",
+      "verdict": {
+        "index": 1,
+        "reason": "引文支持主体、行为、手段及“法律未许可或未经同意”等要件，也出现“不低于十万埃及镑”与“5百万埃及镑”两个数额，但两数额之间的区间或上限关系因原文残缺无法确认；结论虽注明待核对，仍不能由该引文完整支持其罚款表述。",
+        "supported": "partial"
+      },
+      "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+      "conclusion": "依 مادة (TV) 2，每个持有人、控制者或处理者以任何手段收集、处理、披露、使可获得或流通个人数据，如处于法律未许可的情形或未经数据主体同意，应处以不低于十万埃及镑、5百万埃及镑的罚款（原文对两数额之间的区间或上限关系表述残缺，待核对）。",
+      "quote": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل فى غير الأحوال المصرح بها قانونًا أو بدون موافقة الشخص المعنى بالبيانات .\n"
+    },
+    {
+      "question_id": "S5-27",
+      "verdict": {
+        "index": 3,
+        "reason": "引文支持主体、行为、手段、条件及“不低于十万埃及镑”的罚款下限，但同一引文还含“5 مليون جنيه”且关系残缺，结论未反映该数额，罚则表述不能被完整支持。",
+        "supported": "partial"
+      },
+      "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+      "conclusion": "依据مادة (TV) 2，每个持有者、控制者或处理者通过任何手段，在法律未允许的情形下或未经数据主体同意，收集、处理、披露、提供或交易个人数据的，处以不低于十万埃及镑的罚款。",
+      "quote": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل فى غير الأحوال المصرح بها قانونًا أو بدون موافقة الشخص المعنى بالبيانات .\nالجريدة الرسمية - العدد 74 مكرر (ه) فى ‎V0‏ يولية سنة ‎VV 78١‏\nوتكون العقوبة الحبس مدة لا تقل عن ستة شهور وبغرامة لا تقل عن ‎tle‏ ألف جنيه\nنى جنيه ‎ahs‏ بإحدى هاتين العقوبتين . إذا ارتكب ذلك مقابل الحصول على\n‎j‏ أو بقصد تغريض الشخص المعنى بالبيانات للخط ‎gh‏ الضرر .\n"
+    },
+    {
+      "question_id": "S5-29",
+      "verdict": {
+        "index": 0,
+        "reason": "引文虽规定涉及儿童数据的处理需监护人同意，但开头明确以“法律许可的情形除外”为条件；结论未包含该例外，因此未被完整支持。",
+        "supported": "partial"
+      },
+      "clause_id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+      "conclusion": "开展前述任何与儿童数据有关的处理操作时，须取得监护人的同意。",
+      "quote": "وفيما عدا الأحوال المصرح بها قانونًا ‎J ge‏ على موافقة كتابية وصريحة\nوفى حالة إجراء أى عملية مما ذكر تتعلق ببيانات الأطفال ‎٠‏ يلزم موافقة ولى الأمر .\nVO VWs Redd V0 ‏فى‎ (a) Se VA ‏العيو‎ = digas II Bay\nويجب ألا تكون مشاركة الطفل فى لعبة أو مسابقة أو أى نشاط آخر مشروطة بتقديم\nللطفل يويد على ما هو ضرورى للمشاركة فى ذلك .\n"
+    }
+  ],
+  "failures_and_gaps": [
+    {
+      "question_id": "S5-03",
+      "analysis_error": "依据限定生成校验失败: 结论中的数字「2」未出现在所选引文中",
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "4c8728ec-0394-4aaf-a51c-e5e5026c12db",
+          "gap": null,
+          "error": "依据限定生成校验失败: 结论中的数字「2」未出现在所选引文中",
+          "issues": [
+            "依据限定生成校验失败: 结论中的数字「2」未出现在所选引文中"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-04",
+      "analysis_error": "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中；依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中",
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "c50844a4-1198-4110-9b2c-558610419b20",
+          "gap": null,
+          "error": "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中",
+          "issues": [
+            "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中"
+          ]
+        },
+        {
+          "clause_id": "31cdf32a-7b82-4fe9-a143-28f3e9ee78b6",
+          "gap": "所给原文仅规定组织在收集个人数据之时或之前等节点向个人告知收集、使用或披露目的及业务联系人信息，未包含采集车主语音前须取得同意的要求、条件或例外；不能据此认定同意要求。",
+          "error": null,
+          "issues": [
+            "所给原文仅规定组织在收集个人数据之时或之前等节点向个人告知收集、使用或披露目的及业务联系人信息，未包含采集车主语音前须取得同意的要求、条件或例外；不能据此认定同意要求。"
+          ]
+        },
+        {
+          "clause_id": "c50844a4-1198-4110-9b2c-558610419b20",
+          "gap": null,
+          "error": "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中",
+          "issues": [
+            "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-10",
+      "analysis_error": "大模型调用失败(共 2 次请求): output_truncated",
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+          "gap": "所提供的原文仅包含对« consentement de la personne concernée »（数据主体同意）的定义，即自愿、具体、知情地表示同意对其个人数据进行处理，另含« destinataires »（接收方）和« cession ou communication »（转让或通信）的部分定义；未包含任何规定在处理个人数据前必须取得同意的条款，也未包含同意例外、同意形式或撤回条件。因此，无法就“处理个人数据前是否需要同意”形成完整规则，缺少相应的义务性条款依据。",
+          "error": null,
+          "issues": [
+            "所提供的原文仅包含对« consentement de la personne concernée »（数据主体同意）的定义，即自愿、具体、知情地表示同意对其个人数据进行处理，另含« destinataires »（接收方）和« cession ou communication »（转让或通信）的部分定义；未包含任何规定在处理个人数据前必须取得同意的条款，也未包含同意例外、同意形式或撤回条件。因此，无法就“处理个人数据前是否需要同意”形成完整规则，缺少相应的义务性条款依据。"
+          ]
+        },
+        {
+          "clause_id": "f725bbbe-69aa-47f5-8053-e9c2d3cc047e",
+          "gap": "所给原文仅规定直接收集个人数据前由处理控制者或其代表事先告知特定信息，以及非直接收集时的告知要求；未提供处理个人数据前是否须取得同意的规则，也未列明同意作为合法性基础、同意的要件或例外，故无法据此判断是否需要同意。",
+          "error": null,
+          "issues": [
+            "所给原文仅规定直接收集个人数据前由处理控制者或其代表事先告知特定信息，以及非直接收集时的告知要求；未提供处理个人数据前是否须取得同意的规则，也未列明同意作为合法性基础、同意的要件或例外，故无法据此判断是否需要同意。"
+          ]
+        },
+        {
+          "clause_id": "6d475ef3-d53e-48b5-8210-319292473271",
+          "gap": null,
+          "error": "大模型调用失败(共 2 次请求): output_truncated",
+          "issues": [
+            "大模型调用失败(共 2 次请求): output_truncated"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-13",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "72a559c3-d36d-4fa0-9859-d667138eca4a",
+          "gap": "引文主语缺失，无法确定谁有权决定将依法须申报的处理提交授权，以及谁有权依第51条撤回收据或授权；第20条和第51条的具体内容未提供；引文也未涉及处理危害公共秩序时可采取的措施。",
+          "error": null,
+          "issues": [
+            "引文主语缺失，无法确定谁有权决定将依法须申报的处理提交授权，以及谁有权依第51条撤回收据或授权；第20条和第51条的具体内容未提供；引文也未涉及处理危害公共秩序时可采取的措施。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-24",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "6c0f4d5a-1762-4f65-a2c5-279761750925",
+          "gap": "提供的原文仅为一般个人数据处理违法行为的罚则（第106条），未涉及健康或遗传数据的特殊限制，也未涉及汽车核心数据的定义与分类，因此无法回答该问题。",
+          "error": null,
+          "issues": [
+            "提供的原文仅为一般个人数据处理违法行为的罚则（第106条），未涉及健康或遗传数据的特殊限制，也未涉及汽车核心数据的定义与分类，因此无法回答该问题。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-27",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "gap": "原文关键条件受损：虽可见“不得以任何方式收集、处理或披露个人数据，除非获得……明确同意或属于法律许可的情形”，但给予明确同意的主体因OCR损坏无法辨认；不能猜测为数据主体、车主或其他主体，故无法形成完整规则。",
+          "error": null,
+          "issues": [
+            "原文关键条件受损：虽可见“不得以任何方式收集、处理或披露个人数据，除非获得……明确同意或属于法律许可的情形”，但给予明确同意的主体因OCR损坏无法辨认；不能猜测为数据主体、车主或其他主体，故无法形成完整规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-30",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "gap": "引文存在残缺：缺少“向某国传输个人数据”这一表述中的主语，也缺少前置条件，即“دولة لا يتوافر ذ…”之后的内容，并且缺少“استثناء من حكم”所指向的具体规定。因此，无法确认该例外适用的完整主体、范围和条件；所列三类情形也不能单独构成完整规则。",
+          "error": null,
+          "issues": [
+            "引文存在残缺：缺少“向某国传输个人数据”这一表述中的主语，也缺少前置条件，即“دولة لا يتوافر ذ…”之后的内容，并且缺少“استثناء من حكم”所指向的具体规定。因此，无法确认该例外适用的完整主体、范围和条件；所列三类情形也不能单独构成完整规则。"
+          ]
+        },
+        {
+          "clause_id": "2e66a07e-1697-4128-81b4-ddccbab292bf",
+          "gap": "原文规定持牌公司不得将物联网服务相关流量传输至阿拉伯埃及共和国境外，也不得将用于提供物联网服务的网络组件任何部分用于阿拉伯埃及共和国境外；但该禁止性规定附有一项例外，例外文字受损为“إلا ها الجهاز مسبقاً”，无法确认例外的主体、前置条件及完整表述，故不能形成包含全部限定与例外的完整规则。",
+          "error": null,
+          "issues": [
+            "原文规定持牌公司不得将物联网服务相关流量传输至阿拉伯埃及共和国境外，也不得将用于提供物联网服务的网络组件任何部分用于阿拉伯埃及共和国境外；但该禁止性规定附有一项例外，例外文字受损为“إلا ها الجهاز مسبقاً”，无法确认例外的主体、前置条件及完整表述，故不能形成包含全部限定与例外的完整规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-31",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+          "gap": "原文第19条存在OCR损坏：撤销对象在“إلغاء الترخيص أو الة”处残缺，第二项情形不可读，无法完整确定可撤销的对象和全部法定情形；仅可辨认违反许可/批准/认可条件、未支付续期费用、未经中心同意转让等片段，不能形成完整规则。",
+          "error": null,
+          "issues": [
+            "原文第19条存在OCR损坏：撤销对象在“إلغاء الترخيص أو الة”处残缺，第二项情形不可读，无法完整确定可撤销的对象和全部法定情形；仅可辨认违反许可/批准/认可条件、未支付续期费用、未经中心同意转让等片段，不能形成完整规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-32",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "gap": "该原文为OCR受损文本，虽可辨识持有者、控制者或处理者未经法律许可或未经数据主体同意而收集、处理、披露、提供或流通个人数据应受罚金处罚，并处加重情形监禁或罚金，但关键处罚幅度残缺：基本罚金下限后的上限及连接表述受损（“5 مليون جنيه”无法确认性质），加重罚金数额受损（“tle ألف جنيه نى جنيه”），加重条件中获取利益的对象及损害类型亦受损。无法在不猜测的情况下完整保留处罚幅度、加重条件和法律后果，故不能形成完整原子规则。",
+          "error": null,
+          "issues": [
+            "该原文为OCR受损文本，虽可辨识持有者、控制者或处理者未经法律许可或未经数据主体同意而收集、处理、披露、提供或流通个人数据应受罚金处罚，并处加重情形监禁或罚金，但关键处罚幅度残缺：基本罚金下限后的上限及连接表述受损（“5 مليون جنيه”无法确认性质），加重罚金数额受损（“tle ألف جنيه نى جنيه”），加重条件中获取利益的对象及损害类型亦受损。无法在不猜测的情况下完整保留处罚幅度、加重条件和法律后果，故不能形成完整原子规则。"
+          ]
+        }
+      ]
+    }
+  ],
+  "retrieval_tokens": 656748,
+  "final_supported_cases": 27,
+  "human_review": "0/32，待核对；本程序只汇总工程与模型指标"
+}

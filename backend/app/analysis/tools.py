@@ -20,7 +20,7 @@ from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import document_available
 from app.knowledge.graph_evidence import active_edge_filters
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
-from app.knowledge.numeric_integrity import amounts, dates, tokens
+from app.knowledge.numeric_integrity import amounts, separate_explicit_dates
 
 # 每个维度的多语种检索关键词(英/法/阿)。仅用于检索候选条款,不代表结论。
 DIMENSION_KEYWORDS: dict[str, list[str]] = {
@@ -498,11 +498,15 @@ def verify_finding(finding: dict[str, Any], clause_text: str) -> tuple[bool, lis
     elif quote not in clause_text:
         issues.append("引用片段不是该条款原文的连续子串")
     obligation = str(finding.get("obligation") or "")
-    for value, percent in sorted(tokens(obligation) - tokens(quote)):
+    rule_numbers, rule_dates, invalid_dates = separate_explicit_dates(obligation)
+    quote_numbers, quote_dates, _ = separate_explicit_dates(quote)
+    for value, percent in sorted(rule_numbers - quote_numbers):
         issues.append(f"结论中的数字「{value}{'%' if percent else ''}」未出现在所选引文中")
     for currency, value in sorted(amounts(obligation) - amounts(quote)):
         issues.append(f"币种/金额不一致：{currency} {value}")
-    if dates(obligation) - dates(quote):
+    if invalid_dates:
+        issues.append("结论包含无效的明确日期")
+    if rule_dates - quote_dates:
         issues.append("结论日期未获所选引文支持")
     return (not issues), issues
 

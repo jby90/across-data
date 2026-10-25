@@ -1,0 +1,78 @@
+{
+  "read_only_projection": true,
+  "original_audits_rewritten": false,
+  "cases": [
+    {
+      "question_id": "S5-03",
+      "clause_id": "4c8728ec-0394-4aaf-a51c-e5e5026c12db",
+      "old_error": "依据限定生成校验失败: 结论中的数字「2」未出现在所选引文中",
+      "source_dates": [
+        [
+          2021,
+          2,
+          1
+        ]
+      ],
+      "rule_dates": [
+        [
+          2021,
+          2,
+          1
+        ]
+      ],
+      "date_and_numeric_recheck": [
+        true,
+        []
+      ],
+      "quote_sha256": "8761499123e0c9c719bcceec61c0c44f049b00b3bf287500e47bba23a658eac9"
+    },
+    {
+      "question_id": "S5-04",
+      "clause_id": "c50844a4-1198-4110-9b2c-558610419b20",
+      "old_error": "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中",
+      "source_dates": [
+        [
+          2014,
+          7,
+          2
+        ]
+      ],
+      "rule_dates": [
+        [
+          2014,
+          7,
+          2
+        ]
+      ],
+      "date_and_numeric_recheck": [
+        true,
+        []
+      ],
+      "quote_sha256": "d9a7d458b03460146429306aa339e5f88acc251900f950fdcc2681045ccfb976"
+    },
+    {
+      "question_id": "S5-04",
+      "clause_id": "c50844a4-1198-4110-9b2c-558610419b20",
+      "old_error": "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中",
+      "source_dates": [
+        [
+          2014,
+          7,
+          2
+        ]
+      ],
+      "rule_dates": [
+        [
+          2014,
+          7,
+          2
+        ]
+      ],
+      "date_and_numeric_recheck": [
+        true,
+        []
+      ],
+      "quote_sha256": "d9a7d458b03460146429306aa339e5f88acc251900f950fdcc2681045ccfb976"
+    }
+  ]
+}

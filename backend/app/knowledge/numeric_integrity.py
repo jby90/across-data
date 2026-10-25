@@ -2,6 +2,7 @@
 
 import re
 import unicodedata
+from datetime import date
 from decimal import Decimal, InvalidOperation
 
 NUMBER = r"\d+(?:,\d{3})*(?:\.\d+)?"
@@ -108,3 +109,44 @@ def dates(text: str) -> set[tuple[int, int, int]]:
     for month, day, year in re.findall(rf"({month_words})\s+(\d{{1,2}}),?\s+(\d{{4}})(?!\d)", text):
         found.add((int(year), MONTHS[month], int(day)))
     return found
+
+
+def separate_explicit_dates(text: str):
+    """Analysis-only comparison: complete valid dates are identities, not spare numbers.
+
+    Does not change originals, translations or the translation-review protocol.
+    Ambiguous/partial dates are not inferred. Invalid explicit dates stay visible.
+    """
+    normalized = normalize(text).casefold()
+    month_words = "|".join(sorted(MONTHS, key=len, reverse=True))
+    patterns = [
+        (r"(?<!\d)(\d{4})年\s*(\d{1,2})月\s*(\d{1,2})日", "ymd"),
+        (r"(?<!\d)(\d{4})-(\d{2})-(\d{2})(?!\d)", "ymd"),
+        (
+            rf"(?<!\d)(\d{{1,2}})(?:st|nd|rd|th)?(?:\s+day\s+of)?\s+({month_words})\s*[,،]?\s*(\d{{4}})(?!\d)",
+            "dmy",
+        ),
+        (rf"({month_words})\s+(\d{{1,2}}),?\s+(\d{{4}})(?!\d)", "mdy"),
+    ]
+    values, spans, invalid = set(), [], []
+    for pattern, order in patterns:
+        for match in re.finditer(pattern, normalized):
+            a, b, c = match.groups()
+            year, month, day = (
+                (int(a), int(b), int(c))
+                if order == "ymd"
+                else (int(c), MONTHS[b], int(a))
+                if order == "dmy"
+                else (int(c), MONTHS[a], int(b))
+            )
+            try:
+                date(year, month, day)
+            except ValueError:
+                invalid.append(match.group())
+                continue
+            values.add((year, month, day))
+            spans.append(match.span())
+    characters = list(normalized)
+    for start, end in spans:
+        characters[start:end] = " " * (end - start)
+    return tokens("".join(characters)), values, invalid

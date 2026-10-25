@@ -116,6 +116,64 @@ def test_heading_catalog_is_source_only_bounded_and_independent_of_document_iden
     assert set(headings) <= {c.heading for c in rows}
 
 
+@pytest.mark.parametrize(
+    "lead",
+    [
+        "“mobility record” means",
+        '"registre mobile" désigne',
+        "«السجل المتنقل» يعني",
+        '"移动记录" 是指',
+    ],
+)
+def test_quoted_definitions_on_continuations_get_source_bound_search_names(lead):
+    row = candidate(
+        "new-law", "Interpretation\n" + lead + " information in a record.", heading="Interpretation"
+    )
+    before = copy.deepcopy(row)
+    assert lead in retrieval_planner.source_headings(row)
+    assert lead in retrieval_planner.heading_catalog([row], lead, "definition")
+    assert row == before  # no rewriting, renumbering, status changes or graph entity creation
+    row.text = "The text mentions “a definition” but makes no definition here."
+    assert retrieval_planner.source_headings(row) == ["Interpretation"]
+
+
+@pytest.mark.parametrize(
+    "source_date,translation",
+    [
+        ("1 February 2032", "2032年2月1日"),
+        ("2 juillet 2030", "2030年7月2日"),
+        ("٢ جانفي ٢٠٣١", "2031年1月2日"),
+        ("2032-02-29", "2032年2月29日"),
+    ],
+)
+def test_complete_dates_compare_exactly_without_rewriting_quotes(source_date, translation):
+    from app.analysis.tools import verify_finding
+
+    source = "A valid filing is required on " + source_date + "."
+    finding = {"quote": source, "obligation": "申报日期为" + translation}
+    assert verify_finding(finding, source) == (True, [])
+    assert finding["quote"] == source
+    assert not verify_finding({"quote": source, "obligation": "费用为1"}, source)[0]
+
+
+@pytest.mark.parametrize(
+    "source_date,wrong",
+    [
+        ("1 February 2032", "2032年2月2日"),
+        ("1 February 2032", "2032年1月2日"),
+        ("1 February 2032", "2031年2月1日"),
+        ("1 February 2032", "2032年2月31日"),
+        ("July 2030", "2030年7月2日"),
+        ("03/04/2030", "2030年3月4日"),
+    ],
+)
+def test_changed_incomplete_or_ambiguous_dates_are_not_inferred(source_date, wrong):
+    from app.analysis.tools import verify_finding
+
+    source = "A valid filing is required on " + source_date + ". Other amounts are 1, 2, 3, 31."
+    assert not verify_finding({"quote": source, "obligation": "申报日期为" + wrong}, source)[0]
+
+
 async def test_correlated_queries_cannot_starve_an_independent_heading_route(monkeypatch):
     rows = [
         candidate(str(i), "Common processing examples common common common.") for i in range(120)
