@@ -1,0 +1,140 @@
+{
+  "passed": true,
+  "mode": "full_restore_and_all_table_comparison",
+  "restored_database": "remediation_egypt_restorecheck_20261025",
+  "live_database": "remediation_s5_sources_20261025",
+  "backup_sha256": "a01d165ac2663bf5e7a2b4604196a8263a4072c24c1c882860c632b21b922cfc",
+  "tables_verified": 21,
+  "rows_verified": 31008,
+  "live_database_writes": 0,
+  "changed_existing_rows": 0,
+  "model_calls": 0,
+  "checks": [
+    {
+      "table": "agent_workflow_configs",
+      "rows": 46,
+      "sha256": "e69c0a9e90ba587023e75148430d6c30d990a1d25854901f191114680ef61ff5",
+      "equal": true
+    },
+    {
+      "table": "alembic_version",
+      "rows": 1,
+      "sha256": "71fe70e6a3f65493348f567070ad461c02890f40183a02476e945974e8727d77",
+      "equal": true
+    },
+    {
+      "table": "analysis_messages",
+      "rows": 25,
+      "sha256": "1febe4566e94855abd4560407ea91f80c3fbd14b3713ca74b642a03574800aa5",
+      "equal": true
+    },
+    {
+      "table": "analysis_step_traces",
+      "rows": 654,
+      "sha256": "1627c8fe81c8f490da8db891f61419ce583374762e7dd8bc7373ba5fc61cb701",
+      "equal": true
+    },
+    {
+      "table": "analysis_tasks",
+      "rows": 98,
+      "sha256": "7691fe29c6001bbcd2e1a05011559fea7b75b0ece2a7606795b7c19b76b6fc06",
+      "equal": true
+    },
+    {
+      "table": "clause_translations",
+      "rows": 3464,
+      "sha256": "02af8f8120dde27084b3deb4b01f9a931a701f8d0e850c9e42d982bc017e31d9",
+      "equal": true
+    },
+    {
+      "table": "clauses",
+      "rows": 2744,
+      "sha256": "764c3b38aacf97e1da707ef67f1bf558e76e1835582d86e35166ef399960f1a7",
+      "equal": true
+    },
+    {
+      "table": "crawl_runs",
+      "rows": 58,
+      "sha256": "baa27f2fa0e26a22f14982730a2f6c769d38cbc3c60a52469349a076b8897872",
+      "equal": true
+    },
+    {
+      "table": "document_versions",
+      "rows": 81,
+      "sha256": "85c74f3c2a2a54d7f45d248634c99ec0554e571e4969800f06a53ac4d74d7595",
+      "equal": true
+    },
+    {
+      "table": "documents",
+      "rows": 81,
+      "sha256": "7ec58d8bc1b9b1899f55922006deed9cc5017ec6caec467ada04ad2d8383efb0",
+      "equal": true
+    },
+    {
+      "table": "glossary_terms",
+      "rows": 14,
+      "sha256": "6984179eb40b84709c445a8c5be3cfb0ff594196f41acbaa71bb1e518e474852",
+      "equal": true
+    },
+    {
+      "table": "kg_edges",
+      "rows": 5259,
+      "sha256": "f5ecf87a69165256c64531748e119f76f9b2f5fff85b71f2e8a6f25e1a0ddc65",
+      "equal": true
+    },
+    {
+      "table": "kg_nodes",
+      "rows": 2419,
+      "sha256": "83a03d8a6af3d5170cd466938570339883202f37bd617b47dbf560e429335e51",
+      "equal": true
+    },
+    {
+      "table": "knowledge_audit_records",
+      "rows": 15260,
+      "sha256": "c78f114058d1010898d69979a7a944f0d7847e798c42ed828dddd651af331289",
+      "equal": true
+    },
+    {
+      "table": "knowledge_change_proposals",
+      "rows": 473,
+      "sha256": "3b4fdd1628ca68a08722aee5f8a954ad006380f8f33e0b0ab8c87e89f1d34cc3",
+      "equal": true
+    },
+    {
+      "table": "organizations",
+      "rows": 1,
+      "sha256": "5f43d35f184b8dcc28fe933f92567f65000fcc64eb2d1c378f93611e48aea9db",
+      "equal": true
+    },
+    {
+      "table": "pipeline_events",
+      "rows": 202,
+      "sha256": "cc3b4f5614bca37440367ab10a622ba1e66d6a8d34d29a85f58e54d6b8674e89",
+      "equal": true
+    },
+    {
+      "table": "report_versions",
+      "rows": 99,
+      "sha256": "6342ea652f126cf667358bef076ade560a4da1c8e8bc48dbf3a3244325325261",
+      "equal": true
+    },
+    {
+      "table": "review_points",
+      "rows": 4,
+      "sha256": "1551df820f4e57728a3b9c7c0fea74e3a6977fe1f3338db13925a7e503038474",
+      "equal": true
+    },
+    {
+      "table": "source_sites",
+      "rows": 21,
+      "sha256": "f1a4dbf4b1510dd3b2da8ee2f4ac0a1cc64db641c2226fc365435705bb0dd25e",
+      "equal": true
+    },
+    {
+      "table": "users",
+      "rows": 4,
+      "sha256": "96e286486cc35fbd021db014f0e8cd6f7f860e02c994f7f30f17144a0fc062d8",
+      "equal": true
+    }
+  ]
+}
