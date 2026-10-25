@@ -498,3 +498,204 @@ def test_source_support_gate_cannot_be_disabled_by_import():
     ] = False
     with pytest.raises(ValueError):
         validate_graph(nodes, copy.deepcopy(DEFAULT_WORKFLOW_EDGES))
+
+
+@pytest.mark.parametrize("fail", [False, True])
+async def test_concurrent_identical_retrieval_is_billed_once_and_failure_is_not_cached(
+    monkeypatch, fail
+):
+    import asyncio
+
+    from app.analysis.llm import LlmUnavailableError
+
+    retrieval_cache._entries.clear()
+    rows = [candidate("same", "The operator must protect confidential records.")]
+    calls = []
+
+    async def fake(messages, **kwargs):
+        phase = json.loads(messages[1]["content"])["phase"]
+        calls.append(phase)
+        await asyncio.sleep(0.02)
+        if fail:
+            raise LlmUnavailableError("outage", tokens=6, failures=[{"kind": "HTTP"}])
+        return LlmResult(
+            {"queries": ["protect"], "heading_queries": ["protect"]}
+            if phase == "plan"
+            else {"clause_ids": ["same"]},
+            4,
+            2,
+            1,
+            "test",
+        )
+
+    monkeypatch.setattr(retrieval_planner, "call_llm_json", fake)
+
+    async def one():
+        return await retrieval_planner.planned_search(
+            ClauseIndex(copy.deepcopy(rows)),
+            "protect",
+            "保护",
+            "保护?",
+            1,
+            dict(system_prompt="JSON", model="test", temperature=0.0, timeout=5.0),
+            cache_scope="same-org",
+        )
+
+    results = await asyncio.gather(*[one() for _ in range(10)])
+    assert len(calls) == (1 if fail else 2)
+    assert sum(a["tokens"] for _, a in results) == (6 if fail else 12)
+    assert sum(a["requests"] for _, a in results) == (1 if fail else 2)
+    assert sum(a.get("coalesced", False) for _, a in results) == 9
+    if fail:
+        assert all(a["error"] for _, a in results) and not retrieval_cache._entries
+        await one()
+        assert len(calls) == 2
+
+
+@pytest.mark.parametrize("duplicate", [False, True, "gap"])
+async def test_retry_keeps_passed_evidence_and_only_spends_on_failed_items(monkeypatch, duplicate):
+    from app.analysis import evaluation, pipeline
+    from app.analysis.models import AnalysisTask
+
+    rows = [
+        candidate("stable", "The operator must protect confidential records from disclosure."),
+        candidate(
+            "broken", "The subject and condition cannot be identified in this incomplete fragment."
+        ),
+        candidate("replacement", "The operator must notify the customer before disclosure."),
+    ]
+    selections = []
+    writes = []
+
+    async def fake(messages, **kwargs):
+        p = json.loads(messages[1]["content"])
+        if p["phase"] == "select_evidence":
+            selections.append(p)
+            ids = (
+                ["stable", "broken"]
+                if len(selections) == 1
+                else ["stable" if duplicate else "replacement"]
+            )
+            if len(selections) > 1:
+                assert p["output_schema"]["properties"]["findings"]["maxItems"] == 1
+                assert p["retained_evidence"][0]["clause_id"] == "stable"
+            output = {
+                "findings": [
+                    {
+                        "clause_id": i,
+                        "sentence_ids": [1],
+                        "fact_key": "q",
+                        "obligation": "待依据生成",
+                        "risk_level": "MEDIUM",
+                    }
+                    for i in ids
+                ]
+            }
+            if duplicate == "gap" and len(selections) > 1:
+                output = {"findings": [], "gaps": "原文关键条件仍缺失"}
+        else:
+            text = p["evidence"]["quote"]
+            writes.append(text)
+            output = (
+                {"obligation": "", "gap": "缺少主语条件", "risk_level": "MEDIUM"}
+                if "incomplete fragment" in text
+                else {
+                    "obligation": "经营者必须保护保密记录免遭披露"
+                    if "confidential" in text
+                    else "经营者须在披露前告知客户",
+                    "gap": "",
+                    "risk_level": "MEDIUM",
+                }
+            )
+        return LlmResult(output, 2, 1, 1, "test")
+
+    monkeypatch.setattr(pipeline, "call_llm_json", fake)
+    result, call = await pipeline._analyse_dimension(
+        AnalysisTask(country_code="XY", facts_json={"q": "披露资料"}),
+        "D4",
+        "告知",
+        rows,
+        None,
+        dict(system_prompt="JSON", model="test", temperature=0.0, timeout=5.0),
+    )
+    assert writes.count(rows[0].text) == 1
+    assert result["findings"][0]["clause_id"] == "stable"
+    assert len(result["findings"]) == (1 if duplicate else 2)
+    assert bool(result.get("error")) == (duplicate is True)
+    if duplicate == "gap":
+        assert result["repair_unresolved"] and not call.verified
+        assert pipeline._verify_dimension("D4", result, rows)
+    attempts = evaluation.attempted_findings(result, call.as_dict())
+    assert sum(f["clause_id"] == "stable" for f in attempts) == 1
+    assert any(f.get("_generation_gap") for f in attempts)
+    if not duplicate:
+        assert result["evidence_selections"][0]["retained"]
+        assert pipeline._verify_dimension("D4", result, rows) == []
+
+
+@pytest.mark.parametrize("drift", ["text", "anchor"])
+async def test_retained_source_hash_drift_is_blocked_before_any_model_call(monkeypatch, drift):
+    from app.analysis import pipeline
+    from app.analysis.models import AnalysisTask
+
+    row = candidate(
+        "a",
+        "The operator must provide notice before disclosure. A separate permission is required for onward transfer.",
+    )
+    retained = {
+        "clause_id": "a",
+        "fact_key": "q",
+        "obligation": "经营者须在披露前告知",
+        **select_legal_quote(row.text, [1]),
+    }
+    if drift == "text":
+        row.text = "The operator must not provide this information before disclosure."
+    else:
+        retained["selected_sentence_ids"] = [2]
+
+    async def forbidden(*a, **k):
+        raise AssertionError("must not call model")
+
+    monkeypatch.setattr(pipeline, "call_llm_json", forbidden)
+    with pytest.raises(ValueError, match="保留证据已失效"):
+        await pipeline._analyse_dimension(
+            AnalysisTask(facts_json={"q": "披露"}),
+            "D4",
+            "告知",
+            [row],
+            None,
+            dict(system_prompt="JSON", model="test", temperature=0.0, timeout=5.0),
+            _retained=[retained],
+        )
+
+
+async def test_source_review_format_retry_never_retries_a_valid_partial_verdict(monkeypatch):
+    from app.analysis import pipeline
+
+    observed = []
+
+    async def fake(messages, **kwargs):
+        p = json.loads(messages[1]["content"])
+        observed.append(p)
+        assert p["quote"] == "The applicant must obtain consent before transfer."
+        assert p["conclusion"] == "申请人必须转移数据"
+        return LlmResult(
+            {
+                "supported": "yes/partial/no" if len(observed) == 1 else "partial",
+                "reason": "遗漏同意条件",
+            },
+            4,
+            2,
+            1,
+            "test",
+        )
+
+    monkeypatch.setattr(pipeline, "call_llm_json", fake)
+    grade, tokens, requests, failures, ledger = await pipeline._review_source_support(
+        "The applicant must obtain consent before transfer.",
+        "申请人必须转移数据",
+        dict(system_prompt="JSON", model="test", temperature=0.0, timeout=5.0),
+    )
+    assert grade.supported == "partial" and len(observed) == 2
+    assert "schema_feedback" in observed[1] and ledger[0]["error"]
+    assert tokens == 12 and requests == 2 and failures[0]["kind"] == "source_support_schema_error"

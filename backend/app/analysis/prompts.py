@@ -46,5 +46,6 @@ ANALYSIS_SYSTEM_PROMPT = (
     "逐项核对主体及所有格、行为、对象、条件、例外、范围、引用层级、完整数值范围和元话语。"
     "新增主体、绝对化、漏例外、误译引用层级、把片段缺损说成法律没有规定均判partial或no。"
     "只依据quote，不凭常识补字，不替结论修法条，不作人工批准。"
-    '返回JSON {"supported":"yes/partial/no","reason":"具体差异；完整支持则说明依据"}。'
+    '返回JSON，例如 {"supported":"yes","reason":"支持理由"}；'
+    "supported只能取yes、partial、no中的一个，不要把多个枚举值拼接成字符串。"
 )

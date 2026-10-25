@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import copy
+import hashlib
 import json
 import logging
 import time
@@ -167,11 +168,15 @@ def _build_user_message(
     dim_title: str,
     cands: list[ClauseCandidate],
     feedback: list[str] | None,
+    retained=None,
+    repair_limit=None,
 ) -> str:
     schema = AnalysisResponse.model_json_schema()
     properties = schema["$defs"]["FindingSelection"]["properties"]
     properties["fact_key"]["enum"] = list(task.facts_json or {})
     properties["clause_id"]["enum"] = [c.clause_id for c in cands]
+    if repair_limit is not None:
+        schema["properties"]["findings"]["maxItems"] = repair_limit
     payload: dict[str, Any] = {
         "phase": "select_evidence",
         "country": task.country_code,
@@ -183,12 +188,92 @@ def _build_user_message(
         "candidate_clauses": [_candidate_payload(c) for c in cands],
         "output_schema": schema,
     }
+    if retained:
+        payload["retained_evidence"] = [
+            {
+                "clause_id": f["clause_id"],
+                "fact_key": f["fact_key"],
+                "sentence_ids": f.get("selected_sentence_ids") or f["sentence_ids"],
+            }
+            for f in retained
+        ]
+        payload["repair_contract"] = (
+            "这些证据与结论由系统原样保留。只修复失败项，不要重新选择相同证据，也不要重写保留项。"
+        )
     if feedback:
         payload["verifier_feedback_must_fix"] = feedback
     return json.dumps(payload, ensure_ascii=False)
 
 
 _GROUNDING_GATE = asyncio.Semaphore(6)
+
+
+async def _review_source_support(quote, obligation, config):
+    """Retry only rejected JSON format; a valid no/partial verdict is final."""
+    payload = {
+        "phase": "verify_source_support",
+        "quote": quote,
+        "conclusion": obligation,
+        "contract": "只核验原文是否完整支持结论；不作法律或人工审批；严格输出JSON Schema。",
+        "output_schema": SourceSupport.model_json_schema(),
+    }
+    tokens = requests = 0
+    failures = []
+    ledger = []
+    for attempt in range(2):
+        entry = {"attempt": attempt + 1}
+        ledger.append(entry)
+        try:
+            async with _GROUNDING_GATE:
+                response = await call_llm_json(
+                    [
+                        {"role": "system", "content": config["system_prompt"]},
+                        {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
+                    ],
+                    model=config["model"],
+                    temperature=config["temperature"],
+                    timeout=config["timeout"],
+                    max_tokens=6000,
+                )
+            tokens += response.total_tokens
+            requests += response.request_attempts
+            failures.extend(response.failures)
+            entry.update(
+                {
+                    "attempt": attempt + 1,
+                    "output": response.data,
+                    "tokens": response.total_tokens,
+                    "requests": response.request_attempts,
+                    "failures": response.failures,
+                }
+            )
+            grade = SourceSupport.model_validate(response.data)
+            return grade, tokens, requests, failures, ledger
+        except ValueError as exc:
+            detail = str(
+                exc.errors(include_input=False, include_url=False)
+                if hasattr(exc, "errors")
+                else exc
+            )[:1500]
+            entry["error"] = detail
+            failures.append({"kind": "source_support_schema_error", "reason": detail})
+            payload["schema_feedback"] = detail
+        except LlmUnavailableError as exc:
+            entry.update(
+                error=str(exc),
+                tokens=exc.tokens,
+                requests=len(exc.failures),
+                failures=copy.deepcopy(exc.failures),
+            )
+            exc.tokens += tokens
+            exc.failures = failures + exc.failures
+            exc.support_calls = ledger
+            raise
+    exc = LlmUnavailableError(
+        "语义质检JSON格式连续失败", kind="model_format_error", tokens=tokens, failures=failures
+    )
+    exc.support_calls = ledger
+    raise exc
 
 
 async def _ground_selection(
@@ -312,44 +397,17 @@ async def _ground_selection(
                             }
                         )
                     else:
-                        async with _GROUNDING_GATE:
-                            review = await call_llm_json(
-                                [
-                                    {"role": "system", "content": config["system_prompt"]},
-                                    {
-                                        "role": "user",
-                                        "content": json.dumps(
-                                            {
-                                                "phase": "verify_source_support",
-                                                "quote": result["quote"],
-                                                "conclusion": obligation,
-                                                "contract": (
-                                                    "只核验原文是否完整支持结论；"
-                                                    "不作法律或人工审批；输出所给JSON Schema。"
-                                                ),
-                                                "output_schema": SourceSupport.model_json_schema(),
-                                            },
-                                            ensure_ascii=False,
-                                        ),
-                                    },
-                                ],
-                                model=config["model"],
-                                temperature=config["temperature"],
-                                timeout=config["timeout"],
-                                max_tokens=6000,
-                            )
-                        tokens += review.total_tokens
-                        requests += review.request_attempts
-                        failures.extend(review.failures)
-                        support_calls.append(
-                            {
-                                "output": review.data,
-                                "tokens": review.total_tokens,
-                                "requests": review.request_attempts,
-                                "failures": review.failures,
-                            }
-                        )
-                        grade = SourceSupport.model_validate(review.data)
+                        (
+                            grade,
+                            review_tokens,
+                            review_requests,
+                            review_failures,
+                            review_ledger,
+                        ) = await _review_source_support(result["quote"], obligation, config)
+                        tokens += review_tokens
+                        requests += review_requests
+                        failures.extend(review_failures)
+                        support_calls.extend(review_ledger)
                         support_by_claim[support_key] = grade
                     result["source_support"] = {**grade.model_dump(), "human_review": None}
                     if grade.supported != "yes":
@@ -373,6 +431,7 @@ async def _ground_selection(
             tokens += exc.tokens
             requests += len(exc.failures)
             failures.extend(exc.failures)
+            support_calls.extend(getattr(exc, "support_calls", []))
             result["_generation_error"] = str(exc)
             break
         except ValueError as exc:
@@ -406,15 +465,43 @@ async def _analyse_dimension(
     *,
     _attempt_budget: int = 2,
     _support_cache=None,
+    _retained=None,
+    _repair_limit=None,
 ) -> tuple[dict[str, Any], ToolCall]:
     """单个维度的分析调用;模型不可用时返回带 error 的结果而不是编造内容。"""
     if _support_cache is None:
         _support_cache = {}
+    retained = copy.deepcopy(_retained or [])
+    by_id = {c.clause_id: c for c in cands}
+    for f in retained:
+        c = by_id.get(f["clause_id"])
+        bound = (
+            select_legal_quote(
+                c.text, f.get("selected_sentence_ids") or f["sentence_ids"], heading=c.heading
+            )
+            if c
+            else {}
+        )
+        if (
+            c is None
+            or f.get("source_text_sha256") != hashlib.sha256(c.text.encode()).hexdigest()
+            or c.text[f["quote_start"] : f["quote_end"]] != f["quote"]
+            or not verify_finding(f, c.text)[0]
+            or bound["quote_start"] != f["quote_start"]
+            or bound["quote_end"] != f["quote_end"]
+            or (
+                config.get("verify_source_support")
+                and f.get("source_support", {}).get("supported") != "yes"
+            )
+        ):
+            raise ValueError("保留证据已失效或未通过原核验，禁止复用")
     msgs = [
         {"role": "system", "content": config["system_prompt"]},
         {
             "role": "user",
-            "content": _build_user_message(task, dim_code, dim_title, cands, feedback),
+            "content": _build_user_message(
+                task, dim_code, dim_title, cands, feedback, retained, _repair_limit
+            ),
         },
     ]
     started = time.perf_counter()
@@ -440,6 +527,21 @@ async def _analyse_dimension(
                     validated = AnalysisResponse.model_validate(res.data)
                     if any(f.fact_key not in (task.facts_json or {}) for f in validated.findings):
                         raise ValueError("fact_key 不在用户已提供事实中")
+                    if _repair_limit is not None and len(validated.findings) > _repair_limit:
+                        raise ValueError("只重试失败项，不得超过本次修复名额")
+                    for f in validated.findings if retained else []:
+                        c = by_id.get(f.clause_id)
+                        if c is None:
+                            continue
+                        bound = select_legal_quote(c.text, f.sentence_ids, heading=c.heading)
+                        if any(
+                            old["clause_id"] == f.clause_id
+                            and old["fact_key"] == f.fact_key
+                            and old["quote_start"] == bound["quote_start"]
+                            and old["quote_end"] == bound["quote_end"]
+                            for old in retained
+                        ):
+                            raise ValueError("保留项被重复选择，请只修复失败项")
                     break
                 except ValueError as exc:
                     error_kind = "model_format_error"
@@ -463,6 +565,8 @@ async def _analyse_dimension(
                             "格式错误：只返回指定Schema，fact_key与句子编号取自输入，不要输出quote。",
                             detail,
                         ],
+                        retained,
+                        _repair_limit,
                     )
 
             async def ground_one(finding):
@@ -497,6 +601,9 @@ async def _analyse_dimension(
                 or f.get("_selection_error")
             ]
             if refused and attempts < _attempt_budget:
+                _verify_dimension(dim_code, {"findings": grounded}, cands)
+                kept = [f for f in grounded if f.get("_ok")]
+                rejected = [f for f in grounded if not f.get("_ok")]
                 # Reuse the existing two-selection-attempt budget, not a new retry loop.
                 # A source-limited refusal goes back to the selector with its actual reason.
                 # Preserve every first proposal/quote, even when a later selection succeeds.
@@ -523,6 +630,8 @@ async def _analyse_dimension(
                     config,
                     _attempt_budget=_attempt_budget - attempts,
                     _support_cache=_support_cache,
+                    _retained=retained + kept,
+                    _repair_limit=len(rejected),
                 )
                 revised["tokens"] += used_tokens
                 call.arguments.update(
@@ -532,7 +641,11 @@ async def _analyse_dimension(
                     failures=failures + call.arguments.get("failures", []),
                     grounding_calls=grounding_ledger + call.arguments["grounding_calls"],
                     selection_retries=[
-                        {"reason": "source_or_generation_validation", "findings": grounded}
+                        {
+                            "reason": "source_or_generation_validation",
+                            "findings": rejected,
+                            "retained_findings": kept,
+                        }
                     ],
                 )
                 call.duration_ms = int((time.perf_counter() - started) * 1000)
@@ -566,14 +679,23 @@ async def _analyse_dimension(
             "error": str(exc) or "模型调用超过配置时限",
             "error_kind": error_kind,
             "tokens": used_tokens,
-            "findings": [],
+            "findings": retained,
         }, call
     data = validated.model_dump()
     data["evidence_selections"] = [
+        {
+            "clause_id": f["clause_id"],
+            "sentence_ids": f.get("selected_sentence_ids") or f["sentence_ids"],
+            "fact_key": f["fact_key"],
+            "retained": True,
+        }
+        for f in retained
+    ] + [
         {"clause_id": f.clause_id, "sentence_ids": f.sentence_ids, "fact_key": f.fact_key}
         for f in validated.findings
     ]
-    data["findings"] = grounded
+    data["findings"] = retained + grounded
+    data["repair_unresolved"] = bool(retained and _repair_limit and not grounded)
     for finding in data["findings"]:
         finding["business_fact"] = str(task.facts_json[finding["fact_key"]])
         finding["quote_zh"] = ""
@@ -591,15 +713,19 @@ async def _analyse_dimension(
             "failures": failures,
             "request_attempts": request_attempts,
             "grounding_calls": grounding_ledger,
+            "retained_count": len(retained),
+            "repair_limit": _repair_limit,
             "model": config["model"],
             "temperature": config["temperature"],
             "timeout": config["timeout"],
         },
         result_summary=(
-            f"选证据后独立生成 {len(data['findings'])} 项规则/缺口；已知Token {used_tokens}"
+            f"依据生成 {len(grounded)} 项；保留已有核验结果 {len(retained)} 项；"
+            f"已知Token {used_tokens}"
         ),
         duration_ms=int((time.perf_counter() - started) * 1000),
-        verified=not any(entry.get("error") or entry.get("gap") for entry in grounding_ledger),
+        verified=not data["repair_unresolved"]
+        and not any(entry.get("error") or entry.get("gap") for entry in grounding_ledger),
     )
     return data, call
 
@@ -610,7 +736,9 @@ def _verify_dimension(
     """核验一个维度的全部结论,把通过/失败写回 finding,并返回问题清单。"""
     by_id = {c.clause_id: c for c in cands}
     problems: list[str] = []
-    if cands and (result.get("error") or not result.get("findings")):
+    if cands and (
+        result.get("error") or result.get("repair_unresolved") or not result.get("findings")
+    ):
         detail = result.get("error") or result.get("gaps") or "没有结论且没有具体原因"
         problems.append(f"{dim_code}: 有候选但未形成可核验结论：{detail}")
     for f in result.get("findings", []):
@@ -797,11 +925,18 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     dim_titles = dict(EIGHT_DIMENSIONS_SPEC)
     results: dict[str, dict[str, Any]] = {}
     active = [code for code, _ in EIGHT_DIMENSIONS_SPEC if dim_cands[code]]
+    support_caches = {code: {} for code in active}
     t_start = asyncio.get_event_loop().time()
     outs = await asyncio.gather(
         *[
             _analyse_dimension(
-                task, c, dim_titles[c], dim_cands[c], None, runtime["node_dimension_analyst"]
+                task,
+                c,
+                dim_titles[c],
+                dim_cands[c],
+                None,
+                runtime["node_dimension_analyst"],
+                _support_cache=support_caches[c],
             )
             for c in active
         ]
@@ -982,6 +1117,11 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                     dim_cands[c],
                     [p for p in problems if p.startswith(c)],
                     runtime["node_dimension_analyst"],
+                    _support_cache=support_caches[c],
+                    _retained=[f for f in results[c].get("findings", []) if f.get("_ok")],
+                    _repair_limit=max(
+                        1, sum(not f.get("_ok") for f in results[c].get("findings", []))
+                    ),
                 )
                 for c in bad_codes
             ]
@@ -1109,6 +1249,8 @@ async def _compile(
                             "selected_sentence_ids",
                             "anchor_quote_start",
                             "anchor_quote_end",
+                            "source_support",
+                            "source_coverage",
                         )
                     },
                 }
@@ -1142,6 +1284,8 @@ async def _compile(
                             "selected_sentence_ids",
                             "anchor_quote_start",
                             "anchor_quote_end",
+                            "source_support",
+                            "source_coverage",
                         )
                     },
                 }
@@ -1149,13 +1293,20 @@ async def _compile(
         gap: str | None = None
         if r.get("error"):
             gap = "分析技术失败（模型调用或格式错误），请重试；不能当作法源不足"
+        elif r.get("repair_unresolved"):
+            gap = "仍有补证任务未完成；已有核验结果保留，不能标记为完整报告"
         elif not dim_cands.get(code):
             gap = "已归档法源中未检索到与该维度相关的可用条款(待核查)"
         elif not good:
             gap = r.get("gaps") or "模型未能给出可通过原文核验的结论(待核查)"
         elif dropped:
             gap = f"另有 {dropped} 条结论未通过原文核验,已剔除(待核查)"
-        technical_failure = bool(r.get("error") or dropped or (dim_cands.get(code) and not good))
+        technical_failure = bool(
+            r.get("error")
+            or r.get("repair_unresolved")
+            or dropped
+            or (dim_cands.get(code) and not good)
+        )
         if technical_failure and not gap:
             gap = "证据选择/核验仍失败，未生成可交付结论；请重试分析"
         body = ""
