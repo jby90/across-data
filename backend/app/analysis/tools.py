@@ -11,7 +11,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.analysis.retrieval import RETRIEVAL_VERSION, ClauseIndex
@@ -144,6 +144,7 @@ class ClauseCandidate:
     language: str = ""
     section_path: str | None = None
     context_parent_id: str | None = None
+    search_hints: str = ""
 
 
 @dataclass
@@ -346,6 +347,29 @@ class ToolBox:
             except (OSError, ValueError):
                 # Unavailable/ambiguous source cannot prove a link; retain independent IDs.
                 continue
+        # Machine-reviewed graph labels are search vocabulary only, never legal
+        # evidence or an approval. Use the same current/source-bound eligibility as KG.
+        hint_rows = (
+            await self.session.execute(
+                select(KgEdge.evidence_clause_id, KgNode.name_zh, KgNode.name_orig)
+                .join(
+                    KgNode,
+                    or_(KgNode.id == KgEdge.source_node_id, KgNode.id == KgEdge.target_node_id),
+                )
+                .where(
+                    KgEdge.country_code == self.country_code,
+                    *active_edge_filters(),
+                    KgEdge.is_structural.is_(False),
+                    KgNode.node_type.in_(("OBLIGATION", "PENALTY", "DATA_CATEGORY")),
+                    KgNode.review_status.in_(("approved", "pending_review")),
+                )
+            )
+        ).all()
+        hints = {}
+        for cid, zh, orig in hint_rows:
+            hints.setdefault(str(cid), set()).update(x for x in (zh, orig) if x)
+        for c in out:
+            c.search_hints = "\n".join(sorted(hints.get(c.clause_id, [])))
         self._candidates_cache = out
         return out
 

@@ -12,7 +12,7 @@ from app.analysis.llm import LlmUnavailableError, call_llm_json
 from app.analysis.retrieval import SparseIndex, terms
 from app.analysis.source_context import include_context_roots
 
-PLANNER_VERSION = "source-context-cache-v6"
+PLANNER_VERSION = "source-context-graph-cache-v7"
 _DEFINED_LEAD = re.compile(
     r'(?m)^[ \t]*[“"«][^”"»\n]{1,120}[”"»]\s+'
     r"(?:means\b|includes\b|refers to\b|désigne\b|signifie\b|يعني\b|تعني\b|يقصد\b|是指|指)",
@@ -218,6 +218,18 @@ async def planned_search(index, dimension, title, query, top_k, config, *, cache
             # Preserve the old route and add multilingual query routes. No expected IDs/answers.
             fused = {}
             routes = [index.rank(dimension, query), *[index.rank(q, None) for q in queries]]
+            # A separate bilingual graph-vocabulary route bridges names of duties
+            # to source predicates (e.g. a named role vs 'designate individuals').
+            # It only proposes IDs already allowed by the source/version gates.
+            hint_index = SparseIndex([c.search_hints for c in index.candidates])
+            hint_scores = hint_index.scores(query or title)
+            hint_order = sorted(
+                range(len(hint_scores)),
+                key=lambda i: (-hint_scores[i], index.candidates[i].clause_id),
+            )
+            hint_candidates = [index.candidates[i] for i in hint_order if hint_scores[i] > 0][
+                :top_k
+            ]
             # Independent true-heading routes: a long translated paragraph must not
             # drown a short normative heading. This adds candidates, never legal facts.
             headings = SparseIndex(["\n".join(source_headings(c)) for c in index.candidates])
@@ -244,6 +256,11 @@ async def planned_search(index, dimension, title, query, top_k, config, *, cache
                 for c in candidates
                 if c.clause_id in fused and c.clause_id not in reserved and len(pool) < limit
             )
+            # Preserve original query-route quotas within the same bounded model input.
+            pool_ids = {c.clause_id for c in pool}
+            new_hints = [c for c in hint_candidates if c.clause_id not in pool_ids]
+            if new_hints:
+                pool = pool[: limit - len(new_hints)] + new_hints
             ranked = await invoke(
                 {
                     "phase": "rank",
@@ -271,6 +288,10 @@ async def planned_search(index, dimension, title, query, top_k, config, *, cache
                 raise ValueError("有候选但重排未选择任何ID；保留原稀疏路线，不假称法源为空")
             if len(ids) > top_k or len(ids) != len(set(ids)) or any(i not in by_id for i in ids):
                 raise ValueError("重排ID重复、超过top_k或不在候选池内")
+            ranked_count = len(ids)
+            # Ranking uncertainty is not source absence. Fill unused retrieval slots
+            # locally; every added candidate still faces the unchanged evidence gates.
+            ids = [*ids, *[c.clause_id for c in pool if c.clause_id not in ids]][:top_k]
             scored = include_context_roots(
                 [(by_id[i], 1 / (n + 1)) for n, i in enumerate(ids)], index.candidates, top_k
             )
@@ -285,6 +306,12 @@ async def planned_search(index, dimension, title, query, top_k, config, *, cache
                 "failures": failures,
                 "elapsed_ms": int((time.perf_counter() - started) * 1000),
                 "cache_hit": False,
+                "model_ranked_count": ranked_count,
+                "local_fill_count": len(ids) - ranked_count,
+                "graph_search_vocabulary": [
+                    {"clause_id": c.clause_id, "hints": c.search_hints, "legal_evidence": False}
+                    for c in hint_candidates
+                ],
                 "context_links": [
                     {"clause_id": c.clause_id, "context_parent_id": c.context_parent_id}
                     for c, _ in scored

@@ -214,3 +214,118 @@ async def test_multiunit_generation_receives_source_once_and_preserves_coverage_
     assert result["quote"] == source and "除外" in result["obligation"]
     assert result["source_coverage"]["human_review"] is None
     assert audit["tokens"] == 15 and len(audit["proposals"]) == 1 and len(seen) == 1
+
+
+async def test_graph_vocabulary_adds_unseen_source_without_becoming_evidence(monkeypatch):
+    rows = [candidate(str(i), "Consent and information data." * 5) for i in range(120)]
+    target = candidate(
+        "new-role", "The company shall appoint an individual to supervise compliance."
+    )
+    target.search_hints = "合规监督人员指定职责"
+    rows.append(target)
+
+    async def fake(messages, **kwargs):
+        p = json.loads(messages[1]["content"])
+        if p["phase"] == "plan":
+            out = {"queries": ["consent information"], "heading_queries": ["consent"]}
+        else:
+            assert "new-role" in {x["clause_id"] for x in p["candidates"]}
+            chosen = next(x for x in p["candidates"] if x["clause_id"] == "new-role")
+            assert chosen["source"] == target.text and "search_hints" not in chosen
+            assert target.search_hints not in messages[1]["content"]
+            out = {"clause_ids": ["new-role"]}
+        return LlmResult(out, 10, 2, 1, "test")
+
+    monkeypatch.setattr(retrieval_planner, "call_llm_json", fake)
+    found, audit = await retrieval_planner.planned_search(
+        ClauseIndex(rows),
+        "consent",
+        "组织要求",
+        "合规监督人员如何指定？",
+        1,
+        dict(system_prompt="JSON", model="test", temperature=0.0, timeout=5.0),
+    )
+    assert found[0][0].clause_id == "new-role" and audit["requests"] == 2
+
+
+@pytest.mark.parametrize(
+    "variant",
+    [
+        "pending",
+        "approved",
+        "rejected",
+        "superseded",
+        "node_rejected",
+        "wrong_quote",
+        "unjudged",
+        "rule_engine",
+    ],
+)
+async def test_graph_hint_eligibility_never_reuses_bad_or_retired_edges(session_factory, variant):
+    from app.analysis.tools import ToolBox
+
+    from .review_s1_s2_contracts import make_document, make_edge
+
+    async with session_factory() as session:
+        doc, ver, clauses = await make_document(session)
+        doc.title = "A newly registered source"
+        edge, _, target = await make_edge(session, clauses[0])
+        target.name_zh = "专用保密责任"
+        if variant in ("approved", "rejected", "superseded"):
+            edge.review_status = variant
+        elif variant == "node_rejected":
+            target.review_status = "rejected"
+        elif variant == "wrong_quote":
+            edge.evidence_quote = "not in the source"
+        elif variant == "unjudged":
+            edge.judge_verdict = "no"
+        elif variant == "rule_engine":
+            edge.extractor_model = "kg-rule-extractor-v1"
+        await session.flush()
+        before = (
+            edge.review_status,
+            target.review_status,
+            clauses[0].original_text,
+            ver.review_status,
+        )
+        rows = await ToolBox(session, doc.country_code)._load_candidates()
+        assert bool(rows[0].search_hints) == (variant in ("pending", "approved"))
+        assert before == (
+            edge.review_status,
+            target.review_status,
+            clauses[0].original_text,
+            ver.review_status,
+        )
+
+
+async def test_underfilled_ranking_uses_existing_local_candidates_and_keeps_uncertainty(
+    monkeypatch,
+):
+    rows = [
+        candidate(str(i), "A duty to protect records applies to the operator.") for i in range(6)
+    ]
+
+    async def fake(messages, **kwargs):
+        p = json.loads(messages[1]["content"])
+        data = (
+            {"queries": ["protect records"], "heading_queries": ["duty"]}
+            if p["phase"] == "plan"
+            else {"clause_ids": [p["candidates"][-1]["clause_id"]]}
+        )
+        return LlmResult(data, 2, 1, 1, "test")
+
+    monkeypatch.setattr(retrieval_planner, "call_llm_json", fake)
+    found, audit = await retrieval_planner.planned_search(
+        ClauseIndex(rows),
+        "duty",
+        "职责",
+        "protect records?",
+        5,
+        dict(system_prompt="JSON", model="test", temperature=0.0, timeout=3.0),
+    )
+    assert len(found) == 5 and len({c.clause_id for c, _ in found}) == 5
+    assert audit["model_ranked_count"] == 1 and audit["local_fill_count"] == 4
+    assert all(
+        c.review_status == "pending_review" and c.legal_status == "unknown" for c, _ in found
+    )
+    assert audit["requests"] == 2 and audit["tokens"] == 6
