@@ -260,15 +260,48 @@ class FindingSelection(BaseModel):
     risk_level: Literal["HIGH", "MEDIUM", "LOW"]
 
 
+class UserFactNeed(BaseModel):
+    model_config = ConfigDict(strict=True, extra="forbid")
+    fact_key: str = Field(pattern=r"^[a-z][a-z0-9_]{0,63}$")
+    question_zh: str = Field(min_length=4, max_length=600)
+    why_needed: str = Field(min_length=4, max_length=1000)
+    options: list[str] = Field(default_factory=list, max_length=6)
+
+    @model_validator(mode="after")
+    def business_facts_only(self):
+        if self.fact_key in {
+            "country_code",
+            "vehicle_model",
+            "scenario_type",
+            "clause_id",
+            "document_id",
+            "version_id",
+            "source_url",
+            "legal_status",
+            "effective_date",
+            "legal_basis",
+            "law_text",
+            "evidence",
+            "regulation_text",
+        } or re.search(
+            r"(?:请|需要|提供|补充).{0,8}(?:法条原文|法规原文|法律依据|官方法源)", self.question_zh
+        ):
+            raise ValueError("法条、法源和有效状态缺口不能向用户索要业务事实；应记入gaps")
+        if any(not 1 <= len(option.strip()) <= 300 for option in self.options):
+            raise ValueError("业务选项必须是1至300字的非空示例")
+        return self
+
+
 class AnalysisResponse(BaseModel):
     model_config = ConfigDict(strict=True, extra="forbid")
     summary: str = ""
     findings: list[FindingSelection] = Field(max_length=10)
     recommendations: list[str] = Field(default_factory=list, max_length=6)
     gaps: str = ""
+    needs_user_fact: list[UserFactNeed] = Field(default_factory=list, max_length=6)
 
     @model_validator(mode="after")
     def require_findings_or_explicit_gap(self):
-        if not self.findings and not self.gaps.strip():
+        if not self.findings and not self.gaps.strip() and not self.needs_user_fact:
             raise ValueError("没有结论时必须说明缺少哪类法源，不能返回空成功")
         return self

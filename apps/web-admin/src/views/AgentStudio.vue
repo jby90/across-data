@@ -273,6 +273,7 @@ interface BenchmarkSummary {
 const STATUS_LABEL_MAP: Record<string, string> = {
   running: '实时运行中',
   collecting_facts: '💬 对话采集中',
+  awaiting_user_facts: '等待补充业务事实',
   ready_to_run: '⏳ 待启动分析',
   completed: '✅ 已出报告',
   partial_sample: '⚠️ 部分样稿',
@@ -282,6 +283,7 @@ const STATUS_LABEL_MAP: Record<string, string> = {
 const STATUS_TAG_TYPE: Record<string, 'primary' | 'success' | 'warning' | 'danger' | 'info'> = {
   running: 'primary',
   collecting_facts: 'info',
+  awaiting_user_facts: 'warning',
   ready_to_run: 'info',
   completed: 'success',
   partial_sample: 'warning',
@@ -298,6 +300,9 @@ const PHASE_LABEL_MAP: Record<string, string> = {
   compilation: '环节 5 · 八维度国别报告与合规矩阵编制',
   update_linkage: '环节 6 · 法规修订 72h 影响联动追踪',
   error: '异常终止',
+  user_fact_question: '分析中追问 · 等待业务事实',
+  user_fact_answer: '业务事实回答 · 局部续跑',
+  user_fact_exhausted: '两轮追问后保留事实缺口',
 }
 
 const loading = ref(false)
@@ -526,6 +531,7 @@ const loadingBenchmarks = ref(false)
 
 const runningTasks = computed(() => tasks.value.filter((t) => t.status === 'running'))
 const collectingTasks = computed(() => tasks.value.filter((t) => t.status === 'collecting_facts'))
+const awaitingFactTasks = computed(() => tasks.value.filter((t) => t.status === 'awaiting_user_facts'))
 const filteredHistoryTasks = computed(() => {
   return tasks.value.filter((t) => {
     if (historyFilterStatus.value && t.status !== historyFilterStatus.value) return false
@@ -739,6 +745,7 @@ async function pollLiveWorkflows() {
         curr &&
         (curr.status === 'running' ||
           curr.status === 'collecting_facts' ||
+          curr.status === 'awaiting_user_facts' ||
           curr.steps_count !== (selectedTaskDetail.value?.step_traces.length || 0) ||
           curr.status !== selectedTaskDetail.value?.status)
       ) {
@@ -1129,6 +1136,9 @@ onUnmounted(() => {
           }}
         </el-tag>
         <el-tag size="small" type="info"> 对话采集中: {{ collectingTasks.length }} 个 </el-tag>
+        <el-tag size="small" type="warning" data-testid="awaiting-user-facts-count">
+          等待业务事实: {{ awaitingFactTasks.length }} 个
+        </el-tag>
         <el-tag size="small" type="info"> 累计对话工作流: {{ tasks.length }} 条 </el-tag>
 
         <template v-if="runningTasks.length > 0">
@@ -1791,6 +1801,7 @@ onUnmounted(() => {
             <el-option label="全部状态" value="" />
             <el-option label="实时运行中" value="running" />
             <el-option label="💬 对话采集中" value="collecting_facts" />
+            <el-option label="等待补充业务事实" value="awaiting_user_facts" />
             <el-option label="✅ 已出报告" value="completed" />
             <el-option label="⚠️ 部分样稿" value="partial_sample" />
             <el-option label="❌ 执行失败" value="failed" />
@@ -1922,7 +1933,7 @@ onUnmounted(() => {
                 展开各环节产出
               </el-button>
               <el-button
-                v-if="row.sufficiency_score >= 100 && row.status !== 'running'"
+                v-if="row.sufficiency_score >= 100 && !['running','awaiting_user_facts'].includes(row.status)"
                 size="small"
                 type="warning"
                 plain

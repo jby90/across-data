@@ -64,7 +64,7 @@ class AnalysisTask(Base):
     __table_args__ = (
         CheckConstraint(
             "status IN ('collecting_facts','ready_to_run','running','completed',"
-            "'partial_sample','failed')",
+            "'partial_sample','failed','awaiting_user_facts')",
             name="ck_analysis_tasks_status",
         ),
     )
@@ -96,6 +96,18 @@ class AnalysisTask(Base):
     total_duration_ms: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     mcp_calls_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     backtrack_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    fact_followup_rounds: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    pending_user_facts_json: Mapped[list[dict]] = mapped_column(
+        JSONB, nullable=False, default=list, server_default="[]"
+    )
+    fact_followup_history_json: Mapped[list[dict]] = mapped_column(
+        JSONB, nullable=False, default=list, server_default="[]"
+    )
+    analysis_checkpoint_json: Mapped[dict] = mapped_column(
+        JSONB, nullable=False, default=dict, server_default="{}"
+    )
     workflow_version_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("agent_workflow_configs.id", ondelete="RESTRICT"),

@@ -115,6 +115,8 @@ interface TaskDetail {
   total_duration_ms: number
   mcp_calls_count: number
   backtrack_count: number
+  pending_user_facts: Array<{ id: string; fact_key: string; dimension_codes: string[] }>
+  fact_followup_rounds: number
 }
 
 interface MiniKgNode {
@@ -163,6 +165,7 @@ const STATUS_LABEL: Record<string, string> = {
   ready_to_run: '待启动',
   partial_sample: '部分样稿',
   running: '分析中',
+  awaiting_user_facts: '等待补充业务事实',
   failed: '分析失败',
 }
 const FG_CATEGORIES: FgCategory[] = [
@@ -222,13 +225,14 @@ const lastAssistant = computed(() => {
 })
 const showChips = computed(
   () =>
-    status.value === 'collecting_facts' &&
+    ['collecting_facts', 'awaiting_user_facts'].includes(status.value) &&
     !!lastAssistant.value &&
     lastAssistant.value.options.length > 0 &&
     detail.value?.messages[detail.value.messages.length - 1]?.role === 'assistant',
 )
 const hasReport = computed(
-  () => (detail.value?.report_versions.length ?? 0) > 0 && status.value !== 'running',
+  () => (detail.value?.report_versions.length ?? 0) > 0 &&
+    !['running', 'awaiting_user_facts'].includes(status.value),
 )
 const report = computed<ReportVersion | null>(() => {
   const list = detail.value?.report_versions ?? []
@@ -236,6 +240,7 @@ const report = computed<ReportVersion | null>(() => {
 })
 const inputPlaceholder = computed(() => {
   if (status.value === 'running') return '多智能体分析进行中,请稍候…'
+  if (status.value === 'awaiting_user_facts') return '请回答分析中的业务追问；不确定可以如实说明'
   if (status.value === 'completed' || status.value === 'partial_sample')
     return '报告已生成。可在上方导出,或点击左侧「新建评估」评估新的场景'
   const slot = lastAssistant.value?.slot
@@ -336,7 +341,11 @@ async function send(text?: string) {
     })
     scrollBottom()
     apply(
-      await api.post<TaskDetail>(`/api/analysis/tasks/${detail.value.id}/messages`, { content }),
+      await api.post<TaskDetail>(`/api/analysis/tasks/${detail.value.id}/messages`, {
+        content,
+        question_id: status.value === 'awaiting_user_facts'
+          ? detail.value.pending_user_facts?.[0]?.id : undefined,
+      }),
     )
     await refreshTasks()
     scrollBottom()
@@ -596,6 +605,10 @@ onUnmounted(() => {
           </div>
 
           <!-- 分析进度(实时) -->
+          <el-alert v-if="status === 'awaiting_user_facts'" type="warning" :closable="false"
+            data-testid="analysis-user-fact-pause"
+            :title="`分析已暂停 · 第 ${detail.fact_followup_rounds}/2 轮业务追问`"
+            description="请在聊天框回答。已完成维度已保存，回答后仅重跑受影响维度；不确定的事实将保留缺口。" />
           <div v-if="status === 'running'" class="card progress" data-testid="progress-card">
             <div class="card-title">
               <span data-testid="task-running-tag">多智能体分析进行中…</span>

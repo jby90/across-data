@@ -214,9 +214,27 @@ def _brief(slot: str, task: AnalysisTask) -> str:
 
 
 async def post_user_message(
-    session: AsyncSession, task: AnalysisTask, content: str, start: StartFn
+    session: AsyncSession,
+    task: AnalysisTask,
+    content: str,
+    start: StartFn,
+    question_id: str | None = None,
 ) -> None:
     content = content.strip()
+    if task.status == "awaiting_user_facts":
+        from app.analysis.user_facts import answer_user_facts
+
+        question = task.pending_user_facts_json[0]
+        if question_id != question["id"]:
+            raise ValueError("追问已变化或已回答，请刷新后回答当前问题")
+        await add_message(session, task.id, "user", content, slot=question["fact_key"])
+        if await answer_user_facts(
+            session, task, {question["fact_key"]: content}, {question["fact_key"]: question_id}
+        ):
+            await start(session, task)
+        return
+    if question_id is not None:
+        raise ValueError("当前没有该待回答追问，请刷新对话")
     await add_message(session, task.id, "user", content)
 
     if task.status == "running":

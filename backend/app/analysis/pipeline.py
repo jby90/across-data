@@ -42,11 +42,15 @@ from app.analysis.tools import (
     check_country_report_updates,
     verify_finding,
 )
+from app.analysis.user_facts import MAX_FACT_ROUNDS, ask_next, candidate_binding, history_event
 from app.analysis.workflow_engine import (
     EIGHT_DIMENSIONS_SPEC,
     evaluate_fact_sufficiency,
 )
 from app.analysis.workflow_runtime import execution_settings, pin_active_version, require_executable
+from app.core.config import get_settings
+from app.ingestion.archive import ArchiveStore
+from app.ingestion.models import DocumentVersion
 
 log = logging.getLogger(__name__)
 
@@ -103,6 +107,7 @@ async def _add_trace(
     is_backtrack: bool = False,
     reason: str | None = None,
     resolution: str | None = None,
+    commit: bool = True,
 ) -> AnalysisStepTrace:
     seq = (
         len(
@@ -151,7 +156,10 @@ async def _add_trace(
         1 for c in calls if not c.tool_name.startswith("llm.")
     )
     task.updated_at = datetime.now(UTC)
-    await session.commit()
+    if commit:
+        await session.commit()
+    else:
+        await session.flush()
     return tr
 
 
@@ -223,6 +231,11 @@ def _build_user_message(
             "每项只选sentences中同一scope_id的连续编号；retained_context只是上下文，不可再次选择。"
         ),
         "output_schema": schema,
+        "user_fact_contract": {
+            "rounds_used": getattr(task, "fact_followup_rounds", 0) or 0,
+            "exhausted": (getattr(task, "fact_followup_rounds", 0) or 0) >= MAX_FACT_ROUNDS,
+            "rule": "仅追问用户实际业务事实；法源、条号、版本有效性缺失必须记为证据缺口。",
+        },
     }
     if retained:
         payload["retained_evidence"] = [
@@ -645,7 +658,11 @@ async def _analyse_dimension(
                 )
                 return finding
 
-            grounded = await asyncio.gather(*[ground_one(f) for f in validated.findings])
+            grounded = (
+                []
+                if validated.needs_user_fact
+                else await asyncio.gather(*[ground_one(f) for f in validated.findings])
+            )
             refused = [
                 f
                 for f in grounded
@@ -791,6 +808,8 @@ def _verify_dimension(
     """核验一个维度的全部结论,把通过/失败写回 finding,并返回问题清单。"""
     by_id = {c.clause_id: c for c in cands}
     problems: list[str] = []
+    if result.get("user_fact_gap") and not result.get("error"):
+        return problems  # Exhausted business facts cannot be repaired by legal-evidence retries.
     if cands and (
         result.get("error") or result.get("repair_unresolved") or not result.get("findings")
     ):
@@ -832,10 +851,101 @@ def _verify_dimension(
     return problems
 
 
+async def _pause_for_facts(session, task, results, dim_cands):
+    from app.analysis.chat import add_message
+    from app.analysis.evidence_selection import UserFactNeed
+
+    requests = {}
+    for code, result in results.items():
+        for raw in result.get("needs_user_fact", []):
+            need = UserFactNeed.model_validate(raw).model_dump()
+            key = need["fact_key"]
+            if key not in requests:
+                requests[key] = need | {"id": str(uuid.uuid4()), "dimension_codes": []}
+            requests[key]["dimension_codes"].append(code)
+            if need["question_zh"] not in requests[key]["question_zh"]:
+                requests[key]["question_zh"] += "\n" + need["question_zh"]
+                requests[key]["why_needed"] += "\n" + need["why_needed"]
+    if not requests:
+        return False
+    if task.fact_followup_rounds >= MAX_FACT_ROUNDS:
+        for result in results.values():
+            if result.get("needs_user_fact"):
+                result["user_fact_gap"] = copy.deepcopy(result["needs_user_fact"])
+                result["findings"] = []
+                result["gaps"] = "业务事实经两轮追问仍不足：" + "；".join(
+                    item["question_zh"] for item in result["needs_user_fact"]
+                )
+                result["needs_user_fact"] = []
+        history_event(task, "exhausted", requests=list(requests.values()))
+        await add_message(
+            session,
+            task.id,
+            "assistant",
+            "两轮追问后仍有业务事实无法确认，将在对应报告维度保留事实缺口，不推断答案。",
+        )
+        await _add_trace(
+            session,
+            task,
+            node="node_fact_collector",
+            name="业务事实追问达到上限",
+            phase="user_fact_exhausted",
+            status="warning",
+            calls=[],
+            summary="最多两轮追问已完成；事实不足的维度保留缺口",
+            out={"requests": list(requests.values())},
+        )
+        return False
+    task.fact_followup_rounds += 1
+    task.pending_user_facts_json = list(requests.values())
+    # Recheck retained proposals now; the checkpoint is not an automatic approval.
+    for code, result in results.items():
+        if not result.get("needs_user_fact"):
+            _verify_dimension(code, result, dim_cands.get(code, []))
+    checkpoint = {
+        "workflow_version_id": str(task.workflow_version_id),
+        "country_code": task.country_code,
+        "vehicle_model": task.vehicle_model,
+        "scenario_type": task.scenario_type,
+        "facts": copy.deepcopy(task.facts_json),
+        "results": copy.deepcopy(results),
+        "candidate_bindings": {
+            code: [candidate_binding(c) for c in values] for code, values in dim_cands.items()
+        },
+        "resume_dimensions": [],
+    }
+    task.analysis_checkpoint_json = checkpoint
+    task.status = "awaiting_user_facts"
+    history_event(task, "asked", requests=task.pending_user_facts_json)
+    await ask_next(session, task)
+    await _add_trace(
+        session,
+        task,
+        node="node_fact_collector",
+        name="分析中业务事实追问",
+        phase="user_fact_question",
+        status="awaiting_user_facts",
+        calls=[],
+        commit=False,
+        summary=f"分析暂停，等待 {len(requests)} 项业务事实（第 {task.fact_followup_rounds}/2 轮）",
+        out={
+            "requests": task.pending_user_facts_json,
+            "checkpoint": checkpoint,
+            "retained_dimensions": [c for c, r in results.items() if not r.get("needs_user_fact")],
+        },
+    )
+    await session.commit()
+    return True
+
+
 async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     task = await session.get(AnalysisTask, task_id)
     if task is None:
         return
+    if task.status == "awaiting_user_facts":
+        return  # Manual rerun cannot bypass unanswered questions.
+    checkpoint = copy.deepcopy(task.analysis_checkpoint_json or {})
+    resume = bool(checkpoint.get("resume_dimensions"))
     cc = task.country_code.upper()
     cfg = (
         await session.get(AgentWorkflowConfig, task.workflow_version_id)
@@ -845,11 +955,21 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     if cfg is None:
         cfg = await pin_active_version(session, task)
     require_executable(cfg)
+    if resume and checkpoint.get("workflow_version_id") != str(cfg.id):
+        raise ValueError("断点与工作流版本不一致，禁止复用结果")
+    if resume and any(
+        checkpoint.get(k) != getattr(task, k)
+        for k in ("country_code", "vehicle_model", "scenario_type")
+    ):
+        raise ValueError("断点业务场景已变化，禁止复用其他场景结果")
     runtime = {n["node_id"]: execution_settings(n) for n in cfg.nodes_json}
     task.status = "running"
-    task.total_tokens = task.total_duration_ms = task.mcp_calls_count = 0
-    task.backtrack_count = 0
-    task.findings_json = []
+    if not resume:
+        task.total_tokens = task.total_duration_ms = task.mcp_calls_count = 0
+        task.backtrack_count = task.fact_followup_rounds = 0
+        task.pending_user_facts_json = []
+        task.analysis_checkpoint_json = {}
+        task.findings_json = []
     await session.commit()
 
     tb = ToolBox(session, cc, cache_scope=str(task.org_id or task.created_by))
@@ -901,16 +1021,56 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             ],
         },
     )
-    if pending:
+    if pending and not resume:
         task.status = "collecting_facts"
         await session.commit()
         return
 
     # ---- 2. 检索 ----
     mark = len(tb.calls)
+    run_codes = (
+        set(checkpoint["resume_dimensions"]) if resume else dict(EIGHT_DIMENSIONS_SPEC).keys()
+    )
+    retained_results = copy.deepcopy(checkpoint.get("results", {})) if resume else {}
+    retained_cands = {}
 
     async def retrieve():
         availability = await tb.check_source_availability()
+        if resume:
+            fresh = {c.clause_id: c for c in await tb._load_candidates()}
+            changed_facts = {
+                k
+                for k in set(checkpoint["facts"]) | set(task.facts_json)
+                if checkpoint["facts"].get(k) != task.facts_json.get(k)
+            }
+            for code, result in retained_results.items():
+                if any(f.get("fact_key") in changed_facts for f in result.get("findings", [])):
+                    run_codes.add(code)
+            archive = ArchiveStore(get_settings().archive_dir)
+            checked_versions = set()
+            for code, bindings in checkpoint["candidate_bindings"].items():
+                if code in run_codes:
+                    continue
+                if all(
+                    b["clause_id"] in fresh and candidate_binding(fresh[b["clause_id"]]) == b
+                    for b in bindings
+                ):
+                    for binding in bindings:
+                        vid = binding["version_id"]
+                        if vid not in checked_versions:
+                            version = await session.get(DocumentVersion, uuid.UUID(vid))
+                            raw = archive.read(version.archive_path)
+                            if (
+                                archive.sha256(raw) != version.content_hash
+                                or len(raw) != version.size_bytes
+                            ):
+                                raise ValueError("断点原文归档完整性失败，禁止复用")
+                            checked_versions.add(vid)
+                    retained_cands[code] = [fresh[b["clause_id"]] for b in bindings]
+                else:
+                    run_codes.add(code)
+            for code in run_codes:
+                retained_results.pop(code, None)
         # check_source_availability populates the shared source cache first. The search
         # calls below read that cache; no concurrent commands use the AsyncSession.
         searched = await asyncio.gather(
@@ -922,9 +1082,12 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                     config=runtime["node_mcp_retriever"],
                 )
                 for code, _ in EIGHT_DIMENSIONS_SPEC
+                if code in run_codes
             ]
         )
-        dim_cands = dict(zip((c for c, _ in EIGHT_DIMENSIONS_SPEC), searched, strict=True))
+        dim_cands = retained_cands | dict(
+            zip((c for c, _ in EIGHT_DIMENSIONS_SPEC if c in run_codes), searched, strict=True)
+        )
         all_cands = {c.clause_id: c for lst in dim_cands.values() for c in lst}
         await tb.query_kg_obligations(list(all_cands))
         await tb.verify_clause_effective_date(list(all_cands.values()))
@@ -978,8 +1141,8 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
 
     # ---- 3. 分析(8 个维度并行调用模型) ----
     dim_titles = dict(EIGHT_DIMENSIONS_SPEC)
-    results: dict[str, dict[str, Any]] = {}
-    active = [code for code, _ in EIGHT_DIMENSIONS_SPEC if dim_cands[code]]
+    results: dict[str, dict[str, Any]] = copy.deepcopy(retained_results)
+    active = [code for code, _ in EIGHT_DIMENSIONS_SPEC if code in run_codes and dim_cands[code]]
     support_caches = {code: {} for code in active}
     t_start = asyncio.get_event_loop().time()
     outs = await asyncio.gather(
@@ -1001,7 +1164,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     for code, (data, call) in zip(active, outs, strict=True):
         results[code] = data
         llm_calls.append(call)
-    tokens = sum(int(r.get("tokens") or 0) for r in results.values())
+    tokens = sum(int(results[c].get("tokens") or 0) for c in active)
     errors = [c for c in llm_calls if not c.verified]
     await _add_trace(
         session,
@@ -1027,6 +1190,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             "vehicle_model": task.vehicle_model,
             "scenario_type": task.scenario_type,
             "dimensions_requested": active,
+            "retained_dimensions": sorted(retained_results),
         },
         out={
             "dimensions_analysed": active,
@@ -1060,6 +1224,9 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             },
         },
     )
+
+    if await _pause_for_facts(session, task, results, dim_cands):
+        return
 
     # ---- 4. 核验(程序化子串/数字校验) ----
     async def _verify_round(codes: list[str], phase: str) -> list[str]:
@@ -1160,7 +1327,7 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     for round_no in range(1, runtime["node_citation_verifier"]["max_backtrack_rounds"] + 1):
         if not problems:
             break
-        task.backtrack_count = round_no
+        task.backtrack_count += 1
         bad_codes = sorted({p.split(":")[0].split(" ")[0] for p in problems})
         b0 = asyncio.get_event_loop().time()
         outs2 = await asyncio.gather(
@@ -1238,6 +1405,8 @@ async def run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
                 },
             },
         )
+        if await _pause_for_facts(session, task, results, dim_cands):
+            return
         problems2 = await _verify_round(bad_codes, "re_verification")
         redo.backtrack_resolution = (
             "补证模型调用或格式校验失败，不能记作核验通过"
@@ -1359,6 +1528,8 @@ async def _compile(
         gap: str | None = None
         if r.get("error"):
             gap = "分析技术失败（模型调用或格式错误），请重试；不能当作法源不足"
+        elif r.get("user_fact_gap"):
+            gap = r["gaps"]
         elif r.get("repair_unresolved"):
             gap = "仍有补证任务未完成；已有核验结果保留，不能标记为完整报告"
         elif not dim_cands.get(code):
@@ -1369,9 +1540,10 @@ async def _compile(
             gap = f"另有 {dropped} 条结论未通过原文核验,已剔除(待核查)"
         technical_failure = bool(
             r.get("error")
-            or r.get("repair_unresolved")
-            or dropped
-            or (dim_cands.get(code) and not good)
+            or (
+                not r.get("user_fact_gap")
+                and (r.get("repair_unresolved") or dropped or (dim_cands.get(code) and not good))
+            )
         )
         if technical_failure and not gap:
             gap = "证据选择/核验仍失败，未生成可交付结论；请重试分析"
@@ -1393,6 +1565,8 @@ async def _compile(
                 else "PARTIAL_GAP",
                 "gap_kind": "analysis_error"
                 if technical_failure
+                else "user_fact_gap"
+                if r.get("user_fact_gap")
                 else "source_gap"
                 if gap
                 else None,
@@ -1419,7 +1593,7 @@ async def _compile(
             if technical_failed
             else ""
             if full
-            else "尚有维度缺少可用法源,已逐维标注证据缺口,本报告为部分样稿。"
+            else "尚有维度存在业务事实或可用法源缺口,已逐维标注,本报告为部分样稿。"
         )
     )
     rvs = list(
@@ -1561,5 +1735,7 @@ async def _update_linkage(
     task.status = (
         "failed" if rv.status == "analysis_failed" else "completed" if full else "partial_sample"
     )
+    task.analysis_checkpoint_json = {}
+    task.pending_user_facts_json = []
     task.updated_at = datetime.now(UTC)
     await session.commit()

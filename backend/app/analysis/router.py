@@ -60,6 +60,7 @@ from app.analysis.workflow_runtime import (
     activate_version,
     execution_settings,
     pin_active_version,
+    require_executable,
 )
 from app.core.db import get_session
 from app.iam.deps import (
@@ -90,8 +91,22 @@ STALE_RUNNING_SECONDS = 600
 
 async def _start(session: AsyncSession, task: AnalysisTask) -> None:
     """把任务置为运行中并在后台启动流水线,请求立即返回。"""
+    task = await session.scalar(
+        select(AnalysisTask)
+        .where(AnalysisTask.id == task.id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    )
+    if task.status in {"running", "awaiting_user_facts"}:
+        raise HTTPException(409, "任务正在执行或等待业务事实，不能重复启动或跳过追问")
     try:
-        await pin_active_version(session, task)
+        if (task.analysis_checkpoint_json or {}).get("resume_dimensions"):
+            cfg = await session.get(AgentWorkflowConfig, task.workflow_version_id)
+            if cfg is None:
+                raise ValueError("断点的执行版本不存在")
+            require_executable(cfg)
+        else:
+            await pin_active_version(session, task)
     except ValueError as exc:
         raise HTTPException(409, str(exc)) from exc
     task.status = "running"
@@ -259,6 +274,8 @@ async def _to_task_summary(session: AsyncSession, t: AnalysisTask) -> AnalysisTa
     missing_unfulfilled = sum(
         1 for m in (t.missing_facts_json or []) if not m.get("is_fulfilled", False)
     )
+    if t.status == "awaiting_user_facts":
+        missing_unfulfilled += len(t.pending_user_facts_json or [])
     return AnalysisTaskSummaryOut(
         id=t.id,
         conversation_code=format_conversation_code(t.id, t.created_at),
@@ -389,6 +406,8 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
             )
             for m in msgs
         ],
+        pending_user_facts=t.pending_user_facts_json or [],
+        fact_followup_rounds=t.fact_followup_rounds,
         id=t.id,
         conversation_code=format_conversation_code(t.id, t.created_at),
         org_id=t.org_id,
@@ -752,7 +771,9 @@ async def update_user_task_facts(
     session: SessionDep,
 ) -> AnalysisTaskDetailOut:
     """补充追问事实；当事实完备度达到 100% 时自动启动多智能体协同生成八维度报告。"""
-    task = await session.get(AnalysisTask, task_id)
+    task = await session.scalar(
+        select(AnalysisTask).where(AnalysisTask.id == task_id).with_for_update()
+    )
     if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
 
@@ -760,6 +781,18 @@ async def update_user_task_facts(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="分析正在运行中,请等待完成后再补充事实"
         )
+    if task.status == "awaiting_user_facts":
+        from app.analysis.user_facts import answer_user_facts
+
+        try:
+            resume = await answer_user_facts(session, task, body.facts, body.question_ids)
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
+        if resume and body.auto_run_if_sufficient:
+            await _start(session, task)
+        return await _to_task_detail(session, task)
+    if body.question_ids:
+        raise HTTPException(409, "该追问已完成，请勿重复提交旧回答")
     merged = dict(task.facts_json or {})
     for k, v in (body.facts or {}).items():
         if v is not None and str(v).strip():
@@ -1210,10 +1243,17 @@ async def post_chat_message(
     session: SessionDep,
 ) -> AnalysisTaskDetailOut:
     """用户在聊天框发送一条消息:助手记录信息、继续追问,齐备后自动启动分析。"""
-    task = await session.get(AnalysisTask, task_id)
+    task = await session.scalar(
+        select(AnalysisTask).where(AnalysisTask.id == task_id).with_for_update()
+    )
     if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="对话不存在")
-    await post_user_message(session, task, body.content, _start)
+    try:
+        await post_user_message(
+            session, task, body.content, _start, str(body.question_id) if body.question_id else None
+        )
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
     await session.refresh(task)
     return await _to_task_detail(session, task)
 

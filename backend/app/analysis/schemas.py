@@ -17,6 +17,8 @@ def compute_active_node(task_status: str, traces: list[Any]) -> tuple[str | None
     """根据当前对话工作流状态和已完成步骤轨迹,计算当前正在运行或等待中的 Agent 节点。"""
     if task_status == "collecting_facts":
         return "node_fact_collector", "信息采集与追问 Agent（对话采集中）"
+    if task_status == "awaiting_user_facts":
+        return "node_fact_collector", "信息采集与追问 Agent（分析暂停，等待业务事实）"
     if task_status == "ready_to_run":
         return "node_fact_collector", "信息采集与追问 Agent（事实已齐备，待启动）"
     if task_status != "running":
@@ -31,6 +33,8 @@ def compute_active_node(task_status: str, traces: list[Any]) -> tuple[str | None
     )
     if phase == "fact_check":
         return "node_mcp_retriever", "MCP 法规混合检索 Agent（正在检索目标国现行条款）"
+    if phase == "user_fact_answer":
+        return "node_mcp_retriever", "MCP 法规混合检索 Agent（正在恢复受影响维度）"
     if phase == "retrieval":
         return (
             "node_dimension_analyst",
@@ -309,6 +313,7 @@ class ChatMessageOut(BaseModel):
 
 class ChatMessageIn(BaseModel):
     content: str = Field(min_length=1, max_length=2000)
+    question_id: uuid.UUID | None = None
 
 
 class AnalysisTaskDetailOut(BaseModel):
@@ -340,6 +345,8 @@ class AnalysisTaskDetailOut(BaseModel):
     workflow_version_id: uuid.UUID | None = None
     workflow_version_no: int
     messages: list[ChatMessageOut] = Field(default_factory=list)
+    pending_user_facts: list[dict[str, Any]] = Field(default_factory=list)
+    fact_followup_rounds: int = 0
     created_at: datetime
     updated_at: datetime
 
@@ -356,6 +363,7 @@ class AnalysisTaskCreateIn(BaseModel):
 class UpdateFactsIn(BaseModel):
     facts: dict[str, Any]
     auto_run_if_sufficient: bool = True
+    question_ids: dict[str, str] = Field(default_factory=dict)
 
 
 class ReportEditIn(BaseModel):

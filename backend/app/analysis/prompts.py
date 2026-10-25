@@ -11,6 +11,12 @@ ANALYSIS_SYSTEM_PROMPT = (
     "clause_id、fact_key来自输入，sentence_ids为1至6个连续整数；不是法律条号。不要重抄quote或翻译。"
     "每项句子须在同一scope_id；只选sentences，不选retained_context或retained_evidence中的已完成部分。"
     "完整法律列表由系统组织为选证单元，只选实际提供的sentence_id，不把列表项目序号当成句子编号。"
+    "若当前维度缺少影响判断的用户业务事实，返回needs_user_fact数组："
+    "每项含fact_key(业务事实英文键)、question_zh、why_needed、options(可选示例)。"
+    "只能询问实际业务的主体、场景、处理方式、目的、接收方或措施等；"
+    "不能向用户索要法条、法规原文、法源、法律有效状态或法律判断。法源不足写入gaps。"
+    "需要追问时该维度findings留空，不根据未知业务事实下结论；已回答但含糊时应具体追问。"
+    "若user_fact_contract.exhausted为true，不再追问，明确记录业务事实缺口，不能猜测答案。"
     "此阶段不写最终规则，obligation填‘待依据生成’，risk_level填MEDIUM。"
     '仅返回 {"findings":[{"clause_id":"候选ID","sentence_ids":[1],'
     '"fact_key":"事实键","obligation":"待依据生成","risk_level":"MEDIUM"}],'

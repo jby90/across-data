@@ -13,7 +13,7 @@ from app.analysis.retrieval_planner import RETRIEVAL_SYSTEM_PROMPT
 from app.core.config import get_settings
 from app.knowledge.history import snapshot
 
-RUNTIME_SCHEMA = "s5-source-support-v6"
+RUNTIME_SCHEMA = "s6-user-facts-v7"
 # Applicable fields only: deterministic nodes do not pretend to use LLM parameters.
 PARAMETERS = {
     "node_start": set(),
@@ -192,7 +192,7 @@ async def ensure_baseline(session: AsyncSession) -> AgentWorkflowConfig:
             readonly_locked=True,
             nodes_json=baseline_nodes(),
             edges_json=copy.deepcopy(DEFAULT_WORKFLOW_EDGES),
-            change_note=("[baseline-s5-quality] 问题检索与依据限定生成；旧库仅追加待激活版本"),
+            change_note=("[baseline-s6-user-facts] 分析中业务追问与断点续跑；旧库仅追加待激活版本"),
         )
         session.add(current)
         await session.flush()
