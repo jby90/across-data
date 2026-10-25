@@ -36,7 +36,9 @@ def write_report(result, path):
         "",
         f"完成 {result['completed_cases']}/{result['total_cases']} 题；技术错误 {result['technical_error_cases']} 题。",
         f"其中 {sum(c['findings_total'] > 0 for c in result['cases'])} 题有分析项（含拒绝/失败尝试）；无输出不算引文通过。",
-        f"已知 Token：{result['total_tokens']:,}；客户端总耗时：{result['elapsed_seconds']:.2f} 秒。",
+        f"已知 Token：{result['total_tokens']:,}；本次客户端耗时：{result['elapsed_seconds']:.2f} 秒。",
+        "续跑时只统计本次客户端耗时；此前中断耗时未知。Token 含记录的缓存结果，不代表服务商计费账单。"
+        if result.get("resumed_batch") else "",
         "",
         "标注按已归档原文定位建立，未根据检索前五结果挑选题目，也未用模型自评冒充人工核验。",
         "埃及部分原文OCR损伤、法源有效状态未知及源隔离造成的未命中均照实保留；不自动解除隔离。",
@@ -55,7 +57,9 @@ def write_report(result, path):
 
 async def run(args):
     started = time.perf_counter()
-    batch = str(uuid.uuid4())
+    batch = str(uuid.UUID(args.resume_batch)) if args.resume_batch else str(uuid.uuid4())
+    if args.retry_technical_errors and not args.resume_batch:
+        raise ValueError("技术重试必须明确指定原批次；不能把复测混称为独立新评测")
     async with httpx.AsyncClient(base_url=args.base_url, timeout=600) as client:
         r = await client.post(
             "/api/auth/admin/login",
@@ -69,6 +73,29 @@ async def run(args):
         r = await client.get("/api/admin/agent-studio/evaluations/suite")
         r.raise_for_status()
         frozen = r.json()
+        done = set()
+        retried = []
+        if args.resume_batch:
+            r = await client.get("/api/admin/agent-studio/evaluations/latest")
+            r.raise_for_status()
+            previous = r.json()
+            r = await client.get("/api/admin/agent-studio/workflow")
+            r.raise_for_status()
+            if (previous.get("batch_id") != batch
+                or previous.get("suite_sha256") != frozen["suite_sha256"]
+                or previous.get("workflow_version_id") != r.json()["id"]):
+                raise RuntimeError("批次、冻结题集或执行版本已变更，拒绝混合续跑")
+            # The server appends immutable attempts. Never replay semantic
+            # rejections just to improve a score; explicit recovery is technical only.
+            done = {case["question_id"] for case in previous["cases"]}
+            if args.retry_technical_errors:
+                retried = [case["question_id"] for case in previous["cases"] if any(
+                    case.get(key) for key in ("analysis_error", "judge_error", "retrieval_error")
+                )]
+                done -= set(retried)
+            print(f"Resuming {batch}; retaining {len(done)} recorded cases", flush=True)
+            if retried:
+                print(f"Technical retry only: {', '.join(retried)}; old audits retained", flush=True)
         gate = asyncio.Semaphore(args.concurrency)
 
         async def one(q):
@@ -83,7 +110,7 @@ async def run(args):
                     flush=True,
                 )
 
-        await asyncio.gather(*(one(q) for q in frozen["cases"]))
+        await asyncio.gather(*(one(q) for q in frozen["cases"] if q["id"] not in done))
         r = await client.get("/api/admin/agent-studio/evaluations/latest")
         r.raise_for_status()
         result = r.json()
@@ -92,6 +119,13 @@ async def run(args):
         ):
             raise RuntimeError("批次不完整或被其他批次切换，不能发布混合指标")
         result["elapsed_seconds"] = time.perf_counter() - started
+        result["resumed_batch"] = bool(args.resume_batch)
+        result["retried_technical_errors"] = retried
+        if retried:
+            result["note"] += (
+                " 本次仅对技术失败追加尝试，其他题复用原记录；不是全题重新独立运行。"
+                "原始整批结果另行保留，语义否定结果未为改善分数而重试。"
+            )
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(
             json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -108,6 +142,9 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--base-url", default="http://127.0.0.1:18005")
     p.add_argument("--concurrency", type=int, default=3)
+    p.add_argument("--resume-batch", help="Resume the current unchanged batch without replaying records")
+    p.add_argument("--retry-technical-errors", action="store_true",
+                   help="Append retries only for recorded technical errors; preserve old audits")
     p.add_argument("--output", type=Path, required=True)
     p.add_argument(
         "--report",

@@ -2429,7 +2429,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <p data-testid="evaluation-completeness">已完成 {{ benchmarkData.completed_cases }}/{{ benchmarkData.total_cases }} 题 · 出现过技术错误 {{ benchmarkData.technical_error_cases }} 题（含已恢复的尝试）</p>
+          <p data-testid="evaluation-completeness">已完成 {{ benchmarkData.completed_cases }}/{{ benchmarkData.total_cases }} 题 · 当前案例记录中技术错误 {{ benchmarkData.technical_error_cases }} 题；被替代的历史尝试另存审计，不计入此处。</p>
           <p>其中 {{ benchmarkData.cases.filter(c => c.findings_total > 0).length }} 题有分析项（含拒绝/失败尝试）；无输出不算引文通过。</p>
 
           <el-table :data="benchmarkData.cases" border stripe size="small" style="margin-top: 16px">

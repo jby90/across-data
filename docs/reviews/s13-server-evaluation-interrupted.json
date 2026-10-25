@@ -1,0 +1,159 @@
+{
+  "batch_id": "0a1ab17d-43f6-434b-bb50-c9f32ad6291f",
+  "state": "interrupted",
+  "reason": "HTTP 500 at S5-12 during server response degradation; no full-suite success claimed",
+  "completed_stdout_records": [
+    {
+      "question_id": "S5-01",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        0,
+        0
+      ],
+      "judge": [
+        0,
+        0
+      ]
+    },
+    {
+      "question_id": "S5-02",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        2,
+        2
+      ],
+      "judge": [
+        2,
+        2
+      ]
+    },
+    {
+      "question_id": "S5-03",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        4,
+        4
+      ],
+      "judge": [
+        4,
+        4
+      ]
+    },
+    {
+      "question_id": "S5-04",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        3,
+        3
+      ],
+      "judge": [
+        3,
+        3
+      ]
+    },
+    {
+      "question_id": "S5-05",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        3,
+        3
+      ],
+      "judge": [
+        3,
+        3
+      ]
+    },
+    {
+      "question_id": "S5-06",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        2,
+        3
+      ],
+      "judge": [
+        2,
+        2
+      ]
+    },
+    {
+      "question_id": "S5-07",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        1,
+        1
+      ],
+      "judge": [
+        1,
+        1
+      ]
+    },
+    {
+      "question_id": "S5-09",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        0,
+        0
+      ],
+      "judge": [
+        0,
+        0
+      ]
+    },
+    {
+      "question_id": "S5-08",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        0,
+        0
+      ],
+      "judge": [
+        0,
+        0
+      ]
+    },
+    {
+      "question_id": "S5-10",
+      "retrieval": [
+        1,
+        1
+      ],
+      "quote": [
+        0,
+        0
+      ],
+      "judge": [
+        0,
+        0
+      ]
+    }
+  ],
+  "manual_review": "pending",
+  "next": "Resume unfinished cases serially after resource/cutover validation; retain prior records"
+}
