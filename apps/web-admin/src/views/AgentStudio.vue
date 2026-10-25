@@ -518,7 +518,7 @@ function connectLiveEvents() {
   progressStream = startProgressStream({
     url: '/api/admin/agent-studio/events', token: api.token,
     onState: state => { progressState.value = state },
-    onUnauthorized: () => { api.setToken(null); window.location.assign('/login') },
+    onUnauthorized: () => { api.setToken(null); window.location.assign(import.meta.env.BASE_URL + 'login') },
     onEvent: event => {
       if (progressRefresh !== undefined) return
       progressRefresh = setTimeout(() => {

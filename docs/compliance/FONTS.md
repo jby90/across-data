@@ -1,30 +1,19 @@
-# 字体登记与使用规则
+# 自托管字体与多语言导出
 
-## 原则
+仅分发 OFL 开源字体，不打包或嵌入系统字体，不使用字体 CDN。
 
-1. **不使用系统字体做分发/嵌入**:微软雅黑、宋体、黑体、苹方、Arial、Segoe UI、方正、汉仪等均无嵌入/分发授权,不得打包、不得嵌入平台生成的 PDF。
-2. 只使用 **OFL-1.1 / Apache-2.0** 开源字体,**自托管**,不引用 Google Fonts 等外部 CDN。
-3. 阿拉伯文必须使用带 HarfBuzz 整形的渲染链(WeasyPrint/浏览器),并支持从右到左。
-4. **子集化、转换格式(如 TTF→WOFF2)视为修改**:核对保留字体名(RFN)条款,保留版权声明与许可全文,必要时改名。
-5. Word 导出只写字体名,**不分发系统字体**;需要版式完全一致时嵌入下表中的开源字体。
-6. 新增字体必须先在本表登记,再入库。
+浏览器使用 Fontsource Inter 5.3.0、Noto Sans SC 5.3.1、Noto Naskh Arabic 5.3.0 的 400/600 WOFF2。上游已经按 unicode-range 分包，本项目不再修改字体字节。完整文件 SHA-256、版本和分包性质见 [browser-fonts-manifest.json](browser-fonts-manifest.json)。CSS 使用 font-display: swap，浏览器按字符范围按需加载。保留各包 OFL 全文，许可页可查看。
 
-## 登记表
+PDF 使用 Google Fonts 官方仓库固定提交 `e7db6ca603fd4862010383ff17ffd6cc4ffac1c0` 的未修改 TTF。来源、哈希与许可原件保存在 `backend/app/analysis/fonts/open-fonts-manifest.json`，启动导出前校验文件哈希。
 
-| 字体 | 用途 | 许可 | 版本 | 来源 | SHA-256 | 子集化 | 状态 |
-|---|---|---|---|---|---|---|---|
-| 思源黑体 CN Medium(Source Han Sans CN) | 中文界面/报告正文 | Apache-2.0(随字体文件内嵌声明,2014 版) | 待登记 | 一期使用的文件,SHA-256 见 `AutoDataCross/.../FONT-NOTICE.json`:`fa660569…8644b43`(TTF) | 见左 | 否 | **待重新下载并核对** |
-| Noto Naskh Arabic Regular | 阿拉伯文正文 | OFL-1.1 | 2.021 | https://github.com/notofonts/arabic | `8a515763…92689840` | 否 | 待迁入 |
-| Noto Sans SC / Noto Serif SC | 中文界面/报告衬线 | OFL-1.1 | 待登记 | https://github.com/notofonts/noto-cjk | 待登记 | 计划按 unicode-range 分包 | 待选定 |
-| Inter | 拉丁/法文界面 | OFL-1.1 | 待登记 | https://github.com/rsms/inter | 待登记 | 否 | 待选定 |
-| JetBrains Mono | 等宽(条号、哈希) | OFL-1.1 | 待登记 | https://github.com/JetBrains/JetBrainsMono | 待登记 | 否 | 待选定 |
+| 字体 | 字节数 | SHA-256 |
+|---|---:|---|
+| notosanssc | 17772300 | `a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da` |
+| notonaskharabic | 307592 | `67b5a525a661b607971fbd3f96a81b89d3a768e74534fca84f18ac97e6fab72f` |
+| inter | 876576 | `29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031` |
 
-> 上表"待登记"项在字体入库时用 `Get-FileHash -Algorithm SHA256` 填写,并核对来源页面上的许可证文本。
-> 一期的 Source Han Sans 文件标注为 Apache-2.0(Adobe 2014 版本)。新平台入库前要重新从官方来源下载并核对版本与许可文本,**不直接拷贝一期仓库文件**。
+PDF 由 WeasyPrint 70 + Pango/HarfBuzz 进行阿拉伯文整形、从右到左排版和字体嵌入；PDF 内部自动子集化，不把生成的子集字体作为独立字体产品发布。所选字体的 OFL 声明中，Noto Sans SC 的保留名称是 Source，Noto/Inter 的所用名称未列作保留名称；版权和 OFL 全文随包保留。Word 只写 Inter / Noto Sans SC / Noto Naskh Arabic 字体名，不嵌入系统字体；接收电脑需安装对应开源字体才能保持相同版式。
 
-## 待办
+旧 SourceHanSansCN-Medium.ttf 的来源尚未重新确认，S12 渲染不再使用或随生产镜像分发，Git 历史保留。字体核验属于工程检查，人工法务确认仍待完成。
 
-- [ ] 选定中文字体版本(Source Han Sans / Noto Sans SC)并下载入库,填 SHA-256。
-- [ ] 为 WeasyPrint PDF 导出准备字体目录与 fontconfig 配置。
-- [ ] 前端字体分包与 `font-display` 策略。
-- [ ] 评估是否需要中文衬线字体用于报告。
+Windows 开发验证需要官方 MSYS2 UCRT64 的 Pango 动态库，设置 WEASYPRINT_DLL_DIRECTORIES；Linux 容器安装 Debian 的 libpango-1.0-0、libpangoft2-1.0-0、libharfbuzz-subset0。原生库保持未修改、动态加载，许可证原件留在系统包 copyright 目录。

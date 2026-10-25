@@ -3,14 +3,10 @@ from __future__ import annotations
 import copy
 import io
 import re
-import textwrap
 import zipfile
 from datetime import UTC, datetime
-from pathlib import Path
 from types import SimpleNamespace
 from xml.sax.saxutils import escape
-
-from PIL import Image, ImageDraw, ImageFont
 
 from app.analysis.citation_policy import policy_label, review_detail, review_label, review_overview
 from app.analysis.models import AnalysisTask, ReportVersion
@@ -98,9 +94,6 @@ COUNTRY_LABEL = {
     "LB": "黎巴嫩 (Lebanon)",
 }
 
-# 随包携带的开源字体(Source Han Sans,Apache-2.0),不依赖系统字体
-BUNDLED_FONT = Path(__file__).parent / "fonts" / "SourceHanSansCN-Medium.ttf"
-
 PARTIAL_NOTICE = (
     "【部分样稿】部分维度缺少可通过原文核验的依据,已逐维标注缺口;"
     "引用的中文为机器翻译,尚未经律所人工复核。"
@@ -112,7 +105,8 @@ def _w_p(text: str, bold: bool = False, size: int = 22, color: str = "1E293B") -
     keep = "<w:keepNext/>" if (bold and size >= 24) or text.startswith("依据与合规义务") else ""
     return (
         f"<w:p><w:pPr>{keep}<w:spacing w:after='120' w:line='300' w:lineRule='auto'/></w:pPr>"
-        f"<w:r><w:rPr>{b_tag}<w:color w:val='{color}'/>"
+        f"<w:r><w:rPr>{b_tag}<w:rFonts w:ascii='Inter' w:hAnsi='Inter' "
+        f"w:eastAsia='Noto Sans SC' w:cs='Noto Naskh Arabic'/><w:color w:val='{color}'/>"
         f"<w:sz w:val='{size}'/><w:szCs w:val='{size}'/></w:rPr>"
         f"<w:t xml:space='preserve'>{escape(text or '')}</w:t></w:r></w:p>"
     )
@@ -269,132 +263,15 @@ def build_report_docx(task: AnalysisTask, rv: ReportVersion, dimension: str | No
     return buf.getvalue()
 
 
-def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    if BUNDLED_FONT.exists():
-        return ImageFont.truetype(str(BUNDLED_FONT), size=size)
-    return ImageFont.load_default()
-
-
-def _wrap(text: str, width: int) -> list[str]:
-    return textwrap.wrap(text, width=width) or [""]
-
-
-def _pixel_lines(text, font, width):
-    """Wrap by rendered width, including long identifiers and mixed-language text."""
-    for raw in text.splitlines() or [""]:
-        while raw:
-            lo, hi = 1, len(raw)
-            while lo < hi:
-                mid = (lo + hi + 1) // 2
-                if font.getlength(raw[:mid]) <= width:
-                    lo = mid
-                else:
-                    hi = mid - 1
-            yield raw[:lo]
-            raw = raw[lo:]
-
 
 def build_report_pdf(task: AnalysisTask, rv: ReportVersion, dimension: str | None = None) -> bytes:
-    """生成多页 PDF(页面图片式,使用随包开源字体,不依赖系统字体)。"""
-    task, rv = _view(task, rv, dimension)
-    page_w, page_h = 1240, 1754
-    margin_x, margin_top, margin_bottom = 80, 115, 90
-    fonts = {
-        "TITLE": _load_font(28),
-        "H2": _load_font(22),
-        "BODY": _load_font(17),
-        "SMALL": _load_font(15),
-        "WARN": _load_font(15),
-    }
-    country = COUNTRY_LABEL.get(task.country_code, task.country_code)
-    queue: list[tuple[str, str]] = [
-        ("TITLE", f"{country} 汽车数据跨境合规评估报告 {dimension or '八维度'}"),
-        ("SMALL", f"任务:{task.title} | v{rv.version_no} | 车型:{task.vehicle_model}"),
-    ]
-    queue.extend([("WARN", EXPORT_NOTICE), ("SMALL", DISCLAIMER)])
-    queue.append(("SMALL", review_overview(rv.dimensions_json)))
-    queue.extend(("WARN", notice) for notice in update_notices(rv))
-    queue.append(("SMALL", f"生成时引用策略：{policy_label(rv.citation_policy)}"))
-    if rv.is_partial_sample:
-        queue += [("WARN", ln) for ln in _wrap(PARTIAL_NOTICE, 50)]
-    queue.append(("H2", "一、执行摘要"))
-    for raw in (rv.executive_summary or "").splitlines():
-        queue += [("BODY", ln) for ln in _wrap(raw.strip(), 50) if raw.strip()]
-    queue.append(("H2", "二、合规分析判定矩阵"))
-    for idx, f in enumerate(task.findings_json or [], start=1):
-        head = (
-            f"[{idx}] {f.get('business_fact', '')} → {_clause_ref(f)} "
-            f"风险:{f.get('risk_level', '')}"
-        )
-        queue += [("BODY", ln) for ln in _wrap(head, 50)]
-        detail = f"义务:{f.get('compliance_obligation', '')} | 依据:{f.get('basis_quote', '')}"
-        queue += [("SMALL", ln) for ln in _wrap(detail, 56)]
-    if not task.findings_json:
-        queue.append(("SMALL", "该版本未保存判定矩阵快照，请查看本章引用；未借用当前任务数据。"))
-    queue.append(("H2", "三、评估章节"))
-    for dim in rv.dimensions_json or []:
-        title = f"【{dim.get('dimension_code', '')}】{dim.get('dimension_title', '')}"
-        queue.append(("H2", f"{title} [{dim.get('risk_level', '')}]"))
-        if dim.get("missing_gap_note"):
-            queue += [("WARN", ln) for ln in _wrap(f"核查缺口:{dim['missing_gap_note']}", 50)]
-        for raw in str(dim.get("content_markdown", "")).splitlines():
-            if raw.strip():
-                queue += [("BODY", ln) for ln in _wrap(raw.strip().lstrip("#").strip(), 50)]
-        for cite in dim.get("citations", []) or []:
-            ref = f"引用 {cite.get('citation_tag', '')}: {_clause_ref(cite)}"
-            queue += [("SMALL", ln) for ln in _wrap(ref, 56)]
-            queue.extend(
-                ("SMALL", ln)
-                for ln in _wrap(
-                    f"原文：{cite.get('quote_original', '')}；"
-                    f"来源：{cite.get('source_url') or '未提供'}；"
-                    f"人工复核：{review_label(cite)}；"
-                    f"{review_detail(cite)}",
-                    56,
-                )
-            )
+    """Selectable multilingual PDF; originals and frozen report snapshots remain unchanged."""
+    from app.analysis.pdf_renderer import render_pdf
 
-    steps = {"TITLE": 48, "H2": 42, "WARN": 34, "SMALL": 26, "BODY": 32}
-    pages: list[Image.Image] = []
-    img = Image.new("RGB", (page_w, page_h), (255, 255, 255))
-    draw = ImageDraw.Draw(img)
-    y = margin_top
-    colors = {
-        "TITLE": (15, 23, 42),
-        "H2": (29, 78, 216),
-        "WARN": (180, 83, 9),
-        "SMALL": (71, 85, 105),
-        "BODY": (30, 41, 59),
-    }
-    for style, text in [
-        (s, line) for s, raw in queue for line in _pixel_lines(raw, fonts[s], page_w - margin_x * 2)
-    ]:
-        step = steps[style]
-        if y + step > page_h - margin_bottom:
-            pages.append(img)
-            img = Image.new("RGB", (page_w, page_h), (255, 255, 255))
-            draw = ImageDraw.Draw(img)
-            y = margin_top
-        if style == "WARN":
-            draw.rectangle(
-                [margin_x - 8, y - 4, page_w - margin_x, y + step - 4], fill=(254, 243, 199)
-            )
-        draw.text((margin_x, y), text, font=fonts[style], fill=colors[style])
-        y += step
-    pages.append(img)
-    for idx, page in enumerate(pages, start=1):
-        footer_draw = ImageDraw.Draw(page)
-        footer_draw.text(
-            (margin_x, 30), _context(task, rv, dimension), font=fonts["SMALL"], fill=(71, 85, 105)
-        )
-        footer_draw.text((margin_x, 54), EXPORT_NOTICE, font=_load_font(12), fill=(71, 85, 105))
-        footer_draw.text((margin_x, 76), DISCLAIMER, font=_load_font(12), fill=(71, 85, 105))
-        footer_draw.text(
-            (page_w // 2 - 60, page_h - 50),
-            f"Page {idx} / {len(pages)}",
-            font=fonts["SMALL"],
-            fill=(148, 163, 184),
-        )
-    out = io.BytesIO()
-    pages[0].save(out, format="PDF", resolution=150.0, save_all=True, append_images=pages[1:])
-    return out.getvalue()
+    task, rv = _view(task, rv, dimension)
+    return render_pdf(
+        task, rv, dimension=dimension, context=_context(task, rv, dimension),
+        country=COUNTRY_LABEL.get(task.country_code, task.country_code),
+        notices=[EXPORT_NOTICE, DISCLAIMER, *update_notices(rv)]
+        + ([PARTIAL_NOTICE] if rv.is_partial_sample else []),
+    )

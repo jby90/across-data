@@ -1,6 +1,6 @@
-/* Local browser font fallbacks only. No external font requests or bundled font assets. */
+/* Self-hosted OFL WOFF2 subsets; imported by each frontend. No font CDN. */
 :root {
-  --cy-font: 'Noto Sans SC', 'Source Han Sans CN', 'Inter', system-ui, sans-serif;
+  --cy-font: 'Inter', 'Noto Sans SC', 'Noto Naskh Arabic', sans-serif;
   --cy-ink: #20323f;
   --cy-muted: #64748b;
   --cy-blue: #315fe8;
@@ -982,3 +982,5 @@ code {
     left: 16px !important;
   }
 }
+
+.demo-notice { margin: 0 0 18px; color: #64748b; font-size: 12px; line-height: 1.6; }

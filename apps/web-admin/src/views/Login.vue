@@ -68,6 +68,7 @@ async function submit() {
     </section>
     <main class="login-main">
       <div class="login-form">
+        <p class="demo-notice">演示环境，数据仅供参考</p>
         <div class="eyebrow">ADMIN WORKSPACE</div>
         <h2>管理工作，从这里开始</h2>
         <p class="login-description">登录以管理法规资料、内容复核与平台运行。</p>
@@ -95,6 +96,7 @@ async function submit() {
             >登录工作台<AppIcon name="arrow" style="margin: 0 0 0 10px"
           /></el-button>
         </el-form>
+        <p><RouterLink to="/licenses">开源许可声明</RouterLink></p>
         <div class="login-switch">
           企业用户？<template v-if="userUrl"
             ><a :href="userUrl">前往企业端<AppIcon name="arrow" /></a

@@ -21,6 +21,8 @@ dist-*/
 data/archive/
 data/tmp/
 backend/data/
+backend/wheelhouse/*
+!backend/wheelhouse/.gitkeep
 *.log
 .pgdata/
 

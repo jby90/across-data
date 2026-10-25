@@ -1037,13 +1037,15 @@ async def export_user_report(
         citation_policy=rv.citation_policy,
         regulatory_updates=await report_updates(session, rv.id),
     )
-    data = (
-        build_report_zip(task, export_view)
-        if ext == "zip"
-        else build_report_docx(task, export_view, dimension)
-        if ext == "docx"
-        else build_report_pdf(task, export_view, dimension)
-    )
+    from starlette.concurrency import run_in_threadpool
+
+    # Native PDF shaping must not block chat progress or SSE heartbeats.
+    if ext == "zip":
+        data = await run_in_threadpool(build_report_zip, task, export_view)
+    elif ext == "docx":
+        data = await run_in_threadpool(build_report_docx, task, export_view, dimension)
+    else:
+        data = await run_in_threadpool(build_report_pdf, task, export_view, dimension)
     media = {
         "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "pdf": "application/pdf",

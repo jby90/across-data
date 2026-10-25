@@ -2,7 +2,7 @@
 import { ElMessage } from 'element-plus'
 import { startProgressStream, type StreamState } from '@cyshuhe/shared'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
 import KgForceGraph, {
   type FgCategory,
@@ -10,6 +10,8 @@ import KgForceGraph, {
   type FgNode,
 } from '../components/KgForceGraph.vue'
 const route = useRoute()
+const router = useRouter()
+let openRequest = 0
 
 interface ChatMessage {
   id: string
@@ -320,8 +322,12 @@ async function refreshTasks() {
 }
 
 async function openTask(id: string) {
+  const request = ++openRequest
   try {
-    apply(await api.get<TaskDetail>(`/api/analysis/tasks/${id}`))
+    const next = await api.get<TaskDetail>(`/api/analysis/tasks/${id}`)
+    if (request !== openRequest) return
+    apply(next)
+    if (route.query.task !== id) await router.push({ query: { ...route.query, task: id } })
     openChapters.value = []
     openExtras.value = []
     scrollBottom()
@@ -331,9 +337,12 @@ async function openTask(id: string) {
 }
 
 async function newChat() {
+  const request = ++openRequest
   try {
     const d = await api.post<TaskDetail>('/api/analysis/chats', {})
+    if (request !== openRequest) return
     apply(d)
+    await router.push({ query: { ...route.query, task: d.id } })
     await refreshTasks()
     scrollBottom()
     inputEl.value?.focus()
@@ -418,7 +427,7 @@ watch(() => [detail.value?.id, detail.value?.status], () => {
   progressStream = startProgressStream({
     url: `/api/analysis/tasks/${detail.value.id}/events`, token: api.token,
     onState: state => { progressState.value = state },
-    onUnauthorized: () => { api.setToken(null); window.location.assign('/login') },
+    onUnauthorized: () => { api.setToken(null); window.location.assign(import.meta.env.BASE_URL + 'login') },
     onEvent: event => {
       if (event.type === 'connected' || progressRefresh !== undefined) return
       progressRefresh = setTimeout(() => {
@@ -541,6 +550,9 @@ async function refreshRegulatoryUpdates() {
     if (detail.value?.id === id) apply(next)
   } catch { /* The notification page exposes retryable loading errors. */ }
 }
+watch(() => route.query.task, (id) => {
+  if (typeof id === 'string' && id !== detail.value?.id) void openTask(id)
+})
 onMounted(async () => {
   window.addEventListener('regulatory-notifications-updated', refreshRegulatoryUpdates)
   try {
