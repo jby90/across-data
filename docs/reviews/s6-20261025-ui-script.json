@@ -1,0 +1,21 @@
+{
+  "syntheticFixture": true,
+  "providerApiCalls": 0,
+  "checks": [
+    {
+      "round": 1,
+      "optionFilledWithoutAutoSubmit": true,
+      "answerSubmitted": true
+    },
+    {
+      "round": 2,
+      "optionFilledWithoutAutoSubmit": true,
+      "answerSubmitted": true
+    },
+    {
+      "reportShown": true,
+      "dimensions": 8,
+      "syntheticFixture": true
+    }
+  ]
+}

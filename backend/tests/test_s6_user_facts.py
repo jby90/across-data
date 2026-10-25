@@ -21,7 +21,7 @@ from .helpers import make_pdf
 from .test_analysis_p3 import FACTS, _seed_sg_corpus
 
 
-def fake_s6(calls, request_key="transfer_destination"):
+def fake_s6(calls, request_key="transfer_destination", extra_question=False):
     async def fake(messages, **kwargs):
         p = json.loads(messages[1]["content"])
         phase = p["phase"]
@@ -41,7 +41,18 @@ def fake_s6(calls, request_key="transfer_destination"):
         else:
             code = p["dimension"]["code"]
             calls.append({"code": code, "facts": p["business_facts"], "model": kwargs.get("model")})
-            if code == "D3" and "上海" not in p["business_facts"].get(request_key, ""):
+            if extra_question and code == "D4" and not p["business_facts"].get("recipient_role"):
+                data = {
+                    "findings": [],
+                    "needs_user_fact": [
+                        {
+                            "fact_key": "recipient_role",
+                            "question_zh": "接收机构承担什么实际业务职责？",
+                            "why_needed": "需要明确接收机构的实际业务职责。",
+                        }
+                    ],
+                }
+            elif code == "D3" and "上海" not in p["business_facts"].get(request_key, ""):
                 data = {
                     "findings": [],
                     "needs_user_fact": [
@@ -83,7 +94,14 @@ async def wait_state(client, headers, task_id, expected):
     raise AssertionError("S6 state transition timed out")
 
 
-async def start(client, seed, session_factory, monkeypatch, request_key="transfer_destination"):
+async def start(
+    client,
+    seed,
+    session_factory,
+    monkeypatch,
+    request_key="transfer_destination",
+    extra_question=False,
+):
     await _seed_sg_corpus(session_factory)
     async with session_factory() as session:
         version = await session.scalar(select(DocumentVersion).limit(1))
@@ -117,7 +135,7 @@ async def start(client, seed, session_factory, monkeypatch, request_key="transfe
         version.size_bytes = len(blob)
         await session.commit()
     calls = []
-    monkeypatch.setattr(pipeline, "call_llm_json", fake_s6(calls, request_key))
+    monkeypatch.setattr(pipeline, "call_llm_json", fake_s6(calls, request_key, extra_question))
     headers = bearer(await login(client, "user", "a-member@example.com"))
     r = await client.post(
         "/api/analysis/tasks", headers=headers, json={"title": "S6 synthetic test", "facts": FACTS}
@@ -251,6 +269,28 @@ async def test_shared_fact_answer_invalidates_all_dimensions_that_used_it(
     ).status_code == 200
     await wait_state(client, headers, paused["id"], {"completed"})
     assert Counter(c["code"] for c in calls) == Counter({f"D{i}": 2 for i in range(1, 9)})
+
+
+async def test_multiple_questions_queue_answers_before_any_dimension_resumes(
+    client, seed, session_factory, monkeypatch
+):
+    headers, calls, paused = await start(
+        client, seed, session_factory, monkeypatch, extra_question=True
+    )
+    assert len(paused["pending_user_facts"]) == 2
+    assert (await answer(client, headers, paused, "中国上海研发中心")).status_code == 200
+    intermediate = (await client.get(f"/api/analysis/tasks/{paused['id']}", headers=headers)).json()
+    assert intermediate["status"] == "awaiting_user_facts"
+    assert intermediate["pending_user_facts"][0]["fact_key"] == "recipient_role"
+    assert len(calls) == 8  # No eager model calls while another answer is outstanding.
+    assert intermediate["messages"][-1]["slot"] == "recipient_role"
+    assert (
+        await answer(client, headers, intermediate, "仅承担合成测试研发职责")
+    ).status_code == 200
+    done = await wait_state(client, headers, paused["id"], {"completed"})
+    trace = [t for t in done["step_traces"] if t["phase"] == "analysis"][-1]
+    assert trace["input_snapshot"]["dimensions_requested"] == ["D3", "D4"]
+    assert len(trace["input_snapshot"]["retained_dimensions"]) == 6
 
 
 async def test_source_text_change_invalidates_affected_checkpoint_without_reusing_stale_quotes(

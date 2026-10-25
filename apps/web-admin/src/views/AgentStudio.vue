@@ -1460,6 +1460,17 @@ onUnmounted(() => {
                 >
                   💬 对话采集中 ({{ selectedTaskDetail.sufficiency_score }}%)
                 </div>
+                <div
+                  v-else-if="
+                    selectedTaskDetail?.workflow_version_id === workflow?.id &&
+                    selectedTaskDetail?.status === 'awaiting_user_facts' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id
+                  "
+                  class="node-collecting-banner"
+                  data-testid="node-awaiting-user-facts-badge"
+                >
+                  分析已暂停 · 等待业务事实
+                </div>
 
                 <!-- 叠加任务运行耗时与退回状态条 -->
                 <div v-if="nodeTraceStatsMap.get(node.node_id)" class="node-trace-footer">
@@ -1468,6 +1479,7 @@ onUnmounted(() => {
                     :type="
                       nodeTraceStatsMap.get(node.node_id)?.status === 'skipped' ? 'info'
                       : nodeTraceStatsMap.get(node.node_id)?.status === 'failed' ? 'danger'
+                      : nodeTraceStatsMap.get(node.node_id)?.status === 'awaiting_user_facts' ? 'warning'
                       : nodeTraceStatsMap.get(node.node_id)?.hasBacktrack ? 'warning' : 'success'
                     "
                   >
@@ -1476,6 +1488,7 @@ onUnmounted(() => {
                         ? `执行 ${nodeTraceStatsMap.get(node.node_id)?.runs} 次 (含补证)`
                         : nodeTraceStatsMap.get(node.node_id)?.status === 'skipped' ? '按配置跳过'
                         : nodeTraceStatsMap.get(node.node_id)?.status === 'failed' ? '执行失败'
+                        : nodeTraceStatsMap.get(node.node_id)?.status === 'awaiting_user_facts' ? '等待业务事实'
                         : '执行通过'
                     }}
                   </el-tag>
