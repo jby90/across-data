@@ -1,0 +1,24 @@
+{
+  "admin_source_commit": "8af5b7a",
+  "scope": "admin presentation only",
+  "removed_notices": [
+    "toolbar read-only badge",
+    "node lock labels",
+    "inspector lock badge",
+    "production protection banner",
+    "parameter and code restriction badges",
+    "read-only wording in import/export dialogs"
+  ],
+  "visible_restriction_notices": false,
+  "parameter_inputs_checked": 9,
+  "all_parameter_inputs_disabled": true,
+  "system_prompt_disabled": true,
+  "system_prompt_readonly": true,
+  "workflow_layout_tests_passed": 5,
+  "admin_typecheck_and_production_build": "passed",
+  "api_worker_db_containers_unchanged": true,
+  "backend_changes": false,
+  "database_changes": false,
+  "screenshot": "img/agent-studio-no-readonly-notices-20261026.png",
+  "browser_scope": "opened the actual analysis node and inspected disabled/readonly DOM properties; no import, activation or analysis submitted"
+}
