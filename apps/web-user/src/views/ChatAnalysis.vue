@@ -4,6 +4,8 @@ import { startProgressStream, type StreamState } from '@cyshuhe/shared'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
+import { useAuth } from '../auth'
+import { conversationStamp, conversationSignal, elapsedLabel, receiveExport } from '../chatFeedback'
 import LegalText from '../components/LegalText.vue'
 import type { LegalTerm } from '@cyshuhe/shared/src/legalText'
 function readableMessage(text: string) {
@@ -22,6 +24,7 @@ function businessSummary(text: string) {
 }
 const route = useRoute()
 const router = useRouter()
+const auth = useAuth()
 let openRequest = 0
 
 interface ChatMessage {
@@ -95,6 +98,7 @@ interface ReportVersion {
 }
 
 interface TaskSummary {
+  messages_count: number
   id: string
   conversation_code: string
   title: string
@@ -104,6 +108,7 @@ interface TaskSummary {
 }
 
 interface TaskDetail {
+  activity?: {label: string; state: string; started_at: string} | null
   id: string
   conversation_code: string
   current_active_node_id: string | null
@@ -169,7 +174,21 @@ const CHOICE_SLOTS = new Set(['country_code', 'scenario_type'])
 const tasks = ref<TaskSummary[]>([])
 const detail = ref<TaskDetail | null>(null)
 const input = ref('')
-const sending = ref(false)
+const pendingSends = reactive(new Map<string, number>())
+const sending = computed(() => !!detail.value && pendingSends.has(detail.value.id))
+const clockNow = ref(Date.now())
+const seen = ref<Record<string, string>>({})
+const followStream = ref(true)
+const exportJob = ref<{taskId: string; label: string; started: number; phase: 'preparing' | 'receiving'; received: number; total: number | null} | null>(null)
+const currentExport = computed(() => exportJob.value?.taskId === detail.value?.id ? exportJob.value : null)
+const sendElapsed = computed(() => elapsedLabel(pendingSends.get(detail.value?.id || '') || clockNow.value, clockNow.value))
+const activityElapsed = computed(() => detail.value?.activity?.started_at
+  ? elapsedLabel(Date.parse(detail.value.activity.started_at), clockNow.value) : '')
+const exportElapsed = computed(() => elapsedLabel(exportJob.value?.started || clockNow.value, clockNow.value))
+let mounted = true
+let lastSidebarRefresh = 0
+let polling = false
+let listRequest = 0
 const streamEl = ref<HTMLDivElement | null>(null)
 const inputEl = ref<{ focus: () => void } | null>(null)
 
@@ -227,10 +246,10 @@ const inputPlaceholder = computed(() => {
 })
 const inputDisabled = computed(() => sending.value || status.value === 'running')
 
-function scrollBottom() {
+function scrollBottom(force = false) {
   nextTick(() => {
     const el = streamEl.value
-    if (!el) return
+    if (!el || (!force && !followStream.value)) return
     const summary = el.querySelector<HTMLElement>('[data-testid="report-card"]')
     if (hasReport.value && summary) {
       el.scrollTop += summary.getBoundingClientRect().top - el.getBoundingClientRect().top - 20
@@ -240,10 +259,32 @@ function scrollBottom() {
   })
 }
 
+function trackScroll() {
+  const el = streamEl.value
+  if (el) followStream.value = el.scrollHeight - el.scrollTop - el.clientHeight < 100
+}
+function seenKey() { return `cyshuhe.chat-seen.v1.${auth.user?.id || 'session'}` }
+function markSeen(task: TaskSummary) {
+  seen.value[task.id] = conversationStamp(task)
+  try { localStorage.setItem(seenKey(), JSON.stringify(seen.value)) } catch { /* Storage can be disabled. */ }
+}
+function isUnread(task: TaskSummary) {
+  return seen.value[task.id] !== conversationStamp(task) && task.id !== detail.value?.id
+}
+
 function apply(d: TaskDetail) {
   const previousLatest = detail.value?.report_versions[0]?.version_no
   const followLatest = detail.value?.id !== d.id || reportVersionNo.value === previousLatest
   detail.value = d
+  const summary: TaskSummary = {
+    id: d.id, conversation_code: d.conversation_code, title: d.title, status: d.status,
+    country_code: d.country_code, messages_count: d.messages.length,
+    latest_report_version: d.report_versions[0]?.version_no || 0,
+  }
+  const index = tasks.value.findIndex(t => t.id === d.id)
+  if (index >= 0) tasks.value[index] = summary
+  else tasks.value.push(summary)
+  if (document.visibilityState === 'visible') markSeen(summary)
   if (
     d.report_versions.length > 0 &&
     (followLatest || !d.report_versions.some((r) => r.version_no === reportVersionNo.value))
@@ -253,7 +294,19 @@ function apply(d: TaskDetail) {
 }
 
 async function refreshTasks() {
-  tasks.value = await api.get<TaskSummary[]>('/api/analysis/tasks')
+  const request = ++listRequest
+  const next = await api.get<TaskSummary[]>('/api/analysis/tasks')
+  if (!mounted || request !== listRequest) return
+  const previous = new Map(tasks.value.map(t => [t.id, t]))
+  tasks.value = next
+  lastSidebarRefresh = Date.now()
+  for (const task of next) {
+    const old = previous.get(task.id)
+    if (old && task.id !== detail.value?.id && conversationStamp(old) !== conversationStamp(task)) {
+      if (task.status === 'awaiting_user_facts') ElMessage.info(`${task.title}：有新的业务追问`)
+      else if (task.latest_report_version > old.latest_report_version) ElMessage.success(`${task.title}：报告已生成`)
+    }
+  }
 }
 
 async function openTask(id: string) {
@@ -265,7 +318,8 @@ async function openTask(id: string) {
     if (route.query.task !== id) await router.push({ query: { ...route.query, task: id } })
     openChapters.value = []
     openExtras.value = []
-    scrollBottom()
+    followStream.value = true
+    scrollBottom(true)
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '加载对话失败')
   }
@@ -279,7 +333,8 @@ async function newChat() {
     apply(d)
     await router.push({ query: { ...route.query, task: d.id } })
     await refreshTasks()
-    scrollBottom()
+    followStream.value = true
+    scrollBottom(true)
     inputEl.value?.focus()
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '新建对话失败')
@@ -289,7 +344,10 @@ async function newChat() {
 async function send(text?: string) {
   const content = (text ?? input.value).trim()
   if (!content || !detail.value || inputDisabled.value) return
-  sending.value = true
+  const id = detail.value.id
+  const request = openRequest
+  const questionId = status.value === 'awaiting_user_facts' ? detail.value.pending_user_facts?.[0]?.id : undefined
+  pendingSends.set(id, Date.now())
   try {
     input.value = ''
     // 先把用户的话显示出来,再等待助手回复
@@ -301,23 +359,23 @@ async function send(text?: string) {
       options: [],
       slot: null,
     })
-    scrollBottom()
-    apply(
-      await api.post<TaskDetail>(`/api/analysis/tasks/${detail.value.id}/messages`, {
+    followStream.value = true
+    scrollBottom(true)
+    const next = await api.post<TaskDetail>(`/api/analysis/tasks/${id}/messages`, {
         content,
-        question_id: status.value === 'awaiting_user_facts'
-          ? detail.value.pending_user_facts?.[0]?.id : undefined,
-      }),
-    )
+        question_id: questionId,
+      })
+    if (!mounted) return
+    if (detail.value?.id === id && request === openRequest) apply(next)
     // The answer is saved and the next question is available. Refreshing the
     // sidebar must not keep the composer locked while another request is slow.
     void refreshTasks().catch(() => { /* A later refresh can update the sidebar. */ })
     scrollBottom()
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '发送失败')
-    if (detail.value) await openTask(detail.value.id)
+    if (mounted && detail.value?.id === id && request === openRequest) await openTask(id)
   } finally {
-    sending.value = false
+    pendingSends.delete(id)
   }
 }
 
@@ -338,18 +396,34 @@ function onEnter(ev: KeyboardEvent) {
 }
 
 let timer: number | undefined
+let clockTimer: number | undefined
 async function poll() {
-  if (progressState.value === 'live') return
-  await refreshProgress()
+  if (polling || document.visibilityState !== 'visible') return
+  polling = true
+  try {
+    if (progressState.value !== 'live') await refreshProgress()
+    // A background conversation can finish while a different one is open.
+    if (Date.now() - lastSidebarRefresh > 10000) {
+      await refreshTasks()
+      const summary = tasks.value.find(t => t.id === detail.value?.id)
+      if (summary && detail.value && !sending.value &&
+          (summary.status !== detail.value.status || summary.messages_count !== detail.value.messages.length ||
+           summary.latest_report_version !== (detail.value.report_versions[0]?.version_no || 0))) {
+        const id = detail.value.id
+        const next = await api.get<TaskDetail>(`/api/analysis/tasks/${id}`)
+        if (mounted && detail.value?.id === id) apply(next)
+      }
+    }
+  } catch { /* A later refresh retries; preserve the conversation. */ }
+  finally { polling = false }
 }
 async function refreshProgress() {
   if (detail.value?.status !== 'running') return
   const id = detail.value.id
   try {
     const next = await api.get<TaskDetail>(`/api/analysis/tasks/${id}`)
-    if (detail.value?.id !== id) return
+    if (!mounted || detail.value?.id !== id) return
     apply(next)
-    await refreshTasks()
     scrollBottom()
   } catch {
     /* 下一轮重试 */
@@ -360,6 +434,7 @@ watch(() => [detail.value?.id, detail.value?.status], () => {
   progressStream?.close()
   clearTimeout(progressRefresh)
   progressRefresh = undefined
+  progressState.value = 'idle'
   if (!detail.value || detail.value.status !== 'running') return
   progressStream = startProgressStream({
     url: `/api/analysis/tasks/${detail.value.id}/events`, token: api.token,
@@ -377,7 +452,7 @@ watch(() => [detail.value?.id, detail.value?.status], () => {
 
 watch(
   () => [detail.value?.messages.length, detail.value?.progress.length, detail.value?.status],
-  scrollBottom,
+  () => scrollBottom(),
 )
 
 async function openCitation(clauseId: string | null, quote = '') {
@@ -444,27 +519,36 @@ async function openDiff() {
 }
 
 async function download(ext: 'docx' | 'pdf' | 'zip', dimension?: string) {
-  if (!detail.value || !report.value) return
+  if (!detail.value || !report.value || exportJob.value) return
   if (report.value.source_integrity_alerts?.length) {
     ElMessage.error('报告引用的原文来源异常，已停止导出，请核实来源后重新分析')
     return
   }
+  const id = detail.value.id
+  const country = detail.value.country_code
+  const ver = report.value.version_no
+  const label = `${dimension ? `${dimension} 章节` : '完整报告'} · ${ext.toUpperCase()} · v${ver}`
+  exportJob.value = {taskId: id, label, started: Date.now(), phase: 'preparing', received: 0, total: null}
   try {
-    const ver = report.value.version_no
-    const res = await fetch(`/api/analysis/tasks/${detail.value.id}/reports/${ver}/export.${ext}${dimension ? '?dimension=' + encodeURIComponent(dimension) : ''}`, {
+    const res = await fetch(`/api/analysis/tasks/${id}/reports/${ver}/export.${ext}${dimension ? '?dimension=' + encodeURIComponent(dimension) : ''}`, {
       headers: { Authorization: `Bearer ${api.token()}` },
     })
-    if (!res.ok) throw new Error(`导出失败 (${res.status})`)
-    const blob = await res.blob()
+    const blob = await receiveExport(res, (received, total) => {
+      if (exportJob.value) Object.assign(exportJob.value, {phase: 'receiving', received, total})
+    })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `cyshuhe_${detail.value.country_code}_${dimension || '8dim'}_report_v${ver}.${ext}`
+    a.download = `cyshuhe_${country}_${dimension || '8dim'}_report_v${ver}.${ext}`
+    document.body.appendChild(a)
     a.click()
-    URL.revokeObjectURL(url)
-    ElMessage.success(`已导出 ${ext.toUpperCase()} 报告 (v${ver})`)
+    a.remove()
+    window.setTimeout(() => URL.revokeObjectURL(url), 30000)
+    if (mounted) ElMessage.success(`${label} 已交给浏览器下载，请查看下载列表`)
   } catch (e: unknown) {
-    ElMessage.error((e as Error).message || '导出失败')
+    if (mounted) ElMessage.error((e as Error).message || '导出失败，可重试')
+  } finally {
+    exportJob.value = null
   }
 }
 
@@ -491,6 +575,11 @@ watch(() => route.query.task, (id) => {
   if (typeof id === 'string' && id !== detail.value?.id) void openTask(id)
 })
 onMounted(async () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(seenKey()) || '{}')
+    if (saved && typeof saved === 'object' && !Array.isArray(saved)) seen.value = saved
+  } catch { /* Unavailable or old browser state does not block chat. */ }
+  clockTimer = window.setInterval(() => { clockNow.value = Date.now() }, 1000)
   window.addEventListener('regulatory-notifications-updated', refreshRegulatoryUpdates)
   try {
     await refreshTasks()
@@ -507,10 +596,12 @@ onMounted(async () => {
   timer = window.setInterval(poll, 2000)
 })
 onUnmounted(() => {
+  mounted = false
   window.removeEventListener('regulatory-notifications-updated', refreshRegulatoryUpdates)
   progressStream?.close()
   clearTimeout(progressRefresh)
   if (timer !== undefined) window.clearInterval(timer)
+  if (clockTimer !== undefined) window.clearInterval(clockTimer)
 })
 </script>
 
@@ -530,26 +621,20 @@ onUnmounted(() => {
           class="session-item"
           :class="{ active: detail?.id === t.id }"
           data-testid="analysis-task-item"
+          role="button"
+          tabindex="0"
+          :aria-current="detail?.id === t.id ? 'true' : undefined"
           @click="openTask(t.id)"
+          @keydown.enter="openTask(t.id)"
+          @keydown.space.prevent="openTask(t.id)"
         >
-          <div class="s-title">{{ t.title }}</div>
+          <div class="s-title"><span class="session-dot" :class="conversationSignal(t).tone" aria-hidden="true" />{{ t.title }}</div>
           <div class="s-code" data-testid="session-conversation-code">
             {{ t.conversation_code || t.id.slice(0, 8) }}
           </div>
-          <el-tag
-            size="small"
-            :type="
-              t.status === 'completed'
-                ? 'success'
-                : t.status === 'running'
-                  ? 'primary'
-                  : t.status === 'failed'
-                    ? 'danger'
-                    : 'info'
-            "
-          >
-            {{ STATUS_LABEL[t.status] || t.status }}
-          </el-tag>
+          <div class="session-state" :class="conversationSignal(t).tone">
+            {{ conversationSignal(t).label }}<span v-if="isUnread(t)" class="unread-label">新动态</span>
+          </div>
         </div>
       </div>
     </aside>
@@ -582,7 +667,15 @@ onUnmounted(() => {
         </div>
       </header>
 
-      <div ref="streamEl" class="stream" data-testid="chat-stream">
+      <div v-if="exportJob" class="export-feedback" data-testid="export-feedback" role="status" aria-live="polite">
+        <span class="activity-spinner" aria-hidden="true" />
+        <div><strong>{{ exportJob.phase === 'preparing' ? '正在生成文件' : '正在接收文件' }}</strong><span>{{ exportJob.label }} · {{ exportElapsed }}</span>
+          <small v-if="exportJob.phase === 'preparing'">{{ exportJob.label.includes('PDF') ? '正在完成分页和字体排版，完成后自动下载。' : '文件准备好后自动下载。' }}</small>
+          <small v-else>已接收 {{ Math.ceil(exportJob.received / 1024) }} KB<span v-if="exportJob.total"> / {{ Math.ceil(exportJob.total / 1024) }} KB</span></small>
+        </div>
+      </div>
+
+      <div ref="streamEl" class="stream" data-testid="chat-stream" @scroll.passive="trackScroll">
         <template v-if="detail">
           <div
             v-for="m in detail.messages"
@@ -595,7 +688,16 @@ onUnmounted(() => {
             <div class="bubble">{{ m.role === 'assistant' ? readableMessage(m.content) : m.content }}</div>
           </div>
 
-          <div v-if="showChips" class="chips" data-testid="chat-options">
+          <div v-if="sending" class="row assistant" data-testid="chat-waiting" role="status" aria-live="polite">
+            <div class="avatar">助</div>
+            <div class="bubble waiting-bubble">
+              <div class="activity-title"><span class="activity-spinner" aria-hidden="true" />正在整理您的回答</div>
+              <p>正在更新业务信息并准备下一步。</p>
+              <small>已等待 {{ sendElapsed }}<span v-if="pendingSends.get(detail.id) && clockNow - pendingSends.get(detail.id)! > 20000"> · 仍在处理，您可以先查看其他对话</span></small>
+            </div>
+          </div>
+
+          <div v-if="showChips && !sending" class="chips" data-testid="chat-options">
             <span v-if="!CHOICE_SLOTS.has(lastAssistant?.slot ?? '')" class="chip-hint">
               以下只是示例回答,点击会填入输入框,请按您的实际情况修改后再发送:
             </span>
@@ -611,10 +713,10 @@ onUnmounted(() => {
             </el-button>
           </div>
 
-          <el-alert v-if="status === 'awaiting_user_facts'" type="info" :closable="false" data-testid="analysis-user-fact-pause" title="请补充业务信息" description="回答下方问题后继续生成报告。" />
-          <div v-if="status === 'running'" class="card progress" data-testid="progress-card">
-            <div class="card-title"><span data-testid="task-running-tag">正在评估您的业务场景…</span></div>
-            <div v-for="(s,i) in detail.progress" :key="i" class="step"><b>{{s.label}}</b></div>
+          <el-alert v-if="status === 'awaiting_user_facts' && !sending" type="info" :closable="false" data-testid="analysis-user-fact-pause" title="请补充业务信息" description="回答上方问题后继续生成报告。" />
+          <div v-if="status === 'running'" class="card progress" data-testid="progress-card" role="status" aria-live="polite">
+            <div class="card-title"><span class="activity-title" data-testid="task-running-tag"><span class="activity-spinner" aria-hidden="true" />{{ detail.activity?.label || '正在评估您的业务场景' }}</span><small v-if="activityElapsed">本环节 {{ activityElapsed }}</small></div>
+            <div class="progress-stages"><span v-for="(s,i) in detail.progress" :key="i" class="progress-stage" :class="s.state"><span aria-hidden="true">{{ s.state === 'complete' ? '✓' : s.state === 'failed' ? '!' : '·' }}</span> {{s.label}}</span></div>
           </div>
           <el-alert v-if="status === 'failed'" type="error" :closable="false" title="本次评估暂未完成" description="可输入“重试”重新分析，或将对话编号提供给管理员。" />
 
@@ -682,7 +784,7 @@ onUnmounted(() => {
                 />
               </el-select>
               <el-dropdown trigger="click"
-                ><el-button type="primary" size="small" :disabled="report.status === 'analysis_failed'">导出报告</el-button
+                ><el-button type="primary" size="small" :loading="!!currentExport" :disabled="!!exportJob || report.status === 'analysis_failed'">{{ currentExport ? '正在导出' : '导出报告' }}</el-button
                 ><template #dropdown
                   ><el-dropdown-menu
                     ><el-dropdown-item data-testid="btn-export-docx" @click="download('docx')"
@@ -723,8 +825,8 @@ onUnmounted(() => {
                   </el-tag>
                 </template>
                 <div style="display:flex;gap:8px;margin:8px 0 12px">
-                  <el-button size="small" :data-testid="`export-${d.dimension_code}-docx`" @click="download('docx', d.dimension_code)">导出本章 Word</el-button>
-                  <el-button size="small" :data-testid="`export-${d.dimension_code}-pdf`" @click="download('pdf', d.dimension_code)">导出本章 PDF</el-button>
+                  <el-button size="small" :disabled="!!exportJob" :data-testid="`export-${d.dimension_code}-docx`" @click="download('docx', d.dimension_code)">导出本章 Word</el-button>
+                  <el-button size="small" :disabled="!!exportJob" :data-testid="`export-${d.dimension_code}-pdf`" @click="download('pdf', d.dimension_code)">导出本章 PDF</el-button>
                 </div>
                 <el-alert
                   v-if="d.missing_gap_note"
@@ -1305,6 +1407,32 @@ onUnmounted(() => {
 .el-collapse-item {
   margin-top: 4px;
 }
+.session-dot { display: inline-block; width: 8px; height: 8px; margin: 0 8px 1px 0; border-radius: 50%; background: #a2afbf; flex-shrink: 0; }
+.session-dot.green { background: #159b71; }
+.session-dot.amber { background: #d99a23; }
+.session-dot.blue { background: #4168e8; }
+.session-dot.red { background: #df6666; }
+.session-state { margin-top: 10px; font-size: 12px; line-height: 1.6; color: #7b899a; }
+.session-state.green { color: #168563; }
+.session-state.amber { color: #9d711a; }
+.session-state.blue { color: #4163c8; }
+.session-state.red { color: #bb4c4c; }
+.unread-label { display: inline-block; margin-left: 7px; padding: 0 5px; border-radius: 4px; background: #e8efff; color: #365bc7; font-size: 11px; }
+.activity-title { display: flex; align-items: center; gap: 10px; }
+.activity-spinner { display: inline-block; width: 15px; height: 15px; flex-shrink: 0; border: 2px solid #dce5f9; border-top-color: #5275cf; border-radius: 50%; animation: activity-spin 1s linear infinite; }
+.waiting-bubble { min-width: 230px; }
+.waiting-bubble p { margin: 7px 0; color: #78889a; font-size: 13px; }
+.waiting-bubble small, .progress small { font-size: 12px; color: #8794a4; font-weight: 400; }
+.progress-stages { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 16px; }
+.progress-stage { font-size: 13px; color: #708197; }
+.progress-stage.complete > span { color: #1c9576; }
+.progress-stage.warning, .progress-stage.waiting { color: #a17b37; }
+.progress-stage.failed { color: #b45959; }
+.export-feedback { display: flex; align-items: center; gap: 12px; margin: 12px 24px 0; padding: 12px 16px; border-radius: 10px; background: #eef3ff; color: #395ca7; font-size: 13px; }
+.export-feedback strong { margin-right: 12px; font-weight: 600; }
+.export-feedback small { display: block; margin-top: 5px; color: #71829e; font-size: 12px; }
+@keyframes activity-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .activity-spinner { animation: none; border-top-color: #5275cf; } }
 @media (max-width: 1100px) {
   .sessions {
     width: 205px;
