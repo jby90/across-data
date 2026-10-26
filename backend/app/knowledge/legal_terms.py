@@ -99,7 +99,7 @@ PRIORITY = {
     "official_parallel": 3,
     "international_reference": 4,
 }
-DEFINITION_RULE_VERSION = "explicit-definition-v3"
+DEFINITION_RULE_VERSION = "explicit-definition-v5"
 ORIGIN_PRIORITY = {"manual": 0, "machine_translation": 1, "machine_reference": 1, "auto": 2}
 SOURCE_LABEL = {
     "law_definition": "法律定义",
@@ -108,8 +108,10 @@ SOURCE_LABEL = {
     "international_reference": "国际参考",
 }
 QUOTED = re.compile(
-    r'[“‘"«](?P<term>[^”’"»\n]{2,100})[”’"»]\s*'
-    r"(?:means?|includes?|refers to|désigne|s[’\']entend(?:\s+par)?|signifie|"
+    r'[“‘"«](?P<term>[^“‘”’"«»\n]{2,100})[”’"»]'
+    r'(?:\s*,?\s*(?:in relation to|in respect of|for the purposes of)\s+[^;“”"\n]{1,200}?)?\s*,?\s*'
+    r"(?:means?|includes?|refers to|has the (?:same )?meaning|désigne|"
+    r"s[’\']entend(?:\s+par)?|signifie|"
     r"يقصد\s+ب[هها]*|تعني)\s+",
     re.I,
 )
@@ -118,7 +120,7 @@ DEFINITION_HEADING = re.compile(
     r"\bdefinitions?\b|\binterprétation\b|\bdéfinitions?\b|on entend par|تعريف|يقصد|المصطلحات", re.I
 )
 
-QUOTED_COLON = re.compile(r'[“‘"«]\s*(?P<term>[^”’"»\n]{2,100}?)\s*[”’"»]\s*[:：]\s*')
+QUOTED_COLON = re.compile(r'[“‘"«]\s*(?P<term>[^“‘”’"«»\n]{2,100}?)\s*[”’"»]\s*[:：]\s*')
 FRENCH_DIRECT = re.compile(
     r"on entend par\s+(?P<term>[^\n:：]{2,100}?)\s+(?=toutes?\b|tous\b|les?\b|la\b|une?\b)", re.I
 )
@@ -176,6 +178,15 @@ def definition_spans(text, heading=""):
         boundary = STRUCTURAL_BOUNDARY.search(text, m.end(), end)
         if boundary:
             end = boundary.start()
+        # An amending instruction can wrap an inserted definition in another
+        # quotation. Keep its terminating punctuation, not the next instruction.
+        amendment_end = re.search(
+            r'(?<=[.;؛。])[”"]\s*(?:[”"]\s*)?;\s*(?=\([a-z]\)|(?:delete|insert|omit|replace)\b)',
+            text[m.end() : end],
+            re.I,
+        )
+        if amendment_end:
+            end = m.end() + amendment_end.start()
         while end > m.end() and text[end - 1].isspace():
             end -= 1
         term = re.sub(

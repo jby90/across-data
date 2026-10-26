@@ -128,6 +128,46 @@ def test_no_guessed_or_incomplete_definitions(text, heading):
     assert definition_spans(text, heading) == []
 
 
+def test_nested_amendment_quotes_do_not_become_part_of_terms_or_definitions():
+    text = (
+        "“(2) In paragraph (1), “ongoing relationship” means a continuing business relationship.; "
+        "“applicable purpose” means a purpose in Schedule 10.;”; "
+        "(b) delete “old expression” and insert “new expression”."
+    )
+    rows = definition_spans(text, "Interpretation")
+    assert [r["source_term"] for r in rows] == ["ongoing relationship", "applicable purpose"]
+    assert rows[1]["quote"] == "“applicable purpose” means a purpose in Schedule 10.;"
+    assert all(r["quote"] == text[r["start"] : r["end"]] for r in rows)
+
+
+def test_adjacent_definition_names_are_not_absorbed_by_previous_quote():
+    text = (
+        "“appeal” means a request under section 4; "
+        "“Appeal Panel” means a panel constituted under section 5; "
+        "“authorised person” means a person exercising the delegated power."
+    )
+    rows = definition_spans(text, "Definitions")
+    assert [r["source_term"] for r in rows] == ["appeal", "Appeal Panel", "authorised person"]
+    assert "Panel" not in rows[0]["quote"]
+    assert "authorised" not in rows[1]["quote"]
+
+
+def test_scoped_and_cross_referenced_definitions_end_previous_definition():
+    text = (
+        "“applicable country” means a country prescribed in the regulations; "
+        "“applicable data”, in relation to an organisation, means personal data in its control; "
+        "“data request” has the meaning given by section 9."
+    )
+    rows = definition_spans(text, "Definitions")
+    assert [r["source_term"] for r in rows] == [
+        "applicable country",
+        "applicable data",
+        "data request",
+    ]
+    assert "applicable data" not in rows[0]["quote"]
+    assert "data request" not in rows[1]["quote"]
+
+
 async def test_append_only_version_scope_and_hash_guard(session_factory):
     async with session_factory() as s:
         d, v, c = await source(
