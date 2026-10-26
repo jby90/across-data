@@ -68,7 +68,6 @@ async function submit() {
     </section>
     <main class="login-main">
       <div class="login-form">
-        <p class="demo-notice">演示环境，数据仅供参考</p>
         <div class="eyebrow">ADMIN WORKSPACE</div>
         <h2>管理工作，从这里开始</h2>
         <p class="login-description">登录以管理法规资料、内容复核与平台运行。</p>

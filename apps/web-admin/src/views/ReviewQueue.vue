@@ -2,6 +2,7 @@
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { api } from '../api'
+import TerminologyLibrary from '../components/TerminologyLibrary.vue'
 
 interface GlossaryHit {
   term_id?: string
@@ -80,6 +81,7 @@ interface GlossaryTerm {
 
 const activeTab = ref<'translations' | 'points' | 'glossary'>('translations')
 const countryFilter = ref('SG')
+const countryOptions=ref<Array<{country_code:string;country_name_zh:string}>>([])
 const statusFilter = ref('')
 const loading = ref(false)
 
@@ -311,7 +313,7 @@ async function createTerm() {
   }
 }
 
-onMounted(loadAll)
+onMounted(async()=>{try{countryOptions.value=await api.get('/admin/knowledge/countries')}catch(e){ElMessage.error((e as Error).message)}await loadAll()})
 </script>
 
 <template>
@@ -320,16 +322,12 @@ onMounted(loadAll)
       <div>
         <h1>翻译与复核</h1>
         <div class="sub">
-          按任务的引用策略选择依据：机器处理内容可进入草稿并逐条标注待核对；原文与译文分别复核，只有完成复核的内容才标为可作法律依据。
+          管理中文对照、来源定义和影响结论的解读问题。自动质量检查与人工审批分别留存。
         </div>
       </div>
       <div style="display: flex; gap: 8px; align-items: center">
         <el-select v-model="countryFilter" style="width: 140px" @change="resetAndLoad">
-          <el-option value="SG" label="SG 新加坡" />
-          <el-option value="EG" label="EG 埃及" />
-          <el-option value="TN" label="TN 突尼斯" />
-          <el-option value="MA" label="MA 摩洛哥" />
-          <el-option value="LB" label="LB 黎巴嫩" />
+          <el-option v-for="c in countryOptions" :key="c.country_code" :value="c.country_code" :label="`${c.country_code} ${c.country_name_zh}`" />
         </el-select>
         <el-popover trigger="click" placement="bottom-end" :width="310"
           ><template #reference><el-button>批量处理</el-button></template>
@@ -540,6 +538,8 @@ onMounted(loadAll)
 
       <!-- 第三页签：两层法律术语库 -->
       <el-tab-pane label="法律术语" name="glossary">
+        <TerminologyLibrary :country="countryFilter" />
+        <h3>历史人工维护词条</h3>
         <div style="margin-bottom: 12px; display: flex; justify-content: space-between">
           <div class="sub">
             按四级优先级管理：P1 法律自身定义条款 &gt; P2 监管指南 &gt; P3 官方多语版本 &gt; P4

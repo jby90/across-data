@@ -124,7 +124,6 @@ function logout() {
         </div>
       </header>
       <main id="main-content" class="app-content" tabindex="-1">
-        <p class="demo-notice">演示环境，数据仅供参考；机器内容及人工复核状态请逐条核对。</p>
         <RouterView v-slot="{ Component }"
           ><div :key="route.path" class="app-page">
             <component :is="Component" /></div

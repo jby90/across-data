@@ -4,11 +4,22 @@ import { startProgressStream, type StreamState } from '@cyshuhe/shared'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
-import KgForceGraph, {
-  type FgCategory,
-  type FgEdge,
-  type FgNode,
-} from '../components/KgForceGraph.vue'
+import LegalText from '../components/LegalText.vue'
+import type { LegalTerm } from '@cyshuhe/shared/src/legalText'
+function readableMessage(text: string) {
+  return text.replace(/信息已经齐备[\s\S]*下面会实时显示每个智能体的进度。/, '信息已齐备，正在查找适用法规并生成合规报告。')
+    .replace('然后由多个智能体对照目标国现行法规,', '再对照目标国法规，')
+    .replace('所有回答只用于本次评估。', '')
+}
+function readableContent(text: string) {
+  return text.replace('依据与合规义务（程序子串/数字核验通过；人工复核状态逐条标注）', '依据与合规义务')
+    .replaceAll('；待核对（原文/译文尚未全部人工复核）', '')
+    .replaceAll('；引用材料已复核（分析结论仍为机器草稿）', '')
+}
+function businessSummary(text: string) {
+  return /多智能体|程序核验|tokens|MCP/.test(text)
+    ? `本报告根据您的业务场景，对照适用法规形成八个维度的分析与建议。各章节可查看依据、修订内容并单独导出。` : text
+}
 const route = useRoute()
 const router = useRouter()
 let openRequest = 0
@@ -37,24 +48,6 @@ interface Finding {
   verification_status: string
 }
 
-interface StepTrace {
-  id: string
-  seq_no: number
-  agent_name: string
-  status: string
-  business_summary: string
-  is_backtrack: boolean
-  backtrack_reason: string | null
-  backtrack_resolution: string | null
-  tool_calls: Array<{
-    call_id: string
-    tool_label: string
-    result_summary: string
-    duration_ms: number
-  }>
-  tokens_used: number
-  duration_ms: number
-}
 
 interface Citation {
   source_review_status?: string
@@ -121,28 +114,15 @@ interface TaskDetail {
   status: string
   messages: ChatMessage[]
   findings: Finding[]
-  step_traces: StepTrace[]
+  progress: Array<{label: string; state: string}>
   report_versions: ReportVersion[]
-  total_tokens: number
-  total_duration_ms: number
-  mcp_calls_count: number
-  backtrack_count: number
   pending_user_facts: Array<{ id: string; fact_key: string; dimension_codes: string[] }>
   fact_followup_rounds: number
 }
 
-interface MiniKgNode {
-  id: string
-  node_type: string
-  name_zh: string
-}
-interface MiniKgEdge {
-  source_node_id: string
-  target_node_id: string
-  relation_type: string
-  review_status: string
-}
 interface CitationCard {
+  clause_id: string
+  section_path?: string | null
   source_review_status?: string
   translation_review_status?: string
   source_integrity_alerts?: string[]
@@ -153,7 +133,8 @@ interface CitationCard {
   original_text: string
   translated_text: string
   review_status: string
-  mini_graph: { nodes: MiniKgNode[]; edges: MiniKgEdge[] }
+  terms: LegalTerm[]
+  related_requirements: Array<{id: string; title: string; topic_label: string; quote: string}>
 }
 interface DiffPayload {
   from_version: number
@@ -181,28 +162,6 @@ const STATUS_LABEL: Record<string, string> = {
   running: '分析中',
   awaiting_user_facts: '等待补充业务事实',
   failed: '分析失败',
-}
-const FG_CATEGORIES: FgCategory[] = [
-  { type: 'COUNTRY', name: '国家/地区', color: '#1d4ed8' },
-  { type: 'REGULATOR', name: '监管机构', color: '#0f766e' },
-  { type: 'INSTRUMENT', name: '法规文件', color: '#7c3aed' },
-  { type: 'OBLIGATION', name: '合规义务', color: '#b45309' },
-  { type: 'DATA_CATEGORY', name: '数据类型', color: '#0369a1' },
-  { type: 'PENALTY', name: '违规罚则', color: '#be123c' },
-]
-const RELATION_LABEL: Record<string, string> = {
-  PUBLISHES: '发布',
-  AMENDS: '修订',
-  REPEALS: '废止',
-  GOVERNS: '约束',
-  PROHIBITS: '禁止',
-  REQUIRES: '强制要求',
-  EXEMPTS: '豁免',
-  SUPERVISES: '监管',
-  PENALIZES: '处罚',
-  APPLIES_TO_SCENARIO: '适用场景',
-  RESTRICTS_CROSS_BORDER: '数据出境限制',
-  REQUIRES_ADMISSION: '准入要求',
 }
 // 这两类问题直接点选即发送;事实类问题的示例只填入输入框,由用户按实际情况修改后再发送
 const CHOICE_SLOTS = new Set(['country_code', 'scenario_type'])
@@ -257,7 +216,7 @@ const report = computed<ReportVersion | null>(() => {
 })
 const versionFindings = computed(() => report.value?.dimensions.flatMap(d => d.findings || []) || [])
 const inputPlaceholder = computed(() => {
-  if (status.value === 'running') return '多智能体分析进行中,请稍候…'
+  if (status.value === 'running') return '正在分析您的业务场景，请稍候…'
   if (status.value === 'awaiting_user_facts') return '请回答分析中的业务追问；不确定可以如实说明'
   if (status.value === 'completed' || status.value === 'partial_sample')
     return '报告已生成。可在上方导出,或点击左侧「新建评估」评估新的场景'
@@ -267,30 +226,6 @@ const inputPlaceholder = computed(() => {
   return '请输入您的回答,Enter 发送,Shift+Enter 换行'
 })
 const inputDisabled = computed(() => sending.value || status.value === 'running')
-
-const citationNodes = computed<FgNode[]>(() => {
-  const mg = card.value?.mini_graph
-  if (!mg) return []
-  const deg = new Map<string, number>()
-  for (const e of mg.edges) {
-    deg.set(e.source_node_id, (deg.get(e.source_node_id) || 0) + 1)
-    deg.set(e.target_node_id, (deg.get(e.target_node_id) || 0) + 1)
-  }
-  return mg.nodes.map((n) => ({
-    id: n.id,
-    name: n.name_zh,
-    type: n.node_type,
-    degree: deg.get(n.id) || 1,
-  }))
-})
-const citationEdges = computed<FgEdge[]>(() =>
-  (card.value?.mini_graph.edges ?? []).map((e) => ({
-    source: e.source_node_id,
-    target: e.target_node_id,
-    label: RELATION_LABEL[e.relation_type] || e.relation_type,
-    approved: e.review_status === 'approved',
-  })),
-)
 
 function scrollBottom() {
   nextTick(() => {
@@ -441,7 +376,7 @@ watch(() => [detail.value?.id, detail.value?.status], () => {
 })
 
 watch(
-  () => [detail.value?.messages.length, detail.value?.step_traces.length, detail.value?.status],
+  () => [detail.value?.messages.length, detail.value?.progress.length, detail.value?.status],
   scrollBottom,
 )
 
@@ -657,7 +592,7 @@ onUnmounted(() => {
             :data-testid="`chat-msg-${m.role}`"
           >
             <div class="avatar">{{ m.role === 'assistant' ? '助' : '我' }}</div>
-            <div class="bubble">{{ m.content }}</div>
+            <div class="bubble">{{ m.role === 'assistant' ? readableMessage(m.content) : m.content }}</div>
           </div>
 
           <div v-if="showChips" class="chips" data-testid="chat-options">
@@ -676,44 +611,12 @@ onUnmounted(() => {
             </el-button>
           </div>
 
-          <!-- 分析进度(实时) -->
-          <el-alert v-if="status === 'awaiting_user_facts'" type="warning" :closable="false"
-            data-testid="analysis-user-fact-pause"
-            :title="`分析已暂停 · 第 ${detail.fact_followup_rounds}/2 轮业务追问`"
-            description="请在聊天框回答。已完成维度已保存，回答后仅重跑受影响维度；不确定的事实将保留缺口。" />
+          <el-alert v-if="status === 'awaiting_user_facts'" type="info" :closable="false" data-testid="analysis-user-fact-pause" title="请补充业务信息" description="回答下方问题后继续生成报告。" />
           <div v-if="status === 'running'" class="card progress" data-testid="progress-card">
-            <div class="card-title">
-              <span data-testid="task-running-tag">多智能体分析进行中…</span>
-              <span data-testid="progress-transport">{{ progressState === 'live' ? '实时推送' : '轮询回退' }}</span>
-              <el-tag size="small" type="primary">已完成 {{ detail.step_traces.length }} 步</el-tag>
-            </div>
-            <div
-              v-for="s in detail.step_traces"
-              :key="s.id"
-              class="step"
-              :class="{ back: s.is_backtrack }"
-            >
-              <div class="step-head">
-                <b>{{ s.agent_name }}</b>
-                <el-tag v-if="s.is_backtrack" size="small" type="danger">退回补证</el-tag>
-                <span class="muted">{{ s.duration_ms }} ms · {{ s.tokens_used }} tokens</span>
-              </div>
-              <div>{{ s.business_summary }}</div>
-              <div v-if="s.backtrack_reason" class="back-reason">
-                退回原因:{{ s.backtrack_reason }}
-              </div>
-            </div>
-            <div class="muted" style="margin-top: 6px">正在进行下一步,请稍候…</div>
+            <div class="card-title"><span data-testid="task-running-tag">正在评估您的业务场景…</span></div>
+            <div v-for="(s,i) in detail.progress" :key="i" class="step"><b>{{s.label}}</b></div>
           </div>
-
-          <div v-if="status === 'failed'" class="card">
-            <el-alert type="error" :closable="false" show-icon title="分析失败">
-              <template #default>
-                {{ detail.step_traces[detail.step_traces.length - 1]?.business_summary }}。
-                在下方输入任意内容(如「重试」)即可重新分析。
-              </template>
-            </el-alert>
-          </div>
+          <el-alert v-if="status === 'failed'" type="error" :closable="false" title="本次评估暂未完成" description="可输入“重试”重新分析，或将对话编号提供给管理员。" />
 
           <!-- 报告卡片 -->
           <div v-if="hasReport && report" class="card report" data-testid="report-card">
@@ -730,25 +633,19 @@ onUnmounted(() => {
               >
                 {{
                   report.status === 'analysis_failed'
-                    ? '分析技术失败 · 不可交付'
+                    ? '暂未完成'
                     : report.source_integrity_alerts?.length
                       ? '来源异常 · 暂停导出'
                       : report.is_partial_sample
-                        ? '部分样稿 · 有维度缺依据'
-                        : '八维度程序核验通过 · 草稿待复核'
+                        ? '部分维度待补充'
+                        : '报告草稿'
                 }}
               </el-tag>
             </div>
-            <p class="summary">{{ report.executive_summary }}</p>
+            <p class="summary">{{ businessSummary(report.executive_summary) }}</p>
             <el-alert v-if="report.regulatory_updates?.length" type="warning" :closable="false"
-                :title="report.regulatory_updates.some(u => u.state === 'open') ? '本版本引用的来源曾发生变化，是否属于法规修订及结论影响仍待核对。请在更新通知中重新评估，原文和历史报告保留。' : '本历史版本引用的来源曾发生变化，已有后续报告处理。历史正文及证据保留，人工法律复核仍待核对。'"
+                :title="report.regulatory_updates.some(u => u.state === 'open') ? '引用来源已更新，请查看更新通知并重新评估。' : '已有后续报告版本，可切换查看。'"
               data-testid="report-regulatory-update" style="margin-bottom:12px" />
-            <el-alert type="warning" :closable="false" data-testid="citation-review-overview"
-              :title="`引用复核概览：已复核 ${report.citation_review_summary?.approved ?? 0} 条 / 待核对 ${report.citation_review_summary?.pending ?? 0} 条（按条款及版本去重）。分析结论仍为机器草稿。`"
-              style="margin-bottom: 12px" />
-            <p class="meta">生成时引用策略：{{ report.citation_policy === 'reviewed_only'
-              ? '仅引用已复核材料' : report.citation_policy === 'allow_machine_with_notice'
-                ? '允许机器内容进入草稿，逐条待核对' : '历史未记录，不能推定引用已获人工复核' }}</p>
             <el-alert
               v-for="alert in report.source_integrity_alerts"
               :key="alert"
@@ -818,7 +715,7 @@ onUnmounted(() => {
                   <b>{{ d.dimension_code }}</b
                   >&nbsp;{{ d.dimension_title }}&nbsp;
                   <el-tag size="small" :type="d.status === 'COMPLETE' ? 'success' : 'warning'">
-                    {{ d.status === 'COMPLETE' ? '引文程序核验通过' : '有缺口' }}
+                    {{ d.status === 'COMPLETE' ? '分析完成' : '有缺口' }}
                   </el-tag>
                   &nbsp;
                   <el-tag size="small" :type="d.risk_level === 'HIGH' ? 'danger' : 'info'">
@@ -837,7 +734,7 @@ onUnmounted(() => {
                   :title="d.missing_gap_note"
                   style="margin-bottom: 8px"
                 />
-                <div class="md">{{ d.content_markdown }}</div>
+                <div class="md">{{ readableContent(d.content_markdown) }}</div>
                 <ul v-if="d.key_recommendations.length" class="recs">
                   <li v-for="(r, i) in d.key_recommendations" :key="i">
                     {{ r }}
@@ -848,14 +745,13 @@ onUnmounted(() => {
                     v-for="c in d.citations"
                     :key="c.citation_tag"
                     size="small"
-                    :type="c.source_review_status === 'approved' && (c.translation_review_status === 'approved' || c.language?.startsWith('zh')) ? 'success' : 'warning'"
+                    type="primary"
                     plain
                     data-testid="report-citation-badge"
                     @click="openCitation(c.clause_id, c.quote_original)"
                   >
                     {{ c.citation_tag }} {{ c.document_title.slice(0, 22) }} ·
                     {{ c.clause_number }}
-                    · {{ c.source_review_status === 'approved' && (c.translation_review_status === 'approved' || c.language?.startsWith('zh')) ? '引用材料已复核' : '待核对' }}
                   </el-button>
                 </div>
               </el-collapse-item>
@@ -896,37 +792,12 @@ onUnmounted(() => {
                   <el-table-column label="判断依据(原文)" min-width="200">
                     <template #default="{ row }">
                       <i>"{{ row.basis_quote }}"</i>
-                      <div class="muted">中文为机器翻译:{{ row.basis_zh }}</div>
+                      <div class="muted">中文对照：{{ row.basis_zh }}</div>
                     </template>
                   </el-table-column>
                 </el-table>
               </el-collapse-item>
-              <el-collapse-item
-                name="process"
-                :title="`协同过程(${detail.step_traces.length} 步 · ${detail.mcp_calls_count} 次工具调用 · ${detail.total_tokens} tokens · 退回补证 ${detail.backtrack_count} 次)`"
-              >
-                <div
-                  v-for="s in detail.step_traces"
-                  :key="s.id"
-                  class="step"
-                  :class="{ back: s.is_backtrack }"
-                  :data-testid="s.is_backtrack ? 'backtrack-step-card' : 'normal-step-card'"
-                >
-                  <div class="step-head">
-                    <b>#{{ s.seq_no }} {{ s.agent_name }}</b>
-                    <el-tag v-if="s.is_backtrack" size="small" type="danger">退回补证</el-tag>
-                    <span class="muted">{{ s.duration_ms }} ms · {{ s.tokens_used }} tokens</span>
-                  </div>
-                  <div>{{ s.business_summary }}</div>
-                  <div v-if="s.backtrack_reason" class="back-reason">
-                    退回原因:{{ s.backtrack_reason }}
-                    <div v-if="s.backtrack_resolution">补证结果:{{ s.backtrack_resolution }}</div>
-                  </div>
-                  <div v-for="c in s.tool_calls" :key="c.call_id" class="muted">
-                    · {{ c.tool_label }}({{ c.duration_ms }} ms):{{ c.result_summary }}
-                  </div>
-                </div>
-              </el-collapse-item>
+
             </el-collapse>
           </div>
         </template>
@@ -956,7 +827,7 @@ onUnmounted(() => {
       </footer>
     </section>
 
-    <el-drawer v-model="drawerVisible" title="引用溯源 · 官方原文与关联关系" size="60%">
+    <el-drawer v-model="drawerVisible" title="引用来源与术语释义" size="60%">
       <div v-loading="drawerLoading" data-testid="citation-detail-drawer">
         <el-alert v-for="alert in card?.source_integrity_alerts" :key="alert"
           :title="alert" type="warning" :closable="false" show-icon />
@@ -978,14 +849,12 @@ onUnmounted(() => {
                 card.review_status === 'approved'
                   ? '已复核'
                   : card.translated_text
-                    ? '中文译文（机器翻译，待核对）'
+                    ? '中文对照'
                     : '未翻译'
               }}
             </el-tag>
           </h4>
-          <p class="muted">当前条款审查状态：原文 {{ card.source_review_status === 'approved' ? '已复核' : '待核对' }}；
-            译文 {{ card.translation_review_status === 'approved' ? '已复核' : card.translated_text ? '待核对' : '未提供' }}。
-            报告标记保留生成时状态，不自动追认历史结论。</p>
+          <details class="muted"><summary>资料信息</summary><p>原文：{{ card.source_review_status === 'approved' ? '已复核' : '未人工复核' }}；中文：{{ card.translation_review_status === 'approved' ? '已复核' : '机器翻译' }}</p></details>
           <div v-if="card.source_url" class="muted">
             官方来源:<a :href="card.source_url" target="_blank" rel="noopener">{{
               card.source_url
@@ -994,25 +863,18 @@ onUnmounted(() => {
           <div class="dual">
             <div>
               <div class="col-label">官方原文</div>
-              <div class="md">{{ card.original_text }}</div>
+              <LegalText :text="card.original_text" :terms="card.terms" :clause-id="card.clause_id" :section-path="card.section_path" />
               <div v-if="anchorQuote" class="anchor">
                 报告锚定的原文片段:<mark>{{ anchorQuote }}</mark>
               </div>
             </div>
             <div>
-              <div class="col-label">中文译文（机器翻译，待核对）</div>
-              <div class="md">{{ card.translated_text || '暂无中文译文' }}</div>
+              <div class="col-label">中文对照</div>
+              <LegalText :text="card.translated_text || '暂无中文对照'" :terms="card.terms" :clause-id="card.clause_id" :section-path="card.section_path" />
             </div>
           </div>
-          <div class="col-label" style="margin-top: 12px">该条款关联关系</div>
-          <KgForceGraph
-            v-if="drawerVisible && citationNodes.length > 0"
-            :nodes="citationNodes"
-            :edges="citationEdges"
-            :categories="FG_CATEGORIES"
-            height="340px"
-          />
-          <el-empty v-else description="该条款暂无图谱关联" :image-size="60" />
+          <div v-if="card.related_requirements?.length" class="col-label" style="margin-top:24px">相关合规要求</div>
+          <article v-for="r in card.related_requirements" :key="r.id" class="step"><span class="muted">{{r.topic_label}}</span><h4>{{r.title}}</h4><p>{{r.quote}}</p></article>
         </template>
       </div>
     </el-drawer>

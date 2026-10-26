@@ -1,0 +1,78 @@
+{
+  "model_calls": 23,
+  "request_attempts": 24,
+  "tokens": 103229,
+  "accepted": 180,
+  "failed": [
+    {
+      "id": "2964548d-dd5f-46fd-a36f-02dfbec19c84",
+      "reason": "译文缺失原文数字或比例: 20"
+    },
+    {
+      "id": "3cee1a12-b133-468e-9d67-0a1381ca55d5",
+      "reason": "术语未按规定译法输出: 原词 'anonymised information' 必须译为 '匿名化信息'"
+    },
+    {
+      "id": "3fbbfe38-059d-4883-856f-cfefd397cbd7",
+      "reason": "术语未按规定译法输出: 原词 'relevant request' 必须译为 '相关请求'"
+    },
+    {
+      "id": "408c0aa2-44b6-40d7-8a4d-e812f0c9e381",
+      "reason": "术语未按规定译法输出: 原词 'specified date' 必须译为 '指定日期'"
+    },
+    {
+      "id": "434bb004-955b-443a-a254-b3a380728b6d",
+      "reason": "术语未按规定译法输出: 原词 'address-harvesting software' 必须译为 '地址收集软件'"
+    },
+    {
+      "id": "4cbc865c-85a5-4c85-b179-7ed4c4eb5576",
+      "reason": "术语未按规定译法输出: 原词 'specified certification' 必须译为 '特定认证'"
+    },
+    {
+      "id": "4cf94ea3-ab1b-4417-a67a-2b27783bc333",
+      "reason": "missing_model_item"
+    },
+    {
+      "id": "7323256f-0047-4eb8-a4b8-97f46f03a140",
+      "reason": "译文缺失原文数字或比例: 25"
+    },
+    {
+      "id": "95c78fe6-e568-4b6d-bb0f-bcacf255644a",
+      "reason": "译文缺失原文数字或比例: 20"
+    },
+    {
+      "id": "a63e7827-a296-4ece-b2b8-c8dd1aa84282",
+      "reason": "译文缺失原文数字或比例: 25"
+    },
+    {
+      "id": "ff316c47-a8d5-4adf-99a4-96ea43ec01c3",
+      "reason": "译文缺失原文数字或比例: 25"
+    },
+    {
+      "id": "e5ed88c5-17a5-4223-8362-bc9f2b4a22a5",
+      "reason": "译文缺失原文数字或比例: 5"
+    },
+    {
+      "id": "c6c140f1-df47-4802-90f3-b49c1f010081",
+      "reason": "译文缺失原文数字或比例: 1"
+    },
+    {
+      "id": "d06dea59-962e-49fc-a6d5-8595b9ef3c42",
+      "reason": "译文缺失原文数字或比例: 7"
+    },
+    {
+      "id": "d962255e-ed0d-41ec-b8c9-3d911716521d",
+      "reason": "译文缺失原文数字或比例: 4"
+    },
+    {
+      "id": "f1bf5e2b-892f-43f1-8075-617eaa54ea0c",
+      "reason": "译文缺失原文数字或比例: 6"
+    },
+    {
+      "id": "f895af6d-7083-4f9e-b5ae-1877e784d686",
+      "reason": "译文缺失原文数字或比例: 12"
+    }
+  ],
+  "skipped_cached": 2,
+  "remaining_not_called": 10
+}

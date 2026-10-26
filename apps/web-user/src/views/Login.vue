@@ -68,7 +68,6 @@ async function submit() {
     </section>
     <main class="login-main">
       <div class="login-form">
-        <p class="demo-notice">演示环境，数据仅供参考</p>
         <div class="eyebrow">ENTERPRISE WORKSPACE</div>
         <h2>欢迎回到车研数合</h2>
         <p class="login-description">登录企业工作台，开始您的合规评估。</p>

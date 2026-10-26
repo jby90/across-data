@@ -86,7 +86,7 @@ watch([() => props.selectedId, levels], ([id]) => {
       </div>
     </section>
     <p v-if="!countries.length" class="directory-hint">暂无可显示的国家与文件。</p>
-    <p class="directory-hint">按已有文档类型分类；法律效力与有效状态请查看原文和复核结果。</p>
+    <p class="directory-hint">按国家和文件类别查阅法规。</p>
   </nav>
 </template>
 

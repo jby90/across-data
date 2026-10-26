@@ -21,6 +21,17 @@ from app.knowledge.term_rendering import RenderingBatch, append_rendering
 
 
 async def run(args):
+    feedback_path = getattr(args, "feedback", None)
+    feedback = (
+        {
+            item.get("id"): item.get("reason")
+            for item in json.loads(Path(feedback_path).read_text(encoding="utf-8")).get(
+                "failed", []
+            )
+        }
+        if feedback_path
+        else {}
+    )
     stats = {
         "model_calls": 0,
         "request_attempts": 0,
@@ -90,6 +101,7 @@ async def run(args):
                     "definition_id": str(r.id),
                     "source_term": r.source_term,
                     "definition_original": r.definition_original,
+                    "previous_validation_issue": feedback.get(str(r.id)),
                     "prescribed_target": (
                         r.target_zh
                         if r.registration_origin == "manual"
@@ -106,7 +118,10 @@ async def run(args):
                             "content": "你是法律术语翻译员。只根据所给定义生成中文暂译和完整中文定义。"
                             "不添加任何法律判断、引用或背景事实，保留全部数字、编号、金额、日期、例外与条件。"
                             "prescribed_target不为空时必须逐字使用；否则给出简洁中文暂译。"
-                            "definition_zh必须包含target_zh。仅返回指定JSON。",
+                            "definition_zh必须逐字包含target_zh，不可换成近义词。"
+                            "机构全称也应忠实译成中文；原词已单独保存，不要把整段外文重复附在中文定义中。"
+                            "原文中的版面行号、注释数字和档案编号也必须全部保留，不可自行认定无关而删除。"
+                            "严格修正previous_validation_issue，不得补写原文没有的内容。仅返回指定JSON。",
                         },
                         {
                             "role": "user",
@@ -194,6 +209,10 @@ if __name__ == "__main__":
     parser.add_argument("--batch-size", type=int, choices=range(1, 11), default=8)
     parser.add_argument("--token-budget", type=int, default=100000)
     parser.add_argument("--output", required=True)
+    parser.add_argument(
+        "--feedback",
+        help="Prior result JSON; pass exact validation failures back to the model",
+    )
     args = parser.parse_args()
     with database_scope(DatabaseIdentity(scope="system")):
         asyncio.run(run(args))

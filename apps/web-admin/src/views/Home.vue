@@ -76,7 +76,7 @@ const visibleCards = computed(() =>
       </article>
     </div>
     <div class="workflow-note">
-      <strong>资料处理流程</strong>官方采集 → 解析与翻译 → 人工复核 → 知识关联 → 分析与报告
+      <strong>资料处理流程</strong>官方采集 → 解析与翻译 → 质量检查与重点确认 → 知识关联 → 分析与报告
     </div>
   </div>
 </template>

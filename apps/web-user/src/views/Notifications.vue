@@ -39,11 +39,10 @@ onMounted(load)
   <div class="management-page" v-loading="busy">
     <header class="page-heading"><div><h1>更新通知</h1><p>查看原文变化及受影响的报告，重新评估后留存新版本。</p></div>
       <el-button @click="load">刷新</el-button></header>
-    <el-alert type="info" :closable="false" title="来源变化不等于法规修订已经确认。旧原文、证据和审批记录保留，法律复核仍待核对。" />
     <el-empty v-if="!items.length && !busy" description="暂无更新通知" />
     <article v-for="n in items" :key="n.id" class="notice-card" data-testid="update-notification">
       <div class="notice-heading"><strong>{{ n.country_code }} · {{ n.document_title }}</strong>
-        <el-tag :type="n.state === 'resolved' ? 'info' : 'warning'">{{ n.state === 'resolved' ? '已由新版本处理' : '来源变化待核对' }}</el-tag>
+        <el-tag :type="n.state === 'resolved' ? 'info' : 'warning'">{{ n.state === 'resolved' ? '已由新版本处理' : '来源已更新' }}</el-tag>
         <el-tag v-if="!n.read_at" size="small">未读</el-tag></div>
       <p>{{ n.summary }}</p>
       <p>报告：{{ n.task_title }} · 涉及 {{ n.dimension_codes.join('、') }}</p>

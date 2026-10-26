@@ -17,7 +17,7 @@ const cards = [
     path: '/knowledge',
     icon: 'book',
     title: '法规知识库',
-    description: '检索法规、对照原文和译文，查看知识关系与复核状态。',
+    description: '按国别查阅法规、合规主题和法律术语，对照原文与中文释义。',
     admin: false,
   },
 ]
@@ -45,12 +45,6 @@ const visibleCards = computed(() =>
         <h3>{{ card.title }}</h3>
         <p>{{ card.description }}</p>
         <RouterLink :to="card.path">进入{{ card.title }}<AppIcon name="arrow" /></RouterLink>
-      </article>
-      <article class="feature-card is-planned">
-        <span class="feature-icon"><AppIcon name="file" /></span>
-        <h3>跨境申请表</h3>
-        <p>按业务场景识别申报材料、收集填报信息。此功能将在后续阶段提供。</p>
-        <el-tag type="info" effect="plain">规划中</el-tag>
       </article>
     </div>
     <div class="workflow-note">

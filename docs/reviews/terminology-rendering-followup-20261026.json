@@ -1,0 +1,14 @@
+{
+  "model_calls": 6,
+  "request_attempts": 6,
+  "tokens": 23475,
+  "accepted": 26,
+  "failed": [
+    {
+      "id": "a679ff2b-54a7-4905-868d-f6074c92ee7c",
+      "reason": "CJK 字符占比未达标: 22.2% < 30.0%"
+    }
+  ],
+  "skipped_cached": 182,
+  "remaining_not_called": 0
+}

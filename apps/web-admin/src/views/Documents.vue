@@ -17,6 +17,10 @@ import { api } from '../api'
 import RegulationDirectory from '../components/RegulationDirectory.vue'
 import { directoryCountries, directoryLevels, documentPage } from '@cyshuhe/shared/src/regulationDirectory'
 
+async function copyClauseId(id:string){
+  try {await navigator.clipboard.writeText(id);ElMessage.success('已复制条款 ID，可用于登记来源定义')}
+  catch {ElMessage.error('复制失败，请从条款详情复制 ID')}
+}
 const route = useRoute()
 const router = useRouter()
 
@@ -621,6 +625,7 @@ onMounted(async () => {
         <h4>条款(共 {{ clauses.length }} 条,原文逐字保留)</h4>
         <el-table :data="clauses" border size="small" max-height="420">
           <el-table-column prop="clause_number" label="编号" width="80" />
+          <el-table-column label="来源定位" width="100"><template #default="{row}"><el-button link type="primary" @click="copyClauseId(row.id)">复制条款 ID</el-button></template></el-table-column>
           <el-table-column label="所在章节" width="220">
             <template #default="{ row }">
               <div style="font-size: 12px; color: #909399">
