@@ -1,0 +1,10 @@
+{
+  "frontend_source_commit": "6b0efe8",
+  "user_login_license_links": 0,
+  "admin_login_license_links": 0,
+  "license_pages_retained": true,
+  "in_app_footer_links_retained": true,
+  "both_typechecks_and_production_builds": "passed",
+  "api_worker_db_containers_unchanged": true,
+  "screenshot": "img/login-license-link-hidden-20261026.png"
+}
