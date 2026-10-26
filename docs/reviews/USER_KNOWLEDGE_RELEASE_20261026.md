@@ -42,4 +42,18 @@
 
 ![用户端主题入口](img/user-topics-local-20261026.png)
 
-线上部署信息及生产前后校验将另附本目录的部署结果 JSON，截图以最终线上页面为准。
+## 线上部署
+
+已上线：<https://47.116.46.81/>；管理端：<https://47.116.46.81/admin/>。
+
+运行源码提交 `6f2eeb7`，镜像标签 `6f2eeb7-ip`，数据库迁移 `0023`。两端静态资源路径及实际 JavaScript 内容已检查，API 健康。当前运行角色仍为普通 `cyshuhe_runtime`，无 superuser/BYPASSRLS 权限；原有 11 张 FORCE RLS 表保留。
+
+生产导入新增 275 条中文释义、复用 2 条既有对照，无失败、无来源签名失配、模型调用 0。第二次导入新增 0、复用 277。生产九张受保护表与部署前摘要逐项一致；原文与证据归档未写入。备份位置 `/opt/cyshuhe-backups/20261026T084126Z-pre-terminology`，旧 release 和镜像保留，代码回退不删新表。
+
+真实线上浏览器已验证：五国目录与主题卡片、突尼斯法语法律定义与中文释义悬浮窗、官方来源链接、用户八维报告不展示 MCP/tokens/智能体实现细节、管理员图谱 1,231 条总关系与当前筛选 1,216 条关系、管理员 v48 执行轨迹。管理员只读配置和权限边界保持原状。本次未重新运行或改写既有分析报告。
+
+记录：[部署与数据校验](terminology-production-deployment-20261026.json)、[上线前备份](terminology-production-backup-20261026.json)。
+
+![线上用户主题入口](img/user-topics-production-20261026.png)
+
+![线上来源定义与中文释义](img/user-term-definition-production-20261026.png)

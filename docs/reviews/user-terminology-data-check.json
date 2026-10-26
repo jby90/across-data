@@ -158,7 +158,7 @@
     "MA": 1,
     "LB": 12
   },
-  "derived_history_count": 423,
+  "derived_history_count": 1208,
   "repeat_index": {
     "definitions_added": 0,
     "source_clauses_examined": 1991,
@@ -194,5 +194,6 @@
   "scope_repair": {
     "retained_old_records": true,
     "new_explicit_definitions_including_scoped_and_cross_referenced_terms": true
-  }
+  },
+  "derived_history_database": "working source clone, including retained earlier index/render attempts"
 }
