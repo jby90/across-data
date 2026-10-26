@@ -44,6 +44,12 @@ interface KgEdge {
 
 interface QualitySummary {
   source_integrity_held_documents?: number
+  source_integrity_unresolved_documents?: number
+  source_integrity_replaced_documents?: number
+  source_integrity_records?: Array<{
+    document_id: string; title: string; country_code: string; reason: string;
+    status: string; replacement: null | { document_id: string; title: string; edition: string; source_url: string }
+  }>
   documents_total?: number
   documents_core?: number
   documents_related?: number
@@ -391,13 +397,29 @@ onMounted(async () => {
       </div>
     </header>
     <el-alert
-      v-if="graph.quality_summary.source_integrity_held_documents"
+      v-if="graph.quality_summary.source_integrity_unresolved_documents ?? graph.quality_summary.source_integrity_held_documents"
       type="error"
       :closable="false"
       show-icon
-      :title="`${graph.quality_summary.source_integrity_held_documents} 份资料存在来源绑定异常，已从分析依据隔离。原文与审批仍保留，可在法规文档中核查。`"
+      :title="`${graph.quality_summary.source_integrity_unresolved_documents ?? graph.quality_summary.source_integrity_held_documents} 份资料待补充正确原文`"
       style="margin-bottom: 16px"
-    />
+    >
+      <div v-for="item in graph.quality_summary.source_integrity_records?.filter(x => x.status === 'needs_source')" :key="item.document_id">
+        {{ item.title }} · {{ item.reason }}
+        <router-link :to="{ path: '/documents', query: { country_code: item.country_code, document_id: item.document_id } }">查看资料</router-link>
+      </div>
+    </el-alert>
+    <details v-if="graph.quality_summary.source_integrity_replaced_documents" style="margin-bottom: 16px; font-size: 13px; color: var(--text-secondary)">
+      <summary style="cursor:pointer">历史来源记录 · {{ graph.quality_summary.source_integrity_replaced_documents }} 份已关联替代原文</summary>
+      <div v-for="item in graph.quality_summary.source_integrity_records?.filter(x => x.status === 'replacement_available')" :key="item.document_id" style="padding:12px 0">
+        <p>{{ item.title }}</p>
+        <p>已关联：{{ item.replacement?.title }} · {{ item.replacement?.edition }}</p>
+        <router-link :to="{ path: '/documents', query: { country_code: item.country_code, document_id: item.replacement?.document_id } }">查看替代原文</router-link>
+        <span style="margin:0 10px">·</span>
+        <router-link :to="{ path: '/documents', query: { country_code: item.country_code, document_id: item.document_id } }">查看历史记录</router-link>
+        <p>旧文件继续隔离。来源关联不改变人工审批或法律有效状态。</p>
+      </div>
+    </details>
     <div class="stat-grid" aria-label="按要素类型筛选">
       <button
         v-for="(meta, ntype) in NODE_TYPE_META"

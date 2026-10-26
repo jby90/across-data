@@ -295,6 +295,16 @@ onMounted(async () => {
     }
   }
   await Promise.all([load(), loadNames()])
+  const documentId = route.query.document_id
+  if (typeof documentId === 'string') {
+    try {
+      const doc = docs.value.find(d => d.id === documentId)
+        || await api.get<DocumentOut>(`/admin/documents/${encodeURIComponent(documentId)}`)
+      await open(doc)
+    } catch (e) {
+      ElMessage.error((e as Error).message)
+    }
+  }
 })
 </script>
 

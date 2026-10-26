@@ -465,6 +465,16 @@ async def _build_graph_payload(
         )
         or 0
     )
+    from app.core.config import get_settings
+    from app.ingestion.archive import ArchiveStore
+    from app.ingestion.binding_status import source_binding_statuses
+
+    binding_statuses = (
+        await source_binding_statuses(session, ArchiveStore(get_settings().archive_dir), cc)
+        if source_held_count and not user_view
+        else []
+    )
+    replaced_sources = sum(x["status"] == "replacement_available" for x in binding_statuses)
 
     return GraphPayloadOut(
         country_code=cc,
@@ -477,6 +487,9 @@ async def _build_graph_payload(
             "documents_out_of_scope": docs_out_of_scope,
             "documents_extracted": max(0, docs_total - docs_out_of_scope - source_held_count),
             "source_integrity_held_documents": source_held_count,
+            "source_integrity_unresolved_documents": source_held_count - replaced_sources,
+            "source_integrity_replaced_documents": replaced_sources,
+            "source_integrity_records": binding_statuses,
             "structural_edges": structural_edges,
             "semantic_edges": semantic_edges,
             "semantic_unjudged": semantic_unjudged,
