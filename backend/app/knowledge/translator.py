@@ -45,7 +45,7 @@ from app.knowledge.numeric_integrity import (
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "translate-v8"
+PROMPT_VERSION = "translate-v9"
 MAX_CHUNK_CHARS = 1500
 DEFAULT_CONCURRENCY = 4
 
@@ -320,25 +320,37 @@ def match_clause_glossary(
     hits: list[dict] = []
     lower_text = (original_text or "").lower()
     for term in effective_terms:
-        src = term.source_term.strip()
-        if not src:
+        aliases = getattr(term, "aliases", []) or [term.source_term]
+        aliases = sorted((s.strip() for s in aliases if s.strip()), key=len, reverse=True)
+        if not aliases:
             continue
-        if term.language.lower() in ("en", "fr"):
-            pattern = re.compile(r"\b" + re.escape(src) + r"s?\b", re.IGNORECASE)
-            matched = bool(pattern.search(original_text))
-        else:
-            matched = src in original_text
+        expressions = []
+        for alias in aliases:
+            escaped = r"\s+".join(re.escape(word) for word in alias.split())
+            if re.search(r"[\u0600-\u06ff]", alias):
+                variants = [escaped]
+                if alias.startswith("ال"):
+                    variants.append(re.escape("ل" + alias[1:]))
+                escaped = r"[وف]?(?:[بك])?(?:" + "|".join(variants) + ")"
+            expressions.append(escaped)
+        pattern = re.compile(r"(?<!\w)(?:" + "|".join(expressions) + r")s?(?!\w)", re.I)
+        match = pattern.search(original_text)
+        matched = bool(match)
         if matched:
             hits.append(
                 {
                     "term_id": str(term.id),
                     "concept_code": term.concept_code,
-                    "source_term": term.source_term,
+                    "source_term": match.group(),
                     "target_zh": term.target_zh,
                     "priority_level": term.priority_level,
                     "statutory_definition": term.statutory_definition,
                     "source_reference": term.source_reference,
                     "country_code": term.country_code,
+                    "source_url": getattr(term, "source_url", ""),
+                    "source_kind": getattr(term, "source_kind", "legacy_rendering"),
+                    "definition_id": getattr(term, "definition_id", None),
+                    "preserve_original": getattr(term, "preserve_original", False),
                     "matched_in_translation": True,
                 }
             )
@@ -425,12 +437,21 @@ def verify_translation(
     updated_hits: list[dict] = []
     for h in glossary_hits:
         ok = bool(trans_clean) and (h["target_zh"] in trans_clean)
+        if h.get("preserve_original") and " ".join(
+            h["source_term"].casefold().split()
+        ) not in " ".join(trans_clean.casefold().split()):
+            ok = False
         item = dict(h, matched_in_translation=ok)
         updated_hits.append(item)
         if not ok:
             issues.append(
                 f"术语未按规定译法输出: 原词 '{h['source_term']}' 必须译为 '{h['target_zh']}'"
             )
+        # A correct label elsewhere does not legitimise an everyday mistranslation.
+        if h.get("concept_code") == "data_controller" and "控制器" in trans_clean:
+            issues.append("法律语境中的 controller 不得译为控制器")
+        if h.get("concept_code") == "data_processor" and "处理器" in trans_clean:
+            issues.append("法律语境中的 processor 不得译为处理器")
 
     # ② 原文中的数字、金额、百分比、年份、条号在译文中全部出现
     translated_norm = _normalize_digits(trans_clean)
@@ -503,12 +524,17 @@ def _build_translation_prompts(
     if glossary_hits:
         sys_lines.append("\n【强制法律术语表（原词 -> 规定译法 -> 法定定义）】：")
         for h in glossary_hits:
-            defn = (
-                h.get("statutory_definition") or h.get("source_reference") or "法定标准定义"
-            ).strip()
+            defn = (h.get("statutory_definition") or "仅规范译名，不能据此推定本国法定含义").strip()
             sys_lines.append(
-                f"- 原词: {h['source_term']} -> 规定译法: {h['target_zh']} -> 法定定义: {defn}"
+                f"- 原词: {h['source_term']} -> 规定译法: {h['target_zh']} -> 来源释义: {defn}"
+                f"；来源类型: {h.get('source_kind', 'legacy_rendering')}"
+                f"；出处: {h.get('source_reference', '')}"
             )
+            if h.get("preserve_original"):
+                sys_lines.append(
+                    f"该词须保留原词 {h['source_term']}，并使用暂译 {h['target_zh']}；"
+                    "不得自行消除定义冲突。"
+                )
     if unmatched_terms:
         sys_lines.append("\n【专业词汇参考译法】：")
         for u in unmatched_terms:
@@ -694,6 +720,9 @@ async def translate_clause(
             .all()
         )
 
+    from app.knowledge.legal_terms import translation_terms
+
+    terms = await translation_terms(session, clause, country_code, terms)
     effective_terms = select_effective_terms(terms, country_code, clause.language)
     hits, unmatched = match_clause_glossary(clause.original_text, effective_terms)
 
@@ -922,6 +951,14 @@ async def translate_document_latest_version(
     )
     out: list[ClauseTranslation] = []
     for c in clauses:
+        from app.knowledge.legal_terms import translation_terms
+
+        effective = select_effective_terms(
+            await translation_terms(session, c, doc.country_code, terms),
+            doc.country_code,
+            c.language,
+        )
+        required_hits, _ = match_clause_glossary(c.original_text, effective)
         current = (
             await session.scalars(
                 select(ClauseTranslation).where(
@@ -937,9 +974,7 @@ async def translate_document_latest_version(
             row.review_status == "approved"
             or (
                 row.quality_check_passed
-                and verify_translation(
-                    c.original_text, row.translated_text, row.glossary_hits or []
-                )[0]
+                and verify_translation(c.original_text, row.translated_text, required_hits)[0]
             )
             for row in current
         ):

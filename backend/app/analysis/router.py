@@ -22,6 +22,7 @@ from app.analysis.models import (
     ReportVersion,
 )
 from app.analysis.pipeline import launch_pipeline
+from app.analysis.public_view import PublicTaskDetail, PublicTaskSummary
 from app.analysis.report_exporter import (
     build_report_docx,
     build_report_pdf,
@@ -81,10 +82,7 @@ from app.iam.deps import (
 from app.iam.models import Organization, User
 from app.ingestion.models import Clause, Document, DocumentVersion
 from app.ingestion.safety import report_held_citation_ids
-from app.knowledge.graph_evidence import active_edge_filters
-from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
-from app.knowledge.router import _compute_eight_attributes
-from app.knowledge.schemas import GraphPayloadOut, KgEdgeOut, KgNodeOut
+from app.knowledge.models import ClauseTranslation
 from app.updates.service import report_updates
 
 AdminOrReviewerDep = Annotated[Principal, Depends(require_admin_side)]
@@ -728,7 +726,7 @@ async def execute_evaluation_case(
         raise HTTPException(409, str(exc)) from exc
 
 
-@user_router.get("/tasks", response_model=list[AnalysisTaskSummaryOut])
+@user_router.get("/tasks", response_model=list[PublicTaskSummary])
 async def list_user_analysis_tasks(
     user: UserDep,
     session: SessionDep,
@@ -745,7 +743,7 @@ async def list_user_analysis_tasks(
 
 @user_router.post(
     "/tasks",
-    response_model=AnalysisTaskDetailOut,
+    response_model=PublicTaskDetail,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_user_analysis_task(
@@ -778,7 +776,7 @@ async def create_user_analysis_task(
     return await _to_task_detail(session, task)
 
 
-@user_router.get("/tasks/{task_id}", response_model=AnalysisTaskDetailOut)
+@user_router.get("/tasks/{task_id}", response_model=PublicTaskDetail)
 async def get_user_analysis_task_detail(
     task_id: uuid.UUID,
     user: UserDep,
@@ -790,7 +788,7 @@ async def get_user_analysis_task_detail(
     return await _to_task_detail(session, task)
 
 
-@user_router.post("/tasks/{task_id}/facts", response_model=AnalysisTaskDetailOut)
+@user_router.post("/tasks/{task_id}/facts", response_model=PublicTaskDetail)
 async def update_user_task_facts(
     task_id: uuid.UUID,
     body: UpdateFactsIn,
@@ -838,7 +836,7 @@ async def update_user_task_facts(
     return await _to_task_detail(session, task)
 
 
-@user_router.post("/tasks/{task_id}/run", response_model=AnalysisTaskDetailOut)
+@user_router.post("/tasks/{task_id}/run", response_model=PublicTaskDetail)
 async def run_user_analysis_task(
     task_id: uuid.UUID,
     user: UserDep,
@@ -1160,109 +1158,6 @@ async def get_clause_citation_card(
     tr = translation_rows[0] if len(translation_rows) == 1 else None
     translation_ambiguous = len(translation_rows) > 1
 
-    edges = list(
-        (
-            await session.execute(
-                select(KgEdge).where(KgEdge.evidence_clause_id == clause.id, *active_edge_filters())
-            )
-        )
-        .scalars()
-        .all()
-    )
-    if not edges:
-        # 若当前条款未直接挂边，取同法规的语义边展示 1 跳关联面板
-        sibling_cids = list(
-            (await session.execute(select(Clause.id).where(Clause.version_id == ver.id)))
-            .scalars()
-            .all()
-        )
-        if sibling_cids:
-            edges = list(
-                (
-                    await session.execute(
-                        select(KgEdge).where(
-                            KgEdge.evidence_clause_id.in_(sibling_cids), *active_edge_filters()
-                        )
-                    )
-                )
-                .scalars()
-                .all()
-            )
-
-    node_ids: set[uuid.UUID] = set()
-    for e in edges:
-        node_ids.add(e.source_node_id)
-        node_ids.add(e.target_node_id)
-
-    nodes = (
-        list((await session.execute(select(KgNode).where(KgNode.id.in_(node_ids)))).scalars().all())
-        if node_ids
-        else []
-    )
-    node_map = {n.id: n for n in nodes}
-
-    node_outs = [
-        KgNodeOut(
-            id=n.id,
-            country_code=n.country_code,
-            node_type=n.node_type,
-            node_key=n.node_key,
-            name_zh=n.name_zh,
-            name_orig=n.name_orig,
-            summary=n.summary,
-            document_id=n.document_id,
-            evidence_clause_id=n.evidence_clause_id,
-            review_status=n.review_status,
-            attributes=_compute_eight_attributes(
-                n.country_code, n.node_type, n.name_zh, n.attributes
-            ),
-        )
-        for n in nodes
-    ]
-    edge_outs = [
-        KgEdgeOut(
-            id=e.id,
-            country_code=e.country_code,
-            source_node_id=e.source_node_id,
-            source_name_zh=node_map[e.source_node_id].name_zh
-            if e.source_node_id in node_map
-            else "",
-            source_node_type=node_map[e.source_node_id].node_type
-            if e.source_node_id in node_map
-            else "",
-            target_node_id=e.target_node_id,
-            target_name_zh=node_map[e.target_node_id].name_zh
-            if e.target_node_id in node_map
-            else "",
-            target_node_type=node_map[e.target_node_id].node_type
-            if e.target_node_id in node_map
-            else "",
-            relation_type=e.relation_type,
-            evidence_clause_id=e.evidence_clause_id,
-            evidence_quote=e.evidence_quote,
-            clause_number=clause.clause_number,
-            document_title=doc.title,
-            extractor_model=e.extractor_model,
-            review_status=e.review_status,
-            usable_as_legal_basis=(
-                e.review_status == "approved" and not e.is_structural and e.judge_verdict == "yes"
-            ),
-        )
-        for e in edges
-        if e.source_node_id in node_map and e.target_node_id in node_map
-    ]
-
-    if layout_pending:
-        node_outs, edge_outs = [], []
-    mini_graph = GraphPayloadOut(
-        country_code=doc.country_code,
-        node_counts_by_type={},
-        edge_counts_by_relation={},
-        quality_summary={},
-        nodes=node_outs,
-        edges=edge_outs,
-    )
-
     valid_tr_text = (
         tr.translated_text
         if (
@@ -1272,6 +1167,9 @@ async def get_clause_citation_card(
         )
         else ""
     )
+    from app.knowledge.business_view import topic_cards
+    from app.knowledge.legal_terms import current_definitions, term_payload
+
     return {
         "clause_id": str(clause.id),
         "document_id": str(doc.id),
@@ -1279,6 +1177,7 @@ async def get_clause_citation_card(
         "country_code": doc.country_code,
         "clause_number": clause.clause_number or f"#{clause.ordinal}",
         "heading": clause.heading,
+        "section_path": clause.section_path,
         "version_no": ver.version_no,
         "source_url": doc.source_url,
         "original_text": clause.original_text,
@@ -1317,11 +1216,15 @@ async def get_clause_citation_card(
             and not clause.needs_review
             and ((tr and tr.review_status == "approved") or clause.language.startswith("zh"))
         ),
-        "mini_graph": mini_graph.model_dump(mode="json"),
+        "related_requirements": await topic_cards(session, doc.country_code, clause_id=clause.id),
+        "terms": [
+            term_payload(t)
+            for t in await current_definitions(session, doc.country_code, doc.id, ver.id)
+        ],
     }
 
 
-@user_router.post("/chats", response_model=AnalysisTaskDetailOut, status_code=201)
+@user_router.post("/chats", response_model=PublicTaskDetail, status_code=201)
 async def create_chat(user: UserDep, session: SessionDep) -> AnalysisTaskDetailOut:
     """新建一次对话式评估:助手先问候,并开始逐项提问。"""
     task = AnalysisTask(
@@ -1344,7 +1247,7 @@ async def create_chat(user: UserDep, session: SessionDep) -> AnalysisTaskDetailO
     return await _to_task_detail(session, task)
 
 
-@user_router.post("/tasks/{task_id}/messages", response_model=AnalysisTaskDetailOut)
+@user_router.post("/tasks/{task_id}/messages", response_model=PublicTaskDetail)
 async def post_chat_message(
     task_id: uuid.UUID,
     body: ChatMessageIn,

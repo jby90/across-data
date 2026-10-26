@@ -350,6 +350,34 @@ async def parse_version(
         )
         log.warning("解析失败 version=%s: %s", version.id, e)
 
+    if version.state == VersionState.PARSED.value:
+        await session.flush()
+        try:
+            async with session.begin_nested():
+                from app.knowledge.legal_terms import rebuild_library
+
+                result = await rebuild_library(session, document_id=version.document_id)
+            session.add(
+                PipelineEvent(
+                    version_id=version.id,
+                    step="terminology",
+                    status="ok",
+                    message=f"新增来源定义 {result['definitions_added']} 条",
+                )
+            )
+        except (
+            Exception
+        ) as exc:  # A derived index failure must not discard successfully parsed sources.
+            session.add(
+                PipelineEvent(
+                    version_id=version.id,
+                    step="terminology",
+                    status="error",
+                    message=f"术语索引待重试: {type(exc).__name__}",
+                )
+            )
+            log.warning("术语索引失败 version=%s: %s", version.id, type(exc).__name__)
+
 
 async def _process_candidate(
     sf: SessionFactory,

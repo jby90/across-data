@@ -211,6 +211,9 @@ class RegulationClauseItemOut(BaseModel):
 
 
 class RegulationDetailOut(BaseModel):
+    version_id: uuid.UUID | None = None
+    clauses_total: int = 0
+    clause_offset: int = 0
     regulation: RegulationSummaryOut
     versions: list[dict]
     clauses: list[RegulationClauseItemOut]

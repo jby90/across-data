@@ -154,6 +154,7 @@ class ClauseCandidate:
     source_review_status: str = "pending_review"
     translation_review_status: str = "not_translated"
     translation_id: str | None = None
+    terminology: list[dict] = field(default_factory=list)
 
 
 @dataclass

@@ -17,7 +17,7 @@ from app.ingestion.archive import ArchiveStore
 from app.ingestion.models import Clause, DocumentVersion
 
 from .conftest import bearer, login
-from .helpers import make_pdf
+from .helpers import make_pdf, admin_task_detail
 from .test_analysis_p3 import FACTS, _seed_sg_corpus
 
 
@@ -87,9 +87,10 @@ async def wait_state(client, headers, task_id, expected):
         assert r.status_code == 200, r.text
         d = r.json()
         if d["status"] in expected:
-            return d
+            assert "step_traces" not in d
+            return await admin_task_detail(client, task_id)
         if d["status"] == "failed":
-            raise AssertionError(d["step_traces"][-1])
+            raise AssertionError(await admin_task_detail(client, task_id))
         await asyncio.sleep(0.05)
     raise AssertionError("S6 state transition timed out")
 

@@ -145,6 +145,53 @@ class GlossaryTerm(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
+class LegalTermDefinition(Base):
+    """Append-only, source-bound definitions; machine checks never confer human approval."""
+
+    __tablename__ = "legal_term_definitions"
+    __table_args__ = (UniqueConstraint("fingerprint", name="uq_legal_term_fingerprint"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    concept_code: Mapped[str] = mapped_column(String(128), index=True)
+    country_code: Mapped[str | None] = mapped_column(String(2), nullable=True, index=True)
+    language: Mapped[str] = mapped_column(String(8))
+    source_term: Mapped[str] = mapped_column(String(255))
+    target_zh: Mapped[str] = mapped_column(String(255))
+    definition_original: Mapped[str] = mapped_column(Text)
+    definition_zh: Mapped[str | None] = mapped_column(Text, nullable=True)
+    applies_to_document_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("documents.id", ondelete="RESTRICT"), nullable=True
+    )
+    source_kind: Mapped[str] = mapped_column(String(32))
+    source_url: Mapped[str] = mapped_column(String(2048))
+    source_reference: Mapped[str] = mapped_column(String(500))
+    document_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("documents.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
+    version_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("document_versions.id", ondelete="RESTRICT"), nullable=True
+    )
+    clause_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("clauses.id", ondelete="RESTRICT"), nullable=True, index=True
+    )
+    quote_start: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    quote_end: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    source_text_sha256: Mapped[str] = mapped_column(String(64))
+    fingerprint: Mapped[str] = mapped_column(String(64))
+    verification_status: Mapped[str] = mapped_column(String(32), default="source_matched")
+    registration_origin: Mapped[str] = mapped_column(
+        String(24), default="auto", server_default="auto"
+    )
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="RESTRICT"), nullable=True
+    )
+    # Separate from GlossaryTerm.review_status: never auto-approve legacy/manual records.
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
 class ClauseTranslation(Base):
     """条款级受术语约束机器翻译与译后程序检查结果。"""
 

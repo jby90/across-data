@@ -75,6 +75,11 @@ def create_app() -> FastAPI:
     app.include_router(documents_router)
     app.include_router(knowledge_admin_router)
     app.include_router(knowledge_user_router)
+    from app.knowledge.term_routes import admin as term_admin
+    from app.knowledge.term_routes import user as term_user
+
+    app.include_router(term_admin)
+    app.include_router(term_user)
     app.include_router(analysis_admin_router)
     app.include_router(analysis_user_router)
     app.include_router(notifications_router)

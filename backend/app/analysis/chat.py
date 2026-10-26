@@ -301,9 +301,7 @@ async def post_user_message(
         session,
         task.id,
         "assistant",
-        f"{ack}\n\n信息已经齐备(完备度 100%)。我现在启动多智能体分析:"
-        "先检索该国现行法规条款,再逐维度分析,最后由程序核验每条引用是否真是原文。"
-        "下面会实时显示每个智能体的进度。",
+        f"{ack}\n\n信息已齐备，正在查找适用法规并生成合规报告。",
     )
     task.status = "ready_to_run"
     await session.commit()

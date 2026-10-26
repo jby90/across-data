@@ -206,6 +206,7 @@ def _candidate_payload(c: ClauseCandidate, retained=None, fact_keys=None) -> dic
         "legal_status": c.legal_status,
         "source_review_status": c.source_review_status,
         "translation_review_status": c.translation_review_status,
+        "terminology": c.terminology,
         "review_contract": "程序核验与人工法律复核分开；待核对内容只能进入明确标注的机器草稿。",
         "instrument_identity_for_comparison_only": c.instrument_identity or None,
         "version_contract": "不同来源/版本保持独立，不得合并引文；未知时效不能认定现行有效。",
@@ -249,6 +250,11 @@ def _build_user_message(
             "每项只选sentences中同一scope_id的连续编号；retained_context只是上下文，不可再次选择。"
         ),
         "output_schema": schema,
+        "term_interpretation_contract": (
+            "常规法律术语不需要人工审批。仅当术语缺少法律定义及权威解释，"
+            "且其含义直接影响当前结论时，填needs_term_interpretation，"
+            "引用输入中真实clause_id、逐字原词、具体疑问和结论影响；其他情况留空。"
+        ),
         "user_fact_contract": {
             "rounds_used": getattr(task, "fact_followup_rounds", 0) or 0,
             "exhausted": (getattr(task, "fact_followup_rounds", 0) or 0) >= MAX_FACT_ROUNDS,
@@ -1180,6 +1186,41 @@ async def _run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     )
 
     # ---- 3. 分析(8 个维度并行调用模型) ----
+    from types import SimpleNamespace
+
+    from app.knowledge.legal_terms import translation_terms
+    from app.knowledge.translator import match_clause_glossary
+
+    for candidate in {c.clause_id: c for values in dim_cands.values() for c in values}.values():
+        terms = await translation_terms(
+            session,
+            SimpleNamespace(
+                version_id=uuid.UUID(candidate.version_id),
+                id=uuid.UUID(candidate.clause_id),
+                section_path=candidate.section_path,
+                language=candidate.language or "en",
+                original_text=candidate.text,
+            ),
+            cc,
+            [],
+        )
+        hits, _ = match_clause_glossary(candidate.text, terms)
+        candidate.terminology = [
+            {
+                key: hit.get(key)
+                for key in (
+                    "source_term",
+                    "target_zh",
+                    "statutory_definition",
+                    "source_reference",
+                    "source_kind",
+                    "source_url",
+                    "preserve_original",
+                )
+            }
+            for hit in hits
+            if hit.get("statutory_definition")
+        ]
     await _phase_started(session, task, "node_dimension_analyst", "analysis")
     dim_titles = dict(EIGHT_DIMENSIONS_SPEC)
     results: dict[str, dict[str, Any]] = copy.deepcopy(retained_results)
@@ -1205,6 +1246,23 @@ async def _run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     for code, (data, call) in zip(active, outs, strict=True):
         results[code] = data
         llm_calls.append(call)
+        from app.knowledge.legal_terms import register_critical_ambiguity
+
+        allowed_ids = {str(c.clause_id) for c in dim_cands[code]}
+        for need in data.get("needs_term_interpretation", []):
+            if need.get("clause_id") not in allowed_ids:
+                continue
+            try:
+                await register_critical_ambiguity(
+                    session,
+                    clause_id=uuid.UUID(need["clause_id"]),
+                    source_term=need["source_term"],
+                    question=need["question"],
+                    impact=need["impact"],
+                )
+            except ValueError:
+                # Already-defined terms and unbound guesses do not create review work.
+                continue
     tokens = sum(int(results[c].get("tokens") or 0) for c in active)
     errors = [c for c in llm_calls if not c.verified]
     await _add_trace(

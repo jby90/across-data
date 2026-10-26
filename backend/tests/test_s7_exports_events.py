@@ -153,7 +153,11 @@ async def test_http_stream_order_replay_and_tenant_auth(client, seed, session_fa
             assert r.headers["content-type"].startswith("text/event-stream")
             assert r.headers["x-accel-buffering"] == "no"
         events = parse_events(payload)
-        assert [e["type"] for e in events] == ["connected", *kinds, "snapshot"]
+        assert [e["type"] for e in events] == [
+            "connected",
+            *[k for k in kinds if k not in {"tool_called", "token_usage"}],
+            "snapshot",
+        ]
         assert "OTHER_TENANT" not in payload
         after = events[2]["id"]
         again = await client.get(url, headers=h | {"Last-Event-ID": str(after)})

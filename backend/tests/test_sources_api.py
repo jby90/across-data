@@ -202,7 +202,8 @@ async def test_documents_api_after_real_ingest(client, seed, session_factory, tm
     ).json()
     assert [c["clause_number"] for c in page] == ["2"]
     events = (await client.get(f"/api/admin/versions/{vid}/events", headers=reviewer_h)).json()
-    assert [e["step"] for e in events] == ["download", "parse"]
+    assert [e["step"] for e in events] == ["download", "parse", "terminology"]
+    assert events[-1]["status"] == "ok"
 
     assert (
         await client.get(

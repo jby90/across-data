@@ -87,8 +87,8 @@ async def test_held_source_is_visible_to_admin_but_not_public_knowledge(
     country = next(row for row in overview if row["country_code"] == "SG")
     assert country["clauses_count"] == country["translations_count"] == 0
     assert country["approved_translations_count"] == country["kg_edges_count"] == 0
-    graph = (await client.get("/api/knowledge/graph?country_code=SG", headers=user)).json()
-    assert not any(node["document_id"] == doc_id for node in graph["nodes"])
+    topics = (await client.get("/api/knowledge/topics?country_code=SG", headers=user)).json()
+    assert not any(item["document_id"] == doc_id for item in topics["items"])
     assert (
         await client.post(
             f"/api/admin/knowledge/edges/{edge_id}/review",

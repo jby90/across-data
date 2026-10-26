@@ -111,6 +111,9 @@ async def translate_fragment_context(session, clause, *, density_context=False):
             )
         ).all()
     )
+    from app.knowledge.legal_terms import translation_terms
+
+    terms = await translation_terms(session, clause, document.country_code, terms)
     effective = translator.select_effective_terms(terms, document.country_code, clause.language)
     all_hits, _ = translator.match_clause_glossary(combined, effective)
     translations, models, issues, tokens_in, tokens_out, duration = [], [], [], 0, 0, 0

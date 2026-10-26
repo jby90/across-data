@@ -167,6 +167,22 @@ async def stream_events(request, engine, principal, after=0, task_id=None):
                 # Session released before network writes/backpressure.
                 for event in events:
                     cursor = event.id
+                    if task_id is not None:
+                        # User subscriptions carry business progress, never tool/model/node data.
+                        if event.event_type in {"tool_called", "token_usage"}:
+                            continue
+                        from app.analysis.public_view import PHASES
+
+                        yield sse(
+                            event.event_type,
+                            {
+                                "task_id": str(event.task_id),
+                                "label": PHASES.get(event.payload.get("phase"), "正在处理评估"),
+                                "status": state,
+                            },
+                            cursor,
+                        )
+                        continue
                     yield sse(
                         event.event_type, {"task_id": str(event.task_id), **event.payload}, cursor
                     )

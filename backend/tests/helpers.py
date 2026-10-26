@@ -66,3 +66,13 @@ def make_fetcher(handler, *, delay: float = 0.0, **kwargs) -> PoliteFetcher:
         resolver=public_resolver,
         **kwargs,
     )
+
+
+async def admin_task_detail(client, task_id):
+    """Internal assertions use the authorised admin API, never user diagnostics."""
+    from .conftest import bearer, login
+
+    headers = bearer(await login(client, "admin", "admin@example.com"))
+    result = await client.get(f"/api/admin/agent-studio/tasks/{task_id}", headers=headers)
+    assert result.status_code == 200, result.text
+    return result.json()

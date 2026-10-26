@@ -292,6 +292,14 @@ class UserFactNeed(BaseModel):
         return self
 
 
+class TermInterpretationNeed(BaseModel):
+    model_config = ConfigDict(strict=True, extra="forbid")
+    clause_id: str
+    source_term: str = Field(min_length=2, max_length=100)
+    question: str = Field(min_length=5, max_length=1500)
+    impact: str = Field(min_length=5, max_length=1500)
+
+
 class AnalysisResponse(BaseModel):
     model_config = ConfigDict(strict=True, extra="forbid")
     summary: str = ""
@@ -299,6 +307,9 @@ class AnalysisResponse(BaseModel):
     recommendations: list[str] = Field(default_factory=list, max_length=6)
     gaps: str = ""
     needs_user_fact: list[UserFactNeed] = Field(default_factory=list, max_length=6)
+    needs_term_interpretation: list[TermInterpretationNeed] = Field(
+        default_factory=list, max_length=4
+    )
 
     @model_validator(mode="after")
     def require_findings_or_explicit_gap(self):

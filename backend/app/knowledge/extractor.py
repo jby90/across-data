@@ -1310,7 +1310,7 @@ async def _find_matching_clause(
         for c in clauses:
             if pat.search(c.original_text):
                 return c
-    return clauses[0]
+    return None
 
 
 async def seed_glossary_and_review_points(session: AsyncSession) -> dict[str, int]:
@@ -1331,11 +1331,9 @@ async def seed_glossary_and_review_points(session: AsyncSession) -> dict[str, in
         if exists is not None:
             continue
 
+        # Seed renderings have no source/version identity. The source-bound library
+        # indexes actual definitions; keyword coincidences must not attach evidence.
         evidence_clause = None
-        if item.get("country_code") and item.get("match_keywords"):
-            evidence_clause = await _find_matching_clause(
-                session, item["country_code"], item["match_keywords"]
-            )
 
         term = GlossaryTerm(
             concept_code=item["concept_code"],

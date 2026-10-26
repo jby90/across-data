@@ -4,6 +4,7 @@ import json
 import pytest
 
 from .conftest import bearer, login
+from .helpers import admin_task_detail
 
 TRANSFER_TEXT = (
     "An organisation must not transfer any personal data to a country or territory outside "
@@ -138,7 +139,8 @@ async def _wait_done(client, hdr, task_id, timeout=20):
         r = await client.get(f"/api/analysis/tasks/{task_id}", headers=hdr)
         assert r.status_code == 200
         if r.json()["status"] != "running":
-            return r.json()
+            assert "step_traces" not in r.json()
+            return await admin_task_detail(client, task_id)
         await asyncio.sleep(0.1)
     raise AssertionError("分析任务超时未结束")
 
@@ -184,7 +186,7 @@ async def test_fact_followup_blocks_analysis_without_model(client, seed):
     assert r.status_code == 201
     d = r.json()
     assert d["status"] == "collecting_facts" and d["sufficiency_score"] == 20
-    assert d["findings"] == [] and d["step_traces"] == []
+    assert d["findings"] == [] and "step_traces" not in d
 
 
 async def test_pipeline_real_verification_backtrack_and_tenant_isolation(
@@ -371,7 +373,7 @@ async def test_chat_collects_everything_then_runs_and_reports(
     for text in FACTS.values():
         d = await _send(client, hdr, tid, text)
     assert d["status"] == "running"
-    assert "信息已经齐备" in _last_assistant(d)["content"]
+    assert "信息已齐备" in _last_assistant(d)["content"]
     # 运行中再发消息:只提示进度,不重复启动
     d = await _send(client, hdr, tid, "好了吗")
     assert "进行中" in _last_assistant(d)["content"]
@@ -454,7 +456,9 @@ async def test_conversation_id_admin_history_live_monitor_and_stage_outputs(
     conv_code = chat_res["conversation_code"]
     assert conv_code.startswith("CONV-") and len(conv_code) >= 18
     assert conv_code in chat_res["messages"][0]["content"]
-    assert chat_res["current_active_node_id"] == "node_fact_collector"
+    assert "current_active_node_id" not in chat_res
+    internal = await admin_task_detail(client, chat_res["id"])
+    assert internal["current_active_node_id"] == "node_fact_collector"
 
     # 2. 发起完整评估工作流并等待完成
     run_res = (

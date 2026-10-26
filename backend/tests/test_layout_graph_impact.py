@@ -189,6 +189,6 @@ async def test_report_export_blocked_but_historical_content_remains_unchanged(
         await client.get(f"/api/analysis/clauses/{clause_id}/citation-card", headers=user)
     ).json()
     assert card["source_integrity_alerts"] and not card["usable_as_legal_basis"]
-    assert card["original_text"] and card["mini_graph"]["edges"] == []
+    assert card["original_text"] and card["related_requirements"] == []
     async with session_factory() as s:
         assert record_payload(await s.get(ReportVersion, report_id)) == before
