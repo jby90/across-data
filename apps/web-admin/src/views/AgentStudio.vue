@@ -1041,9 +1041,6 @@ onUnmounted(() => {
         <div class="workflow-title-block">
           <h2 class="workflow-title">智能体工作台</h2>
           <div class="workflow-meta">
-            <el-tag type="info" effect="plain" size="small" data-testid="agent-readonly-lock-badge">
-              配置只读 · 布局可拖动
-            </el-tag>
             <el-tag type="info" size="small"> DSL: {{ workflow?.dsl_version }} </el-tag>
             <el-tag type="info" size="small" data-testid="citation-policy-readonly">{{ citationPolicyLabel }}</el-tag>
           </div>
@@ -1459,7 +1456,6 @@ onUnmounted(() => {
                   >
                     {{ node.category_label }}
                   </span>
-                  <span class="node-lock-tag" title="生产锁定只读">🔒 只读</span>
                 </div>
 
                 <div class="node-card-title">{{ node.title }}</div>
@@ -1552,19 +1548,12 @@ onUnmounted(() => {
             <span class="inspector-node-title" data-testid="inspector-node-title">
               {{ selectedNode.title }}
             </span>
-            <el-tag size="small" type="danger" effect="plain"> 🔒 参数与代码只读 </el-tag>
           </div>
           <div class="inspector-node-sub">
             节点 ID: <code>{{ selectedNode.node_id }}</code> ·
             {{ selectedNode.category_label }}
           </div>
         </div>
-
-        <el-alert type="warning" :closable="false" show-icon class="readonly-banner">
-          <template #title>
-            生产保护模式：当前仅可查看工作流连接关系、参数配置与运行轨迹，禁止直接修改模型参数或节点代码。
-          </template>
-        </el-alert>
 
         <el-tabs v-model="inspectorTab" class="inspector-tabs">
           <!-- Tab 1: 节点详情、连接关系、只读参数与代码 -->
@@ -1618,7 +1607,6 @@ onUnmounted(() => {
             <div class="inspector-section">
               <div class="sec-title">
                 模型与运行参数
-                <el-tag size="small" type="info">禁用调参</el-tag>
               </div>
               <div class="readonly-form-grid">
                 <div class="form-item">
@@ -1648,7 +1636,6 @@ onUnmounted(() => {
             <div class="inspector-section">
               <div class="sec-title">
                 {{ !workflow?.executable ? '历史配置说明（不证明实际执行）' : selectedNode.node_type === 'analyst' || selectedNode.runtime_settings?.semantic_planning === true ? '实际模型 System Prompt' : '执行说明（不发送给模型）' }}
-                <el-tag size="small" type="info">只读锁定</el-tag>
               </div>
               <el-input
                 type="textarea"
@@ -1661,14 +1648,13 @@ onUnmounted(() => {
             </div>
 
             <div v-if="workflow?.executable" class="inspector-section">
-              <div class="sec-title">此版本实际执行参数（只读）</div>
+              <div class="sec-title">此版本实际执行参数</div>
               <pre class="runtime-settings" data-testid="workflow-runtime-settings">{{ JSON.stringify(Object.fromEntries(Object.entries(selectedNode.runtime_settings).filter(([key]) => key !== 'system_prompt')), null, 2) }}</pre>
               <p>可通过配置包修改：{{ selectedNode.configurable_fields.join('、') || '无可变参数' }}</p>
             </div>
             <div class="inspector-section">
               <div class="sec-title">
                 节点执行入口与代码绑定
-                <el-tag size="small" type="danger">禁止修改代码</el-tag>
               </div>
               <div class="code-readonly-box" data-testid="readonly-code-entrypoint">
                 <code>{{ selectedNode.code_entrypoint }}</code>
@@ -2332,8 +2318,7 @@ onUnmounted(() => {
       width="720px"
     >
       <el-alert type="info" :closable="false" show-icon style="margin-bottom: 12px">
-        导出的 JSON 配置包包含全部 7 个智能体节点的拓扑坐标、上下游连接边、MCP 工具绑定、I/O Schema
-        与只读安全策略，可用于版本归档、长久维护与跨环境迁移。
+        JSON 配置包包含工作流节点、连接关系、工具绑定与运行参数，可用于版本归档与跨环境迁移。
       </el-alert>
       <el-input
         v-model="exportedDslText"
@@ -2354,11 +2339,11 @@ onUnmounted(() => {
     <!-- 导入多智能体配置 JSON DSL 弹窗 -->
     <el-dialog
       v-model="importDialogVisible"
-      title="导入多智能体编排配置包（生成新版本并保持生产只读锁）"
+      title="导入多智能体编排配置包"
       width="720px"
     >
       <el-alert type="info" :closable="false" style="margin-bottom: 16px">
-        只允许修改节点白名单参数。代码入口、工具绑定、拓扑与核验闸门不可修改；导入后需单独激活，新运行才使用该版本。
+        导入后生成新版本，激活后供后续评估使用。
       </el-alert>
       <div style="margin-bottom: 12px">
         <label style="font-weight: 600; display: block; margin-bottom: 6px">

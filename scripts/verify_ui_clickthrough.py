@@ -162,8 +162,6 @@ async def verify_admin_portal(browser, creds: dict, bad_responses: list[str], pa
 
     node_cards = await page.locator("[data-testid=dify-node-card]").count()
     assert node_cards == 7, f"Dify 画布节点数量应为 7，实际为: {node_cards}"
-    lock_badge = await page.locator("[data-testid=agent-readonly-lock-badge]").inner_text()
-    assert "只读锁定" in lock_badge
 
     # 点击「依据子串核验与退回质检 Agent」节点，查看右侧检查器与禁用参数
     await page.locator("[data-node-id=node_citation_verifier]").click()
