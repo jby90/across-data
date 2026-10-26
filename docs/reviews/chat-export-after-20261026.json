@@ -1,0 +1,32 @@
+{
+  "health": {
+    "status": "ok"
+  },
+  "user_bundle": "/assets/ChatAnalysis-C4jacvMp.js",
+  "new_ui_live": true,
+  "public_diagnostics_hidden": true,
+  "pdf": [
+    {
+      "repeat": 1,
+      "cache": "miss",
+      "server_timing": "export;dur=9354.2",
+      "wait_headers_seconds": 9.431,
+      "body_transfer_seconds": 0.145,
+      "total_seconds": 9.575,
+      "bytes": 218647,
+      "sha256": "8e10ac1e1db6cd506c3c8bee13f717ccabaf91672375de5e3304ae0c6aa058c6"
+    },
+    {
+      "repeat": 2,
+      "cache": "hit",
+      "server_timing": "export;dur=9.5",
+      "wait_headers_seconds": 0.093,
+      "body_transfer_seconds": 0.068,
+      "total_seconds": 0.16,
+      "bytes": 218647,
+      "sha256": "8e10ac1e1db6cd506c3c8bee13f717ccabaf91672375de5e3304ae0c6aa058c6"
+    }
+  ],
+  "model_calls": 0,
+  "business_task_created": false
+}
