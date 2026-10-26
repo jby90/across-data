@@ -95,7 +95,6 @@ async function submit() {
             >登录工作台<AppIcon name="arrow" style="margin: 0 0 0 10px"
           /></el-button>
         </el-form>
-        <p><RouterLink to="/licenses">开源许可声明</RouterLink></p>
         <div class="login-switch">
           平台管理员或复核员？<template v-if="adminUrl"
             ><a :href="adminUrl">前往管理端<AppIcon name="arrow" /></a
