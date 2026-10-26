@@ -5,6 +5,7 @@ from pydantic import ConfigDict, Field, computed_field, field_serializer
 from app.analysis.schemas import AnalysisTaskDetailOut, AnalysisTaskSummaryOut
 
 PHASES = {
+    "start": "准备评估",
     "fact_check": "整理业务信息",
     "retrieval": "查找适用法规",
     "analysis": "分析合规要求",
@@ -94,16 +95,22 @@ class PublicTaskDetail(AnalysisTaskDetailOut):
     @computed_field
     @property
     def progress(self) -> list[dict[str, str]]:
-        stages = []
+        stages = {}
         for tr in self.step_traces:
             phase = tr.phase if hasattr(tr, "phase") else tr.get("phase")
+            status = tr.status if hasattr(tr, "status") else tr.get("status")
             if phase in PHASES:
-                stages.append({"label": PHASES[phase], "state": "complete"})
+                stages[phase] = {"label": PHASES[phase], "state": (
+                    "failed" if status == "failed" else
+                    "waiting" if status == "awaiting_user_facts" else
+                    "warning" if status in {"warning", "backtracked"} else "complete"
+                )}
+        result = list(stages.values())
         if self.status == "awaiting_user_facts":
-            stages.append({"label": "请补充业务信息", "state": "waiting"})
+            result.append({"label": "请补充业务信息", "state": "waiting"})
         elif self.status == "failed":
-            stages.append({"label": "评估暂未完成，可重试或联系管理员", "state": "failed"})
-        return stages
+            result.append({"label": "评估暂未完成，可重试或联系管理员", "state": "failed"})
+        return result
 
 
 class PublicTaskSummary(AnalysisTaskSummaryOut):

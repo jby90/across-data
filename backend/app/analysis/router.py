@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
+from time import perf_counter
 from types import SimpleNamespace
 from typing import Annotated, Literal
 
@@ -13,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.analysis.benchmarks import run_retrieval_benchmarks
 from app.analysis.chat import PLACEHOLDER_COUNTRY, post_user_message, start_chat
 from app.analysis.events import append_event, stream_events, validate_reader
+from app.analysis.export_cache import cached_pdf
 from app.analysis.models import (
     AgentWorkflowConfig,
     AnalysisEvent,
@@ -22,7 +24,7 @@ from app.analysis.models import (
     ReportVersion,
 )
 from app.analysis.pipeline import launch_pipeline
-from app.analysis.public_view import PublicTaskDetail, PublicTaskSummary
+from app.analysis.public_view import PHASES, PublicTaskDetail, PublicTaskSummary
 from app.analysis.report_exporter import (
     build_report_docx,
     build_report_pdf,
@@ -319,6 +321,20 @@ async def _to_task_summary(session: AsyncSession, t: AnalysisTask) -> AnalysisTa
 
 async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTaskDetailOut:
     await _expire_stale(session, t)
+    # Only real, committed phase starts drive the user-facing activity label.
+    # No prompts, tools, internal node names or model reasoning leave this projection.
+    activity = None
+    if t.status == "running":
+        event = await session.scalar(
+            select(AnalysisEvent)
+            .where(AnalysisEvent.task_id == t.id, AnalysisEvent.event_type == "phase_started")
+            .order_by(AnalysisEvent.id.desc()).limit(1)
+        )
+        if event is not None:
+            activity = {
+                "label": PHASES.get(event.payload.get("phase"), "正在评估业务场景"),
+                "state": "running", "started_at": event.created_at.isoformat(),
+            }
     traces = list(
         (
             await session.execute(
@@ -405,6 +421,7 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
     org_name, creator_email, creator_name = await _load_org_and_creator(session, t)
     active_node_id, active_node_title = compute_active_node(t.status, traces)
     return AnalysisTaskDetailOut(
+        activity=activity,
         messages=[
             ChatMessageOut(
                 id=m.id,
@@ -1028,6 +1045,7 @@ async def export_user_report(
     if ext == "zip" and not {f"D{i}" for i in range(1, 9)} <= codes:
         raise HTTPException(409, "历史报告未保存全部八个维度，不能伪造拆分文件")
     export_view = SimpleNamespace(
+        id=rv.id,
         version_no=rv.version_no,
         is_partial_sample=rv.is_partial_sample,
         dimensions_json=rv.dimensions_json,
@@ -1038,12 +1056,16 @@ async def export_user_report(
     from starlette.concurrency import run_in_threadpool
 
     # Native PDF shaping must not block chat progress or SSE heartbeats.
+    started = perf_counter()
+    cache_hit = False
     if ext == "zip":
         data = await run_in_threadpool(build_report_zip, task, export_view)
     elif ext == "docx":
         data = await run_in_threadpool(build_report_docx, task, export_view, dimension)
     else:
-        data = await run_in_threadpool(build_report_pdf, task, export_view, dimension)
+        data, cache_hit = await run_in_threadpool(
+            cached_pdf, task, export_view, dimension, build_report_pdf
+        )
     media = {
         "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "pdf": "application/pdf",
@@ -1057,6 +1079,8 @@ async def export_user_report(
             + export_filename(task, rv, ext, dimension)
             + '"',
             "Cache-Control": "private, no-store",
+            "Server-Timing": f'export;dur={(perf_counter() - started) * 1000:.1f}',
+            "X-Export-Cache": "hit" if cache_hit else "miss",
         },
     )
 

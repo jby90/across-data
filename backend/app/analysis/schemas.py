@@ -332,6 +332,7 @@ class ChatMessageIn(BaseModel):
 
 
 class AnalysisTaskDetailOut(BaseModel):
+    activity: dict[str, Any] | None = None
     id: uuid.UUID
     conversation_code: str = ""
     org_id: uuid.UUID | None = None
