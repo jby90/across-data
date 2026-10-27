@@ -53,6 +53,7 @@ from app.knowledge.translator import (
     translate_document_latest_version,
     verify_translation,
 )
+from app.knowledge.user_relations import ReaderRelations, reader_relations
 from app.sources.models import SourceSite
 
 AdminOrReviewerDep = Annotated[Principal, Depends(require_admin_side)]
@@ -1390,6 +1391,18 @@ async def list_user_regulations(
         if summary.clauses_count > 0:
             results.append(summary)
     return results
+
+
+@user_router.get("/regulations/{document_id}/relations", response_model=ReaderRelations)
+async def get_reader_relations(
+    document_id: uuid.UUID,
+    _: UserDep,
+    session: SessionDep,
+    version_id: uuid.UUID | None = None,
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=60, ge=1, le=120),
+):
+    return await reader_relations(session, document_id, version_id, offset, limit)
 
 
 @user_router.get("/regulations/{document_id}", response_model=PublicRegulationDetail)
