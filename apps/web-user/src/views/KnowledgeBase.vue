@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { api } from '../api'
 import RegulationDirectory from '../components/RegulationDirectory.vue'
 import LegalText from '../components/LegalText.vue'
 import type { LegalTerm } from '@cyshuhe/shared/src/legalText'
+const RegulationRelations = defineAsyncComponent(
+  () => import('../components/RegulationRelations.vue'),
+)
+const readingView = ref('clauses')
+async function readRelationBasis(clauseId: string) {
+  if (!detail.value) return
+  readingView.value = 'clauses'
+  await openDocument(detail.value.regulation.id, clauseId)
+}
 interface Country {
   country_code: string
   country_name_zh: string
@@ -38,7 +47,11 @@ interface Detail {
   clause_offset: number
   regulation: Regulation
   clauses: Clause[]
-  versions: Array<{ version_no: number; legal_status: string; fetched_at: string | null }>
+  versions: Array<{
+    version_no: number
+    legal_status: string
+    fetched_at: string | null
+  }>
 }
 interface Topic {
   id: string
@@ -168,6 +181,8 @@ async function chooseCountry(code: string) {
   }
 }
 async function openDocument(id: string, clauseId = '') {
+  clearTimeout(clauseSearchTimer)
+  if (id !== detail.value?.regulation.id) readingView.value = 'clauses'
   const req = ++docRequest
   detailBusy.value = true
   clauseSearch.value = ''
@@ -188,14 +203,12 @@ async function openDocument(id: string, clauseId = '') {
     if (clauseId) {
       await nextTick()
       if (req === docRequest)
-        document
-          .getElementById(`clause-${clauseId}`)
-          ?.scrollIntoView({
-            block: 'start',
-            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-              ? 'instant'
-              : 'smooth',
-          })
+        document.getElementById(`clause-${clauseId}`)?.scrollIntoView({
+          block: 'start',
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            ? 'instant'
+            : 'smooth',
+        })
     }
   } catch (e) {
     if (req === docRequest) {
@@ -300,7 +313,8 @@ onMounted(async () => {
               <header class="document-heading">
                 <div>
                   <div class="eyebrow">
-                    {{ detail.regulation.document_type_zh }} · {{ detail.regulation.publisher }}
+                    {{ detail.regulation.document_type_zh }} ·
+                    {{ detail.regulation.publisher }}
                   </div>
                   <h2>{{ detail.regulation.title }}</h2>
                   <p>
@@ -319,64 +333,77 @@ onMounted(async () => {
                   >官方原文 ↗</a
                 >
               </header>
-              <div class="reading-tools">
-                <el-input
-                  v-model="clauseSearch"
-                  clearable
-                  placeholder="查找条号或正文"
-                  aria-label="查找条款"
-                  @input="searchClauses"
-                /><el-button text @click="showVersions = !showVersions">版本记录</el-button>
-              </div>
-              <div v-if="showVersions" class="versions">
-                <div v-for="v in detail.versions" :key="v.version_no">
-                  归档版本 {{ v.version_no }} ·
-                  {{ legalStatus[v.legal_status] || v.legal_status }} ·
-                  {{ v.fetched_at?.slice(0, 10) || '日期未记录' }}
+              <el-radio-group v-model="readingView" class="reading-view" aria-label="法规阅读方式">
+                <el-radio-button value="clauses">条款阅读</el-radio-button>
+                <el-radio-button value="relations">关系解读</el-radio-button>
+              </el-radio-group>
+              <RegulationRelations
+                v-if="readingView === 'relations'"
+                :key="`${detail.regulation.id}:${detail.version_id}`"
+                :document-id="detail.regulation.id"
+                :version-id="detail.version_id"
+                @basis="readRelationBasis"
+              />
+              <template v-else>
+                <div class="reading-tools">
+                  <el-input
+                    v-model="clauseSearch"
+                    clearable
+                    placeholder="查找条号或正文"
+                    aria-label="查找条款"
+                    @input="searchClauses"
+                  /><el-button text @click="showVersions = !showVersions">版本记录</el-button>
                 </div>
-              </div>
-              <article
-                v-for="c in pageClauses"
-                :key="c.clause_id"
-                :id="`clause-${c.clause_id}`"
-                class="clause"
-                :class="{ selected: selectedClause === c.clause_id }"
-              >
-                <h3>
-                  {{ clauseLabel(c.clause_number) || c.ordinal
-                  }}<template v-if="c.heading"> · {{ c.heading }}</template>
-                </h3>
-                <div class="parallel">
-                  <section>
-                    <h4>原文</h4>
-                    <LegalText
-                      :text="c.original_text"
-                      :terms="docTerms"
-                      :clause-id="c.clause_id"
-                      :section-path="c.section_path"
-                    />
-                  </section>
-                  <section>
-                    <h4>中文对照</h4>
-                    <LegalText
-                      v-if="c.translated_text"
-                      :text="c.translated_text"
-                      :terms="docTerms"
-                      :clause-id="c.clause_id"
-                      :section-path="c.section_path"
-                    />
-                    <p v-else class="muted">暂无中文对照</p>
-                  </section>
+                <div v-if="showVersions" class="versions">
+                  <div v-for="v in detail.versions" :key="v.version_no">
+                    归档版本 {{ v.version_no }} ·
+                    {{ legalStatus[v.legal_status] || v.legal_status }} ·
+                    {{ v.fetched_at?.slice(0, 10) || '日期未记录' }}
+                  </div>
                 </div>
-              </article>
-              <el-empty v-if="!pageClauses.length" description="没有匹配的条款" /><el-pagination
-                v-if="detail.clauses_total > 12"
-                :current-page="page"
-                @update:current-page="turnClausePage"
-                :page-size="12"
-                :total="detail.clauses_total"
-                layout="prev, pager, next, total"
-              /> </template
+                <article
+                  v-for="c in pageClauses"
+                  :key="c.clause_id"
+                  :id="`clause-${c.clause_id}`"
+                  class="clause"
+                  :class="{ selected: selectedClause === c.clause_id }"
+                >
+                  <h3>
+                    {{ clauseLabel(c.clause_number) || c.ordinal
+                    }}<template v-if="c.heading"> · {{ c.heading }}</template>
+                  </h3>
+                  <div class="parallel">
+                    <section>
+                      <h4>原文</h4>
+                      <LegalText
+                        :text="c.original_text"
+                        :terms="docTerms"
+                        :clause-id="c.clause_id"
+                        :section-path="c.section_path"
+                      />
+                    </section>
+                    <section>
+                      <h4>中文对照</h4>
+                      <LegalText
+                        v-if="c.translated_text"
+                        :text="c.translated_text"
+                        :terms="docTerms"
+                        :clause-id="c.clause_id"
+                        :section-path="c.section_path"
+                      />
+                      <p v-else class="muted">暂无中文对照</p>
+                    </section>
+                  </div>
+                </article>
+                <el-empty v-if="!pageClauses.length" description="没有匹配的条款" /><el-pagination
+                  v-if="detail.clauses_total > 12"
+                  :current-page="page"
+                  @update:current-page="turnClausePage"
+                  :page-size="12"
+                  :total="detail.clauses_total"
+                  layout="prev, pager, next, total"
+                />
+              </template> </template
             ><el-empty v-else-if="!detailBusy" description="选择一份法规开始阅读" />
           </main></div
       ></el-tab-pane>
@@ -525,6 +552,9 @@ onMounted(async () => {
   display: flex;
   gap: 12px;
   margin: 22px 0;
+}
+.reading-view {
+  margin-top: 22px;
 }
 .reading-tools .el-input {
   max-width: 410px;
