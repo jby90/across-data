@@ -1225,7 +1225,10 @@ async def _run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
     dim_titles = dict(EIGHT_DIMENSIONS_SPEC)
     results: dict[str, dict[str, Any]] = copy.deepcopy(retained_results)
     active = [code for code, _ in EIGHT_DIMENSIONS_SPEC if code in run_codes and dim_cands[code]]
-    support_caches = {code: {} for code in active}
+    # A retained checkpoint proposal can fail re-verification and need repair even
+    # when this resume initially re-analysed another dimension. Keep an isolated
+    # cache for every dimension, not just the initially active subset.
+    support_caches = {code: {} for code, _ in EIGHT_DIMENSIONS_SPEC}
     t_start = asyncio.get_event_loop().time()
     outs = await asyncio.gather(
         *[

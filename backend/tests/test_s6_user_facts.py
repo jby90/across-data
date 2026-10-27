@@ -17,7 +17,7 @@ from app.ingestion.archive import ArchiveStore
 from app.ingestion.models import Clause, DocumentVersion
 
 from .conftest import bearer, login
-from .helpers import make_pdf, admin_task_detail
+from .helpers import admin_task_detail, make_pdf
 from .test_analysis_p3 import FACTS, _seed_sg_corpus
 
 
@@ -333,13 +333,62 @@ async def test_corrupt_retained_archive_blocks_resume_instead_of_reusing_results
     async with session_factory() as session:
         version = await session.scalar(select(DocumentVersion).limit(1))
         path = Path(get_settings().archive_dir) / version.archive_path
+        original = path.read_bytes()
+    try:
         path.write_bytes(b"damaged fixture archive")
-    before = len(calls)
-    assert (await answer(client, headers, paused, "中国上海研发中心")).status_code == 200
-    for _ in range(100):
-        result = (await client.get(f"/api/analysis/tasks/{paused['id']}", headers=headers)).json()
-        if result["status"] == "failed":
-            break
-        await asyncio.sleep(0.05)
-    assert result["status"] == "failed" and not result["report_versions"]
-    assert len(calls) == before
+        before = len(calls)
+        assert (await answer(client, headers, paused, "中国上海研发中心")).status_code == 200
+        for _ in range(100):
+            result = (
+                await client.get(f"/api/analysis/tasks/{paused['id']}", headers=headers)
+            ).json()
+            if result["status"] == "failed":
+                break
+            await asyncio.sleep(0.05)
+        assert result["status"] == "failed" and not result["report_versions"]
+        assert len(calls) == before
+    finally:
+        # This content-addressed synthetic file can be reused by later test fixtures.
+        path.write_bytes(original)
+
+
+@pytest.mark.parametrize("retained_code", ["D1", "D6"])
+@pytest.mark.parametrize("prior_failure", ["refused_finding", "no_findings", "model_error"])
+async def test_resume_can_repair_retained_dimensions_not_in_initial_rerun(
+    client, seed, session_factory, monkeypatch, retained_code, prior_failure
+):
+    """A checkpoint may contain refused proposals while another dimension asks a question."""
+    from app.analysis.models import AnalysisTask
+
+    headers, calls, paused = await start(client, seed, session_factory, monkeypatch)
+    async with session_factory() as session:
+        task = await session.get(AnalysisTask, paused["id"])
+        checkpoint = copy.deepcopy(task.analysis_checkpoint_json)
+        proposal = checkpoint["results"][retained_code]
+        if prior_failure == "refused_finding":
+            proposal["findings"][0]["_generation_gap"] = "Synthetic prior incomplete source"
+            proposal["findings"][0]["_ok"] = False
+        else:
+            proposal["findings"] = []
+            proposal["gaps"] = "Synthetic previous result lacks verified evidence"
+            if prior_failure == "model_error":
+                proposal["error"] = "Synthetic prior model timeout"
+        task.analysis_checkpoint_json = checkpoint
+        await session.commit()
+    assert (await answer(client, headers, paused, "数据传输到中国上海研发中心")).status_code == 200
+    done = await wait_state(client, headers, paused["id"], {"completed"})
+    analyses = [t for t in done["step_traces"] if t["phase"] == "analysis"]
+    assert analyses[-1]["input_snapshot"]["dimensions_requested"] == ["D3"]
+    assert retained_code in analyses[-1]["input_snapshot"]["retained_dimensions"]
+    repairs = [t for t in done["step_traces"] if t["phase"] == "re_analysis"]
+    assert repairs[-1]["input_snapshot"]["re_analysed_dimensions"] == [retained_code]
+    assert Counter(c["code"] for c in calls) == Counter(
+        {**{f"D{i}": 1 for i in range(1, 9)}, "D3": 2, retained_code: 2}
+    )
+    assert not any(t["phase"] == "error" for t in done["step_traces"])
+    assert len(done["report_versions"][0]["dimensions"]) == 8
+    assert done["workflow_version_id"] == paused["workflow_version_id"]
+    # The failed first proposal remains in the trace, never rewritten as a success.
+    verification = [t for t in done["step_traces"] if t["phase"] == "verification"][-1]
+    assert verification["status"] == "backtracked"
+    assert any(p.startswith(retained_code) for p in verification["output_snapshot"]["problems"])
