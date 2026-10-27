@@ -281,6 +281,16 @@ def _build_user_message(
             "rule": "仅追问用户实际业务事实；法源、条号、版本有效性缺失必须记为证据缺口。",
         },
     }
+    if repair_limit is not None:
+        payload["repair_budget"] = {
+            "max_new_findings": repair_limit,
+            "allowed_fact_keys": sorted(facts),
+            "rule": (
+                f"本轮最多返回 {repair_limit} 项新 findings（不包含系统保留项）；"
+                "只处理这些事实键，无法补证时返回 findings=[] 并说明具体 gaps。"
+                "不要新增其他结论，也不要重复输出系统保留项。"
+            ),
+        }
     if retained:
         payload["retained_evidence"] = [
             {
@@ -638,7 +648,10 @@ async def _analyse_dimension(
                             if any(i not in allowed for i in f.sentence_ids):
                                 raise ValueError("所选证据不在本轮可选范围，不能重复保留项")
                     if _repair_limit is not None and len(validated.findings) > _repair_limit:
-                        raise ValueError("只重试失败项，不得超过本次修复名额")
+                        raise ValueError(
+                            f"本轮最多 {_repair_limit} 项新 findings，实际返回 "
+                            f"{len(validated.findings)} 项；系统保留项不应再次输出"
+                        )
                     for f in validated.findings if retained else []:
                         c = by_id.get(f.clause_id)
                         if c is None:
@@ -1802,7 +1815,11 @@ async def _compile(
         status="failed" if technical_failed else "passed" if full else "warning",
         summary=(
             f"编制完成:{len(findings)} 条核验通过的结论,{covered}/8 个维度有依据"
-            + ("" if full else ";缺依据的维度已标注缺口,报告为部分样稿")
+            + (
+                ";仍有分析或依据核验问题，当前记录未通过交付检查"
+                if technical_failed
+                else "" if full else ";缺依据的维度已标注缺口,报告为部分样稿"
+            )
         ),
         calls=[comp],
         duration_ms=comp.duration_ms,

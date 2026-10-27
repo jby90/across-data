@@ -578,6 +578,8 @@ async def test_retry_keeps_passed_evidence_and_only_spends_on_failed_items(monke
             )
             if len(selections) > 1:
                 assert p["output_schema"]["properties"]["findings"]["maxItems"] == 1
+                assert p["repair_budget"]["max_new_findings"] == 1
+                assert p["repair_budget"]["allowed_fact_keys"] == ["q"]
                 assert p["retained_evidence"][0]["clause_id"] == "stable"
             output = {
                 "findings": [
@@ -631,6 +633,62 @@ async def test_retry_keeps_passed_evidence_and_only_spends_on_failed_items(monke
     if not duplicate:
         assert result["evidence_selections"][0]["retained"]
         assert pipeline._verify_dimension("D4", result, rows) == []
+
+
+async def test_repair_budget_is_explicit_without_retained_items_and_overflow_still_rejected(
+    monkeypatch,
+):
+    from app.analysis import pipeline
+    from app.analysis.models import AnalysisTask
+
+    rows = [
+        candidate("a", "The operator must provide notice."),
+        candidate("b", "The operator must protect records."),
+    ]
+    calls = []
+
+    async def oversized(messages, **kwargs):
+        payload = json.loads(messages[1]["content"])
+        calls.append(payload)
+        assert payload["phase"] == "select_evidence"  # Never ground an over-budget selection.
+        assert payload["repair_budget"]["max_new_findings"] == 1
+        assert payload["repair_budget"]["allowed_fact_keys"] == ["q"]
+        assert payload["output_schema"]["properties"]["findings"]["maxItems"] == 1
+        assert set(payload["business_facts"]) == {"q"}
+        return LlmResult(
+            {
+                "findings": [
+                    {
+                        "clause_id": c.clause_id,
+                        "sentence_ids": [1],
+                        "fact_key": "q",
+                        "obligation": "待依据生成",
+                        "risk_level": "LOW",
+                    }
+                    for c in rows
+                ]
+            },
+            2,
+            1,
+            1,
+            "synthetic-overflow",
+        )
+
+    monkeypatch.setattr(pipeline, "call_llm_json", oversized)
+    result, call = await pipeline._analyse_dimension(
+        AnalysisTask(country_code="QZ", facts_json={"q": "synthetic fact", "other": "unused"}),
+        "D8",
+        "整改建议",
+        rows,
+        ["修复已有失败项"],
+        dict(system_prompt="JSON", model="test", temperature=0.0, timeout=5.0),
+        _repair_limit=1,
+        _repair_keys={"q"},
+    )
+    assert len(calls) == 2 and result["error_kind"] == "model_format_error"
+    assert result["findings"] == [] and not call.verified
+    assert result["tokens"] == 6
+    assert "实际返回 2 项" in result["error"]
 
 
 @pytest.mark.parametrize("drift", ["text", "anchor"])

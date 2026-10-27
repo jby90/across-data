@@ -94,9 +94,20 @@ class PublicTaskDetail(AnalysisTaskDetailOut):
 
     @computed_field
     @property
+    def failure_summary(self) -> dict | None:
+        from app.analysis.failure_feedback import failure_feedback
+
+        return failure_feedback(self.status, self.step_traces, self.report_versions, PHASES)
+
+    @computed_field
+    @property
     def progress(self) -> list[dict[str, str]]:
         stages = {}
-        for tr in self.step_traces:
+        boundary = max((
+            i for i, tr in enumerate(self.step_traces)
+            if (tr.phase if hasattr(tr, "phase") else tr.get("phase")) == "fact_check"
+        ), default=0)
+        for tr in self.step_traces[boundary:]:
             phase = tr.phase if hasattr(tr, "phase") else tr.get("phase")
             status = tr.status if hasattr(tr, "status") else tr.get("status")
             if phase in PHASES:
