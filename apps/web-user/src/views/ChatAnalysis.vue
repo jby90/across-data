@@ -108,6 +108,14 @@ interface TaskSummary {
 }
 
 interface TaskDetail {
+  failure_summary?: {
+    title: string
+    summary: string
+    issues: Array<{ label: string; dimension_codes: string[] }>
+    next_action: string
+    retained_citations: number
+    report_version: number | null
+  } | null
   activity?: {label: string; state: string; started_at: string} | null
   id: string
   conversation_code: string
@@ -718,7 +726,16 @@ onUnmounted(() => {
             <div class="card-title"><span class="activity-title" data-testid="task-running-tag"><span class="activity-spinner" aria-hidden="true" />{{ detail.activity?.label || '正在评估您的业务场景' }}</span><small v-if="activityElapsed">本环节 {{ activityElapsed }}</small></div>
             <div class="progress-stages"><span v-for="(s,i) in detail.progress" :key="i" class="progress-stage" :class="s.state"><span aria-hidden="true">{{ s.state === 'complete' ? '✓' : s.state === 'failed' ? '!' : '·' }}</span> {{s.label}}</span></div>
           </div>
-          <el-alert v-if="status === 'failed'" type="error" :closable="false" title="本次评估暂未完成" description="可输入“重试”重新分析，或将对话编号提供给管理员。" />
+          <el-alert v-if="status === 'failed'" type="error" :closable="false" :title="detail.failure_summary?.title || '本次评估暂未完成'" data-testid="analysis-failure-summary">
+            <template v-if="detail.failure_summary">
+              <p>{{ detail.failure_summary.summary }}</p>
+              <ul v-if="detail.failure_summary.issues.length">
+                <li v-for="issue in detail.failure_summary.issues" :key="issue.label">{{ issue.dimension_codes.join('、') }}：{{ issue.label }}</li>
+              </ul>
+              <p>{{ detail.failure_summary.next_action }}</p>
+            </template>
+            <p v-else>可将对话编号提供给管理员定位，已填写的回答会保留。</p>
+          </el-alert>
 
           <!-- 报告卡片 -->
           <div v-if="hasReport && report" class="card report" data-testid="report-card">
@@ -817,7 +834,7 @@ onUnmounted(() => {
                   <b>{{ d.dimension_code }}</b
                   >&nbsp;{{ d.dimension_title }}&nbsp;
                   <el-tag size="small" :type="d.status === 'COMPLETE' ? 'success' : 'warning'">
-                    {{ d.status === 'COMPLETE' ? '分析完成' : '有缺口' }}
+                    {{ d.status === 'COMPLETE' ? '分析完成' : d.status === 'ANALYSIS_ERROR' ? '暂未完成' : '有缺口' }}
                   </el-tag>
                   &nbsp;
                   <el-tag size="small" :type="d.risk_level === 'HIGH' ? 'danger' : 'info'">
@@ -825,8 +842,8 @@ onUnmounted(() => {
                   </el-tag>
                 </template>
                 <div style="display:flex;gap:8px;margin:8px 0 12px">
-                  <el-button size="small" :disabled="!!exportJob" :data-testid="`export-${d.dimension_code}-docx`" @click="download('docx', d.dimension_code)">导出本章 Word</el-button>
-                  <el-button size="small" :disabled="!!exportJob" :data-testid="`export-${d.dimension_code}-pdf`" @click="download('pdf', d.dimension_code)">导出本章 PDF</el-button>
+                  <el-button size="small" :disabled="!!exportJob || report.status === 'analysis_failed'" :data-testid="`export-${d.dimension_code}-docx`" @click="download('docx', d.dimension_code)">导出本章 Word</el-button>
+                  <el-button size="small" :disabled="!!exportJob || report.status === 'analysis_failed'" :data-testid="`export-${d.dimension_code}-pdf`" @click="download('pdf', d.dimension_code)">导出本章 PDF</el-button>
                 </div>
                 <el-alert
                   v-if="d.missing_gap_note"
