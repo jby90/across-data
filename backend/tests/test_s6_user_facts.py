@@ -392,3 +392,72 @@ async def test_resume_can_repair_retained_dimensions_not_in_initial_rerun(
     verification = [t for t in done["step_traces"] if t["phase"] == "verification"][-1]
     assert verification["status"] == "backtracked"
     assert any(p.startswith(retained_code) for p in verification["output_snapshot"]["problems"])
+
+
+@pytest.mark.parametrize("failure", ["refused_evidence", "unexpected_exception"])
+async def test_failed_retained_repair_keeps_checks_and_reports_actual_failure_stage(
+    client, seed, session_factory, monkeypatch, failure
+):
+    from app.analysis.models import AnalysisEvent, AnalysisTask
+
+    headers, calls, paused = await start(client, seed, session_factory, monkeypatch)
+    async with session_factory() as session:
+        task = await session.get(AnalysisTask, paused["id"])
+        cp = copy.deepcopy(task.analysis_checkpoint_json)
+        cp["results"]["D6"]["findings"][0]["_generation_gap"] = "Synthetic source gap"
+        task.analysis_checkpoint_json = cp
+        source_before = list((await session.execute(select(Clause.id, Clause.original_text))).all())
+        await session.commit()
+
+    original_llm = pipeline.call_llm_json
+    original_analyse = pipeline._analyse_dimension
+
+    async def refused(messages, **kwargs):
+        payload = json.loads(messages[1]["content"])
+        if payload["phase"] == "write_from_evidence" and payload["dimension"]["code"] == "D6":
+            field = "units" if payload.get("source_units") else "obligation"
+            return LlmResult(
+                {field: [] if field == "units" else "", "gap": "Synthetic unreadable source"},
+                1,
+                1,
+                1,
+                "synthetic-refusal",
+            )
+        return await original_llm(messages, **kwargs)
+
+    async def broken(task, code, title, candidates, feedback, config, **kwargs):
+        if code == "D6" and feedback:
+            raise RuntimeError("Synthetic repair exception")
+        return await original_analyse(task, code, title, candidates, feedback, config, **kwargs)
+
+    monkeypatch.setattr(pipeline, "call_llm_json", refused)
+    if failure == "unexpected_exception":
+        monkeypatch.setattr(pipeline, "_analyse_dimension", broken)
+    assert (await answer(client, headers, paused, "数据传输到中国上海研发中心")).status_code == 200
+    done = await wait_state(client, headers, paused["id"], {"failed"})
+    errors = [t for t in done["step_traces"] if t["phase"] == "error"]
+    if failure == "unexpected_exception":
+        assert not done["report_versions"]
+        assert errors[-1]["agent_node_id"] == "node_dimension_analyst"
+        assert errors[-1]["input_snapshot"]["failed_phase"] == "re_analysis"
+        async with session_factory() as session:
+            task = await session.get(AnalysisTask, paused["id"])
+            assert task.analysis_checkpoint_json["results"]["D6"] == cp["results"]["D6"]
+            event = await session.scalar(
+                select(AnalysisEvent)
+                .where(AnalysisEvent.task_id == task.id, AnalysisEvent.event_type == "failed")
+                .order_by(AnalysisEvent.id.desc())
+            )
+            assert event.payload["node_id"] == "node_dimension_analyst"
+    else:
+        assert not errors  # Legal-evidence refusal is a recorded analysis failure, not a crash.
+        report = done["report_versions"][0]
+        assert report["status"] == "analysis_failed" and not report["is_partial_sample"]
+        dim = next(d for d in report["dimensions"] if d["dimension_code"] == "D6")
+        assert dim["status"] == "ANALYSIS_ERROR" and not dim["citations"]
+        assert done["backtrack_count"] <= 2
+    async with session_factory() as session:
+        assert (
+            list((await session.execute(select(Clause.id, Clause.original_text))).all())
+            == source_before
+        )

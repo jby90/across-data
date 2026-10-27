@@ -34,7 +34,13 @@ from app.analysis.evidence_selection import (
     sentence_catalog,
 )
 from app.analysis.llm import LlmResult, LlmUnavailableError, call_llm_json
-from app.analysis.models import AgentWorkflowConfig, AnalysisStepTrace, AnalysisTask, ReportVersion
+from app.analysis.models import (
+    AgentWorkflowConfig,
+    AnalysisEvent,
+    AnalysisStepTrace,
+    AnalysisTask,
+    ReportVersion,
+)
 from app.analysis.retrieval import task_query
 from app.analysis.source_alternatives import source_notice
 from app.analysis.tools import (
@@ -78,17 +84,31 @@ async def _guarded_run(
             await session.rollback()
             task = await session.get(AnalysisTask, task_id)
             if task is not None:
+                started = await session.scalar(
+                    select(AnalysisEvent)
+                    .where(
+                        AnalysisEvent.task_id == task.id,
+                        AnalysisEvent.event_type == "phase_started",
+                    )
+                    .order_by(AnalysisEvent.id.desc())
+                    .limit(1)
+                )
+                context = started.payload if started else {}
                 task.status = "failed"
                 task.updated_at = datetime.now(UTC)
                 await _add_trace(
                     session,
                     task,
-                    node="node_report_compiler",
+                    node=context.get("node_id") or "node_start",
                     name="流水线异常终止",
                     phase="error",
                     status="failed",
                     summary=f"流水线异常终止: {type(exc).__name__}: {exc}",
                     calls=[],
+                    inp={
+                        "failed_phase": context.get("phase"),
+                        "failed_node_id": context.get("node_id"),
+                    },
                 )
 
 
@@ -1432,6 +1452,7 @@ async def _run_pipeline(session: AsyncSession, task_id: uuid.UUID) -> None:
             break
         task.backtrack_count += 1
         bad_codes = sorted({p.split(":")[0].split(" ")[0] for p in problems})
+        await _phase_started(session, task, "node_dimension_analyst", "re_analysis")
         b0 = asyncio.get_event_loop().time()
         outs2 = await asyncio.gather(
             *[
