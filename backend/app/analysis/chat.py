@@ -73,10 +73,23 @@ def question_for(slot: str) -> tuple[str, list[str]]:
 
 def match_country(text: str) -> str | None:
     upper = text.upper()
+    matches = []
     for code, name in COUNTRY_NAMES_ZH.items():
         if name in text or re.search(rf"(?<![A-Z]){code}(?![A-Z])", upper):
-            return code
-    return None
+            matches.append(code)
+    return matches[0] if len(matches) == 1 else None
+
+
+def _unfilled_slots(task: AnalysisTask) -> set[str]:
+    """Extraction may fill blanks, never revise facts already supplied by the user."""
+    slots = {key for key in FACT_KEYS if not str((task.facts_json or {}).get(key) or "").strip()}
+    if task.country_code not in COUNTRY_NAMES_ZH:
+        slots.add("country_code")
+    if not (task.vehicle_model or "").strip():
+        slots.add("vehicle_model")
+    if task.scenario_type not in SCENARIO_LABELS:
+        slots.add("scenario_type")
+    return slots
 
 
 def match_scenario(text: str) -> str | None:
@@ -167,7 +180,7 @@ async def start_chat(session: AsyncSession, task: AnalysisTask) -> None:
     await session.commit()
 
 
-async def _llm_extract(text: str) -> dict[str, str]:
+async def _llm_extract(text: str, allowed_slots: set[str] | None = None) -> dict[str, str]:
     """长句里可能一次回答了多个问题:让模型抽取原话片段,片段必须是用户原话的子串。"""
     if not get_settings().llm_api_key or len(text) < 40:
         return {}
@@ -177,12 +190,15 @@ async def _llm_extract(text: str) -> dict[str, str]:
         "scenario_type": "业务场景",
         **{k: v["question_zh"] for k, v in FACT_SPEC.items()},
     }
+    if allowed_slots is not None:
+        descriptions = {key: value for key, value in descriptions.items() if key in allowed_slots}
     messages = [
         {
             "role": "system",
             "content": (
                 "从用户的一段话中抽取各槽位对应的原话片段。只能逐字复制用户原话里的连续片段,"
-                "不得改写、翻译或补充;用户没有提到的槽位不要输出。"
+                "不得改写、翻译或补充;用户没有提到的槽位不要输出。只填写提供的空槽位，"
+                "不得把接收方、人员所在地或举例中的国家当作目标国家。"
                 '只输出 JSON:{"slots":{"槽位名":"原话片段"}}'
             ),
         },
@@ -270,11 +286,21 @@ async def post_user_message(
 
     applied: list[str] = []
     errors: list[str] = []
-    extracted = await _llm_extract(content)
+    # A country answer with multiple jurisdictions needs clarification, not first-match selection.
+    if slot == "country_code" and match_country(content) is None:
+        await _ask(
+            session, task, slot,
+            prefix="没有识别出国家，或回答涉及多个国家；请明确选择一个本次评估的目标国家。\n\n",
+        )
+        await session.commit()
+        return
+    allowed_slots = _unfilled_slots(task)
+    extracted = await _llm_extract(content, allowed_slots)
     for key, snippet in extracted.items():
-        if apply_text(task, key, snippet) is None:
+        if key in allowed_slots and apply_text(task, key, snippet) is None:
             applied.append(key)
-    if not applied:
+    # An answer to the current question must not be lost when other blanks were extracted.
+    if slot not in applied:
         err = apply_text(task, slot, content)
         if err is None:
             applied.append(slot)
