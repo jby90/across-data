@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="14" time="22.713" timestamp="2026-10-25T21:07:43.227054+08:00" hostname="DESKTOP-QQCIT8Q"><testcase classname="tests.test_s12_delivery" name="test_pdf_selectable_multilingual_and_snapshot_unchanged" time="6.732"><failure message="ImportError: cannot import name 'default_url_fetcher' from 'weasyprint' (C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\weasyprint\__init__.py)">def test_pdf_selectable_multilingual_and_snapshot_unchanged():
+        task, rv = sample()
+        before = copy.deepcopy(rv.dimensions_json)
+&gt;       blob = build_report_pdf(task, rv, "D3")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_s12_delivery.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\analysis\report_exporter.py:273: in build_report_pdf
+    return render_pdf(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+task = namespace(id=UUID('05c0cac5-9157-41d3-9a13-2070cc52af8f'), created_at=datetime.datetime(2026, 10, 25, 13, 7, 48, 713365, tzinfo=datetime.timezone.utc), title='导出检查', country_code='ZZ', vehicle_model='示例', findings_json=[])
+rv = namespace(regulatory_updates=[], citation_policy='allow_machine_with_notice', version_no=3, is_partial_sample=True, di...w_status': 'pending', 'translation_review_status': 'pending'}], 'findings': []}], executive_summary='本文件仅导出 D3 跨境与范围。')
+kwargs = {'dimension': 'D3', 'context': 'CONV-20261025-05C0CAC5 | 报告 v3 | D3', 'country': 'ZZ', 'notices': ['机器生成草稿；机器翻译及人工复核状态见引用标记，程序核验不等于法律审批。', '本报告供业务研究参考，不构成法律意见；业务事实及适用法律须由负责人和专业人员核对。', '【部分样稿】部分维度缺少可通过原文核验的依据,已逐维标注缺口;引用的中文为机器翻译,尚未经律所人工复核。']}
+
+    def render_pdf(task, rv, **kwargs):
+        # Lazy import: installation/runtime failures must not degrade to unshaped text.
+&gt;       from weasyprint import HTML, default_url_fetcher
+E       ImportError: cannot import name 'default_url_fetcher' from 'weasyprint' (C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\weasyprint\__init__.py)
+
+app\analysis\pdf_renderer.py:107: ImportError</failure></testcase><testcase classname="tests.test_s12_delivery" name="test_pdf_content_is_text_not_active_markup" time="0.613" /><testcase classname="tests.test_s7_exports_events" name="test_single_dimension_and_zip_keep_selected_version_only[D1]" time="0.928" /><testcase classname="tests.test_s7_exports_events" name="test_single_dimension_and_zip_keep_selected_version_only[D2]" time="0.867" /><testcase classname="tests.test_s7_exports_events" name="test_single_dimension_and_zip_keep_selected_version_only[D3]" time="0.920"><failure message="ImportError: cannot import name 'default_url_fetcher' from 'weasyprint' (C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\weasyprint\__init__.py)">client = &lt;httpx.AsyncClient object at 0x000001D9AE845A90&gt;
+seed = {'org_a': &lt;app.iam.models.Organization object at 0x000001D9AE845700&gt;, 'org_b': &lt;app.iam.models.Organization object at ...app.iam.models.User object at 0x000001D9AE702960&gt;, 'reviewer': &lt;app.iam.models.User object at 0x000001D9AE252B70&gt;, ...}
+session_factory = async_sessionmaker(class_='AsyncSession', bind=&lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000001D9AC5CA810&gt;, autoflush=True, expire_on_commit=False)
+dimension = 'D3'
+
+    @pytest.mark.parametrize("dimension", [f"D{i}" for i in range(1, 9)])
+    async def test_single_dimension_and_zip_keep_selected_version_only(
+        client, seed, session_factory, dimension
+    ):
+        task, rv = await fixture_report(session_factory, seed)
+        h = bearer(await login(client, "user", "a-member@example.com"))
+        url = f"/api/analysis/tasks/{task.id}/reports/1/export."
+        r = await client.get(url + f"docx?dimension={dimension}", headers=h)
+        assert r.status_code == 200, r.text
+        text, header = doc_text(r.content)
+        assert "BODY_MARKER_" + dimension in text and "HISTORICAL_FACT_" + dimension in text
+        assert "FULL_SUMMARY_MARKER" not in text and "LATEST_TASK_SECRET" not in text
+        for other in set(f"D{i}" for i in range(1, 9)) - {dimension}:
+            assert "BODY_MARKER_" + other not in text and "HISTORICAL_FACT_" + other not in text
+        assert "CONV-" in header and dimension in header and "v1" in header and "法律" in header
+        assert dimension in r.headers["content-disposition"]
+        if dimension == "D3":
+&gt;           pdf = await client.get(url + "pdf?dimension=D3", headers=h)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_s7_exports_events.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\httpx\_client.py:1768: in get
+    return await self.request(
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\httpx\_client.py:1540: in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\httpx\_client.py:1629: in send
+    response = await self._send_handling_auth(
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\httpx\_client.py:1657: in _send_handling_auth
+    response = await self._send_handling_redirects(
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\httpx\_client.py:1694: in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\httpx\_client.py:1730: in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\httpx\_transports\asgi.py:170: in handle_async_request
+    await self.app(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\applications.py:1194: in __call__
+    await super().__call__(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\telemetry\_asgi.py:151: in __call__
+    await self.app(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\middleware\base.py:203: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\main.py:65: in isolate_model_egress_context
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\middleware\base.py:179: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\middleware\base.py:149: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\middleware\cors.py:91: in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\middleware\cors.py:149: in simple_response
+    await self.app(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\routing.py:678: in __call__
+    await self.middleware_stack(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\routing.py:2813: in app
+    await route.handle(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\routing.py:1841: in handle
+    await self.original_router.handle(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\routing.py:2896: in handle
+    await included_router._handle_selected(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\routing.py:1867: in _handle_selected
+    await original_route.handle(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\routing.py:1330: in handle
+    await effective_context.app(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\routing.py:167: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\routing.py:153: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\routing.py:746: in app
+    raw_response = await run_endpoint_function(
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\fastapi\routing.py:373: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\analysis\router.py:1048: in export_user_report
+    data = await run_in_threadpool(build_report_pdf, task, export_view, dimension)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\starlette\concurrency.py:34: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\anyio\to_thread.py:65: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\anyio\_backends\_asyncio.py:2706: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\anyio\_backends\_asyncio.py:1100: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+app\analysis\report_exporter.py:273: in build_report_pdf
+    return render_pdf(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+task = namespace(id=UUID('ea153b91-c855-4aa1-8270-0d7e7462ff05'), created_at=datetime.datetime(2026, 10, 25, 13, 7, 53, 70126...json=[{'basis_quote': 'QUOTE_D3', 'business_fact': 'HISTORICAL_FACT_D3', 'compliance_obligation': 'ORIGINAL_RULE_D3'}])
+rv = namespace(regulatory_updates=[], citation_policy=None, version_no=1, is_partial_sample=False, dimensions_json=[{'statu..., 'content_markdown': 'BODY_MARKER_D3', 'key_recommendations': []}], executive_summary='本文件仅导出 D3 DIMENSION_TITLE_D3。')
+kwargs = {'dimension': 'D3', 'context': 'CONV-20261025-EA153B91 | 报告 v1 | D3', 'country': 'XX', 'notices': ['机器生成草稿；机器翻译及人工复核状态见引用标记，程序核验不等于法律审批。', '本报告供业务研究参考，不构成法律意见；业务事实及适用法律须由负责人和专业人员核对。']}
+
+    def render_pdf(task, rv, **kwargs):
+        # Lazy import: installation/runtime failures must not degrade to unshaped text.
+&gt;       from weasyprint import HTML, default_url_fetcher
+E       ImportError: cannot import name 'default_url_fetcher' from 'weasyprint' (C:\Users\Jin\.venvs\cyshuhe\Lib\site-packages\weasyprint\__init__.py)
+
+app\analysis\pdf_renderer.py:107: ImportError</failure></testcase><testcase classname="tests.test_s7_exports_events" name="test_single_dimension_and_zip_keep_selected_version_only[D4]" time="0.791" /><testcase classname="tests.test_s7_exports_events" name="test_single_dimension_and_zip_keep_selected_version_only[D5]" time="0.867" /><testcase classname="tests.test_s7_exports_events" name="test_single_dimension_and_zip_keep_selected_version_only[D6]" time="0.842" /><testcase classname="tests.test_s7_exports_events" name="test_single_dimension_and_zip_keep_selected_version_only[D7]" time="0.957" /><testcase classname="tests.test_s7_exports_events" name="test_single_dimension_and_zip_keep_selected_version_only[D8]" time="0.861" /><testcase classname="tests.test_s7_exports_events" name="test_legacy_snapshot_does_not_borrow_latest_findings" time="2.165" /><testcase classname="tests.test_s7_exports_events" name="test_http_stream_order_replay_and_tenant_auth" time="0.839" /><testcase classname="tests.test_s7_exports_events" name="test_pg_notify_is_after_commit_and_survives_listener_reconnect" time="0.769" /><testcase classname="tests.test_s7_exports_events" name="test_progress_rollback_and_revoked_reader" time="3.628" /></testsuite></testsuites>

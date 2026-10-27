@@ -1,0 +1,69 @@
+{
+  "synthetic_only": true,
+  "task_status": "completed",
+  "original_fact_retained": true,
+  "audit": [
+    {
+      "stage": "started",
+      "purpose": "analysis_json",
+      "hits": {
+        "ORG": 1,
+        "VIN": 1,
+        "EMAIL": 1,
+        "PHONE": 1
+      },
+      "tokens_in": 0,
+      "tokens_out": 0
+    },
+    {
+      "stage": "success",
+      "purpose": "analysis_json",
+      "hits": {
+        "ORG": 1,
+        "VIN": 1,
+        "EMAIL": 1,
+        "PHONE": 1
+      },
+      "tokens_in": 20,
+      "tokens_out": 10
+    },
+    {
+      "stage": "started",
+      "purpose": "analysis_json",
+      "hits": {
+        "ORG": 1,
+        "VIN": 1,
+        "EMAIL": 1,
+        "PHONE": 1
+      },
+      "tokens_in": 0,
+      "tokens_out": 0
+    },
+    {
+      "stage": "success",
+      "purpose": "analysis_json",
+      "hits": {
+        "ORG": 1,
+        "VIN": 1,
+        "EMAIL": 1,
+        "PHONE": 1
+      },
+      "tokens_in": 20,
+      "tokens_out": 10
+    },
+    {
+      "stage": "started",
+      "purpose": "analysis_json",
+      "hits": {},
+      "tokens_in": 0,
+      "tokens_out": 0
+    },
+    {
+      "stage": "success",
+      "purpose": "analysis_json",
+      "hits": {},
+      "tokens_in": 20,
+      "tokens_out": 10
+    }
+  ]
+}

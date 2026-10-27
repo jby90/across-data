@@ -1,0 +1,94 @@
+{
+  "question_id": "S5-02",
+  "question": "车外影像能间接识别个人时如何判断个人数据？",
+  "expected": [
+    {
+      "clause_id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+      "version_no": 1,
+      "clause_number": "2",
+      "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+      "document_title": "Personal Data Protection Act 2012",
+      "original_excerpt": "Interpretation\n2.—(1) In this Act, unless the context otherwise requires —\n“advisory committee” means an advisory committee appointed\nunder section 7;\n“Appeal Committee” means a Data Protection Appeal\nCommittee constituted under section 48P(4), read with the\nSeventh Schedule;\n“Appeal Panel” means the Data Protection Appeal Panel\nestablished by section 48P(1);\n“authorised officer”, in relation to the exercise of any power or\nperformance of any function or duty under any provision of\nthis Act, means a person to whom the exercise of that power\nor ",
+      "source_text_sha256": "960d2647c931964c56c0fb471a695b04dd39be948766951c040aae356bc48f8c"
+    }
+  ],
+  "retrieved": [
+    {
+      "clause_id": "22e9c070-a7fd-40e5-9595-79a1e05223ae",
+      "clause_number": "3.4",
+      "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+    },
+    {
+      "clause_id": "2ef71cd7-44fd-4c27-bfea-f7a920b0fd90",
+      "clause_number": "3.2",
+      "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+    },
+    {
+      "clause_id": "56d7f990-cd7a-4792-aefa-cb9b4ce80198",
+      "clause_number": "4.76",
+      "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+    },
+    {
+      "clause_id": "1a4812eb-60be-493c-a820-75560ac3a371",
+      "clause_number": "2.4",
+      "document_title": "Personal Data Protection Act 2012"
+    },
+    {
+      "clause_id": "9fb8268d-4ad4-42a7-8682-789393bd7f30",
+      "clause_number": "15.34.1",
+      "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+    }
+  ],
+  "source_rows": [
+    {
+      "id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc",
+      "clause_number": "2",
+      "heading": "Interpretation",
+      "page_start": 8,
+      "page_end": 14,
+      "original_text": "Interpretation\n2.—(1) In this Act, unless the context otherwise requires —\n“advisory committee” means an advisory committee appointed\nunder section 7;\n“Appeal Committee” means a Data Protection Appeal\nCommittee constituted under section 48P(4), read with the\nSeventh Schedule;\n“Appeal Panel” means the Data Protection Appeal Panel\nestablished by section 48P(1);\n“authorised officer”, in relation to the exercise of any power or\nperformance of any function or duty under any provision of\nthis Act, means a person to whom the exercise of that power\nor performance of that function or duty under that provision\nhas been delegated under section 38 of the\nInfo-communications Media Development Authority\nAct 2016;\n“Authority” means the Info-communications Media\nDevelopment Authority established by section 3 of the\nInfo-communications Media Development Authority\nAct 2016;\n“benefit plan” means an insurance policy, a pension plan, an\nannuity, a provident fund plan or other similar plan;\n“business” includes the activity of any organisation, whether or\nnot carried on for purposes of gain, or conducted on a regular,\nrepetitive or continuous basis, but does not include an\nindividual acting in his or her personal or domestic capacity;\n“business contact information” means an individual’s name,\nposition name or title, business telephone number, business"
+    },
+    {
+      "id": "1a4812eb-60be-493c-a820-75560ac3a371",
+      "clause_number": "2.4",
+      "heading": "Interpretation",
+      "page_start": 7,
+      "page_end": 12,
+      "original_text": "authority that is related to the allegation of —\n(a) a breach of an agreement;\n(b) a contravention of any written law or any rule of\nprofessional conduct or other requirement imposed by\nany regulatory authority in exercise of its powers under\nany written law; or\n(c) a wrong or a breach of a duty for which a remedy is\nclaimed under any law;\n“processing”, in relation to personal data, means the carrying out\nof any operation or set of operations in relation to the personal\ndata, and includes any of the following:\n(a) recording;\n5 (b) holding;\n(c) organisation, adaptation or alteration;\n(d) retrieval;\n(e) combination;\n(f) transmission;\n10 (g) erasure or destruction;\n“public agency” includes —\n(a) the Government, including any ministry, department,\nagency, or organ of State;\n(b) any tribunal appointed under any written law; or\n15 (c) any statutory body specified under subsection (2);\n“publicly available”, in relation to personal data about an\nindividual, means personal data that is generally available\nto the public, and includes personal data which can be\nobserved by reasonably expected means at a location or an\n20 event —\n(a) at which the individual appears; and\n(b) that is open to the public;\n“relevant body” means the Commission, the Administration\nBody, the Appeal Panel or any Appeal Committee;\n25 “tribunal” includes a judicial or quasi-judicial body or a"
+    },
+    {
+      "id": "2ef71cd7-44fd-4c27-bfea-f7a920b0fd90",
+      "clause_number": "3.2",
+      "heading": null,
+      "page_start": 10,
+      "page_end": 33,
+      "original_text": "different types of data about an individual and from which an individual can be\nidentified, regardless of whether such data is true or accurate, or whether the data\nexists in electronic or other form.\nThe PDPA does not apply in relation to certain categories of personal data which are\nexpressly excluded from the application of the PDPA. These are highlighted in the\nsections later. Please also refer to the chapter on “Anonymisation” in the Advisory\nGuidelines on the PDPA for Selected Topics, which describes the considerations and\nconditions under which personal data may be anonymised and no longer considered\npersonal data for the purposes of the PDPA.\nWhen is data considered “personal data”?\nThe most basic requirement for data to constitute personal data is that it is\ninformation about an identifiable individual. There are two principal considerations.\nFirst, is the purpose of information to be data about an individual or which relates to\nthe individual. Examples include information about an individual’s health,\neducational and employment background, as well as an individual’s activities such as\nspending patterns. There will be situations where the personal data is incidental to\nthe purpose of the information. For example, an internal investigations report that\nincidentally includes names and appointments of key actors involved in the incident"
+    },
+    {
+      "id": "22e9c070-a7fd-40e5-9595-79a1e05223ae",
+      "clause_number": "3.4",
+      "heading": null,
+      "page_start": 10,
+      "page_end": 33,
+      "original_text": "individuals; and (b) can individuals be identified from this set of information or other\ninformation they have access to. In general, organisations should avoid making\nassessments in the abstract. The following paragraphs set out a few of the\nCommission’s considerations in determining personal data.\nNumber of data elements in the dataset and availability of other information\nThe rule of thumb is that there should be at least two data elements in the dataset\nbefore individuals can be identified. Sometimes, more than two data elements may\nbe required before an individual can be identified. This depends very much on the\nspecificity and nature of the data elements. For example, the combination of name\nand NRIC number is usually sufficient to identify individuals, but email addresses may\nneed to be combined with customer shopping preferences and purchase history\nbefore individuals can be identified from this combination of data elements. In\ndetermining whether the dataset is personal data, an organisation should not\noverlook the availability of other information it has or is likely to have access to. For\nexample, a unique customer ID that can link a mailing list to the CRM system.\nIn general, the Commission will apply a “practicability” threshold in determining\nwhether an organisation is likely to have access to other data that will identify an"
+    },
+    {
+      "id": "56d7f990-cd7a-4792-aefa-cb9b4ce80198",
+      "clause_number": "4.76",
+      "heading": null,
+      "page_start": 34,
+      "page_end": 90,
+      "original_text": "expected that his image would be captured by CCTVs installed by the mall for\nsecurity reasons.\nJeff enters Store ABC to make a purchase. It would be reasonably expected\nthat his image would be captured by CCTVs installed by Store ABC for security\nreasons. However, as good practice, Store ABC should put up relevant notices\nto inform its customers about the CCTVs in operation.\nJeff subsequently enters Store XYZ, who has engaged a photographer for the\nday. Generally speaking, photo-taking is reasonably expected in a location like\na store that is open to the public. Therefore, it would be reasonably expected\nfor Jeff’s personal data to be captured by Store XYZ’s photographer (or by\nother photo-taking equipment, e.g. smart phones of fellow patrons). However,\nas good practice, Store XYZ should put up relevant notices to inform its\ncustomers about the photographer.\nJeff leaves the shopping mall and enters a public park where filming for a TV\nshow is taking place. His image was captured by the film crew in the course of\nfilming the show. In this case, it would be reasonably expected that his image\ncould be captured by the film crew. However, as good practice, the film crew\nshould put up notices at appropriate locations (e.g. at the entrances to the\npark) to inform park users that filming is taking place.\nA location or event would be considered “open to the public” if members of the"
+    },
+    {
+      "id": "9fb8268d-4ad4-42a7-8682-789393bd7f30",
+      "clause_number": "15.34.1",
+      "heading": null,
+      "page_start": 101,
+      "page_end": 103,
+      "original_text": "43 User activity data is defined in the PDPA as personal data about an individual that is created in the course or\nas a result of the individual’s use of any product or service provided by the organization.\nproceedings or regulations governing building maintenance and strata\nmanagement); or\nc) the other individual has given consent to the disclosure of his personal data.\nExample:\nBetty applies to Shopping Centre ABC for access to CCTV footage of herself\nwalking through the aisles of the shopping centre on a specific day and time.\nThe CCTV footage contains images of other individuals.\nSince the images of the other shoppers are recorded in a public area, the data\nis considered publicly available. Shopping Centre ABC does not need to obtain\nconsent of the other shoppers in the CCTV footage or mask their images before\nproviding access to Betty.\nExample:\nJohn applies to Organisation DEF for records of his transactions and purchases\nmade on DEF’s platform. Some of the transactions and purchases made by\nJohn on DEF’s platform contain personal data of a third-party (e.g. name of\nthird-party whom John had sent an item to after purchasing that item on the\nplatform). As the personal data of the third-party forms part of John’s user\nactivity data in this instance, Organisation DEF may provide John with access\nto the data without redacting the personal data of the third-party.\nExample:"
+    }
+  ],
+  "status": "engineering annotation ambiguity, human review pending; strict score remains a miss"
+}

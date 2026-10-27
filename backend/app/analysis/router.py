@@ -2,23 +2,35 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from typing import Annotated
+from time import perf_counter
+from types import SimpleNamespace
+from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.analysis.benchmarks import run_retrieval_benchmarks
 from app.analysis.chat import PLACEHOLDER_COUNTRY, post_user_message, start_chat
+from app.analysis.events import append_event, stream_events, validate_reader
+from app.analysis.export_cache import cached_pdf
 from app.analysis.models import (
     AgentWorkflowConfig,
+    AnalysisEvent,
     AnalysisMessage,
     AnalysisStepTrace,
     AnalysisTask,
     ReportVersion,
 )
 from app.analysis.pipeline import launch_pipeline
-from app.analysis.report_exporter import build_report_docx, build_report_pdf
+from app.analysis.public_view import PHASES, PublicTaskDetail, PublicTaskSummary
+from app.analysis.report_exporter import (
+    build_report_docx,
+    build_report_pdf,
+    build_report_zip,
+    export_filename,
+)
 from app.analysis.schemas import (
     AgentWorkflowConfigOut,
     AnalysisFindingOut,
@@ -54,6 +66,14 @@ from app.analysis.workflow_engine import (
     export_workflow_dsl,
     validate_and_import_workflow_dsl,
 )
+from app.analysis.workflow_runtime import (
+    PARAMETERS,
+    RUNTIME_SCHEMA,
+    activate_version,
+    execution_settings,
+    pin_active_version,
+    require_executable,
+)
 from app.core.db import get_session
 from app.iam.deps import (
     Principal,
@@ -63,9 +83,9 @@ from app.iam.deps import (
 )
 from app.iam.models import Organization, User
 from app.ingestion.models import Clause, Document, DocumentVersion
-from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
-from app.knowledge.router import _compute_eight_attributes
-from app.knowledge.schemas import GraphPayloadOut, KgEdgeOut, KgNodeOut
+from app.ingestion.safety import report_held_citation_ids
+from app.knowledge.models import ClauseTranslation
+from app.updates.service import report_updates
 
 AdminOrReviewerDep = Annotated[Principal, Depends(require_admin_side)]
 PlatformAdminDep = Annotated[Principal, Depends(require_platform_admin)]
@@ -81,7 +101,26 @@ STALE_RUNNING_SECONDS = 600
 
 async def _start(session: AsyncSession, task: AnalysisTask) -> None:
     """把任务置为运行中并在后台启动流水线,请求立即返回。"""
+    task = await session.scalar(
+        select(AnalysisTask)
+        .where(AnalysisTask.id == task.id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    )
+    if task.status in {"running", "awaiting_user_facts"}:
+        raise HTTPException(409, "任务正在执行或等待业务事实，不能重复启动或跳过追问")
+    try:
+        if (task.analysis_checkpoint_json or {}).get("resume_dimensions"):
+            cfg = await session.get(AgentWorkflowConfig, task.workflow_version_id)
+            if cfg is None:
+                raise ValueError("断点的执行版本不存在")
+            require_executable(cfg)
+        else:
+            await pin_active_version(session, task)
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
     task.status = "running"
+    await append_event(session, task, "phase_started", {"node_id": "node_start", "phase": "start"})
     await session.commit()
     await session.refresh(task)  # updated_at 由数据库更新,需刷新后才能同步读取
     factory = async_sessionmaker(session.bind, expire_on_commit=False)
@@ -109,16 +148,34 @@ def _to_workflow_out(cfg: AgentWorkflowConfig) -> AgentWorkflowConfigOut:
         dsl_version=cfg.dsl_version,
         is_active=cfg.is_active,
         readonly_locked=True,
-        nodes=[WorkflowNodeOut(**n) for n in (cfg.nodes_json or [])],
+        runtime_schema_version=cfg.runtime_schema_version,
+        executable=cfg.runtime_schema_version == RUNTIME_SCHEMA,
+        nodes=[
+            WorkflowNodeOut(
+                **n,
+                runtime_settings=execution_settings(n)
+                if cfg.runtime_schema_version == RUNTIME_SCHEMA
+                else {},
+                configurable_fields=sorted(
+                    PARAMETERS.get(n["node_id"], set())
+                    | (
+                        {"model_name", "system_prompt"}
+                        if n["node_id"] in ("node_dimension_analyst", "node_mcp_retriever")
+                        else set()
+                    )
+                )
+                if cfg.runtime_schema_version == RUNTIME_SCHEMA
+                else [],
+            )
+            for n in (cfg.nodes_json or [])
+        ],
         edges=[WorkflowEdgeOut(**e) for e in (cfg.edges_json or [])],
         change_note=cfg.change_note,
         created_at=cfg.created_at,
     )
 
 
-async def _load_org_and_creator(
-    session: AsyncSession, t: AnalysisTask
-) -> tuple[str, str, str]:
+async def _load_org_and_creator(session: AsyncSession, t: AnalysisTask) -> tuple[str, str, str]:
     org_name = "系统示例"
     if t.org_id is not None:
         org = await session.get(Organization, t.org_id)
@@ -228,6 +285,8 @@ async def _to_task_summary(session: AsyncSession, t: AnalysisTask) -> AnalysisTa
     missing_unfulfilled = sum(
         1 for m in (t.missing_facts_json or []) if not m.get("is_fulfilled", False)
     )
+    if t.status == "awaiting_user_facts":
+        missing_unfulfilled += len(t.pending_user_facts_json or [])
     return AnalysisTaskSummaryOut(
         id=t.id,
         conversation_code=format_conversation_code(t.id, t.created_at),
@@ -262,6 +321,20 @@ async def _to_task_summary(session: AsyncSession, t: AnalysisTask) -> AnalysisTa
 
 async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTaskDetailOut:
     await _expire_stale(session, t)
+    # Only real, committed phase starts drive the user-facing activity label.
+    # No prompts, tools, internal node names or model reasoning leave this projection.
+    activity = None
+    if t.status == "running":
+        event = await session.scalar(
+            select(AnalysisEvent)
+            .where(AnalysisEvent.task_id == t.id, AnalysisEvent.event_type == "phase_started")
+            .order_by(AnalysisEvent.id.desc()).limit(1)
+        )
+        if event is not None:
+            activity = {
+                "label": PHASES.get(event.payload.get("phase"), "正在评估业务场景"),
+                "state": "running", "started_at": event.created_at.isoformat(),
+            }
     traces = list(
         (
             await session.execute(
@@ -292,6 +365,7 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
         inp_snap, out_snap = _enrich_trace_snapshots(t, tr, rvs, evaluated_missing)
         trace_outs.append(
             AnalysisStepTraceOut(
+                workflow_version_id=tr.workflow_version_id,
                 id=tr.id,
                 seq_no=tr.seq_no,
                 agent_node_id=tr.agent_node_id,
@@ -313,6 +387,12 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
 
     rv_outs = [
         ReportVersionOut(
+            regulatory_updates=await report_updates(session, rv.id),
+            citation_policy=rv.citation_policy or "legacy_unrecorded",
+            source_integrity_alerts=[
+                f"原文绑定或页级解析待核对，引用 {cid} 已隔离，需核查后重新分析"
+                for cid in await report_held_citation_ids(session, rv)
+            ],
             id=rv.id,
             task_id=rv.task_id,
             version_no=rv.version_no,
@@ -341,6 +421,7 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
     org_name, creator_email, creator_name = await _load_org_and_creator(session, t)
     active_node_id, active_node_title = compute_active_node(t.status, traces)
     return AnalysisTaskDetailOut(
+        activity=activity,
         messages=[
             ChatMessageOut(
                 id=m.id,
@@ -353,6 +434,8 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
             )
             for m in msgs
         ],
+        pending_user_facts=t.pending_user_facts_json or [],
+        fact_followup_rounds=t.fact_followup_rounds,
         id=t.id,
         conversation_code=format_conversation_code(t.id, t.created_at),
         org_id=t.org_id,
@@ -378,6 +461,7 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
         total_duration_ms=t.total_duration_ms,
         mcp_calls_count=t.mcp_calls_count,
         backtrack_count=t.backtrack_count,
+        workflow_version_id=t.workflow_version_id,
         workflow_version_no=t.workflow_version_no,
         created_at=t.created_at,
         updated_at=t.updated_at,
@@ -385,6 +469,20 @@ async def _to_task_detail(session: AsyncSession, t: AnalysisTask) -> AnalysisTas
 
 
 # ==================== 管理端 Dify 风格只读多智能体工作台接口 ====================
+
+
+@admin_router.get("/citation-policy")
+async def get_citation_policy(_: AdminOrReviewerDep):
+    from app.core.config import get_settings
+
+    policy = get_settings().citation_policy
+    return {
+        "policy": policy,
+        "label": "允许机器内容进入草稿，逐条待核对"
+        if policy == "allow_machine_with_notice"
+        else "仅使用原文及译文均已复核的引用",
+        "readonly": True,
+    }
 
 
 @admin_router.get("/workflow", response_model=AgentWorkflowConfigOut)
@@ -439,6 +537,7 @@ async def list_workflow_versions(
             dsl_version=c.dsl_version,
             is_active=c.is_active,
             readonly_locked=True,
+            executable=c.runtime_schema_version == RUNTIME_SCHEMA,
             nodes_count=len(c.nodes_json or []),
             edges_count=len(c.edges_json or []),
             change_note=c.change_note,
@@ -449,30 +548,20 @@ async def list_workflow_versions(
 
 
 @admin_router.post(
-    "/workflow/versions/{version_no}/activate",
+    "/workflow/versions/{version}/activate",
     response_model=AgentWorkflowConfigOut,
 )
 async def activate_workflow_version(
-    version_no: int,
-    _: PlatformAdminDep,
+    version: str,
+    user: PlatformAdminDep,
     session: SessionDep,
 ) -> AgentWorkflowConfigOut:
-    cfgs = list(
-        (
-            await session.execute(
-                select(AgentWorkflowConfig).where(AgentWorkflowConfig.workflow_key == WORKFLOW_KEY)
-            )
-        )
-        .scalars()
-        .all()
-    )
-    target = next((c for c in cfgs if c.version_no == version_no), None)
-    if target is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="目标工作流版本不存在")
-    for c in cfgs:
-        c.is_active = c.version_no == version_no
-    await session.commit()
-    await session.refresh(target)
+    try:
+        target = await activate_version(session, version, user.user_id)
+    except LookupError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
     return _to_workflow_out(target)
 
 
@@ -623,7 +712,38 @@ async def get_admin_benchmarks(
 # ==================== 业务用户端多智能体合规分析与八维度报告接口 ====================
 
 
-@user_router.get("/tasks", response_model=list[AnalysisTaskSummaryOut])
+@admin_router.get("/evaluations/suite")
+async def get_evaluation_suite(_: AdminOrReviewerDep):
+    from app.analysis.evaluation import suite
+
+    return suite()
+
+
+@admin_router.get("/evaluations/latest")
+async def get_latest_evaluation(_: AdminOrReviewerDep, session: SessionDep):
+    from app.analysis.evaluation import latest_evaluation
+
+    return await latest_evaluation(session)
+
+
+@admin_router.post("/evaluations/{batch_id}/cases/{question_id}")
+async def execute_evaluation_case(
+    batch_id: uuid.UUID,
+    question_id: str,
+    user: PlatformAdminDep,
+    session: SessionDep,
+):
+    from app.analysis.evaluation import evaluate_case
+
+    try:
+        return await evaluate_case(session, question_id, batch_id, user.user_id)
+    except LookupError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
+
+
+@user_router.get("/tasks", response_model=list[PublicTaskSummary])
 async def list_user_analysis_tasks(
     user: UserDep,
     session: SessionDep,
@@ -640,7 +760,7 @@ async def list_user_analysis_tasks(
 
 @user_router.post(
     "/tasks",
-    response_model=AnalysisTaskDetailOut,
+    response_model=PublicTaskDetail,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_user_analysis_task(
@@ -673,7 +793,7 @@ async def create_user_analysis_task(
     return await _to_task_detail(session, task)
 
 
-@user_router.get("/tasks/{task_id}", response_model=AnalysisTaskDetailOut)
+@user_router.get("/tasks/{task_id}", response_model=PublicTaskDetail)
 async def get_user_analysis_task_detail(
     task_id: uuid.UUID,
     user: UserDep,
@@ -685,7 +805,7 @@ async def get_user_analysis_task_detail(
     return await _to_task_detail(session, task)
 
 
-@user_router.post("/tasks/{task_id}/facts", response_model=AnalysisTaskDetailOut)
+@user_router.post("/tasks/{task_id}/facts", response_model=PublicTaskDetail)
 async def update_user_task_facts(
     task_id: uuid.UUID,
     body: UpdateFactsIn,
@@ -693,7 +813,9 @@ async def update_user_task_facts(
     session: SessionDep,
 ) -> AnalysisTaskDetailOut:
     """补充追问事实；当事实完备度达到 100% 时自动启动多智能体协同生成八维度报告。"""
-    task = await session.get(AnalysisTask, task_id)
+    task = await session.scalar(
+        select(AnalysisTask).where(AnalysisTask.id == task_id).with_for_update()
+    )
     if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
 
@@ -701,6 +823,18 @@ async def update_user_task_facts(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="分析正在运行中,请等待完成后再补充事实"
         )
+    if task.status == "awaiting_user_facts":
+        from app.analysis.user_facts import answer_user_facts
+
+        try:
+            resume = await answer_user_facts(session, task, body.facts, body.question_ids)
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
+        if resume and body.auto_run_if_sufficient:
+            await _start(session, task)
+        return await _to_task_detail(session, task)
+    if body.question_ids:
+        raise HTTPException(409, "该追问已完成，请勿重复提交旧回答")
     merged = dict(task.facts_json or {})
     for k, v in (body.facts or {}).items():
         if v is not None and str(v).strip():
@@ -719,7 +853,7 @@ async def update_user_task_facts(
     return await _to_task_detail(session, task)
 
 
-@user_router.post("/tasks/{task_id}/run", response_model=AnalysisTaskDetailOut)
+@user_router.post("/tasks/{task_id}/run", response_model=PublicTaskDetail)
 async def run_user_analysis_task(
     task_id: uuid.UUID,
     user: UserDep,
@@ -776,9 +910,14 @@ async def edit_user_report_version(
         new_dims.append(copy_d)
 
     new_rv = ReportVersion(
+        citation_policy=latest.citation_policy,
         task_id=task.id,
         version_no=next_ver,
-        status="partial_sample" if latest.is_partial_sample else "edited",
+        status="analysis_failed"
+        if latest.status == "analysis_failed"
+        else "partial_sample"
+        if latest.is_partial_sample
+        else "edited",
         is_partial_sample=latest.is_partial_sample,
         change_note=body.change_note.strip() or f"人工修订版本 v{next_ver}",
         executive_summary=(
@@ -791,10 +930,17 @@ async def edit_user_report_version(
         created_by=user.user_id,
     )
     session.add(new_rv)
+    await session.flush()
+    from app.updates.service import link_report, reconcile_impacts
+
+    await link_report(session, task, new_rv)
+    await reconcile_impacts(session, task_ids=[task.id])
     await session.commit()
     await session.refresh(new_rv)
 
     return ReportVersionOut(
+        regulatory_updates=await report_updates(session, new_rv.id),
+        citation_policy=new_rv.citation_policy or "legacy_unrecorded",
         id=new_rv.id,
         task_id=new_rv.task_id,
         version_no=new_rv.version_no,
@@ -868,63 +1014,123 @@ async def diff_user_report_versions(
     )
 
 
-@user_router.get("/tasks/{task_id}/reports/{version_no}/export.docx")
-async def export_user_report_docx(
+@user_router.get("/tasks/{task_id}/reports/{version_no}/export.{ext}")
+async def export_user_report(
     task_id: uuid.UUID,
     version_no: int,
+    ext: Literal["docx", "pdf", "zip"],
     user: UserDep,
     session: SessionDep,
+    dimension: Literal["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8"] | None = None,
 ) -> Response:
     task = await session.get(AnalysisTask, task_id)
     if task is None or task.org_id != user.org_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
-    rv = (
-        await session.execute(
-            select(ReportVersion).where(
-                ReportVersion.task_id == task.id,
-                ReportVersion.version_no == version_no,
-            )
+        raise HTTPException(404, "合规分析任务不存在")
+    rv = await session.scalar(
+        select(ReportVersion).where(
+            ReportVersion.task_id == task.id, ReportVersion.version_no == version_no
         )
-    ).scalar_one_or_none()
+    )
     if rv is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
+        raise HTTPException(404, "报告版本不存在")
+    if rv.status == "analysis_failed":
+        raise HTTPException(409, "报告分析技术失败，不能导出为部分样稿，请重试分析")
+    if await report_held_citation_ids(session, rv):
+        raise HTTPException(409, "报告引用了来源绑定或页级解析待核对的条款，请核查后重新分析再导出")
+    if ext == "zip" and dimension:
+        raise HTTPException(400, "ZIP 包含整份与八个维度，请勿同时指定单个维度")
+    codes = {d["dimension_code"] for d in rv.dimensions_json or []}
+    if dimension and dimension not in codes:
+        raise HTTPException(404, "该报告版本没有此维度")
+    if ext == "zip" and not {f"D{i}" for i in range(1, 9)} <= codes:
+        raise HTTPException(409, "历史报告未保存全部八个维度，不能伪造拆分文件")
+    export_view = SimpleNamespace(
+        id=rv.id,
+        version_no=rv.version_no,
+        is_partial_sample=rv.is_partial_sample,
+        dimensions_json=rv.dimensions_json,
+        executive_summary=rv.executive_summary,
+        citation_policy=rv.citation_policy,
+        regulatory_updates=await report_updates(session, rv.id),
+    )
+    from starlette.concurrency import run_in_threadpool
 
-    docx_bytes = build_report_docx(task, rv)
-    filename = f"cyshuhe_{task.country_code}_8dim_report_v{version_no}.docx"
+    # Native PDF shaping must not block chat progress or SSE heartbeats.
+    started = perf_counter()
+    cache_hit = False
+    if ext == "zip":
+        data = await run_in_threadpool(build_report_zip, task, export_view)
+    elif ext == "docx":
+        data = await run_in_threadpool(build_report_docx, task, export_view, dimension)
+    else:
+        data, cache_hit = await run_in_threadpool(
+            cached_pdf, task, export_view, dimension, build_report_pdf
+        )
+    media = {
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "pdf": "application/pdf",
+        "zip": "application/zip",
+    }
     return Response(
-        content=docx_bytes,
-        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        data,
+        media_type=media[ext],
+        headers={
+            "Content-Disposition": 'attachment; filename="'
+            + export_filename(task, rv, ext, dimension)
+            + '"',
+            "Cache-Control": "private, no-store",
+            "Server-Timing": f'export;dur={(perf_counter() - started) * 1000:.1f}',
+            "X-Export-Cache": "hit" if cache_hit else "miss",
+        },
     )
 
 
-@user_router.get("/tasks/{task_id}/reports/{version_no}/export.pdf")
-async def export_user_report_pdf(
+def _event_cursor(last_event_id):
+    try:
+        value = int(last_event_id or "0")
+        if not 0 <= value <= 9223372036854775807:
+            raise ValueError
+        return value
+    except ValueError as exc:
+        raise HTTPException(400, "Last-Event-ID 不合法") from exc
+
+
+@user_router.get("/tasks/{task_id}/events")
+async def user_task_events(
     task_id: uuid.UUID,
-    version_no: int,
+    request: Request,
     user: UserDep,
     session: SessionDep,
-) -> Response:
-    task = await session.get(AnalysisTask, task_id)
-    if task is None or task.org_id != user.org_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="合规分析任务不存在")
-    rv = (
-        await session.execute(
-            select(ReportVersion).where(
-                ReportVersion.task_id == task.id,
-                ReportVersion.version_no == version_no,
-            )
-        )
-    ).scalar_one_or_none()
-    if rv is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="报告版本不存在")
+    last_event_id: str | None = Header(default=None, alias="Last-Event-ID"),
+):
+    cursor = _event_cursor(last_event_id)
+    await validate_reader(session, user, task_id)
+    engine = session.bind
+    await session.rollback()  # No request transaction/connection held by a long-lived stream.
+    return StreamingResponse(
+        stream_events(request, engine, user, cursor, task_id),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
+    )
 
-    pdf_bytes = build_report_pdf(task, rv)
-    filename = f"cyshuhe_{task.country_code}_8dim_report_v{version_no}.pdf"
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+
+@admin_router.get("/events")
+async def admin_task_events(
+    request: Request,
+    admin: AdminOrReviewerDep,
+    session: SessionDep,
+    last_event_id: str | None = Header(default=None, alias="Last-Event-ID"),
+):
+    cursor = _event_cursor(last_event_id)
+    await validate_reader(session, admin)
+    if last_event_id is None:
+        cursor = await session.scalar(select(func.max(AnalysisEvent.id))) or 0
+    engine = session.bind
+    await session.rollback()
+    return StreamingResponse(
+        stream_events(request, engine, admin, cursor),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
     )
 
 
@@ -947,104 +1153,46 @@ async def get_clause_citation_card(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="引用条款不存在")
 
     clause, ver, doc = row
-    tr = (
-        await session.execute(
-            select(ClauseTranslation).where(ClauseTranslation.clause_id == clause.id)
-        )
-    ).scalar_one_or_none()
+    from app.ingestion.safety import document_is_held
 
-    edges = list(
-        (await session.execute(select(KgEdge).where(KgEdge.evidence_clause_id == clause.id)))
+    if await document_is_held(session, doc.id):
+        raise HTTPException(409, "此引用的原文绑定异常已隔离，请管理员核实来源后重做分析")
+    from app.ingestion.layout_safety import layout_held_clause_ids
+
+    layout_pending = bool(await layout_held_clause_ids(session, [clause.id]))
+    translation_rows = list(
+        (
+            await session.execute(
+                select(ClauseTranslation)
+                .where(
+                    ClauseTranslation.clause_id == clause.id,
+                    ClauseTranslation.is_current.is_(True),
+                    ClauseTranslation.review_status.in_(
+                        ("machine_translated", "pending_review", "approved")
+                    ),
+                    ClauseTranslation.quality_check_passed.is_(True),
+                )
+                .order_by(ClauseTranslation.updated_at.desc())
+                .limit(2)
+            )
+        )
         .scalars()
         .all()
     )
-    if not edges:
-        # 若当前条款未直接挂边，取同法规的语义边展示 1 跳关联面板
-        sibling_cids = list(
-            (await session.execute(select(Clause.id).where(Clause.version_id == ver.id)))
-            .scalars()
-            .all()
+    tr = translation_rows[0] if len(translation_rows) == 1 else None
+    translation_ambiguous = len(translation_rows) > 1
+
+    valid_tr_text = (
+        tr.translated_text
+        if (
+            tr is not None
+            and tr.review_status not in ("not_translated", "translation_failed", "superseded")
+            and (tr.translated_text or "").strip()
         )
-        if sibling_cids:
-            edges = list(
-                (
-                    await session.execute(
-                        select(KgEdge).where(KgEdge.evidence_clause_id.in_(sibling_cids))
-                    )
-                )
-                .scalars()
-                .all()
-            )
-
-    node_ids: set[uuid.UUID] = set()
-    for e in edges:
-        node_ids.add(e.source_node_id)
-        node_ids.add(e.target_node_id)
-
-    nodes = (
-        list((await session.execute(select(KgNode).where(KgNode.id.in_(node_ids)))).scalars().all())
-        if node_ids
-        else []
+        else ""
     )
-    node_map = {n.id: n for n in nodes}
-
-    node_outs = [
-        KgNodeOut(
-            id=n.id,
-            country_code=n.country_code,
-            node_type=n.node_type,
-            node_key=n.node_key,
-            name_zh=n.name_zh,
-            name_orig=n.name_orig,
-            summary=n.summary,
-            document_id=n.document_id,
-            evidence_clause_id=n.evidence_clause_id,
-            review_status=n.review_status,
-            attributes=_compute_eight_attributes(
-                n.country_code, n.node_type, n.name_zh, n.attributes
-            ),
-        )
-        for n in nodes
-    ]
-    edge_outs = [
-        KgEdgeOut(
-            id=e.id,
-            country_code=e.country_code,
-            source_node_id=e.source_node_id,
-            source_name_zh=node_map[e.source_node_id].name_zh
-            if e.source_node_id in node_map
-            else "",
-            source_node_type=node_map[e.source_node_id].node_type
-            if e.source_node_id in node_map
-            else "",
-            target_node_id=e.target_node_id,
-            target_name_zh=node_map[e.target_node_id].name_zh
-            if e.target_node_id in node_map
-            else "",
-            target_node_type=node_map[e.target_node_id].node_type
-            if e.target_node_id in node_map
-            else "",
-            relation_type=e.relation_type,
-            evidence_clause_id=e.evidence_clause_id,
-            evidence_quote=e.evidence_quote,
-            clause_number=clause.clause_number,
-            document_title=doc.title,
-            extractor_model=e.extractor_model,
-            review_status=e.review_status,
-            usable_as_legal_basis=(e.review_status == "approved"),
-        )
-        for e in edges
-        if e.source_node_id in node_map and e.target_node_id in node_map
-    ]
-
-    mini_graph = GraphPayloadOut(
-        country_code=doc.country_code,
-        node_counts_by_type={},
-        edge_counts_by_relation={},
-        quality_summary={},
-        nodes=node_outs,
-        edges=edge_outs,
-    )
+    from app.knowledge.business_view import topic_cards
+    from app.knowledge.legal_terms import current_definitions, term_payload
 
     return {
         "clause_id": str(clause.id),
@@ -1053,16 +1201,54 @@ async def get_clause_citation_card(
         "country_code": doc.country_code,
         "clause_number": clause.clause_number or f"#{clause.ordinal}",
         "heading": clause.heading,
+        "section_path": clause.section_path,
         "version_no": ver.version_no,
         "source_url": doc.source_url,
         "original_text": clause.original_text,
-        "translated_text": tr.translated_text if tr else "（待翻译）",
-        "review_status": tr.review_status if tr else "pending_review",
-        "mini_graph": mini_graph.model_dump(mode="json"),
+        "translated_text": valid_tr_text,
+        "review_status": "approved"
+        if (
+            not layout_pending
+            and ver.review_status == "approved"
+            and not clause.needs_review
+            and ((tr and tr.review_status == "approved") or clause.language.startswith("zh"))
+        )
+        else "pending_review"
+        if tr
+        else "not_translated",
+        "source_integrity_alerts": (
+            ["本页存在待核对解析修订；以下仅保留旧原文和译文，禁止作新的法律依据引用。"]
+            if layout_pending
+            else []
+        )
+        + (
+            ["同一条款存在多个现行译文，尚未消歧；保留原文，不任意选取一个译文。"]
+            if translation_ambiguous
+            else []
+        ),
+        "source_review_status": "approved"
+        if ver.review_status == "approved" and not clause.needs_review
+        else "pending_review",
+        "translation_review_status": tr.review_status
+        if tr
+        else "ambiguous_current"
+        if translation_ambiguous
+        else "not_translated",
+        "usable_as_legal_basis": bool(
+            not layout_pending
+            and ver.review_status == "approved"
+            and not clause.needs_review
+            and ((tr and tr.review_status == "approved") or clause.language.startswith("zh"))
+        ),
+        "related_requirements": await topic_cards(session, doc.country_code, clause_id=clause.id),
+        "terms": [
+            term_payload(t)
+            for t in await current_definitions(session, doc.country_code, doc.id, ver.id)
+        ],
     }
 
 
-@user_router.post("/chats", response_model=AnalysisTaskDetailOut, status_code=201)
+@user_router.post("/chats", response_model=PublicTaskDetail, status_code=201)
 async def create_chat(user: UserDep, session: SessionDep) -> AnalysisTaskDetailOut:
     """新建一次对话式评估:助手先问候,并开始逐项提问。"""
     task = AnalysisTask(
@@ -1085,7 +1271,7 @@ async def create_chat(user: UserDep, session: SessionDep) -> AnalysisTaskDetailO
     return await _to_task_detail(session, task)
 
 
-@user_router.post("/tasks/{task_id}/messages", response_model=AnalysisTaskDetailOut)
+@user_router.post("/tasks/{task_id}/messages", response_model=PublicTaskDetail)
 async def post_chat_message(
     task_id: uuid.UUID,
     body: ChatMessageIn,
@@ -1093,10 +1279,17 @@ async def post_chat_message(
     session: SessionDep,
 ) -> AnalysisTaskDetailOut:
     """用户在聊天框发送一条消息:助手记录信息、继续追问,齐备后自动启动分析。"""
-    task = await session.get(AnalysisTask, task_id)
+    task = await session.scalar(
+        select(AnalysisTask).where(AnalysisTask.id == task_id).with_for_update()
+    )
     if task is None or task.org_id != user.org_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="对话不存在")
-    await post_user_message(session, task, body.content, _start)
+    try:
+        await post_user_message(
+            session, task, body.content, _start, str(body.question_id) if body.question_id else None
+        )
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
     await session.refresh(task)
     return await _to_task_detail(session, task)
 

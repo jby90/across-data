@@ -1,0 +1,2298 @@
+{
+  "completed_cases": 32,
+  "total_cases": 32,
+  "recall_at_5": 0.53125,
+  "retrieval_hits": 17,
+  "retrieval_expected": 32,
+  "quote_fidelity": null,
+  "faithful_findings": 0,
+  "findings_total": 0,
+  "fact_consistency": null,
+  "supported_findings": 0,
+  "judged_findings": 0,
+  "judge_coverage": null,
+  "llm_judged": true,
+  "human_review_count": 0,
+  "human_review_status": "0/32 未经人工复核",
+  "total_tokens": 0,
+  "technical_error_cases": 32,
+  "note": "工程来源标注集，非人工金标准。事实一致性为独立模型对结论是否获引文支持的判断（llm_judged），不代表法律准确率。未生成/未判定项不计为通过，另列覆盖率。",
+  "cases": [
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "e86d4068-399f-45a5-adff-1f078a78fc2c",
+          "clause_number": "16.9",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "5831b62e-2d6d-4829-8840-ff490bb3962b",
+          "clause_number": "4",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "c1c54055-20a8-45df-a4b3-3094a42dd96c",
+          "clause_number": "20.9",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "22e9c070-a7fd-40e5-9595-79a1e05223ae",
+          "clause_number": "3.4",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "5c291ff6-5a0f-4c5c-9af5-756a55099986",
+          "clause_number": "15.11",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-02",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D2",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 2.728,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "2",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Interpretation\n2.—(1) In this Act, unless the context otherwise requires —\n“advisory committee” means an advisory committee appointed\nunder section 7;\n“Appeal Committee” means a Data Protection Appeal\nCommittee constituted under section 48P(4), read with the\nSeventh Schedule;\n“Appeal Panel” means the Data Protection Appeal Panel\nestablished by section 48P(1);\n“authorised officer”, in relation to the exercise of any power or\nperformance of any function or duty under any provision of\nthis Act, means a person to whom the exercise of that power\nor ",
+          "source_text_sha256": "960d2647c931964c56c0fb471a695b04dd39be948766951c040aae356bc48f8c"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "车外影像能间接识别个人时如何判断个人数据？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "根据个人数据定义判断可识别性"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "d5d8fcfd-a190-4b4f-80b7-78829289b72e",
+          "clause_number": "3.20",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "9a845dcd-c7e0-4249-9456-0fee86b3ca9b",
+          "clause_number": "9",
+          "document_title": "Personal Data Protection Act 2012 - Personal Data Protection Regulations 2014"
+        },
+        {
+          "clause_id": "4d29a055-d5f0-47bc-b126-bf579bdc35ed",
+          "clause_number": "0.1",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "dd3ec147-106e-4eb3-a116-24a4f42a8778",
+          "clause_number": "21.1",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "a4d8176f-7b61-4c72-8b08-0fc8d72a1be8",
+          "clause_number": "2.4",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-01",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D1",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 2.858,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "9885ae7b-34d8-4109-9f7b-ee7cc8fe2ef8",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "4",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Application of Act\n4.—(1) Parts 3, 4, 5, 6, 6A and 6B do not impose any obligation\non —\n(a) any individual acting in a personal or domestic capacity;\n(b) any employee acting in the course of his or her\nemployment with an organisation;\n(c) any public agency; or\n(d) any other organisations or personal data, or classes of\norganisations or personal data, prescribed for the purposes\nof this provision.\n[40/2020]\n(2) Parts 3, 4, 5, 6 (except sections 24 and 25), 6A (except\nsections 26C(3)(a) and 26E) and 6B do not impose any obligation on\na data inter",
+          "source_text_sha256": "cd0a0f1cfa1c7afcf3ba22eb5dcf0710f17d238503ab76fd28242e5ada35569b"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "企业车联网数据处理是否受一般数据保护法约束？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "检查适用范围及例外，不把所有主体一概纳入"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "abc976bc-7df5-449b-85b1-57eb6bd33001",
+          "clause_number": "19.4",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "c9ab0ba5-ceda-4608-82dd-424bd4b29cdf",
+          "clause_number": "19.1",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "8ccf531d-b7c8-4863-b558-03f9373bcdeb",
+          "clause_number": "3.23",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "9d04d66a-0087-4109-86a0-8c18515058ff",
+          "clause_number": "19.8.2",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "8b2ffa30-640a-4f8d-be0e-8eead6120fe6",
+          "clause_number": "19.2",
+          "document_title": "The Transfer Limitation Obligation chapter 19 historical guidance"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-03",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D3",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 2.814,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "26",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Transfer of personal data outside Singapore\n26.—(1) An organisation must not transfer any personal data to a\ncountry or territory outside Singapore except in accordance with\nrequirements prescribed under this Act to ensure that organisations\nprovide a standard of protection to personal data so transferred that is\ncomparable to the protection under this Act.\n(2) The Commission may, on the application of any organisation,\nby written notice exempt the organisation from any requirement\nprescribed pursuant to subsection (1) in respect of any transfe",
+          "source_text_sha256": "af115bb055e771fa119062bf054569ef16970e45248fd293420cc154db670353"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "向境外研发中心传输遥测与个人数据前须满足什么？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "境外保护标准及法定条件，不能仅凭签合同认定合规"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "b23c9b98-a65f-41af-a749-6ff4e074e80e",
+          "clause_number": "46",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "559f90a9-7054-4a02-8f57-bd2832986151",
+          "clause_number": "15.34",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "66e22222-e862-45ee-8a56-1073cd6ce6e4",
+          "clause_number": "4.93",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "5e6f8ed8-74cb-45ac-84c6-5a1577d9ca2c",
+          "clause_number": "17.1",
+          "document_title": "Road Traffic Act - Road Traffic (Autonomous Motor Vehicles) Rules 2017"
+        },
+        {
+          "clause_id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+          "clause_number": "25",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-04",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D4",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 2.618,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "c50844a4-1198-4110-9b2c-558610419b20",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "13",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Consent required\n13. An organisation must not, on or after 2 July 2014, collect, use or\ndisclose personal data about an individual unless —\n(a) the individual gives, or is deemed to have given, his or her\nconsent under this Act to the collection, use or disclosure,\nas the case may be; or\n(b) the collection, use or disclosure (as the case may be)\nwithout the individual’s consent is required or authorised\nunder this Act or any other written law.",
+          "source_text_sha256": "d9a7d458b03460146429306aa339e5f88acc251900f950fdcc2681045ccfb976"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "采集车主语音前是否需要同意？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "同意及法定例外须结合事实"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "e12c5bd9-b910-43b8-8b97-5019725af0e2",
+          "clause_number": "18.2",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "4193d701-47d1-4e11-9cd4-c8b0ae944035",
+          "clause_number": "4.42",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "a2f2ab42-5126-44ab-b837-22b66dd6b200",
+          "clause_number": "15.41",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "1f365a8d-f84c-4b82-8f9b-fb34a6903878",
+          "clause_number": "18.9",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "6563286a-c737-4170-983e-81ffb0a4217f",
+          "clause_number": "18.1",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-05",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D5",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 2.482,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "623a4ec2-ad56-456c-929d-311cf8e5f293",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "25",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Retention of personal data\n25. An organisation must cease to retain its documents containing\npersonal data, or remove the means by which the personal data can be\nassociated with particular individuals, as soon as it is reasonable to\nassume that —\n(a) the purpose for which that personal data was collected is no\nlonger being served by retention of the personal data; and\n(b) retention is no longer necessary for legal or business\npurposes.",
+          "source_text_sha256": "7867b7b6b2515c30cd1dec614b5b5010f22a2199bdce8e57854957dcd1c8b503"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "个人数据可以无限期保存吗？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "目的不再必要时停止留存或去标识，不给出虚构固定天数"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+          "clause_number": "48J",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "5fceb016-2474-4089-85aa-5da5db5db501",
+          "clause_number": "10A",
+          "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Enforcement) (Amendment) Regulations 2022"
+        },
+        {
+          "clause_id": "87b7fbf3-b7e7-4e89-806d-8cceaa3f5582",
+          "clause_number": "48J.2",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "76c52d39-e304-4a44-be4f-28f079fc6d4d",
+          "clause_number": "17",
+          "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Appeal) Regulations 2021"
+        },
+        {
+          "clause_id": "c1c54055-20a8-45df-a4b3-3094a42dd96c",
+          "clause_number": "20.9",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-06",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D6",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 2.447,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "48J",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Financial penalties\n48J.—(1) Subject to subsection (2), the Commission may, if it is\nsatisfied that —\n(a) an organisation has intentionally or negligently\ncontravened any provision of Part 3, 4, 5, 6, 6A or 6B; or\n(b) a person has intentionally or negligently contravened —\n(i) any provision of Part 9; or\n(ii) section 48B(1),\nrequire, by written notice, the organisation or person (as the case may\nbe) to pay a financial penalty.\n[40/2020]\n(2) Subsection (1) does not apply in relation to any contravention of\na provision of this Act, the breach of ",
+          "source_text_sha256": "4cffa3abaeee144c9c456c1a3cc2551ed235f8877275eb057b2bcae080b036a1"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "违法处理个人数据的财务处罚条款在哪里？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "处罚上限与适用条件须以引文为准"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "ce6b5392-dbb0-477b-8f52-e9e6d9c69c00",
+          "clause_number": "27",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+          "clause_number": "25",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "ae0363ad-7e7d-4dce-88f2-d7c3ebe466b2",
+          "clause_number": "24",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "a6b4cbb1-7ea2-49cb-ae19-158f7daa0778",
+          "clause_number": "6",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "be84752c-95b9-4e42-8ec7-aa3323f6b68b",
+          "clause_number": "21.14",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-07",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D7",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 2.187,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "c52be03e-14e1-4ed4-bd2e-a63a1d210296",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "11",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Compliance with Act\n11.—(1) In meeting its responsibilities under this Act, an\norganisation must consider what a reasonable person would\nconsider appropriate in the circumstances.\n(2) An organisation is responsible for personal data in its possession\nor under its control.\n(3) An organisation must designate one or more individuals to be\nresponsible for ensuring that the organisation complies with this Act.\n(4) An individual designated under subsection (3) may delegate to\nanother individual the responsibility conferred by that designation.\n(5) An",
+          "source_text_sha256": "63ac1188dca27adaed6c93847899a3329303461c9b3ab986a9975a98dada8e7f"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "数据合规负责人任命与车联网企业准备有关吗？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "数据保护负责人是治理义务，不等同车辆准入许可"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "c9fb7efd-b689-4f26-9165-6b729880e0b1",
+          "clause_number": "17.1",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "fd83b508-690f-4597-b805-33c89e6bbf2d",
+          "clause_number": "20.21",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "db6cb693-12c4-442f-8be8-754b0ecef288",
+          "clause_number": "26A",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+          "clause_number": "25",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "09f8319e-2420-49d3-98a7-74326a021f50",
+          "clause_number": "4.2",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-08",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D8",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 2.351,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "26aee55a-dc11-42b5-adc2-34e28765be74",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "24",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Protection of personal data\n24. An organisation must protect personal data in its possession or\nunder its control by making reasonable security arrangements to\nprevent —\n(a) unauthorised access, collection, use, disclosure, copying,\nmodification or disposal, or similar risks; and\n(b) the loss of any storage medium or device on which\npersonal data is stored.\n[40/2020]",
+          "source_text_sha256": "2cf5d1a0492765f9c852055d4f4ca9019b3400e7ddb2a3884ae3a41eff6cd341"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "应如何防止车联网数据被未经授权访问？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "采取合理安全安排，避免编造认证要求"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "f3e72f00-5854-4c76-8601-b1444809c124",
+          "clause_number": "26",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "c9b7418e-295f-4a4d-93ff-367ceefa169d",
+          "clause_number": "2.3",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "6005a4b2-5089-486f-83de-6767b204f0e9",
+          "clause_number": "18",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "2845ca09-e7be-4994-a105-7a10b93029a4",
+          "clause_number": "10",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-09",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D1",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 0.413,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "d3bd4a57-58f2-445d-940c-aa8d4831e71b",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "2",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 2\n1- La présente loi s’applique au traitement des données à caractère personnel,\nautomatisé en tout ou en partie, ainsi qu’au traitement non automatisé de\ndonnées à caractère personnel contenues ou appelées à figurer dans des fichiers\nmanuels ;\n2- La présente loi s’applique au traitement des données à caractère personnel\nrépondant à la définition du paragraphe 1 ci-dessus :\na) Lorsqu’il est effectué par une personne physique ou morale dont le\nresponsable est établi sur le territoire marocain. Le responsable d’un\ntraitement qui exerce un",
+          "source_text_sha256": "1fa7901f49a4e4f288ddbfb8dfdcad35fdcc44ed73db0bf6442d8fa79773f4e3"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "平台处理车辆用户信息适用何种范围？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "自动和非自动处理的适用范围"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+          "clause_number": "premier.2",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "2845ca09-e7be-4994-a105-7a10b93029a4",
+          "clause_number": "10",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "6d475ef3-d53e-48b5-8210-319292473271",
+          "clause_number": "4",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "9f926914-d84e-423d-9fc6-7f9cccec86dd",
+          "clause_number": "6",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-10",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D4",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 1.852,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "6d475ef3-d53e-48b5-8210-319292473271",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "4",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 4\nLe traitement des données, à caractère personnel ne peut être effectué que si la\npersonne concernée a indubitablement donné son consentement à l’opération ou à\nl’ensemble des opérations envisagées.\nLes données à caractère personnel objet du traitement ne peuvent être\ncommuniquées à un tiers que pour la réalisation de fins, directement liées aux\nfonctions du cédant et du cessionnaire et sous réserve du consentement préalable,\nde la personne concernée.\nToutefois, ce consentement n’est pas exigé si le traitement est nécessaire :\na) au re",
+          "source_text_sha256": "75e4c3e78743f29984bd2dabb32d7d234f96eceb73e8b486d1d1a431f0b299f7"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "处理个人数据前是否需要同意？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "同意与合法例外"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "f3e72f00-5854-4c76-8601-b1444809c124",
+          "clause_number": "26",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "ae80c1eb-b1cf-4e57-9add-5c0dab654c18",
+          "clause_number": "1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+          "clause_number": "23",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "c9b7418e-295f-4a4d-93ff-367ceefa169d",
+          "clause_number": "2.3",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-11",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D5",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 0.752,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "a18e376b-7228-48d4-b282-4f7fcb92c8f7",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "3",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 3\n1- Les données à caractère personnel doivent être :\na) traitées loyalement et licitement ;\nb) collectées pour des finalités déterminées explicites et légitimes, et ne pas\nêtre traitées ultérieurement de manière incompatible avec finalités ;\nc) adéquates, pertinentes et non excessives, au regard des finalités pour\nlesquelles elles sont collectées, et pour lesquelles, elles sont traitées\nultérieurement ;\nd) exactes et, si nécessaire, mises à jour. Toutes les mesures raisonnables\ndoivent être prises, pour que les données inexactes ou inc",
+          "source_text_sha256": "cfa8fc8c8424086c8014e751103171f17e443fa895638b9a06793cde979fec4f"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "车辆位置数据应遵守何种留存原则？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "必要性和保存期限，不设臆造固定期限"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "91bfec96-3e74-4614-8206-d2eab4cbaaa3",
+          "clause_number": "24",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "86c35695-9944-422a-b837-f30c95738cd5",
+          "clause_number": "60",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "157d8a76-3b75-4f6c-ad11-7e9e642e3ffb",
+          "clause_number": "4",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "3fc6861e-286a-471b-83a9-40fa4633b9c1",
+          "clause_number": "43",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-12",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D3",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.747,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "3fc6861e-286a-471b-83a9-40fa4633b9c1",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "43",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 43\nLe responsable d’un traitement ne peut transférer des données à caractère personnel\nvers un Etat étranger que si cet Etat assure un niveau de protection suffisant de la vie\nprivée et des libertés et droits fondamentaux des personnes à l’égard du traitement\ndont ces données font l’objet ou peuvent faire l’objet.\nLe caractère suffisant du niveau de protection assuré par un Etat s’apprécie\nnotamment en fonction des dispositions en vigueur dans cet Etat, des mesures de\nsécurité qui y sont appliquées, des caractéristiques propres du trait",
+          "source_text_sha256": "bd419ad4735863ac750bccb290cc3b92d106d7b65bb2a6ee2bc250ebc793fb86"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "向境外云平台传输个人数据的保护条件是什么？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "目的国充分保护及评估因素"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "71169f5b-b69e-425b-ba04-e3c805b48363",
+          "clause_number": "51",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+          "clause_number": "58",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "a922bc44-ad6a-4d0e-bf42-2286c46522b8",
+          "clause_number": "27",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "58916f40-cef0-4c0d-8773-6c7a603d8b59",
+          "clause_number": "premier.1",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "f3e72f00-5854-4c76-8601-b1444809c124",
+          "clause_number": "26",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-13",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D6",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.736,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "71169f5b-b69e-425b-ba04-e3c805b48363",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "51",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 51\nSans préjudice des sanctions pénales, lorsqu’il apparaît, à la suite de la mise en\nœuvre du traitement objet de la déclaration ou de l’autorisation prévue à l’article 12\nde la présente loi, que ce traitement porte atteinte à la sûreté ou à l’ordre public ou\nest contraire à la morale et aux bonnes mœurs, la Commission nationale peut, sans\ndélais, retirer, selon le cas, le récépissé de la déclaration ou l’autorisation.",
+          "source_text_sha256": "04b70d8aaef3c47a3365fae1652e084daddfb6b9c3fe591c3da30bf205466c20"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "处理危害公共秩序时监管机关可采取什么措施？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "可撤回申报回执或许可"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+          "clause_number": "23",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "f3e72f00-5854-4c76-8601-b1444809c124",
+          "clause_number": "26",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+          "clause_number": "58",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "c2970107-ac76-41a6-8070-2d858059defb",
+          "clause_number": "4.2",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-14",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D8",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.612,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "23",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 23\n1- Le responsable du traitement doit mettre en œuvre les mesures techniques et\norganisationnelles appropriées pour protéger les données à caractère personnel\ncontre la destruction accidentelle ou illicite, la perte accidentelle, l’altération, la\ndiffusion ou l’accès non autorisé, notamment lorsque le traitement comporte\ndes transmissions de données dans un réseau, ainsi que contre toute autre forme\nde traitement illicite. Ces mesures doivent assurer, compte tenu de l’Etat de\nl’art et des coûts liés à leur mise en œuvre, un niveau de ",
+          "source_text_sha256": "7d2a225224cd452bb5783facc78a7f00ad42b4dd494306481f275d6ba8300491"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "企业如何保护传输中的数据？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "技术和组织安全措施"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "15e74606-a6b0-486a-8d37-e05f183beb50",
+          "clause_number": "23",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "c298f1b4-5305-48f4-b7b2-704807f5a7a7",
+          "clause_number": "4",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "fbcbb070-7a26-4aed-bdbe-6ba8cd44222e",
+          "clause_number": "79",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "2bc7c1e1-c315-4bad-8305-381c0b832a27",
+          "clause_number": "38",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "404014b1-cad7-4904-acb1-8bddfde89a57",
+          "clause_number": "96",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-15",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D2",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.585,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "c298f1b4-5305-48f4-b7b2-704807f5a7a7",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "4",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 4 : Au sens de la présente loi, on entend par données à caractère personnel toutes les\ninformations quelle que soit leur origine ou leur forme et qui permettent directement ou\nindirectement à identifier une personne physique ou la rendent identifiable, à l’exception des\ninformations liées à la vie publique ou considérées comme telles par la loi.\n Article. 5 : Est réputée identifiable, la personne physique susceptible d’être identifiée, directement ou\nindirectement, à travers plusieurs données ou symboles qui concernent notamment son identi",
+          "source_text_sha256": "9944ae325552e62470a3c23ec51bd3f859a363093df1364b06ed58a61a89af37"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "哪些车主信息构成个人数据？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "直接或间接识别自然人及法定边界"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "61514193-a67c-4ca8-aeea-443ce50a0078",
+          "clause_number": "第2页",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "ad8de395-2a39-459b-bf74-0956e4cadc42",
+          "clause_number": "90",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+          "clause_number": "2.2",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+          "clause_number": "8",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "cb785147-f2dd-4edd-a00d-815b2364d07b",
+          "clause_number": "0.1",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-16",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D7",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 0.574,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "3f961886-5bb3-401c-be0e-a9ed6835676a",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "7",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 7 : Toute opération de traitement des données à caractère personnel est soumise à une déclaration\npréalable déposée au siège de l’Instance nationale de protection des données à caractère\npersonnel contre récépissé ou notifiée par lettre recommandée avec accusé de réception ou par\ntout autre moyen laissant une trace écrite.\n La déclaration est effectuée par le responsable du traitement ou son représentant légal.\n La déclaration n’exonère pas de la responsabilité à l’égard des tiers.\n Les conditions et les procédures de la présentation de la",
+          "source_text_sha256": "acf4de012ed96687fd809aae683f88bf389325ae33bc49c86c5c967912b9ddfe"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "处理个人数据前应办理什么手续？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "事先向监管机关申报"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "b74b20bc-2242-41d4-bed2-232e90125d9f",
+          "clause_number": "30",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "b58f9117-5240-409a-b728-6a626d5a4997",
+          "clause_number": "49",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+          "clause_number": "2.2",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "cb785147-f2dd-4edd-a00d-815b2364d07b",
+          "clause_number": "0.1",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "074d0e23-0d0c-4a1a-a109-bdee864c1bd6",
+          "clause_number": "4.1",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-17",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D4",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 0.549,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "da860a72-090f-4df3-b568-c168d1fc2bb8",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "10",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 10 : La collecte des données à caractère personnel ne peut être effectuée que pour des finalités\nlicites, déterminées et explicites.",
+          "source_text_sha256": "f0df2d23973cfe99c86285bcc3e8229106fd0c0b15cd4fe7549e4f4a51cc1db8"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "采集车辆用户资料应如何确定目的？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "合法、确定和明确的目的"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "6e8d81e1-c268-4837-a0fa-aa4e89661eda",
+          "clause_number": "3.1",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+          "clause_number": "8",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "4ac63298-ca3a-4182-82c4-1734cf3ca241",
+          "clause_number": "22",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "fbcbb070-7a26-4aed-bdbe-6ba8cd44222e",
+          "clause_number": "79",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "2bc7c1e1-c315-4bad-8305-381c0b832a27",
+          "clause_number": "38",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-18",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D5",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 0.692,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "b77b769e-8e4f-487d-9073-f548e906c466",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "11",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 11 : Les données à caractère personnel doivent être traitées loyalement, et dans la limite nécessaire\nau regard des finalités pour lesquelles elles ont été collectées. Le responsable du traitement doit\négalement s’assurer que ces données sont exactes, précises et mises à jour.",
+          "source_text_sha256": "ca86275021b8c73272cd141119678d414f7d7a9f145bea3c197c4ee359587259"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "长期存储的车主信息应满足什么质量原则？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "忠实、必要、准确并更新；不杜撰具体天数"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "4a79eabc-164b-4864-b4f5-82acd6945351",
+          "clause_number": "63",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+          "clause_number": "8",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "abd7720d-d30e-40be-bc6c-48be331cc640",
+          "clause_number": "81",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "7de2887a-3c2c-4e61-8487-4d7cb42b7e1d",
+          "clause_number": "28",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "ad8de395-2a39-459b-bf74-0956e4cadc42",
+          "clause_number": "90",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-19",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D3",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 0.701,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "ac0987cd-0c8d-4673-a08d-745ea822caeb",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "52",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 52 : Dans tous les cas, l’obtention de l’autorisation de l’Instance pour effectuer le transfert des\ndonnées à caractère personnel vers l’étranger est obligatoire.\n L’Instance doit statuer sur la demande d’autorisation dans un délai maximum d’un mois à\npartir de la présentation de la demande.\n Lorsque les données à caractère personnel à transférer concernent un enfant, la demande est\nprésentée au juge de la famille.\nCHAPITRE V\nDe quelques catégories particulières de traitement\nSection I - Du traitement des données à caractère personnel par ",
+          "source_text_sha256": "d6143b6900eb853ae51486f5a49282d2b4b3eb50a513e17257a5499ae94dc01b"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "将数据传往海外须办理什么授权？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "强制事先授权及儿童数据的特殊程序"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "fbcbb070-7a26-4aed-bdbe-6ba8cd44222e",
+          "clause_number": "79",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "6049572a-1552-4ed2-b5f6-69fc3a6c47c0",
+          "clause_number": "18",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "f9628f8e-a16b-4c74-a062-558a40652235",
+          "clause_number": "42",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "e9f0ded9-c38d-49e0-bdd1-0f406a12209b",
+          "clause_number": "19",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "f453649e-f22b-49c5-adb9-04da1fda3bed",
+          "clause_number": "21",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-20",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D8",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.569,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "6049572a-1552-4ed2-b5f6-69fc3a6c47c0",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "18",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 18 :\nToute personne qui effectue, personnellement ou par une tierce personne, le traitement des\ndonnées à caractère personnel est tenue à l’égard des personnes concernées de prendre toutes\nles précautions nécessaires pour assurer la sécurité de ces données et empêcher les tiers de\nprocéder à leur modification, à leur altération ou à leur consultation sans l’autorisation de la\npersonne concernée.",
+          "source_text_sha256": "f1d2d49eec8db4743692e66dbd194b82ae6e5c4f164fd85eb4ae3d783cbf0208"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "如何防止第三方擅自更改或查看数据？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "安全预防和防止未经许可访问"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "clause_number": "٨٥",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+          "clause_number": "٩٩",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "clause_number": "٨٧",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "clause_number": "١.2",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "9c56439e-4e84-4c89-8b3d-43ed3b45935e",
+          "clause_number": "١.1",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-21",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D1",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.753,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٨٥",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٨٥:\nتطبق الأحكام الواردة في هذا الباب علـى جميـع المعالجـات الآليـة وغيـر الآليـة للبيانـات ذات الطـابع\nالشخصي. لكنها لا تطبق علـى المعالجـات المتعلقـة بالنشـاطات الشخصـية التـي ي قـوم بهـا الشـخص\nحصرياً لحاجاته .\n لا يمكـن الاتفـاق علـى مخالفـة الأحكـام الـواردة فـي هـذا البـاب التـي ـنظم\nت حقـوق الأشـخاص المعنيـين ُ\nبالمعالجـات وموجبـات المسـؤولين عـن هـذه المعالجـات. كمـا أنـه لا يمكـن الاحتجـاج بـأي اتفـاق أو\nبأي بند مخالف أو بأي تعهد بمشيئة منفردة .",
+          "source_text_sha256": "24612abf619cb31e43e5a7d9654f5f1155d94e4cc5eb50ef0112685907ed61bb"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "自动与非自动车辆数据处理是否都在范围内？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "适用范围及个人家庭活动例外"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "clause_number": "١.2",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "8cfea491-9d6e-412f-a503-cf2b21a6bbcb",
+          "clause_number": "٩٢",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "21cff2ce-868d-416c-984f-0a4f716edfdb",
+          "clause_number": "٨٨",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "9c56439e-4e84-4c89-8b3d-43ed3b45935e",
+          "clause_number": "١.1",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-22",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D4",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 0.732,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٨٧",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٨٧:\nع\nّ\nُجم\nت البيانات ذات الطابع الشخصي بأمانة ولأهداف مشروعة ومحددة وصريحة .\nيجـب أن تكـون البيانـات ملائمـة وغيـر مت جـاوزة للأهـداف المعلنـة، وأن تكـون صـحيحة وكاملـة وأن\nتبقى ميومة بالقدر اللازم .\n لا يمكن في مرحلة لاحقة معالجة هذه البيانات لأهداف لا تتوافق مـع الغايـات المعلنـة، لـم مـا يتعلـق\nالأمر بمعالجة بيانات لأهداف إحصائية أو تاريخية أو للبحث العلمي .",
+          "source_text_sha256": "8e6e1cba420319fc8116a31767406b5afc0a10fb03bd41428ed3ba2e4353a064"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "车主数据收集应说明哪些目的？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "诚信、合法明确目的及相容用途"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+          "clause_number": "٩٩",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "clause_number": "٨٧",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "clause_number": "١.2",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "clause_number": "٨٥",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-23",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D5",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 0.694,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٩٠",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٩٠:\n لا يكـون حفـظ البيانـات ذات الطـابع الشخصـي مشـروعاً إلا خـلال الفتـرة المبينـة فـي التصـريح عـن\nيرخ المعالجة أو رراقال في الذي ص\nّ\nبها .",
+          "source_text_sha256": "060afee21381408ddac492ca511ff910dc0a5074918ac7d7bacffc6c2d29fe8e"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "个人数据可以超出申报期间保存吗？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "仅限申报或批准期间"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "clause_number": "٨٧",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+          "clause_number": "٩٩",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "80349556-bd83-4c65-b262-46184f494235",
+          "clause_number": "٨٦",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "467af361-5577-4df4-ab74-1a0dd0eda162",
+          "clause_number": "٩١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-24",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D2",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.78,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "467af361-5577-4df4-ab74-1a0dd0eda162",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٩١",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٩١:\nُمنـع\nي جمـع البيانـات ذات الطـابع الشخصـي أو معالجتهـا، إذا كانـت تكشـف، بصـورة مباشـرة أو غيـر\nمباشرة، عن الحالة الصحية أو الهوية أو ثيةراو ال الحياة الجنسية للشخص المعني .\n لا يسري هذا المنع في الحالات التالية :\n١ - عندما يكون الشخص المعني قد وضع هذه البيانات في متناول الجمهـور أو وافـق راصـ ع حةً لـى\nمعالجتها، لم ما يوجد مانع قانوني .\n٢ - عندما يكون تجميع البيانات أو معالجتها ضروريين لوضع تشـخيص طبـي أو تقـديم عـلاج طبـي\n من قبل عضو في مهنة صحية .\n٣ - عند إثبات أو حق الدفاع عنه أمام القضاء .\n٤ - في حال الحصول على ترخيص وفق أحكام ",
+          "source_text_sha256": "79583fca9ac89d42444365c5b99b0d402d1429679bd338dfc2a3c50eb4fc09fe"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "健康或遗传数据有何特殊限制？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "敏感数据原则禁止及限定例外"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "6c0f4d5a-1762-4f65-a2c5-279761750925",
+          "clause_number": "١٠٦",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+          "clause_number": "٩٥",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "4492beb2-cde2-4a70-9078-947e7e1453aa",
+          "clause_number": "٩٦",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+          "clause_number": "٩٩",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-25",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D7",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.813,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٩٥",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٩٥:\nباستثناء الإعفاءات المنصوص عليها في المادة السابقة، يجـب علـى مـن يرغـب بجمـع البيانـات ذات\nالطــابع الشخصــي ومعالجتهــا، إعــلام وزارة الاقتصــاد والتجــارة بموجــب تصــريح وفــق الأصــول لقــاء\nإيصال .",
+          "source_text_sha256": "e28647e3731df909409793b7bdb80feb8507c1046b38b7258bba13e5ea262e85"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "企业开始收集个人资料前要向谁申报？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "除豁免外向经济贸易部申报"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "b3cf2404-4048-4628-ac26-42041e621557",
+          "clause_number": "١٠٣",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "clause_number": "١.2",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "80349556-bd83-4c65-b262-46184f494235",
+          "clause_number": "٨٦",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "clause_number": "٨٥",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-26",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D8",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.59,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "80349556-bd83-4c65-b262-46184f494235",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٨٦",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٨٦:\nلكـــل شـــخص الحـــق فـــي الاطـــلاع والا راعتـــ ض أمـــام المســـؤول عـــن معالجـــة البيانـــات ذات الطـــابع\nالشخصــي علــى المعلومــات والتحاليــل المســتعملة فــي المعالجــات الآليــة المتعلقــة بــه والمتــذرع بهــا\nبوجهه .\n لا يمكـن رراقـ لأي قضـائي أو إداري يسـتوجب تقييمـاً لتصـرف الإنسـان أن يعتمـد علـى معالجـة آليـة\nللبيانات فقط، تهدف إلى تحديد صفات الشخص أو إلى تقييم بعض جوانب شخصيته .\nالفصل الثاني :\nتجميع المعلومات ذات الطابع الشخصي ومعالجتها",
+          "source_text_sha256": "e618fa31f069ad04c021190a65e7c93d88299bba21fbcd7fa012768b9caaef38"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "可否完全依靠自动处理作出个人评价决定？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "访问异议及不得仅依自动处理的限制"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "491f1c58-391e-4d36-9a52-4fc426326a01",
+          "clause_number": "第19页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "clause_number": "(؟):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "c35a5e67-81eb-4647-9b0d-fdd72722d383",
+          "clause_number": "第36页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "a0aa4715-be1c-475c-9674-c9843707e9df",
+          "clause_number": "第15页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "clause_number": "‎)١0(‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-27",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D4",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.548,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "(؟):",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة (؟):\nلا يجوز جمع البيانات الشخصية أو معا أو الإفصاح عنها أو إفشائها بأى\nوسيلة من الوسائل إلا بمؤافقة ضريخة من اله ‎call‏ بالببياتات : أو فى الأخوال\nالمصرح بها قانونًا .\nالجريدة الرسمية-العدو ‎VA‏ مكزر (ه) فى ‎V0‏ يوليةاسنة ‎Vi VV‏\nويكون للشخص المعنى بالبيانات الحقوق الآتية :\nبالبياناية|الشخصية الخاصة به الموجودة ‎Gal‏ أى حائز أو متحكم أو معالج\nل إليها أو الحصول عليها .\n‎LA‏ الاحتفاظ ببياناته الش:\n‏دأو معالجتها .\n‏المحدد لها.\n‎Lig) iid LAU! suey‏ القاتون! 2 والإجراءات والضوابط والمعايير\n‏القياسية للجمع والمعالجة والحفظ والتأمين لهذه البيانا",
+          "source_text_sha256": "97803677169eb33f4c1ad5188c5acc7351970f82048dc7c58a96657b76c8dca0"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "收集和披露个人数据应满足什么条件？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "确认同意或法定处理条件；OCR受损处保持待核查"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "17caed9c-1157-4b13-abfc-59c528838f7a",
+          "clause_number": "第38页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "clause_number": "‎)١0(‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "29ecf7ff-f0e1-473a-bd58-a3a6152a4e1b",
+          "clause_number": "第25页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "39d94b9f-54ff-49fb-b0c9-b4987264917a",
+          "clause_number": "第28页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-28",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D8",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.513,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "(0):",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة (0): 9\n. )لأ\nمع مراعاة احكام المادة )¥\\\nBi cE REL nail A\n‏التنفيذية ووفقًا للحالات المشروعة والقان”!‎\n‏من المركز أو المتحكم أو من أى ذى صفة ب‎\n‏بنطاق عملية المعالجة وموضوعها وطبيعتها ونوع‎\nad ‏العرض اله‎\nت الشخصية واتفاقها وكفايتها مع\nوقكين المركز من التفتيش والرقابة للتأكد\n‎١‏ - الحصول على ترخيص أو تصريح من\n‎VY‏ - يلتزم المعالج خارج جمهورية مصر ‎mil‏ ن ممشل له فى جمهورية مصر العربية\n‏وذلك على ‎rl‏ الى عيب اللقحة السفيلية.\n‏مل على البيانات الشخصية .\nالجريدة الرسمية - العدد ‎VA‏ مكرر (ه) فى 18 ‎١١ 7 des dle‏\nوفى حال وجود أكثر من معالج « يلت",
+          "source_text_sha256": "9e84d4d569bd9029ca9760acb5fd9f07ed042390dfb2d32504fba6104d94d217"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "控制者和处理者有哪些保护职责？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "以可读原文为限，不补全OCR受损职责"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "266409bc-969b-4d6b-9291-b86cdac6c42f",
+          "clause_number": "3.1",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+          "clause_number": "(؟١):‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "17caed9c-1157-4b13-abfc-59c528838f7a",
+          "clause_number": "第38页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "77458678-4dc2-406e-9902-368507541a66",
+          "clause_number": "第4页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-29",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D2",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.561,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "(؟١):‏",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة (؟١):‏\n‎a‏\n‏يحظر على المتحكم\nشخ ‎Ee oe ee oe‏\nمنالمركز.\nوفيما عدا الأحوال المصرح بها قانونًا ‎J ge‏ على موافقة كتابية وصريحة\nوفى حالة إجراء أى عملية مما ذكر تتعلق ببيانات الأطفال ‎٠‏ يلزم موافقة ولى الأمر .\nVO VWs Redd V0 ‏فى‎ (a) Se VA ‏العيو‎ = digas II Bay\nويجب ألا تكون مشاركة الطفل فى لعبة أو مسابقة أو أى نشاط آخر مشروطة بتقديم\nللطفل يويد على ما هو ضرورى للمشاركة فى ذلك .\nبير والضوابط التى تحددها اللائحة التنفيذية لهذا القانون .",
+          "source_text_sha256": "ba064af0472c49c2e7404517370e186ba37b411e20b6a64ec6e9542c49e363c6"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "儿童或敏感信息处理应注意什么？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "核对明确同意和儿童监护要求，受损处不推断"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "d0969f10-d8b5-4a81-80bc-7c5f47ead87a",
+          "clause_number": "第1页",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "e0db79b7-bcf8-459d-94a9-8ccdd6933c99",
+          "clause_number": "9.1",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "clause_number": "‎)١0(‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "65e0b0b9-d25c-474d-a095-82f0f7c3b81d",
+          "clause_number": "第24页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-30",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D3",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.531,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "‎)١0(‏",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة ‎)١0(‏ 4\nاستثناء من حكم |\n‎a‏\n‏الشخصية إلى دولة لا يتوافر ذ\n5 3\nوذلك فى الحالات الآتية :\n‎-١‏ المحافظة على حياة الشخص المعنى\n‎SS‏ وتوفير الرعاية الطبية أو العلاج\nأو إدارة الخدمات الصحية له .\n‏؟ - تنفيذ التزامات بما يضمن إثبات حق أو ممارسته أمام جهات العدالة أو الدفاع عنه .\n‎Eel 15‏ الدبو مكار اله إلى لابين ما\n‏\" - إبرام عقد ‎١‏ أو تنفيذ عقد مبرم بالفعل . أو سيتم إبرامه بين المسئول عن المعالجة\n‏الما تيي بنباية المسلجة العلفة..\nو الزام ل\n‎ih‏ . دولة أخرىيوفقًا لتشريعاتهاالقددة والساريق.\n‎wim ep‏ طراف تكون\n‎ee\n‏تجر ”آلا امال « ‎dey‏ الأ أت ال",
+          "source_text_sha256": "4da24a9e2c6ca07a7e71447ef21bf590b8bac89ad2282827337ed34fdcc10811"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "向境外传输个人数据是否存在限定例外？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "核对原文列明例外，OCR缺损不补全"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+          "clause_number": "(19):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "a0aa4715-be1c-475c-9674-c9843707e9df",
+          "clause_number": "第15页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "6920f564-9dcd-4f0c-88ce-0f6001cf402f",
+          "clause_number": "第20页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "561bd1c4-9ce2-4443-8433-b491e5df5df9",
+          "clause_number": "17.1",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-31",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D7",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.508,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "(19):",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة (19):\nيجوز للمركز إلغاء الترخيص أو الة\nمن الحالات الآتية :\n. ‏مخالفة شروط الترخيص أو التصريح أو الاعتماد‎ - ١\n‎i‏ الاعتماد بعد إصداره فى أى\n6 الجريدة الرسمية — ‎VA call‏ مكزر (ه) فى 18 يوليةاسنة .م\n؟ - عدم سداد رسوم تجديد الترخيص أو التصريح أو الاعتماد .\nلترخيص أو التصريح أو الاعتماد للغير دون موافقة المركز .\nالمتحكم أو المعالج .\nYX (1) ‏مادة‎\nيكون للمركز موازنة خاصة تعد على فط ت'الهيئات الاقتصادية طبقنًا للقواعد\nالتى تحددها لائحة المركز وتتبع قواعد النظام ‎GL‏ الموحد . وذلك دون التقيد بالقواعد\nوالنظم الحكومية ‎lars.‏ السنة المالية للمركز ",
+          "source_text_sha256": "9b0b0f549926537892866a3fd1ab3114aaa5d4289b7ad421092f35c762905218"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "监管机关在什么情况下可以撤销许可？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "许可条件违反等可读事项，不扩展残缺信息"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 0,
+      "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "clause_number": "‎(TV)‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "491f1c58-391e-4d36-9a52-4fc426326a01",
+          "clause_number": "第19页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "26aa86d7-ac41-485b-bd3a-66d050a16789",
+          "clause_number": ")80(",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "clause_number": "(؟):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-32",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "大模型调用失败(共 2 次请求): HTTP 400",
+      "dimension_code": "D6",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 0.424,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "‎(TV)‏",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل فى غير الأحوال المصرح بها قانونًا أو بدون موافقة الشخص المعنى بالبيانات .\nالجريدة الرسمية - العدد 74 مكرر (ه) فى ‎V0‏ يولية سنة ‎VV 78١‏\nوتكون العقوبة الحبس مدة لا تقل عن ستة شهور وبغرامة لا تقل عن ‎tle‏ ألف جنيه\nنى جنيه ‎ahs‏ بإحدى هاتين العقوبتين . إذا ارتكب ذلك مقابل الحصول على\n‎j‏ أو بقصد تغريض الشخص المعنى بالبيانات للخط ‎gh‏ الضرر .\nكل مثل قانونق\n‎gps‏ هذا القائو",
+          "source_text_sha256": "1569e15e854f3d3dd04884437223c9626b00b0927197f4ef516872c009d53093"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "未经许可处理个人数据的处罚依据在哪里？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+      "workflow_version_no": 24,
+      "expected_conclusion_points": [
+        "罚则文字和数字有OCR风险，金额不得猜测"
+      ]
+    }
+  ],
+  "batch_id": "21f00a5d-e12a-49e6-9551-9e41a335552f",
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "workflow_version_id": "31b31336-805c-484f-b876-fdd27df51fb0",
+  "elapsed_seconds": 13.064844599997741
+}

@@ -1,0 +1,36 @@
+{
+  "isolated_only": true,
+  "runtime_role": {
+    "current_user": "cyshuhe_local_s11demo",
+    "rolsuper": false,
+    "rolbypassrls": false,
+    "rolcreatedb": false,
+    "rolcreaterole": false
+  },
+  "unscoped_task_count": 0,
+  "task_id": "cc4a8686-bb7e-4550-880f-ea40532b1493",
+  "task_status": "completed",
+  "child_ownership_counts": {
+    "analysis_messages": 30,
+    "analysis_step_traces": 13,
+    "report_versions": 1
+  },
+  "analysis_dimension_requests": [
+    [
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5",
+      "D6",
+      "D7",
+      "D8"
+    ],
+    [
+      "D3"
+    ]
+  ],
+  "failed_trace_preserved": true,
+  "external_paid_model_calls": 0,
+  "human_review": "pending_review"
+}

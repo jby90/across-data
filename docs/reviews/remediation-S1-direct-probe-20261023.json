@@ -1,0 +1,50 @@
+[
+  {
+    "language": "en",
+    "clause_id": "0034a9f2-1de7-4790-8848-80d94b371d2b",
+    "source_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/455.pdf",
+    "version_id": "c67ab79d-fe33-4a36-b363-1f9becfad809",
+    "content_hash": "223c6b8ff2fcd9507c8675951b4b777260bc40951d8ed0b68a1f26515966f2ac",
+    "original": "Withdrawal of review application\n8. An applicant of a review application may, at any time before\nthe Commission has given a notice under regulation 17 to either the\napplicant or the respondent, withdraw the review application by a\nnotice in writing to the Commission.",
+    "translation": "复审申请的撤回\n8. 复审申请人可在委员会根据第17条向申请人或被申请人发出通知之前的任何时间，通过向委员会发出书面通知撤回复审申请。",
+    "model": "deepseek-flash",
+    "tokens_in": 465,
+    "tokens_out": 36,
+    "duration_ms": 791,
+    "program_checks_passed": true,
+    "issues": [],
+    "human_review": "pending"
+  },
+  {
+    "language": "fr",
+    "clause_id": "073d8c4a-8a40-446a-a1ef-cdbf9554cf9f",
+    "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+    "version_id": "4c96e765-6d50-4106-89b9-e247f76daba3",
+    "content_hash": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+    "original": "Art. 45 : Les données à caractère personnel doivent être détruites dès l’expiration du délai fixé à sa\nconservation dans la déclaration ou l’autorisation ou les lois spécifiques ou en cas de réalisation\ndes finalités pour lesquelles elles ont été collectées ou lorsqu’elles deviennent inutiles pour\nl’activité du responsable du traitement. Il est établi un procès-verbal par huissier de justice et en\nprésence d’un expert désigné par l’Instance.\n Les honoraires de l’expert fixés par l’Instance et les frais de l’huissier de justice sont à la\ncharge du responsable du traitement.",
+    "translation": "第45条：个人数据必须在声明或授权或特别法律所规定的保存期限届满时，或在收集目的实现时，或在其对处理责任人的活动变得无用时，予以销毁。应由司法执达员在机构指定的专家在场的情况下制作笔录。\n由机构确定的专家报酬及司法执达员的费用由处理责任人承担。",
+    "model": "deepseek-flash",
+    "tokens_in": 558,
+    "tokens_out": 70,
+    "duration_ms": 1373,
+    "program_checks_passed": true,
+    "issues": [],
+    "human_review": "pending"
+  },
+  {
+    "language": "ar",
+    "clause_id": "03537033-803b-4d50-a8df-af7d8677a553",
+    "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+    "version_id": "ee99bccb-9fc2-4afa-a223-65a43c00891e",
+    "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+    "original": "المادة :١١٣ إعاقة أو تشويش أو تعطيل :\nً وبـأي وسـيلة، عـن طريـق الشـبكة المعلوماتيـة أو أحـد أجهـزة\n كل من أعاق أو شـوش أو عطـل قصـدا\nالحاسب الآلي وما في حكمها، الوصول إلى الخدمـة أو الـدخول الـى الأجهـزة أو أو مجراالبـ مصـادر\nالبيانات أو المعلومات يعاقب بالحبس من ثلاثة أشهر ا لى سـنتين وبال راغ مـة مـن مليـونين إلـى ثلاثـين\nمليون ليرة لبنانية أو باحدى هاتين العقوبتين .",
+    "translation": "第113条 阻碍、干扰或中断：\n凡故意以任何方式，通过信息网络或计算机设备及类似设备，阻碍、干扰或中断对服务的访问、对设备或数据或信息资源的访问的，处3个月至2年监禁，并处200万至3000万黎巴嫩镑罚金，或处上述两种刑罚之一。",
+    "model": "deepseek-flash",
+    "tokens_in": 578,
+    "tokens_out": 75,
+    "duration_ms": 1123,
+    "program_checks_passed": true,
+    "issues": [],
+    "human_review": "pending"
+  }
+]

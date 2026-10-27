@@ -1,0 +1,618 @@
+{
+  "summary": {
+    "targets": 59,
+    "standalone_passed": 52,
+    "context_passed": 1,
+    "failed": 6,
+    "tokens_in": 91462,
+    "tokens_out": 295294,
+    "duration_seconds": 256.589,
+    "human_approved": 0,
+    "started_at": "2026-10-23T14:22:46.184795+00:00",
+    "completed_at": "2026-10-23T14:27:02.773516+00:00"
+  },
+  "results": [
+    {
+      "clause_id": "87b7fbf3-b7e7-4e89-806d-8cceaa3f5582",
+      "path": "standalone_translation",
+      "record_id": "482a512f-5319-4d63-b6c2-20c8c00e5698",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 832,
+      "tokens_out": 1183
+    },
+    {
+      "clause_id": "ac7f3a7a-a73b-483f-979a-e6256e03e1fb",
+      "path": "standalone_translation",
+      "record_id": "dd3bdb4a-1db1-4255-baa6-b02ac7e37eb7",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 896,
+      "tokens_out": 2372
+    },
+    {
+      "clause_id": "b32f6aaa-4ba4-4442-8ebb-51e64b7d62d4",
+      "path": "standalone_translation",
+      "record_id": "c098565c-cb5e-4a95-8413-b75e6093e491",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1286,
+      "tokens_out": 2519
+    },
+    {
+      "clause_id": "058c1386-4d5c-4933-a15b-59dbc54d45ba",
+      "path": "standalone_translation",
+      "record_id": "a5b96acc-e240-4fda-b960-6ff4be152261",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1019,
+      "tokens_out": 2510
+    },
+    {
+      "clause_id": "be134cb3-cd98-427a-b7ca-9585a73152e8",
+      "path": "standalone_translation",
+      "record_id": "ccdced7a-4c76-487f-b333-4ca7f85f9286",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1081,
+      "tokens_out": 2764
+    },
+    {
+      "clause_id": "ed8f0fe2-0245-4747-95a8-8c24fc05912c",
+      "path": "standalone_translation",
+      "record_id": "b7b83f84-0919-41f0-b085-ca065b91ceba",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1403,
+      "tokens_out": 3103
+    },
+    {
+      "clause_id": "d1a393ea-21d4-453c-826f-44c9ced168d2",
+      "path": "standalone_translation",
+      "record_id": "11a570ce-3c07-463c-beb8-49e308ae4f3f",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1358,
+      "tokens_out": 4159
+    },
+    {
+      "clause_id": "9269e471-6464-4291-92ff-3c1c7dd3082d",
+      "path": "standalone_translation",
+      "record_id": "7cfcb785-76c9-4a69-a680-47a78a6168d9",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1230,
+      "tokens_out": 5099
+    },
+    {
+      "clause_id": "7f423ccc-e35e-4a90-8128-e9e99585d37a",
+      "path": "standalone_translation",
+      "record_id": "4ff3224d-7d7c-4657-b8f7-af2958408aad",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1243,
+      "tokens_out": 4011
+    },
+    {
+      "clause_id": "074d0e23-0d0c-4a1a-a109-bdee864c1bd6",
+      "path": "standalone_translation",
+      "record_id": "f698120a-691a-427c-a08d-8e71bb2b2d20",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1314,
+      "tokens_out": 6061
+    },
+    {
+      "clause_id": "d97cc5bd-2bae-4d33-9ee6-bad15b3e5b50",
+      "path": "standalone_translation",
+      "record_id": "4959b54d-878d-41a8-9d3e-e22716beca93",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 3077,
+      "tokens_out": 4442
+    },
+    {
+      "clause_id": "12a105b8-0f27-45ce-9768-af1890aa8cb4",
+      "path": "standalone_translation",
+      "record_id": "84d19c57-75f8-4460-8d6c-772c05e75eeb",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 15.8% < 30.0%"
+      ],
+      "tokens_in": 1484,
+      "tokens_out": 960
+    },
+    {
+      "clause_id": "babfe6a4-9494-4b31-960b-a9368b77e3a1",
+      "path": "standalone_translation",
+      "record_id": "58a09bcf-d2bf-44af-8234-0a35bccaaa99",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 833,
+      "tokens_out": 1493
+    },
+    {
+      "clause_id": "60033c36-4329-4bd6-a19d-7bfc0f2077b3",
+      "path": "standalone_translation",
+      "record_id": "a786f38b-7c4a-4ef9-8612-b83555a54827",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1518,
+      "tokens_out": 3939
+    },
+    {
+      "clause_id": "8a1dd9a1-eda9-4bee-8649-867c630fff73",
+      "path": "standalone_translation",
+      "record_id": "6f262bc1-e70e-4040-96c9-c525103aa443",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 27.3% < 30.0%"
+      ],
+      "tokens_in": 1484,
+      "tokens_out": 719
+    },
+    {
+      "clause_id": "1226dd89-1989-42d6-919a-d84e3f17aa77",
+      "path": "standalone_translation",
+      "record_id": "139f8029-70f1-4c24-af5b-9e9e9a62c568",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1484,
+      "tokens_out": 4631
+    },
+    {
+      "clause_id": "bf35708a-0e6a-4e0a-944a-ea1dd354d19b",
+      "path": "standalone_translation",
+      "record_id": "409d0811-4d9d-4bac-98fb-de0c2755b204",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1484,
+      "tokens_out": 4323
+    },
+    {
+      "clause_id": "74fe152f-5688-4cd6-99b3-2ca9cb322c90",
+      "path": "standalone_translation",
+      "record_id": "916c3754-d5a5-49c3-b17d-25aca05e674e",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 23.8% < 30.0%"
+      ],
+      "tokens_in": 1484,
+      "tokens_out": 2913
+    },
+    {
+      "clause_id": "f3c9205a-1f12-42ab-808e-ddb73c1bd610",
+      "path": "standalone_translation",
+      "record_id": "922a7393-c4df-4619-93c1-2a6db63a4c15",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 897,
+      "tokens_out": 2251
+    },
+    {
+      "clause_id": "6625e7a4-2f3d-4f46-b04a-7475f0229d79",
+      "path": "context_revision",
+      "record_id": "083b0888-7da5-40e0-a2ab-2e04c8f2ed2f",
+      "passed": true,
+      "review_status": "pending_review",
+      "issues": [],
+      "tokens_in": 2090,
+      "tokens_out": 7244
+    },
+    {
+      "clause_id": "45695122-5775-4788-99f9-869b300ee993",
+      "path": "standalone_translation",
+      "record_id": "1af8c197-552b-468c-b50f-4f773900d97b",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1164,
+      "tokens_out": 3819
+    },
+    {
+      "clause_id": "e00847d1-cb2d-4ff2-9285-ca87c5b488b9",
+      "path": "standalone_translation",
+      "record_id": "ed0dcd2f-b87a-4ffb-8b0f-5d871083260e",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1197,
+      "tokens_out": 3785
+    },
+    {
+      "clause_id": "ffd53ff5-3fec-4f46-ba7d-8f98d0ceb3e9",
+      "path": "standalone_translation",
+      "record_id": "c9a6750b-0c32-492e-9890-a7a47a56ece0",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1202,
+      "tokens_out": 3125
+    },
+    {
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "path": "standalone_translation",
+      "record_id": "db450e0f-818f-4833-857d-6be56fd1735b",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 28.0% < 30.0%"
+      ],
+      "tokens_in": 1894,
+      "tokens_out": 11694
+    },
+    {
+      "clause_id": "589e36c8-5c76-47b6-93e6-f7d8fa8baebd",
+      "path": "standalone_translation",
+      "record_id": "ce22e4af-45f6-42d8-9add-673fd2c63d5d",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1186,
+      "tokens_out": 4267
+    },
+    {
+      "clause_id": "562332d3-cc57-40b4-8bbd-2c8a890f5c26",
+      "path": "standalone_translation",
+      "record_id": "9462e2bf-1c42-465e-be68-859e68b7aa15",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 2588,
+      "tokens_out": 6789
+    },
+    {
+      "clause_id": "4d787fbb-370a-4529-865e-168b98e2a2db",
+      "path": "standalone_translation",
+      "record_id": "012b1e48-edf3-40f3-83c3-822dd5a9293b",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1248,
+      "tokens_out": 6543
+    },
+    {
+      "clause_id": "3214922b-a62e-4f0a-8667-fe84f1f1a7ce",
+      "path": "standalone_translation",
+      "record_id": "81fed1cd-9f65-4ccb-822f-c36770cf44ce",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 2388,
+      "tokens_out": 7628
+    },
+    {
+      "clause_id": "39a190b1-27df-47c1-b4a9-6d191ba34269",
+      "path": "standalone_translation",
+      "record_id": "2b0b56ba-ae9a-4bd4-be5f-e5f010517926",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1471,
+      "tokens_out": 8327
+    },
+    {
+      "clause_id": "2ba32a50-00c5-4f0b-a3f3-c3a2eda58690",
+      "path": "standalone_translation",
+      "record_id": "add88f41-e840-42db-a852-8b70c066bde6",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1014,
+      "tokens_out": 1147
+    },
+    {
+      "clause_id": "5ca90596-6cf2-4bb6-a16d-9aaab0b53744",
+      "path": "standalone_translation",
+      "record_id": "95b853dd-43ce-4bf6-bc65-7dd04ed6095f",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1528,
+      "tokens_out": 8098
+    },
+    {
+      "clause_id": "a352bbed-584c-4a98-9b5d-703c79756fc1",
+      "path": "standalone_translation",
+      "record_id": "d6cd404a-5491-4be0-8ffe-5c20ee59f09c",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1168,
+      "tokens_out": 4931
+    },
+    {
+      "clause_id": "b9ac88f2-08b3-4ebc-b25d-91be7919184b",
+      "path": "standalone_translation",
+      "record_id": "47b47249-79f7-4432-926c-bad4875fd3f5",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1423,
+      "tokens_out": 8202
+    },
+    {
+      "clause_id": "13a3cf7c-8c68-4eac-8140-ff2a3e545a4e",
+      "path": "standalone_translation",
+      "record_id": "d08f19da-3bed-4bb9-b810-7940af6f9949",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1254,
+      "tokens_out": 748
+    },
+    {
+      "clause_id": "55016589-c959-4a5d-8d87-be3d3e6ed290",
+      "path": "standalone_translation",
+      "record_id": "7b9f2b8a-12c4-4b5f-bd52-e25c89d06902",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1027,
+      "tokens_out": 5282
+    },
+    {
+      "clause_id": "852a8b72-47d8-4d02-81dc-57e22c1eefeb",
+      "path": "standalone_translation",
+      "record_id": "d9b94095-769d-49d1-b345-71c5593fa63d",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1045,
+      "tokens_out": 2082
+    },
+    {
+      "clause_id": "fd8a1b46-70f7-46c0-aa1a-fbebf4822317",
+      "path": "standalone_translation",
+      "record_id": "1e65244c-b7d2-4afa-92b2-8d5da0ea61f0",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1041,
+      "tokens_out": 1786
+    },
+    {
+      "clause_id": "bff528b3-8f9d-4195-a12d-cfd3040a5701",
+      "path": "standalone_translation",
+      "record_id": "24563f9a-9832-41c2-86ed-dd8e10c3ef2d",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1086,
+      "tokens_out": 1972
+    },
+    {
+      "clause_id": "da644084-5f14-486a-9c6b-0c86647e3fee",
+      "path": "standalone_translation",
+      "record_id": "4677f52b-cfda-48ba-97ad-1ebcbc5c4177",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1072,
+      "tokens_out": 2956
+    },
+    {
+      "clause_id": "3ebcfed8-c8b8-4fb1-b27f-42aee8b160b6",
+      "path": "standalone_translation",
+      "record_id": "df4af898-b351-4c3b-8156-2a11550ef90a",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1007,
+      "tokens_out": 1245
+    },
+    {
+      "clause_id": "780397d4-2b8e-4e74-ad0e-0b40e0f02e88",
+      "path": "standalone_translation",
+      "record_id": "f2680311-c1e9-45f2-8ecd-c3a063e1ca03",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1062,
+      "tokens_out": 1444
+    },
+    {
+      "clause_id": "ced9dd45-5d79-4dc9-baa8-6a3080a268cd",
+      "path": "standalone_translation",
+      "record_id": "57ed3577-d002-46c2-96f0-b4b46cae4481",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 5288,
+      "tokens_out": 10858
+    },
+    {
+      "clause_id": "aca3aa6d-70c8-43af-b993-9faac5d48953",
+      "path": "standalone_translation",
+      "record_id": "1e3f27a5-8fde-4aac-a3ca-3f4b6ddef13f",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1088,
+      "tokens_out": 1715
+    },
+    {
+      "clause_id": "5454cc7b-f2cb-48c9-aafd-592007b184bd",
+      "path": "standalone_translation",
+      "record_id": "1793f0cd-3fe3-4552-8322-6f684fec028a",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1052,
+      "tokens_out": 1692
+    },
+    {
+      "clause_id": "c2ba8815-a9ea-4303-a784-b8ae7316df59",
+      "path": "standalone_translation",
+      "record_id": "e4d713d2-4137-4542-9818-fa240e0dea57",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1532,
+      "tokens_out": 908
+    },
+    {
+      "clause_id": "4fed0752-65f5-48c9-9dc1-b1398efc3553",
+      "path": "standalone_translation",
+      "record_id": "30166ebc-5fd0-478f-baa8-90c1e7bfcf6f",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 758,
+      "tokens_out": 757
+    },
+    {
+      "clause_id": "7e5ae8f1-46f9-455f-a41e-b6b366666c7d",
+      "path": "standalone_translation",
+      "record_id": "e43b06cb-1e46-40c4-9d92-d59d2d8d9b80",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 2380,
+      "tokens_out": 11037
+    },
+    {
+      "clause_id": "962aea6d-d8ae-4e6e-b45b-7eb4f6704371",
+      "path": "standalone_translation",
+      "record_id": "591b26cc-7db1-42ab-8058-16cc80c4c251",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 2372,
+      "tokens_out": 10873
+    },
+    {
+      "clause_id": "b2f86f59-e58c-46be-a638-b2847d11de94",
+      "path": "standalone_translation",
+      "record_id": "c3fc5eac-073f-4f56-9e13-24065dfd827a",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 2164,
+      "tokens_out": 2886
+    },
+    {
+      "clause_id": "f0ac9199-9f7b-46a4-b761-198e4ca2e647",
+      "path": "standalone_translation",
+      "record_id": "fe0c8fa8-8d0a-4d6f-93ab-4e9e802c698d",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 829,
+      "tokens_out": 3241
+    },
+    {
+      "clause_id": "6eb30e61-a97c-4d16-8a5f-cecd1cfb8425",
+      "path": "standalone_translation",
+      "record_id": "9208fc6d-0fb4-495d-8b83-f47f3ae4f3db",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 949,
+      "tokens_out": 2622
+    },
+    {
+      "clause_id": "753b6f52-476e-4b0f-9a1b-d26961d917bb",
+      "path": "standalone_translation",
+      "record_id": "c4effbf9-0660-4772-81fd-4acfd6d85705",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1277,
+      "tokens_out": 5064
+    },
+    {
+      "clause_id": "04860d97-8327-487a-b5b7-7fc806e463ad",
+      "path": "standalone_translation",
+      "record_id": "0e285a71-73d1-45f3-b7ae-ee34010eec73",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1329,
+      "tokens_out": 4268
+    },
+    {
+      "clause_id": "7973c897-f859-4d63-a0d3-496488241b24",
+      "path": "standalone_translation",
+      "record_id": "33197ffe-7850-45a7-864e-3d74ab934ff7",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 2100,
+      "tokens_out": 6653
+    },
+    {
+      "clause_id": "f97f1c8f-50cf-4684-9768-2af977da740b",
+      "path": "standalone_translation",
+      "record_id": "111aa8a1-941e-46ff-a648-a0c166f11d68",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 861,
+      "tokens_out": 4582
+    },
+    {
+      "clause_id": "b1f9a38a-a59d-4458-be23-21e825c9ef69",
+      "path": "standalone_translation",
+      "record_id": "54b5cc82-5973-4425-b5ba-aba297e90c55",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 1661,
+      "tokens_out": 11326
+    },
+    {
+      "clause_id": "01124562-5dfa-47ca-9938-56111f3cc2aa",
+      "path": "standalone_translation",
+      "record_id": "4acd06d8-2c89-46df-94f5-7c9648f9ee4f",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "译文缺失原文数字或比例: 20"
+      ],
+      "tokens_in": 2344,
+      "tokens_out": 11171
+    },
+    {
+      "clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+      "path": "standalone_translation",
+      "record_id": "ef86ea47-ffdc-4b87-932c-cd56fb8d48fd",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 20.1% < 30.0%"
+      ],
+      "tokens_in": 3966,
+      "tokens_out": 21463
+    },
+    {
+      "clause_id": "b6578d76-3e4f-4189-a1ae-6c498d5969f8",
+      "path": "standalone_translation",
+      "record_id": "b2457102-4087-4e82-9fe3-9384a7adf7c8",
+      "passed": true,
+      "review_status": "machine_translated",
+      "issues": [],
+      "tokens_in": 3950,
+      "tokens_out": 21612
+    }
+  ]
+}

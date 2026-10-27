@@ -1,0 +1,64 @@
+{
+  "summary": {
+    "targets": 4,
+    "standalone_passed": 0,
+    "context_passed": 0,
+    "failed": 4,
+    "tokens_in": 6602,
+    "tokens_out": 7327,
+    "duration_seconds": 22.163,
+    "human_approved": 0,
+    "started_at": "2026-10-23T14:54:42.045768+00:00",
+    "completed_at": "2026-10-23T14:55:04.208914+00:00"
+  },
+  "results": [
+    {
+      "clause_id": "bf35708a-0e6a-4e0a-944a-ea1dd354d19b",
+      "path": "standalone_translation",
+      "record_id": "9aef07cf-7cc0-4232-8a07-d36d783a0533",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 20.0% < 30.0%"
+      ],
+      "tokens_in": 1642,
+      "tokens_out": 1066
+    },
+    {
+      "clause_id": "74fe152f-5688-4cd6-99b3-2ca9cb322c90",
+      "path": "standalone_translation",
+      "record_id": "701116ff-517c-4d32-ba48-d8135a493e7e",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 21.1% < 30.0%"
+      ],
+      "tokens_in": 1642,
+      "tokens_out": 1942
+    },
+    {
+      "clause_id": "60033c36-4329-4bd6-a19d-7bfc0f2077b3",
+      "path": "standalone_translation",
+      "record_id": "5010c834-9591-4164-8ca0-5b10b8c74f98",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 16.7% < 30.0%"
+      ],
+      "tokens_in": 1676,
+      "tokens_out": 1093
+    },
+    {
+      "clause_id": "1226dd89-1989-42d6-919a-d84e3f17aa77",
+      "path": "standalone_translation",
+      "record_id": "c70d4333-502d-4f79-aa9f-b4063dfab372",
+      "passed": false,
+      "review_status": "translation_failed",
+      "issues": [
+        "CJK 字符占比未达标: 15.4% < 30.0%"
+      ],
+      "tokens_in": 1642,
+      "tokens_out": 3226
+    }
+  ]
+}

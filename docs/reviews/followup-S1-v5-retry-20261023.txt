@@ -1,0 +1,7 @@
+{"completed": 10, "total": 59, "passed": 10}
+{"completed": 20, "total": 59, "passed": 17}
+{"completed": 30, "total": 59, "passed": 26}
+{"completed": 40, "total": 59, "passed": 36}
+{"completed": 50, "total": 59, "passed": 46}
+{"completed": 59, "total": 59, "passed": 53}
+{"targets": 59, "standalone_passed": 52, "context_passed": 1, "failed": 6, "tokens_in": 91462, "tokens_out": 295294, "duration_seconds": 256.589, "human_approved": 0, "started_at": "2026-10-23T14:22:46.184795+00:00", "completed_at": "2026-10-23T14:27:02.773516+00:00"}

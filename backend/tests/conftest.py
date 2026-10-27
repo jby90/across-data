@@ -1,14 +1,16 @@
 import atexit
 import os
 import shutil
+import subprocess
 import tempfile
+from pathlib import Path
 
 # 必须在导入 app 之前设置测试配置(归档目录强制指向临时目录,防止写入 backend/data)
 _TEST_ARCHIVE_DIR = tempfile.mkdtemp(prefix="cyshuhe-archive-")
 atexit.register(shutil.rmtree, _TEST_ARCHIVE_DIR, True)
 os.environ.setdefault("CYSH_JWT_SECRET", "test-secret-only-for-pytest-" + "x" * 16)
 os.environ.setdefault("CYSH_ENV", "dev")
-os.environ.setdefault("CYSH_ARCHIVE_DIR", _TEST_ARCHIVE_DIR)
+os.environ["CYSH_ARCHIVE_DIR"] = _TEST_ARCHIVE_DIR
 
 import pgserver  # noqa: E402
 import pytest  # noqa: E402
@@ -34,6 +36,32 @@ def pg_server():
     pgdata = tempfile.mkdtemp(prefix="cyshuhe-pg-")
     server = pgserver.get_server(pgdata, cleanup_mode="delete")
     yield server
+    # Repeated TRUNCATE creates many relation files. Windows can take >60s
+    # to finish its shutdown checkpoint; pgserver's default then kills only
+    # the postmaster and races still-running children against directory removal.
+    # Wait for a confirmed graceful shutdown, with durability settings unchanged.
+    from pgserver._commands import POSTGRES_BIN_PATH
+
+    target = Path(pgdata).resolve()
+    assert target.parent == Path(tempfile.gettempdir()).resolve()
+    assert target.name.startswith("cyshuhe-pg-")
+    subprocess.run(
+        [
+            str(POSTGRES_BIN_PATH / ("pg_ctl.exe" if os.name == "nt" else "pg_ctl")),
+            "-D",
+            str(target),
+            "-m",
+            "fast",
+            "-w",
+            "-t",
+            "180",
+            "stop",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        **({"user": server.system_user} if server.system_user else {}),
+    )
     server.cleanup()
 
 
@@ -49,6 +77,9 @@ async def engine(pg_url):
     async with eng.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield eng
+    from app.analysis.events import close_hubs
+
+    await close_hubs()
     await eng.dispose()
 
 
@@ -58,6 +89,15 @@ async def session_factory(engine):
         tables = ", ".join(t.name for t in Base.metadata.sorted_tables)
         await conn.execute(text(f"TRUNCATE {tables} RESTART IDENTITY CASCADE"))
     return async_sessionmaker(engine, expire_on_commit=False)
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def isolated_model_audit(session_factory):
+    """Real model-transport tests audit only to the isolated test database."""
+    from app.core.redaction import llm_scope
+
+    with llm_scope(session_factory=session_factory):
+        yield
 
 
 @pytest_asyncio.fixture

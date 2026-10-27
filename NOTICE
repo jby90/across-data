@@ -1,0 +1,6 @@
+车研数合采用第三方开源库和字体。各组件版权归原作者所有。
+浏览器 /licenses 页列出版本、许可及来源，并提供 THIRD-PARTY-NOTICES.txt 全文。
+源代码登记：docs/compliance/THIRD_PARTY.md、FONTS.md、sbom-lock.json。
+Pyphen 代码选择其 MPL-1.1 选项；未使用的字典不进入生产镜像。
+原生动态库未修改，系统包 copyright 与源码获取方式随部署记录保留。
+本登记不表示第三方商标授权或人工法务审批。

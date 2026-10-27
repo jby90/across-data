@@ -4,7 +4,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 def format_conversation_code(task_id: uuid.UUID, created_at: datetime | None = None) -> str:
@@ -13,12 +13,12 @@ def format_conversation_code(task_id: uuid.UUID, created_at: datetime | None = N
     return f"CONV-{dt.strftime('%Y%m%d')}-{task_id.hex[:8].upper()}"
 
 
-def compute_active_node(
-    task_status: str, traces: list[Any]
-) -> tuple[str | None, str | None]:
+def compute_active_node(task_status: str, traces: list[Any]) -> tuple[str | None, str | None]:
     """根据当前对话工作流状态和已完成步骤轨迹,计算当前正在运行或等待中的 Agent 节点。"""
     if task_status == "collecting_facts":
         return "node_fact_collector", "信息采集与追问 Agent（对话采集中）"
+    if task_status == "awaiting_user_facts":
+        return "node_fact_collector", "信息采集与追问 Agent（分析暂停，等待业务事实）"
     if task_status == "ready_to_run":
         return "node_fact_collector", "信息采集与追问 Agent（事实已齐备，待启动）"
     if task_status != "running":
@@ -33,6 +33,8 @@ def compute_active_node(
     )
     if phase == "fact_check":
         return "node_mcp_retriever", "MCP 法规混合检索 Agent（正在检索目标国现行条款）"
+    if phase == "user_fact_answer":
+        return "node_mcp_retriever", "MCP 法规混合检索 Agent（正在恢复受影响维度）"
     if phase == "retrieval":
         return (
             "node_dimension_analyst",
@@ -91,6 +93,8 @@ class WorkflowNodeOut(BaseModel):
     input_variables: list[dict[str, str]] = Field(default_factory=list)
     output_variables: list[dict[str, str]] = Field(default_factory=list)
     responsibility_desc: str
+    runtime_settings: dict[str, Any] = Field(default_factory=dict)
+    configurable_fields: list[str] = Field(default_factory=list)
 
 
 class WorkflowEdgeOut(BaseModel):
@@ -112,6 +116,8 @@ class AgentWorkflowConfigOut(BaseModel):
     dsl_version: str
     is_active: bool
     readonly_locked: bool
+    runtime_schema_version: str | None = None
+    executable: bool = False
     nodes: list[WorkflowNodeOut]
     edges: list[WorkflowEdgeOut]
     change_note: str | None = None
@@ -125,6 +131,7 @@ class WorkflowVersionSummaryOut(BaseModel):
     dsl_version: str
     is_active: bool
     readonly_locked: bool
+    executable: bool = False
     nodes_count: int
     edges_count: int
     change_note: str | None = None
@@ -134,7 +141,7 @@ class WorkflowVersionSummaryOut(BaseModel):
 class WorkflowDslImportIn(BaseModel):
     dsl_payload: dict[str, Any]
     change_note: str = Field(default="管理员导入多智能体编排配置", max_length=500)
-    activate_immediately: bool = True
+    activate_immediately: bool = False
 
 
 class FollowUpQuestionOut(BaseModel):
@@ -148,6 +155,17 @@ class FollowUpQuestionOut(BaseModel):
 
 
 class AnalysisFindingOut(BaseModel):
+    version_id: str | None = None
+    source_nature: str = "unclassified"
+    source_notice: str = ""
+    selected_sentence_ids: list[int] = Field(default_factory=list)
+    anchor_quote_start: int | None = None
+    anchor_quote_end: int | None = None
+    sentence_ids: list[int] = Field(default_factory=list)
+    quote_start: int | None = None
+    quote_end: int | None = None
+    source_text_sha256: str | None = None
+    selection_version: str | None = None
     finding_id: str
     dimension_code: str
     business_fact: str
@@ -175,6 +193,7 @@ class ToolCallTraceOut(BaseModel):
 
 
 class AnalysisStepTraceOut(BaseModel):
+    workflow_version_id: uuid.UUID | None = None
     id: uuid.UUID
     seq_no: int
     agent_node_id: str
@@ -194,6 +213,21 @@ class AnalysisStepTraceOut(BaseModel):
 
 
 class ReportCitationOut(BaseModel):
+    source_review_status: str = "unrecorded"
+    translation_review_status: str = "unrecorded"
+    translation_id: str | None = None
+    language: str = ""
+    version_id: str | None = None
+    source_nature: str = "unclassified"
+    source_notice: str = ""
+    selected_sentence_ids: list[int] = Field(default_factory=list)
+    anchor_quote_start: int | None = None
+    anchor_quote_end: int | None = None
+    sentence_ids: list[int] = Field(default_factory=list)
+    quote_start: int | None = None
+    quote_end: int | None = None
+    source_text_sha256: str | None = None
+    selection_version: str | None = None
     citation_tag: str  # e.g. "[SG-PDPA-s26]"
     clause_id: str | None = None
     document_id: str | None = None
@@ -207,6 +241,8 @@ class ReportCitationOut(BaseModel):
 
 
 class ReportDimensionOut(BaseModel):
+    findings: list[dict[str, Any]] = Field(default_factory=list)
+    gap_kind: str | None = None
     dimension_code: str  # D1..D8
     dimension_title: str
     status: str  # COMPLETE / PARTIAL_GAP / STALE_ALERT
@@ -226,6 +262,10 @@ class StaleImpactAlertOut(BaseModel):
 
 
 class ReportVersionOut(BaseModel):
+    regulatory_updates: list[dict[str, Any]] = Field(default_factory=list)
+    citation_policy: str = "legacy_unrecorded"
+    citation_review_summary: dict[str, int] = Field(default_factory=dict)
+    source_integrity_alerts: list[str] = Field(default_factory=list)
     id: uuid.UUID
     task_id: uuid.UUID
     version_no: int
@@ -236,6 +276,13 @@ class ReportVersionOut(BaseModel):
     dimensions: list[ReportDimensionOut]
     stale_impacts: list[StaleImpactAlertOut] = Field(default_factory=list)
     created_at: datetime
+
+    @model_validator(mode="after")
+    def summarize_reviews(self):
+        from app.analysis.citation_policy import review_summary
+
+        self.citation_review_summary = review_summary([d.model_dump() for d in self.dimensions])
+        return self
 
 
 class AnalysisTaskSummaryOut(BaseModel):
@@ -281,9 +328,11 @@ class ChatMessageOut(BaseModel):
 
 class ChatMessageIn(BaseModel):
     content: str = Field(min_length=1, max_length=2000)
+    question_id: uuid.UUID | None = None
 
 
 class AnalysisTaskDetailOut(BaseModel):
+    activity: dict[str, Any] | None = None
     id: uuid.UUID
     conversation_code: str = ""
     org_id: uuid.UUID | None = None
@@ -309,8 +358,11 @@ class AnalysisTaskDetailOut(BaseModel):
     total_duration_ms: int
     mcp_calls_count: int
     backtrack_count: int
+    workflow_version_id: uuid.UUID | None = None
     workflow_version_no: int
     messages: list[ChatMessageOut] = Field(default_factory=list)
+    pending_user_facts: list[dict[str, Any]] = Field(default_factory=list)
+    fact_followup_rounds: int = 0
     created_at: datetime
     updated_at: datetime
 
@@ -327,6 +379,7 @@ class AnalysisTaskCreateIn(BaseModel):
 class UpdateFactsIn(BaseModel):
     facts: dict[str, Any]
     auto_run_if_sufficient: bool = True
+    question_ids: dict[str, str] = Field(default_factory=dict)
 
 
 class ReportEditIn(BaseModel):

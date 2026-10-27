@@ -1,0 +1,364 @@
+{
+  "batch_id": "e6d45939-5d78-4386-9768-a959a9b0554f",
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "country_metrics": {
+    "SG": {
+      "hits": 5,
+      "expected": 8,
+      "supported": 17,
+      "judged": 18
+    },
+    "MA": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 14,
+      "judged": 14
+    },
+    "TN": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 14,
+      "judged": 15
+    },
+    "LB": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 14,
+      "judged": 15
+    },
+    "EG": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 5,
+      "judged": 6
+    }
+  },
+  "misses": [
+    {
+      "question_id": "S5-01",
+      "country": "SG",
+      "expected": {
+        "clause_id": "9885ae7b-34d8-4109-9f7b-ee7cc8fe2ef8",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "4",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Application of Act\n4.—(1) Parts 3, 4, 5, 6, 6A and 6B do not impose any obligation\non —\n(a) any individual acting in a personal or domestic capacity;\n(b) any employee acting in the course of his or her\nemployment with an organisation;\n(c) any public agency; or\n(d) any other organisations or personal data, or classes of\norganisations or personal data, prescribed for the purposes\nof this provision.\n[40/2020]\n(2) Parts 3, 4, 5, 6 (except sections 24 and 25), 6A (except\nsections 26C(3)(a) and 26E) and 6B do not impose any obligation on\na data inter",
+        "source_text_sha256": "cd0a0f1cfa1c7afcf3ba22eb5dcf0710f17d238503ab76fd28242e5ada35569b"
+      },
+      "stage": "candidate_generation",
+      "same_title_number_other_identity": [],
+      "queries": [
+        "general data protection law scope",
+        "personal data definition",
+        "vehicle user data protection",
+        "connected vehicle data processing",
+        "data protection applicability",
+        "vehicle data controller obligations"
+      ],
+      "heading_queries": [
+        "Scope of data protection legislation",
+        "Definition of personal data",
+        "Applicability to vehicle data",
+        "Protection of vehicle user data",
+        "Controller obligations",
+        "Lawful processing of personal data"
+      ],
+      "note": "同标题条号不等于已确认同一版本；标注疑点只能人工核查，不改评分"
+    },
+    {
+      "question_id": "S5-03",
+      "country": "SG",
+      "expected": {
+        "clause_id": "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "26",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Transfer of personal data outside Singapore\n26.—(1) An organisation must not transfer any personal data to a\ncountry or territory outside Singapore except in accordance with\nrequirements prescribed under this Act to ensure that organisations\nprovide a standard of protection to personal data so transferred that is\ncomparable to the protection under this Act.\n(2) The Commission may, on the application of any organisation,\nby written notice exempt the organisation from any requirement\nprescribed pursuant to subsection (1) in respect of any transfe",
+        "source_text_sha256": "af115bb055e771fa119062bf054569ef16970e45248fd293420cc154db670353"
+      },
+      "stage": "retrieval_failure_pool_unrecorded",
+      "same_title_number_other_identity": [],
+      "queries": null,
+      "heading_queries": null,
+      "note": "同标题条号不等于已确认同一版本；标注疑点只能人工核查，不改评分"
+    },
+    {
+      "question_id": "S5-02",
+      "country": "SG",
+      "expected": {
+        "clause_id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "2",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Interpretation\n2.—(1) In this Act, unless the context otherwise requires —\n“advisory committee” means an advisory committee appointed\nunder section 7;\n“Appeal Committee” means a Data Protection Appeal\nCommittee constituted under section 48P(4), read with the\nSeventh Schedule;\n“Appeal Panel” means the Data Protection Appeal Panel\nestablished by section 48P(1);\n“authorised officer”, in relation to the exercise of any power or\nperformance of any function or duty under any provision of\nthis Act, means a person to whom the exercise of that power\nor ",
+        "source_text_sha256": "960d2647c931964c56c0fb471a695b04dd39be948766951c040aae356bc48f8c"
+      },
+      "stage": "retrieval_failure_pool_unrecorded",
+      "same_title_number_other_identity": [],
+      "queries": null,
+      "heading_queries": null,
+      "note": "同标题条号不等于已确认同一版本；标注疑点只能人工核查，不改评分"
+    }
+  ],
+  "unsupported": [
+    {
+      "question_id": "S5-01",
+      "verdict": {
+        "index": 0,
+        "reason": "引文要求数据中介“代表组织并为其目的”处理个人数据时，组织才承担同等义务；结论省略“为该组织目的”这一条件，扩大了适用情形。其余关于第3至6A部分、拥有或控制个人数据负责、十项主要义务的表述有引文支持。",
+        "supported": "partial"
+      },
+      "clause_id": "cdaadda9-e82e-4dd0-be68-c86405d6f8af",
+      "conclusion": "组织须遵守《PDPA》第3至6A部分的数据保护条款；组织对其拥有或控制的个人数据负责；当组织雇用数据中介代表其处理个人数据时，组织承担与自身处理该个人数据时相同的《PDPA》义务；概括而言，组织若从事与个人数据的收集、使用或披露相关的活动，须遵守数据保护条款所含的十项主要义务。",
+      "quote": "Overview of the Data Protection Provisions\nOrganisations are required to comply with the Data Protection Provisions in Parts 3\nto 6A of the PDPA. When considering what they should do to comply with the Data\nProtection Provisions, organisations should note that they are responsible for\npersonal data in their possession or under their control4\n. In addition, when an\norganisation employs a data intermediary to process personal data on its behalf and\nfor its purposes, organisations have the same obligations under the PDPA as if the\npersonal data were processed by the organisation itself5\n.\nBroadly speaking, the Data Protection Provisions contain ten main obligations which\norganisations are required to comply with if they undertake activities relating to the\ncollection, use or disclosure of personal data. "
+    },
+    {
+      "question_id": "S5-15",
+      "verdict": {
+        "index": 1,
+        "reason": "引文规定自动化和非自动化处理均由自然人或法人实施；结论仅对自动化处理明确限定实施主体，非自动化处理未提该主体条件，范围不完全一致。",
+        "supported": "partial"
+      },
+      "clause_id": "3bb3e9d6-c592-41d2-9ced-de95b8b4a29f",
+      "conclusion": "Art. 2：本法适用于由自然人或法人实施的个人数据的自动化处理，以及个人数据的非自动化处理。",
+      "quote": "Art. 2 : La présente loi s’applique au traitement automatisé, ainsi qu’au traitement non automatisé des\ndonnées à caractère personnel mis en œuvre par des personnes physiques ou par des personnes\nmorales."
+    },
+    {
+      "question_id": "S5-25",
+      "verdict": {
+        "index": 1,
+        "reason": "第96条引文逐项支持六类应包含信息；但结论另称“提交主体和提交时点由前条规定”，引文仅称“وفق المادة السابقة”，未明确提及提交主体和提交时点，故该部分无直接支持。",
+        "supported": "partial"
+      },
+      "clause_id": "4492beb2-cde2-4a70-9078-947e7e1453aa",
+      "conclusion": "依据原文 المادة ٩٦：依照前条（المادة السابقة，其内容未提供，不补全）向 وزارة الإقتصاد والتجارة 提交的 التصريح（该词所指的法律行为性质待核对，原文未确定是申报、许可还是授权），必须包含以下信息：١- 处理目的；٢- 作为处理对象的个人性质数据及其来源；٣- 相关人员的类别；٤- 可获知该数据的第三方或其类别；٥- 数据保留期限；٦- 处理负责人的身份和地址。本条仅规定该 التصريح 应包含的内容；提交主体和提交时点由前条规定，本条未提供该规定的原文。",
+      "quote": "المادة ٩٦:\nيجب أن يتضمن التصريح م\nّ\nالمقد إلى وزارة الإقتصاد والتجارة وفق المادة السابقة، المعلومات التالية :\n١ - غايات المعالجة .\n٢ - البيانات ذات الطابع الشخصي موضوع المعالجة ومصدرها .\n٣ - فئات الأشخاص المعنيين .\n٤ - الأشخاص الثالثين او فئاتهم الذين يمكن إطلاعهم على البيانات .\n٥ - مدة الإحتفاظ بالبيانات .\n٦ - هوية وعنوان المسؤول عن المعالجة .\n"
+    },
+    {
+      "question_id": "S5-27",
+      "verdict": {
+        "index": 2,
+        "reason": "引文支持مادة (17)禁止电子联系、目的表述受损，并列出须获得数据主体同意作为条件之一；但原文表述为“除非满足下列条件”，同意仅是第1项，结论将其简化为“除非取得同意”，对例外条件的范围有所收窄，故非完整支持。",
+        "supported": "partial"
+      },
+      "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+      "conclusion": "مادة (17) 规定，禁止进行任何电子联系（该电子联系的目的表述在原文中受损、无法辨认），除非取得数据主体同意。",
+      "quote": "‎wim ep‏ طراف تكون\n‎ee\n‏تجر ”آلا امال « ‎dey‏ الأ أت الشخه\n‏\\ - اتفاق طييع ةاعم كلفين المتحكمين أ\n‏أو معالج\n‎3\n‎0\n‎‘3\n‏مادة (17) : 9\n‏يحظر إجراء أى اتصال الكتشرونى بغرض ‎LINN‏ للشخض المعنى بالبيانات »\nإلا بتوافر الشروط الآتية :\n‎١‏ -الحصول على موافقة من الشخص المعنى بالبيانات .\n"
+    }
+  ],
+  "failures_and_gaps": [
+    {
+      "question_id": "S5-03",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": "大模型调用失败(共 2 次请求): output_truncated",
+      "attempted_gaps": []
+    },
+    {
+      "question_id": "S5-02",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": "重排ID重复、超过top_k或不在候选池内",
+      "attempted_gaps": []
+    },
+    {
+      "question_id": "S5-04",
+      "analysis_error": "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中",
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "c50844a4-1198-4110-9b2c-558610419b20",
+          "gap": null,
+          "error": "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中",
+          "issues": [
+            "依据限定生成校验失败: 结论中的数字「7」未出现在所选引文中"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-14",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": "大模型调用失败(共 2 次请求): output_truncated",
+      "attempted_gaps": []
+    },
+    {
+      "question_id": "S5-20",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": "大模型调用失败(共 2 次请求): output_truncated",
+      "attempted_gaps": []
+    },
+    {
+      "question_id": "S5-22",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "21cff2ce-868d-416c-984f-0a4f716edfdb",
+          "gap": "所给引文OCR受损：第89条中告知义务的触发时点（是否限于“处理前”）及“الا راعت ض على إج ءرا المعالجة”等限定条件无法辨认，不能完整保留原文全部条件与例外，故不能据此形成完整原子规则。",
+          "error": null,
+          "issues": [
+            "所给引文OCR受损：第89条中告知义务的触发时点（是否限于“处理前”）及“الا راعت ض على إج ءرا المعالجة”等限定条件无法辨认，不能完整保留原文全部条件与例外，故不能据此形成完整原子规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-23",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+          "gap": "所给原文在第٩٠条“التصريح عن ... المعالجة أو ...”之后存在OCR受损，无法辨认“أو”所连接的替代期间或条件；因此不能完整确定保存个人数据合法期间的例外范围，也不能据此形成关于超出申报期间保存的完整规则。",
+          "error": null,
+          "issues": [
+            "所给原文在第٩٠条“التصريح عن ... المعالجة أو ...”之后存在OCR受损，无法辨认“أو”所连接的替代期间或条件；因此不能完整确定保存个人数据合法期间的例外范围，也不能据此形成关于超出申报期间保存的完整规则。"
+          ]
+        },
+        {
+          "clause_id": "4492beb2-cde2-4a70-9078-947e7e1453aa",
+          "gap": "现有依据（المادة ٩٦）仅规定向经济与贸易部提交的申报须包含“数据留存期限”等信息，未规定个人数据能否超出申报期间保存，也未规定留存期限的上限或超期保存的禁止与例外条件；因此缺少关于留存期限限制及超期保存法律后果的直接依据。",
+          "error": null,
+          "issues": [
+            "现有依据（المادة ٩٦）仅规定向经济与贸易部提交的申报须包含“数据留存期限”等信息，未规定个人数据能否超出申报期间保存，也未规定留存期限的上限或超期保存的禁止与例外条件；因此缺少关于留存期限限制及超期保存法律后果的直接依据。"
+          ]
+        },
+        {
+          "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "gap": "原文仅表明数据应与已宣布的目的相称、不超出该目的并应准确完整，且提及数据应在必要范围内保持；但其中“ميومة”一词表述受损，无法确定其准确含义，原文也未规定申报期间或超出申报期间的存储期限规则，因此不能据此判断个人数据能否超出申报期间保存。",
+          "error": null,
+          "issues": [
+            "原文仅表明数据应与已宣布的目的相称、不超出该目的并应准确完整，且提及数据应在必要范围内保持；但其中“ميومة”一词表述受损，无法确定其准确含义，原文也未规定申报期间或超出申报期间的存储期限规则，因此不能据此判断个人数据能否超出申报期间保存。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-24",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "467af361-5577-4df4-ab74-1a0dd0eda162",
+          "gap": "所给原文存在OCR损坏：禁止收集或处理的个人数据列举中“ثيةراو ال”无法辨认，例外第1项中同意的限定词亦损坏，无法在不猜测的情况下完整列明禁止范围及该例外；原文仅提及健康状况、身份和性生活，未提供遗传数据规则。",
+          "error": null,
+          "issues": [
+            "所给原文存在OCR损坏：禁止收集或处理的个人数据列举中“ثيةراو ال”无法辨认，例外第1项中同意的限定词亦损坏，无法在不猜测的情况下完整列明禁止范围及该例外；原文仅提及健康状况、身份和性生活，未提供遗传数据规则。"
+          ]
+        },
+        {
+          "clause_id": "830444df-9cd8-43f6-943a-c3f64f8fbd2c",
+          "gap": "提供的原文（المادة ٩٣）只规定：个人数据处理责任主体应根据数据性质和产生的风险，采取一切措施保障数据安全与安保，防止被篡改、受损或遭未经授权者访问；这是一般个人数据安保义务条款，不是针对健康数据或遗传数据等特殊类别的分类、认定或特别限制条款。因此，本条无法就“健康或遗传数据有何特殊限制”形成有依据的规则；缺少界定健康或遗传数据、设定特殊类别数据处理条件或限制、规定相应例外的依据。",
+          "error": null,
+          "issues": [
+            "提供的原文（المادة ٩٣）只规定：个人数据处理责任主体应根据数据性质和产生的风险，采取一切措施保障数据安全与安保，防止被篡改、受损或遭未经授权者访问；这是一般个人数据安保义务条款，不是针对健康数据或遗传数据等特殊类别的分类、认定或特别限制条款。因此，本条无法就“健康或遗传数据有何特殊限制”形成有依据的规则；缺少界定健康或遗传数据、设定特殊类别数据处理条件或限制、规定相应例外的依据。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-26",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "gap": "所提供的唯一依据（المادة ٨٥）仅界定了本章对个人数据自动化处理与非自动化处理的适用范围，并排除了仅为其个人需要而开展的个人活动处理；它未包含关于可否完全依靠自动处理作出个人评价决定的规则、条件、例外或法律后果。因此，无法基于该原文形成完整规则。",
+          "error": null,
+          "issues": [
+            "所提供的唯一依据（المادة ٨٥）仅界定了本章对个人数据自动化处理与非自动化处理的适用范围，并排除了仅为其个人需要而开展的个人活动处理；它未包含关于可否完全依靠自动处理作出个人评价决定的规则、条件、例外或法律后果。因此，无法基于该原文形成完整规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-27",
+      "analysis_error": "大模型调用失败(共 2 次请求): output_truncated",
+      "judge_error": null,
+      "retrieval_error": "大模型调用失败(共 2 次请求): output_truncated",
+      "attempted_gaps": [
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "gap": "所提供的原文为OCR受损文本：禁止行为清单中的中间项（“أو معا”）以及“明确同意”的作出主体（“من اله ‎call‏ بالببياتات”）无法辨认，法律许可例外的准确范围亦不完整。因同意主体和部分行为对象等关键条件残缺，不能在不猜测的情况下形成完整规则；需提供清晰原文。",
+          "error": null,
+          "issues": [
+            "所提供的原文为OCR受损文本：禁止行为清单中的中间项（“أو معا”）以及“明确同意”的作出主体（“من اله ‎call‏ بالببياتات”）无法辨认，法律许可例外的准确范围亦不完整。因同意主体和部分行为对象等关键条件残缺，不能在不猜测的情况下形成完整规则；需提供清晰原文。"
+          ]
+        },
+        {
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "gap": null,
+          "error": "大模型调用失败(共 2 次请求): output_truncated",
+          "issues": [
+            "大模型调用失败(共 2 次请求): output_truncated"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-28",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "gap": "原文关键条件及例外受损且不完整：引文虽提到“存在多个处理者时，每一处理者均受所规定全部义务的约束”，但未列明“所规定”的义务内容，且后段“أوذلك فى يلي عدم وجود عقد يحدد التزامات ومسئوليات كل منهم بوضوح”存在OCR损坏，无法确定其是否构成未以合同明确约定各自义务和责任时的例外或附加条件，故不能形成完整有依据的原子规则。",
+          "error": null,
+          "issues": [
+            "原文关键条件及例外受损且不完整：引文虽提到“存在多个处理者时，每一处理者均受所规定全部义务的约束”，但未列明“所规定”的义务内容，且后段“أوذلك فى يلي عدم وجود عقد يحدد التزامات ومسئوليات كل منهم بوضوح”存在OCR损坏，无法确定其是否构成未以合同明确约定各自义务和责任时的例外或附加条件，故不能形成完整有依据的原子规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-30",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": "大模型调用失败(共 2 次请求): output_truncated",
+      "attempted_gaps": [
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "gap": "所提供的原文存在OCR损坏：第10条第4款开头关于“向不具备……的国家传输个人数据”的适用前提残缺，第3项合同例外中相对方及限定内容也残缺。因此，无法在保留全部触发条件和限定的前提下，完整还原向境外传输个人数据的限定例外，不能形成有依据的原子规则。",
+          "error": null,
+          "issues": [
+            "所提供的原文存在OCR损坏：第10条第4款开头关于“向不具备……的国家传输个人数据”的适用前提残缺，第3项合同例外中相对方及限定内容也残缺。因此，无法在保留全部触发条件和限定的前提下，完整还原向境外传输个人数据的限定例外，不能形成有依据的原子规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-32",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "gap": "原文对未经法律许可或未经数据主体同意而收集、处理、披露、提供或流转个人数据的行为规定了罚金和加重处罚，但“5 مليون جنيه”所在部分、加重处罚的罚金数额以及“الحصول على…”对价内容均因文本受损无法辨认，不能在不猜测的情况下形成完整的处罚规则。",
+          "error": null,
+          "issues": [
+            "原文对未经法律许可或未经数据主体同意而收集、处理、披露、提供或流转个人数据的行为规定了罚金和加重处罚，但“5 مليون جنيه”所在部分、加重处罚的罚金数额以及“الحصول على…”对价内容均因文本受损无法辨认，不能在不猜测的情况下形成完整的处罚规则。"
+          ]
+        }
+      ]
+    }
+  ],
+  "retrieval_tokens": 736083,
+  "final_supported_cases": 28,
+  "human_review": "0/32，待核对；本程序只汇总工程与模型指标"
+}

@@ -1,0 +1,57 @@
+{
+  "leads": [
+    {
+      "url": "https://pdpc.gov.eg/",
+      "publisher": "Egypt Personal Data Protection Center",
+      "source_kind": "national_authority",
+      "discovery_url": "https://pdpc.gov.eg/",
+      "note": "Official center entry; discover original law only if robots permits. No inferred asset filenames."
+    },
+    {
+      "url": "https://www.pdpc.gov.eg/home",
+      "publisher": "Egypt Personal Data Protection Center",
+      "source_kind": "national_authority",
+      "discovery_url": "https://snaabble.com/blog/customer-data-protection-compliance",
+      "note": "Previously discovered official entry. Blog is discovery-only, not legal evidence."
+    },
+    {
+      "url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+      "publisher": "Egypt Ministry of Communications and Information Technology",
+      "source_kind": "national_authority",
+      "discovery_url": "https://atlas.webtracking.org/frameworks/eg-pdpl/",
+      "note": "Previously registered original-source link; filename/URL does not by itself authenticate the migrated Arabic scan."
+    },
+    {
+      "url": "https://alamiria.com/Sec/Home",
+      "publisher": "Egypt General Authority for Government Printing Offices",
+      "source_kind": "gazette_publisher",
+      "discovery_url": "https://alamiria.com/Sec/Home",
+      "note": "Official gazette publisher entry; no guessed encrypted law IDs or paid-access bypass."
+    },
+    {
+      "url": "https://natlex.ilo.org/dyn/natlex2/natlex2/files/download/111246/EGY111246%20Ara.pdf",
+      "publisher": "International Labour Organization NATLEX",
+      "source_kind": "intergovernmental_repository",
+      "discovery_url": "https://www.ilo.org/dyn/natlex/natlex4.detail?p_classification=01&p_count=7&p_isn=111246&p_lang=en",
+      "note": "NATLEX metadata names Cyrilla as the Arabic file's electronic source. Not an Egyptian official publication; do not upgrade the source nature."
+    }
+  ],
+  "excluded_leads": [
+    {
+      "url": "https://idsc.gov.eg/upload/DocumentLibrary/AttachmentA/10385/5.pdf",
+      "reason": "Official policy summary; not verified full statutory text. Cannot fill missing statutory provisions."
+    },
+    {
+      "url": "https://sis.gov.eg/en/media-center/news/sisi-endorses-law-on-personal-data-protection/",
+      "reason": "Official enactment news; not the full law and cannot supply the six missing provisions."
+    },
+    {
+      "url": "https://eg.andersen.com/wp-content/uploads/2026/02/Law-No.-151-of-2020-1.pdf",
+      "reason": "Law-firm English translation, not Egyptian official original. Not used to replace or repair Arabic source characters."
+    },
+    {
+      "url": "https://www.pdpc.gov.eg/assets/pdf-data/PDPL%20no.%20151%20of%202020%20%28ar",
+      "reason": "Malformed link previously found in a secondary blog; no guessed completion or retry grid."
+    }
+  ]
+}

@@ -2,23 +2,8 @@
 import * as echarts from 'echarts'
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 
-export interface FgNode {
-  id: string
-  name: string
-  type: string
-  degree: number
-}
-export interface FgEdge {
-  source: string
-  target: string
-  label: string
-  approved: boolean
-}
-export interface FgCategory {
-  type: string
-  name: string
-  color: string
-}
+import { graphSeries, type FgNode, type FgEdge, type FgCategory } from '@cyshuhe/shared/src/graphPresentation'
+export type { FgNode, FgEdge, FgCategory } from '@cyshuhe/shared/src/graphPresentation'
 
 const props = defineProps<{
   nodes: FgNode[]
@@ -27,6 +12,7 @@ const props = defineProps<{
   visibleTypes?: string[]
   selectedId?: string
   height?: string
+  overview?: boolean
 }>()
 const emit = defineEmits<{
   (e: 'node-click', id: string): void
@@ -39,64 +25,24 @@ let chart: echarts.ECharts | null = null
 let observer: ResizeObserver | null = null
 
 function buildOption(): echarts.EChartsOption {
-  const showEdgeLabel = props.edges.length <= 40
-  const selectedLegend: Record<string, boolean> = {}
-  for (const c of props.categories) {
-    selectedLegend[c.name] = !props.visibleTypes || props.visibleTypes.includes(c.type)
-  }
-  const data = props.nodes.map((n) => {
-    const selected = n.id === props.selectedId
-    return {
-      id: n.id,
-      name: n.name,
-      category: props.categories.findIndex((c) => c.type === n.type),
-      symbolSize: selected ? 34 : Math.min(40, 12 + Math.sqrt(n.degree) * 4),
-      itemStyle: selected ? { borderColor: '#0f172a', borderWidth: 3 } : undefined,
-      label: { show: n.type === 'COUNTRY' || n.degree >= 6 || selected },
-    }
-  })
-  const links = props.edges.map((e) => ({
-    source: e.source,
-    target: e.target,
-    value: e.label as unknown as number,
-    label: { show: showEdgeLabel, formatter: e.label, fontSize: 10 },
-    lineStyle: { color: e.approved ? '#16a34a' : '#94a3b8', curveness: 0.12 },
-  }))
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   return {
+    animation: !reducedMotion,
+    animationDuration: 240,
+    animationDurationUpdate: 180,
     tooltip: {
+      renderMode: 'richText',
+      textStyle: { fontSize: 12 },
+      confine: true,
       formatter: (p: any) => {
-        if (p.dataType === 'edge') return `${p.data.value}`
+        if (p.dataType === 'edge') return `${p.data.name}`
         const cat = props.categories[p.data.category]
-        return `${cat?.name ?? ''}<br/>${p.data.name}`
+        return `${cat?.name ?? ''}\n${p.data.name}`
       },
     },
-    legend: [
-      {
-        data: props.categories.map((c) => c.name),
-        selected: selectedLegend,
-        bottom: 0,
-        itemWidth: 12,
-        itemHeight: 12,
-        textStyle: { color: '#475569' },
-      },
-    ],
-    series: [
-      {
-        type: 'graph',
-        layout: 'force',
-        roam: true,
-        draggable: true,
-        categories: props.categories.map((c) => ({ name: c.name, itemStyle: { color: c.color } })),
-        data,
-        links,
-        force: { repulsion: 420, edgeLength: [70, 170], gravity: 0.06 },
-        edgeSymbol: ['none', 'arrow'],
-        edgeSymbolSize: 6,
-        emphasis: { focus: 'adjacency', label: { show: true } },
-        lineStyle: { width: 1.2 },
-        label: { position: 'right', fontSize: 11, color: '#334155', overflow: 'truncate', width: 140 },
-      },
-    ],
+    series: [graphSeries(props.nodes, props.edges, props.categories, {
+      overview: props.overview, selectedId: props.selectedId, reducedMotion, viewportWidth: canvas.value?.clientWidth,
+    })],
   }
 }
 
@@ -120,14 +66,20 @@ async function render() {
 }
 
 watch(
-  () => [props.nodes, props.edges, props.selectedId, props.visibleTypes],
+  () => [props.nodes, props.edges, props.selectedId, props.visibleTypes, props.overview],
   () => render(),
   { deep: true },
 )
 
 onMounted(() => {
   if (typeof ResizeObserver !== 'undefined' && host.value) {
-    observer = new ResizeObserver(() => render())
+    observer = new ResizeObserver(() => {
+      const el = canvas.value
+      // Hidden tabs have a zero-sized canvas; ECharts must not resize until visible.
+      if (!el || !el.clientWidth || !el.clientHeight) return
+      if (chart) chart.resize()
+      else render()
+    })
     observer.observe(host.value)
   }
   render()
@@ -140,8 +92,21 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="host" class="kg-force" :style="{ height: height || '500px' }" data-testid="user-kg-force-graph">
-    <div ref="canvas" class="canvas"></div>
+  <div
+    ref="host"
+    class="kg-force"
+    :style="{ height: height || '500px' }"
+    data-testid="user-kg-force-graph"
+  >
+    <div
+      ref="canvas"
+      class="canvas"
+      role="img"
+      aria-label="法规知识关系图，证据明细可在列表中查看"
+    ></div>
+    <button class="reset-view" type="button" @click="chart?.dispatchAction({ type: 'restore' })">
+      重置视图
+    </button>
     <div v-if="!nodes.length" class="empty">当前筛选条件下暂无关联节点</div>
   </div>
 </template>
@@ -164,5 +129,21 @@ onUnmounted(() => {
   justify-content: center;
   color: #64748b;
   font-size: 13px;
+}
+.reset-view {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 1;
+  background: #ffffffeb;
+  border: 1px solid #dce4ed;
+  border-radius: 7px;
+  padding: 7px 12px;
+  font-size: 12px;
+  color: #64798a;
+}
+.reset-view:hover {
+  color: #315fe8;
+  border-color: #b8c9f1;
 }
 </style>

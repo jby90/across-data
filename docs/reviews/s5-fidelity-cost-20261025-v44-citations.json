@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "tasks_checked": 10,
+  "final_findings_checked": 239,
+  "source_sha256_and_offsets": true,
+  "document_and_version_identity": true,
+  "numeric_amount_date_checks": true,
+  "machine_source_support_present": true,
+  "new_human_approvals": 0,
+  "note": "程序与机器质检不是人工法律适用确认"
+}

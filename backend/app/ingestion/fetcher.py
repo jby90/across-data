@@ -185,18 +185,14 @@ class PoliteFetcher:
             elif resp.status_code == 200 and (
                 "text/html" in ctype or final_path.endswith("/error")
             ):
-                # 部分政府站点(如 lp.gov.lb)在无 robots.txt 时 302 到 HTML /error 页并返回 200
-                parser = RobotFileParser()
-                parser.parse([])
-                self._robots_note[origin] = (
-                    "无有效 text/plain robots.txt(返回 HTML 页),按 RFC 9309 视为允许"
-                )
-            elif 400 <= resp.status_code < 500:
+                parser = None
+                self._robots_note[origin] = "返回 HTML/错误页，无法确认 robots 规则，不抓取"
+            elif resp.status_code in (404, 410):
                 parser = RobotFileParser()  # 没有 robots.txt:视为允许
                 parser.parse([])
                 self._robots_note[origin] = f"HTTP {resp.status_code},无 robots.txt,视为允许"
             else:
-                parser = None  # 5xx:保守起见一律不抓
+                parser = None  # Authentication/rate limits/5xx never imply permission.
                 self._robots_note[origin] = f"HTTP {resp.status_code},无法确认规则,保守起见不抓取"
         except (httpx.HTTPError, BlockedError, FetchError) as e:
             parser = None

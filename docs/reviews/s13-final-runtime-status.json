@@ -1,0 +1,99 @@
+{
+  "containers": [
+    {
+      "container": "cyshuhe-api-1",
+      "status": "running",
+      "oom": false,
+      "restarts": 0,
+      "image_ref": "cyshuhe-api:f8d510e",
+      "image_id": "sha256:fb130f934d8046f30ded0f6c2488a50ba8e20970a957d2532db3135ce20e5dae",
+      "health": "healthy"
+    },
+    {
+      "container": "cyshuhe-worker-1",
+      "status": "running",
+      "oom": false,
+      "restarts": 0,
+      "image_ref": "cyshuhe-api:f8d510e",
+      "image_id": "sha256:fb130f934d8046f30ded0f6c2488a50ba8e20970a957d2532db3135ce20e5dae",
+      "health": null
+    },
+    {
+      "container": "cyshuhe-web-admin-1",
+      "status": "running",
+      "oom": false,
+      "restarts": 0,
+      "image_ref": "cyshuhe-web-admin:c0ec889",
+      "image_id": "sha256:6bcd5ca8753ab81f373afda92a697c7e8fa2731e581ea140c0d70ee27c0654e9",
+      "health": null
+    },
+    {
+      "container": "cyshuhe-web-user-1",
+      "status": "running",
+      "oom": false,
+      "restarts": 0,
+      "image_ref": "cyshuhe-web-user:f8d510e",
+      "image_id": "sha256:5af575be313d3eb07e8bedb672db8abec214d6e9f58f79144f3eea5d6b2445c0",
+      "health": null
+    },
+    {
+      "container": "cyshuhe-nginx-1",
+      "status": "running",
+      "oom": false,
+      "restarts": 0,
+      "image_ref": "nginx:1.28-alpine",
+      "image_id": "sha256:201aafcbd9cdd5385d5aaf610b45389944d8c2269c4a6f10e6fdf39f76cab592",
+      "health": null
+    },
+    {
+      "container": "multiagent-online-database-1",
+      "status": "exited",
+      "oom": false,
+      "restarts": 0,
+      "image_ref": "multiagent-decision-database:1.1.0",
+      "image_id": "sha256:cdeae546f1dfe40566e96914fe33be04f2c8b79b56a8ea5944dd07ce5174b426",
+      "health": "unhealthy"
+    },
+    {
+      "container": "multiagent-online-backend-1",
+      "status": "exited",
+      "oom": false,
+      "restarts": 0,
+      "image_ref": "multiagent-decision-backend:handoff-v3.3-diag-20260825-64",
+      "image_id": "sha256:e64ab0a1b0ad502a53b2699bbbbbaff9de118e26263f65c8d389da3087587dc6",
+      "health": "unhealthy"
+    },
+    {
+      "container": "multiagent-online-frontend-1",
+      "status": "exited",
+      "oom": false,
+      "restarts": 0,
+      "image_ref": "multiagent-decision-frontend:handoff-v3.3-diag-20260825-121",
+      "image_id": "sha256:ba706264f471a25ff5bb8fc8677ffc0acb947ec8441025477eb28d5e7f14277d",
+      "health": "unhealthy"
+    }
+  ],
+  "free_m": "               total        used        free      shared  buff/cache   available\nMem:            1608         601          94          70         913         767\nSwap:           2047           0        2047\n",
+  "disk": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/vda3        40G   19G   19G  50% /\n",
+  "preview_removed": true,
+  "http_checks": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/admin/",
+      "status": 200
+    },
+    {
+      "path": "/api/health",
+      "status": 200
+    },
+    {
+      "path": "/api/analysis/tasks",
+      "status": 401
+    }
+  ],
+  "checked_at": "2026-10-25T15:22:07.255105+00:00",
+  "manual_review": "pending"
+}

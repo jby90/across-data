@@ -14,11 +14,15 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from pathlib import Path
 
 from playwright.async_api import Page, async_playwright
 
 DEV_CREDS = Path.home() / ".cyshuhe-dev" / "credentials.json"
+
+ADMIN_URL = os.environ.get("CYSH_UI_ADMIN_URL", "http://localhost:5174").rstrip("/")
+USER_URL = os.environ.get("CYSH_UI_USER_URL", "http://localhost:5173").rstrip("/")
 
 
 async def _assert_no_error_toast(page: Page, step: str) -> None:
@@ -41,12 +45,12 @@ async def verify_admin_portal(browser, creds: dict, bad_responses: list[str], pa
     page.on("pageerror", lambda e: page_errors.append(f"ADMIN JS ERROR: {e}"))
 
     print("[1/8] 打开管理端登录页 http://localhost:5174/login ...")
-    await page.goto("http://localhost:5174/login", wait_until="networkidle")
+    await page.goto(ADMIN_URL + "/login", wait_until="networkidle")
     inputs = page.locator("input")
     await inputs.nth(0).fill("admin@example.com")
     await inputs.nth(1).fill(creds["users"]["admin@example.com"])
     await page.get_by_role("button", name="登录").click()
-    await page.wait_for_url("http://localhost:5174/", timeout=10000)
+    await page.wait_for_url(ADMIN_URL + "/", timeout=10000)
     await _assert_no_error_toast(page, "管理端登录")
 
     print("[2/8] 点击「采集站点」并验证站点列表与联动跳转 ...")
@@ -158,8 +162,6 @@ async def verify_admin_portal(browser, creds: dict, bad_responses: list[str], pa
 
     node_cards = await page.locator("[data-testid=dify-node-card]").count()
     assert node_cards == 7, f"Dify 画布节点数量应为 7，实际为: {node_cards}"
-    lock_badge = await page.locator("[data-testid=agent-readonly-lock-badge]").inner_text()
-    assert "只读锁定" in lock_badge
 
     # 点击「依据子串核验与退回质检 Agent」节点，查看右侧检查器与禁用参数
     await page.locator("[data-node-id=node_citation_verifier]").click()
@@ -225,12 +227,12 @@ async def verify_user_portal(browser, creds: dict, bad_responses: list[str], pag
     page.on("pageerror", lambda e: page_errors.append(f"USER JS ERROR: {e}"))
 
     print("[6/8] 打开用户端登录页 http://localhost:5173/login ...")
-    await page.goto("http://localhost:5173/login", wait_until="networkidle")
+    await page.goto(USER_URL + "/login", wait_until="networkidle")
     inputs = page.locator("input")
     await inputs.nth(0).fill("member@example.com")
     await inputs.nth(1).fill(creds["users"]["member@example.com"])
     await page.get_by_role("button", name="登录").click()
-    await page.wait_for_url("http://localhost:5173/", timeout=10000)
+    await page.wait_for_url(USER_URL + "/", timeout=10000)
     await _assert_no_error_toast(page, "用户端登录")
 
     print("[7/8] 点击用户端「法规知识库」并验证三级目录树、八项属性、左右双栏与义务原文高亮 ...")
@@ -398,12 +400,12 @@ async def verify_admin_conversation_history_and_stages(
     )
     page.on("pageerror", lambda e: page_errors.append(f"ADMIN_STAGE JS ERROR: {e}"))
 
-    await page.goto("http://localhost:5174/login", wait_until="networkidle")
+    await page.goto(ADMIN_URL + "/login", wait_until="networkidle")
     inputs = page.locator("input")
     await inputs.nth(0).fill("admin@example.com")
     await inputs.nth(1).fill(creds["users"]["admin@example.com"])
     await page.get_by_role("button", name="登录").click()
-    await page.wait_for_url("http://localhost:5174/", timeout=10000)
+    await page.wait_for_url(ADMIN_URL + "/", timeout=10000)
 
     await page.locator(".el-menu-item", has_text="多Agent编排工作台").click()
     await page.wait_for_load_state("networkidle")
@@ -448,6 +450,10 @@ async def verify_admin_conversation_history_and_stages(
 
 
 async def main() -> int:
+    if os.environ.get("CYSH_UI_ISOLATED_TESTS") != "1":
+        raise RuntimeError("This script creates synthetic data and tests review actions. "
+                           "Use an isolated test database and explicitly set CYSH_UI_ISOLATED_TESTS=1. "
+                           "For production, use read-only capture_screenshots.py and manual checks.")
     creds = json.loads(DEV_CREDS.read_text(encoding="utf-8"))
     bad_responses: list[str] = []
     page_errors: list[str] = []

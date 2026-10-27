@@ -165,6 +165,33 @@ async def test_first_run_discovers_downloads_parses(session_factory, tmp_path):
         assert site.last_status == "success" and site.consecutive_failures == 0
 
 
+async def test_download_success_parse_failure_is_partial_and_preserves_raw(
+    session_factory, tmp_path
+):
+    state = Site()
+    state.pdf = b"%PDF-1.7 not a complete valid PDF"
+    site_id = await add_site(
+        session_factory, strategy="DIRECT", entry="https://example.org/laws/act.pdf"
+    )
+    result, archive = await run(session_factory, tmp_path, state, site_id)
+    assert result.status == "partial" and result.errors == 1
+    assert result.versions_new == 1 and "Parse" in result.message
+    async with session_factory() as session:
+        version = (await session.scalars(select(DocumentVersion))).one()
+        doc = await session.get(Document, version.document_id)
+        assert version.state == "failed" and doc.last_error == version.error
+        assert archive.read(version.archive_path) == state.pdf
+        assert await session.scalar(select(func.count()).select_from(Clause)) == 0
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(PipelineEvent)
+                .where(PipelineEvent.status == "error")
+            )
+            == 1
+        )
+
+
 async def test_rerun_unchanged_creates_nothing_new(session_factory, tmp_path):
     state = Site()
     site_id = await add_site(session_factory)
@@ -303,6 +330,7 @@ async def test_index_page_failure_fails_run_and_counts(session_factory, tmp_path
     site_id = await add_site(session_factory)
     r, _ = await run(session_factory, tmp_path, state, site_id)
     assert r.status == "failed"
+    assert r.errors >= 1
     async with session_factory() as s:
         site = await s.get(SourceSite, site_id)
         assert site.last_status == "failed" and site.consecutive_failures == 1
@@ -344,7 +372,7 @@ async def test_keywords_and_pagination(session_factory, tmp_path):
         assert r.pages_read == 2 and r.links_found == 1  # 关键词只保留 Data Act
 
 
-async def test_reparse_replaces_clauses_and_detects_tampered_archive(session_factory, tmp_path):
+async def test_reparse_preserves_clauses_and_detects_tampered_archive(session_factory, tmp_path):
     state = Site()
     site_id = await add_site(
         session_factory, strategy="DIRECT", entry="https://example.org/laws/act.pdf", config={}
@@ -370,7 +398,7 @@ async def test_reparse_replaces_clauses_and_detects_tampered_archive(session_fac
             await s.execute(
                 select(func.count()).select_from(Clause).where(Clause.version_id == v.id)
             )
-        ).scalar() == 0
+        ).scalar() == 2  # 完整性失败隔离该版本，但保留历史条款和审批引用
 
 
 async def test_unsupported_file_type_fails_parse_but_keeps_original(session_factory, tmp_path):

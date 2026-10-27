@@ -1,1072 +1,749 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import { computed, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { api } from '../api'
-import KgForceGraph from '../components/KgForceGraph.vue'
-
-interface CountryOverview {
+import RegulationDirectory from '../components/RegulationDirectory.vue'
+import LegalText from '../components/LegalText.vue'
+import type { LegalTerm } from '@cyshuhe/shared/src/legalText'
+const RegulationRelations = defineAsyncComponent(
+  () => import('../components/RegulationRelations.vue'),
+)
+const readingView = ref('clauses')
+async function readRelationBasis(clauseId: string) {
+  if (!detail.value) return
+  readingView.value = 'clauses'
+  await openDocument(detail.value.regulation.id, clauseId)
+}
+interface Country {
   country_code: string
   country_name_zh: string
-  country_name_orig: string
   documents_count: number
-  clauses_count: number
-  translations_count: number
-  approved_translations_count: number
-  kg_nodes_count: number
-  kg_edges_count: number
 }
-
-interface ClauseTranslation {
-  id: string
-  clause_id: string
-  country_code: string
-  document_title: string
-  clause_number: string | null
-  heading: string | null
-  original_text: string
-  translated_text: string
-  glossary_hits: Array<{
-    source_term: string
-    target_zh: string
-    priority_level: number
-    statutory_definition?: string | null
-    source_reference?: string | null
-  }>
-  unmatched_terms: Array<{
-    source_term: string
-    provisional_zh: string
-    statutory_definition: string
-    source_reference: string
-  }>
-  usable_as_legal_basis: boolean
-  status_badge: string
-}
-
-interface KgNode {
-  id: string
-  country_code: string
-  node_type: string
-  node_key: string
-  name_zh: string
-  name_orig: string | null
-  summary: string | null
-  attributes: Record<string, string>
-  document_id: string | null
-  review_status: string
-}
-
-interface KgEdge {
-  id: string
-  country_code: string
-  source_node_id: string
-  source_name_zh: string
-  source_node_type: string
-  target_node_id: string
-  target_name_zh: string
-  target_node_type: string
-  relation_type: string
-  evidence_clause_id: string
-  evidence_quote: string
-  clause_number: string | null
-  document_title: string | null
-  usable_as_legal_basis: boolean
-}
-
-interface GraphPayload {
-  country_code: string
-  node_counts_by_type: Record<string, number>
-  edge_counts_by_relation: Record<string, number>
-  quality_summary?: Record<string, number>
-  nodes: KgNode[]
-  edges: KgEdge[]
-}
-
-interface RegulationSummary {
+interface Regulation {
   id: string
   country_code: string
   title: string
   document_type: string
   document_type_zh: string
+  publisher: string
   language: string
   source_url: string
-  publisher: string
   version_no: number
   legal_status: string
-  fetched_at: string | null
-  sha256_hex: string | null
   clauses_count: number
-  translated_clauses_count: number
-  edges_count: number
-  eight_attributes: Record<string, string>
-  version_count: number
 }
-
-interface RegulationClauseItem {
+interface Clause {
   clause_id: string
   ordinal: number
   clause_number: string | null
   heading: string | null
-  section_path: string | null
+  section_path?: string | null
   original_text: string
   translated_text: string | null
-  status_badge: string
-  usable_as_legal_basis: boolean
-  glossary_hits: Array<{
-    source_term: string
-    target_zh: string
-    priority_level: number
-    statutory_definition?: string | null
-    source_reference?: string | null
-  }>
-  unmatched_terms: Array<{
-    source_term: string
-    provisional_zh: string
-    statutory_definition: string
-    source_reference: string
-  }>
-  linked_edges: Array<{
-    edge_id: string
-    relation_type: string
-    source_name_zh: string
-    source_node_type: string
-    target_name_zh: string
-    target_node_type: string
-    evidence_quote: string
-    usable_as_legal_basis: boolean
-  }>
 }
-
-interface RegulationDetail {
-  regulation: RegulationSummary
+interface Detail {
+  version_id: string | null
+  clauses_total: number
+  clause_offset: number
+  regulation: Regulation
+  clauses: Clause[]
   versions: Array<{
     version_no: number
     legal_status: string
     fetched_at: string | null
-    content_hash: string
-    text_source: string
-    note: string
   }>
-  clauses: RegulationClauseItem[]
-  mini_graph: GraphPayload
 }
-
-const NODE_TYPE_META: Record<string, { label: string; color: string }> = {
-  COUNTRY: { label: '国家/地区', color: '#1d4ed8' },
-  REGULATOR: { label: '监管机构', color: '#0f766e' },
-  INSTRUMENT: { label: '法规文件', color: '#7c3aed' },
-  OBLIGATION: { label: '合规义务', color: '#b45309' },
-  DATA_CATEGORY: { label: '数据类型', color: '#0369a1' },
-  PENALTY: { label: '违规罚则', color: '#be123c' },
+interface Topic {
+  id: string
+  topic: string
+  topic_label: string
+  title: string
+  document_id: string
+  document_title: string
+  clause_id: string
+  clause_number: string
+  version_no: number
+  quote: string
+  source_url: string
 }
-
-const ALL_NODE_TYPES = Object.keys(NODE_TYPE_META)
-
-const RELATION_LABEL: Record<string, string> = {
-  PUBLISHES: '发布',
-  AMENDS: '修订',
-  REPEALS: '废止',
-  GOVERNS: '约束',
-  PROHIBITS: '禁止',
-  REQUIRES: '强制要求',
-  EXEMPTS: '豁免',
-  SUPERVISES: '监管',
-  PENALIZES: '处罚',
-  APPLIES_TO_SCENARIO: '适用场景',
-  RESTRICTS_CROSS_BORDER: '数据出境限制',
-  REQUIRES_ADMISSION: '准入要求',
-}
-
-const EIGHT_ATTR_LABELS: Array<{ key: string; label: string }> = [
-  { key: 'applicable_industry', label: '1. 适用行业' },
-  { key: 'data_scope', label: '2. 数据范围' },
-  { key: 'cross_border_condition', label: '3. 出境条件' },
-  { key: 'retention_period', label: '4. 留存期限' },
-  { key: 'authorization_requirement', label: '5. 授权要求' },
-  { key: 'penalty_amount', label: '6. 处罚金额' },
-  { key: 'violation_level', label: '7. 违规等级' },
-  { key: 'admission_checklist', label: '8. 准入材料清单' },
-]
-
-const overviews = ref<CountryOverview[]>([])
-const selectedCountry = ref('SG')
-const keyword = ref('')
-const onlyApproved = ref(false)
-const activeTab = ref('center')
-const clauses = ref<ClauseTranslation[]>([])
-const regulations = ref<RegulationSummary[]>([])
-const regDetail = ref<RegulationDetail | null>(null)
-const regLoading = ref(false)
-const showMiniGraph = ref(true)
-const showVersions = ref(false)
-const highlightedQuotes = ref<Record<string, string>>({})
-
-const graph = ref<GraphPayload>({
-  country_code: 'SG',
-  node_counts_by_type: {},
-  edge_counts_by_relation: {},
-  nodes: [],
-  edges: [],
-})
-const loading = ref(false)
-
-// 合规地图筛选状态
-const visibleNodeTypes = ref<string[]>([...ALL_NODE_TYPES])
-const relationFilter = ref('')
-const maxEdges = ref(300)
-const selectedNodeId = ref('')
-
-const fgCategories = Object.entries(NODE_TYPE_META).map(([type, m]) => ({
-  type,
-  name: m.label,
-  color: m.color,
-}))
-
-// 按「法律层级」分组左侧目录树
-const regulationsByTier = computed(() => {
-  const groups: Record<string, RegulationSummary[]> = {}
-  for (const r of regulations.value) {
-    ;(groups[r.document_type_zh] ||= []).push(r)
-  }
-  return groups
-})
-
-function isTypeVisible(ntype: string): boolean {
-  return visibleNodeTypes.value.includes(ntype)
-}
-
-function toggleNodeType(ntype: string) {
-  const idx = visibleNodeTypes.value.indexOf(ntype)
-  if (idx >= 0) {
-    if (visibleNodeTypes.value.length <= 1) {
-      ElMessage.warning('请至少保留 1 类节点显示')
-      return
-    }
-    visibleNodeTypes.value = visibleNodeTypes.value.filter((t) => t !== ntype)
-    const sel = graph.value.nodes.find((n) => n.id === selectedNodeId.value)
-    if (sel && sel.node_type === ntype) selectedNodeId.value = ''
-  } else {
-    visibleNodeTypes.value = [...visibleNodeTypes.value, ntype]
-  }
-}
-
-function hideHubNodeTypes() {
-  visibleNodeTypes.value = ['INSTRUMENT', 'OBLIGATION', 'DATA_CATEGORY', 'PENALTY']
-}
-
-function showAllNodeTypes() {
-  visibleNodeTypes.value = [...ALL_NODE_TYPES]
-}
-
-const typeFilteredEdges = computed(() => {
-  const vis = new Set(visibleNodeTypes.value)
-  return graph.value.edges.filter(
-    (e) => vis.has(e.source_node_type) && vis.has(e.target_node_type),
-  )
-})
-
-const filteredEdges = computed(() =>
-  relationFilter.value
-    ? typeFilteredEdges.value.filter((e) => e.relation_type === relationFilter.value)
-    : typeFilteredEdges.value,
-)
-
-interface MergedEdge {
-  source: string
-  target: string
-  relation: string
-  count: number
-  approved: boolean
-}
-
-const mergedEdges = computed<MergedEdge[]>(() => {
-  const map = new Map<string, MergedEdge>()
-  for (const e of filteredEdges.value) {
-    const key = `${e.source_node_id}|${e.target_node_id}|${e.relation_type}`
-    const cur = map.get(key)
-    if (cur) {
-      cur.count += 1
-      cur.approved = cur.approved && e.usable_as_legal_basis
-    } else {
-      map.set(key, {
-        source: e.source_node_id,
-        target: e.target_node_id,
-        relation: e.relation_type,
-        count: 1,
-        approved: e.usable_as_legal_basis,
-      })
-    }
-  }
-  return [...map.values()]
-})
-
-const graphEdgesRaw = computed(() => {
-  const edges = mergedEdges.value
-  if (edges.length <= maxEdges.value) return edges
-  const degree: Record<string, number> = {}
-  for (const e of edges) {
-    degree[e.source] = (degree[e.source] || 0) + 1
-    degree[e.target] = (degree[e.target] || 0) + 1
-  }
-  return edges
-    .slice()
-    .sort((a, b) => degree[b.source] + degree[b.target] - (degree[a.source] + degree[a.target]))
-    .slice(0, maxEdges.value)
-})
-
-const fgEdges = computed(() =>
-  graphEdgesRaw.value.map((e) => ({
-    source: e.source,
-    target: e.target,
-    label: (RELATION_LABEL[e.relation] || e.relation) + (e.count > 1 ? ` ×${e.count}` : ''),
-    approved: e.approved,
+const countries = ref<Country[]>([]),
+  regulations = ref<Regulation[]>([]),
+  detail = ref<Detail | null>(null)
+const country = ref(''),
+  tab = ref('library'),
+  search = ref(''),
+  clauseSearch = ref(''),
+  topic = ref('')
+const terms = ref<LegalTerm[]>([]),
+  docTerms = ref<LegalTerm[]>([]),
+  topics = ref<Topic[]>([])
+const busy = ref(false),
+  detailBusy = ref(false),
+  page = ref(1),
+  topicPage = ref(1),
+  termPage = ref(1),
+  selectedClause = ref(''),
+  showVersions = ref(false)
+let requestNo = 0,
+  docRequest = 0
+const directoryCountries = computed(() =>
+  countries.value.map((c) => ({
+    code: c.country_code,
+    name: c.country_name_zh,
+    count: c.documents_count,
   })),
 )
-
-const fgNodes = computed(() => {
-  const vis = new Set(visibleNodeTypes.value)
-  const degree: Record<string, number> = {}
-  for (const e of graphEdgesRaw.value) {
-    degree[e.source] = (degree[e.source] || 0) + 1
-    degree[e.target] = (degree[e.target] || 0) + 1
-  }
-  return (graph.value.nodes || [])
-    .filter((n) => vis.has(n.node_type) && degree[n.id])
-    .map((n) => ({ id: n.id, name: n.name_zh, type: n.node_type, degree: degree[n.id] }))
-})
-
-const tableEdges = computed(() =>
-  selectedNodeId.value
-    ? filteredEdges.value.filter(
-        (e) => e.source_node_id === selectedNodeId.value || e.target_node_id === selectedNodeId.value,
-      )
-    : filteredEdges.value,
+const filteredDocs = computed(() =>
+  regulations.value.filter((d) => d.title.toLowerCase().includes(search.value.toLowerCase())),
 )
-
-// 单部法规的 1 跳关联图数据
-const miniFgEdges = computed(() => {
-  const mg = regDetail.value?.mini_graph
-  if (!mg) return []
-  const map = new Map<string, MergedEdge>()
-  for (const e of mg.edges) {
-    const key = `${e.source_node_id}|${e.target_node_id}|${e.relation_type}`
-    const cur = map.get(key)
-    if (cur) {
-      cur.count += 1
-    } else {
-      map.set(key, {
-        source: e.source_node_id,
-        target: e.target_node_id,
-        relation: e.relation_type,
-        count: 1,
-        approved: e.usable_as_legal_basis,
-      })
+const filteredTerms = computed(() =>
+  terms.value.filter((t) =>
+    `${t.source_term} ${t.target_zh} ${t.definition_original || ''}`
+      .toLowerCase()
+      .includes(search.value.toLowerCase()),
+  ),
+)
+const topicOptions = computed(() => [
+  ...new Map(topics.value.map((t) => [t.topic, t.topic_label])).entries(),
+])
+const topicGroups = computed(() =>
+  topicOptions.value.map(([key, label]) => {
+    const rows = topics.value.filter((t) => t.topic === key)
+    return {
+      key,
+      label,
+      count: rows.length,
+      documents: new Set(rows.map((t) => t.document_id)).size,
     }
-  }
-  return [...map.values()].map((e) => ({
-    source: e.source,
-    target: e.target,
-    label: (RELATION_LABEL[e.relation] || e.relation) + (e.count > 1 ? ` ×${e.count}` : ''),
-    approved: e.approved,
-  }))
-})
-
-const miniFgNodes = computed(() => {
-  const mg = regDetail.value?.mini_graph
-  if (!mg) return []
-  const degree: Record<string, number> = {}
-  for (const e of miniFgEdges.value) {
-    degree[e.source] = (degree[e.source] || 0) + 1
-    degree[e.target] = (degree[e.target] || 0) + 1
-  }
-  return (mg.nodes || []).map((n) => ({
-    id: n.id,
-    name: n.name_zh,
-    type: n.node_type,
-    degree: degree[n.id] || 1,
-  }))
-})
-
-function toggleHighlightQuote(clauseId: string, quote: string) {
-  if (highlightedQuotes.value[clauseId] === quote) {
-    const next = { ...highlightedQuotes.value }
-    delete next[clauseId]
-    highlightedQuotes.value = next
-  } else {
-    highlightedQuotes.value = { ...highlightedQuotes.value, [clauseId]: quote }
-  }
+  }),
+)
+function resetSearchPages() {
+  topicPage.value = 1
+  termPage.value = 1
 }
-
-function splitByHighlight(text: string, quote?: string): Array<{ text: string; mark: boolean }> {
-  if (!quote || !text.includes(quote)) {
-    return [{ text, mark: false }]
-  }
-  const idx = text.indexOf(quote)
-  return [
-    { text: text.slice(0, idx), mark: false },
-    { text: quote, mark: true },
-    { text: text.slice(idx + quote.length), mark: false },
-  ]
+function chooseTopic(key: string) {
+  topic.value = key
+  topicPage.value = 1
 }
-
-async function selectRegulation(docId: string) {
-  regLoading.value = true
+function clauseLabel(value: string | null | undefined) {
+  if (!value) return ''
+  return value.length > 70
+    ? value.match(/^(?:[A-Za-zÀ-ÿ.]+\s*)?\d+(?:\.\d+)*(?:\([a-z0-9]+\))*/)?.[0] ||
+        value.slice(0, 65) + '…'
+    : value
+}
+const filteredTopics = computed(() =>
+  topics.value.filter(
+    (t) =>
+      (!topic.value || t.topic === topic.value) &&
+      `${t.title} ${t.document_title} ${t.quote}`
+        .toLowerCase()
+        .includes(search.value.toLowerCase()),
+  ),
+)
+const pageClauses = computed(() => detail.value?.clauses || [])
+const legalStatus: Record<string, string> = {
+  in_force: '现行',
+  amended: '已修订',
+  repealed: '已废止',
+  unknown: '有效状态未记录',
+}
+async function chooseCountry(code: string) {
+  const id = ++requestNo
+  ++docRequest
+  country.value = code
+  busy.value = true
+  detail.value = null
+  search.value = ''
+  topic.value = ''
+  topicPage.value = 1
+  termPage.value = 1
   try {
-    regDetail.value = await api.get<RegulationDetail>(`/knowledge/regulations/${docId}`)
-    highlightedQuotes.value = {}
-  } catch (e: unknown) {
-    ElMessage.error((e as Error).message)
-  } finally {
-    regLoading.value = false
-  }
-}
-
-async function loadData() {
-  loading.value = true
-  try {
-    const q = new URLSearchParams()
-    q.set('country_code', selectedCountry.value)
-    q.set('only_approved', String(onlyApproved.value))
-    if (keyword.value.trim()) q.set('keyword', keyword.value.trim())
-
-    const regQ = new URLSearchParams()
-    regQ.set('country_code', selectedCountry.value)
-    if (keyword.value.trim()) regQ.set('keyword', keyword.value.trim())
-
-    const [ov, cl, gr, regs] = await Promise.all([
-      api.get<CountryOverview[]>('/knowledge/overview'),
-      api.get<ClauseTranslation[]>(`/knowledge/clauses?${q.toString()}`),
-      api.get<GraphPayload>(
-        `/knowledge/graph?country_code=${selectedCountry.value}&only_approved=${onlyApproved.value}`,
-      ),
-      api.get<RegulationSummary[]>(`/knowledge/regulations?${regQ.toString()}`),
+    const [docs, ts, tp] = await Promise.all([
+      api.get<Regulation[]>(`/api/knowledge/regulations?country_code=${code}`),
+      api.get<{ items: LegalTerm[] }>(`/api/knowledge/terminology?country_code=${code}`),
+      api.get<{ items: Topic[] }>(`/api/knowledge/topics?country_code=${code}`),
     ])
-    overviews.value = ov
-    clauses.value = cl
-    graph.value = gr
-    regulations.value = regs
-    if (regs.length > 0) {
-      const preferred =
-        regs.find((r) => r.edges_count > 2 && r.translated_clauses_count > 0) || regs[0]
-      await selectRegulation(preferred.id)
-    } else {
-      regDetail.value = null
+    if (id !== requestNo) return
+    regulations.value = docs
+    terms.value = ts.items
+    topics.value = tp.items
+    if (docs[0]) await openDocument(docs[0].id)
+  } catch (e) {
+    if (id === requestNo) {
+      regulations.value = []
+      terms.value = []
+      topics.value = []
+      ElMessage.error((e as Error).message)
     }
-  } catch (e: unknown) {
-    ElMessage.error((e as Error).message)
   } finally {
-    loading.value = false
+    if (id === requestNo) busy.value = false
   }
 }
-
-function selectCountry(cc: string) {
-  selectedCountry.value = cc
-  selectedNodeId.value = ''
-  loadData()
+async function openDocument(id: string, clauseId = '') {
+  clearTimeout(clauseSearchTimer)
+  if (id !== detail.value?.regulation.id) readingView.value = 'clauses'
+  const req = ++docRequest
+  detailBusy.value = true
+  clauseSearch.value = ''
+  page.value = 1
+  selectedClause.value = clauseId
+  try {
+    const d = await api.get<Detail>(
+      `/api/knowledge/regulations/${id}${clauseId ? `?focus_clause_id=${clauseId}` : ''}`,
+    )
+    if (req !== docRequest) return
+    const t = await api.get<{ items: LegalTerm[] }>(
+      `/api/knowledge/terminology?country_code=${country.value}&document_id=${id}${d.version_id ? `&version_id=${d.version_id}` : ''}`,
+    )
+    if (req !== docRequest) return
+    detail.value = d
+    docTerms.value = t.items
+    page.value = Math.floor(d.clause_offset / 12) + 1
+    if (clauseId) {
+      await nextTick()
+      if (req === docRequest)
+        document.getElementById(`clause-${clauseId}`)?.scrollIntoView({
+          block: 'start',
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            ? 'instant'
+            : 'smooth',
+        })
+    }
+  } catch (e) {
+    if (req === docRequest) {
+      detail.value = null
+      ElMessage.error((e as Error).message)
+    }
+  } finally {
+    if (req === docRequest) detailBusy.value = false
+  }
 }
-
-function onGraphNodeClick(id: string) {
-  selectedNodeId.value = selectedNodeId.value === id ? '' : id
+function turnClausePage(value: number) {
+  if (value === page.value) return
+  page.value = value
+  void loadClausePage()
 }
-
-onMounted(loadData)
+async function loadClausePage() {
+  const doc = detail.value
+  if (!doc) return
+  const req = ++docRequest
+  detailBusy.value = true
+  try {
+    const q = new URLSearchParams({
+      clause_offset: String((page.value - 1) * 12),
+      clause_limit: '12',
+      keyword: clauseSearch.value,
+    })
+    if (doc.version_id) q.set('version_id', doc.version_id)
+    const d = await api.get<Detail>(`/api/knowledge/regulations/${doc.regulation.id}?${q}`)
+    if (req === docRequest) detail.value = d
+  } catch (e) {
+    if (req === docRequest) ElMessage.error((e as Error).message)
+  } finally {
+    if (req === docRequest) detailBusy.value = false
+  }
+}
+let clauseSearchTimer: ReturnType<typeof setTimeout> | undefined
+function searchClauses() {
+  page.value = 1
+  clearTimeout(clauseSearchTimer)
+  clauseSearchTimer = setTimeout(loadClausePage, 250)
+}
+async function seeBasis(t: Topic) {
+  tab.value = 'library'
+  await openDocument(t.document_id, t.clause_id)
+}
+onUnmounted(() => {
+  clearTimeout(clauseSearchTimer)
+  ++docRequest
+  ++requestNo
+})
+onMounted(async () => {
+  try {
+    countries.value = await api.get<Country[]>('/api/knowledge/overview')
+    if (countries.value[0]) await chooseCountry(countries.value[0].country_code)
+  } catch (e) {
+    ElMessage.error((e as Error).message)
+  }
+})
 </script>
-
 <template>
-  <div>
-    <h2 style="margin-top: 0">五国官方法规知识库与合规关系地图</h2>
-    <p class="sub">
-      提示：只有经合作律所确认、标记为「已复核(可作法律依据)」的条款与关系，才会被安全评估报告与跨境申请表作为正式法律依据引用；「机器翻译，待核对」仅供检索参考。
-    </p>
-
-    <!-- 五国概览卡片 -->
-    <div class="country-grid">
-      <div
-        v-for="c in overviews"
-        :key="c.country_code"
-        class="country-card"
-        :class="{ active: selectedCountry === c.country_code }"
-        @click="selectCountry(c.country_code)"
-      >
-        <div style="font-weight: 700; font-size: 16px">
-          {{ c.country_name_zh }} ({{ c.country_code }})
-        </div>
-        <div class="sub">{{ c.country_name_orig }}</div>
-        <div style="margin-top: 8px; font-size: 12px">
-          官方法规 <strong>{{ c.documents_count }}</strong> 份 · 条款
-          <strong>{{ c.clauses_count }}</strong> 条
-        </div>
-        <div style="font-size: 12px; margin-top: 2px">
-          受控译文 <strong>{{ c.translations_count }}</strong> 条（已复核
-          <strong>{{ c.approved_translations_count }}</strong>） · 图谱边
-          <strong>{{ c.kg_edges_count }}</strong> 条
-        </div>
+  <div class="knowledge-page">
+    <header class="page-heading">
+      <div>
+        <h1>法规与合规知识</h1>
+        <p>从国别法规找到合规要求，查看对应条款与术语释义。</p>
       </div>
-    </div>
-
-    <!-- 检索栏 -->
-    <div style="margin: 16px 0; display: flex; gap: 10px; align-items: center">
+      <el-select
+        v-model="country"
+        aria-label="选择国家"
+        style="width: 180px"
+        @change="chooseCountry"
+        ><el-option
+          v-for="c in countries"
+          :key="c.country_code"
+          :value="c.country_code"
+          :label="c.country_name_zh"
+      /></el-select>
+    </header>
+    <div class="knowledge-search">
       <el-input
-        v-model="keyword"
-        style="width: 340px"
+        v-model="search"
         clearable
-        placeholder="输入英文/中文关键词检索法规与条款（如 transfer、autonomous、个人数据）"
-        @keyup.enter="loadData"
+        placeholder="搜索法规、合规主题或法律术语"
+        aria-label="搜索法规知识"
+        @input="resetSearchPages"
       />
-      <el-switch v-model="onlyApproved" active-text="只看律所已复核依据" @change="loadData" />
-      <el-button type="primary" :loading="loading" @click="loadData">检索</el-button>
     </div>
-
-    <el-tabs v-model="activeTab">
-      <!-- 页签 1: 法规中心 + 法规详情（左右双栏对照 + 8项属性 + 1跳关联图 + 点击义务高亮原文） -->
-      <el-tab-pane
-        name="center"
-        :label="`法规中心 · 分级目录与双栏对照 (${regulations.length} 份法规)`"
-      >
-        <div class="center-layout" v-loading="loading">
-          <!-- 左侧三级分类树：国家 -> 法律层级 -> 法规 -->
-          <div class="reg-sidebar" data-testid="user-reg-tree">
-            <div class="sidebar-title">
-              {{ selectedCountry }} 法规分类目录 ({{ regulations.length }})
-            </div>
-            <div v-for="(list, tierName) in regulationsByTier" :key="tierName" class="tier-group">
-              <div class="tier-header">{{ tierName }} ({{ list.length }})</div>
-              <div
-                v-for="r in list"
-                :key="r.id"
-                class="reg-item"
-                :class="{ active: regDetail?.regulation.id === r.id }"
-                :data-testid="`user-reg-item-${r.id}`"
-                @click="selectRegulation(r.id)"
-              >
-                <div class="reg-item-title">{{ r.title }}</div>
-                <div class="reg-item-meta">
-                  <span>{{ r.publisher }}</span>
-                  <span>v{{ r.version_no }} · {{ r.clauses_count }} 条款 · {{ r.edges_count }} 关系</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 右侧法规详情面板（页面 2 要求：基本信息、8项核心属性、1跳关联面板、左右双栏原文/中译对照与高亮） -->
-          <div class="reg-detail" v-loading="regLoading" data-testid="user-reg-detail">
-            <template v-if="regDetail">
-              <div class="detail-header">
-                <div>
-                  <h3 style="margin: 0 0 6px 0">{{ regDetail.regulation.title }}</h3>
-                  <div class="sub" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
-                    <span>发布机构：<strong>{{ regDetail.regulation.publisher }}</strong></span>
-                    <span>层级：<strong>{{ regDetail.regulation.document_type_zh }}</strong></span>
-                    <span>当前版本：<strong>v{{ regDetail.regulation.version_no }} ({{ regDetail.regulation.legal_status }})</strong></span>
-                    <span>条款数：<strong>{{ regDetail.regulation.clauses_count }} 条</strong></span>
-                    <a
-                      :href="regDetail.regulation.source_url"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style="color: #2563eb; font-weight: 600"
-                    >
-                      打开官方来源链接 ↗
-                    </a>
-                  </div>
-                </div>
-                <div style="display: flex; gap: 8px">
-                  <el-button size="small" plain @click="showMiniGraph = !showMiniGraph">
-                    {{ showMiniGraph ? '收起本法规关联图谱' : '展开本法规关联图谱' }}
-                  </el-button>
-                  <el-button size="small" plain @click="showVersions = !showVersions">
-                    版本历史 ({{ regDetail.versions.length }})
-                  </el-button>
-                </div>
-              </div>
-
-              <!-- 版本历史折叠面板 -->
-              <div v-if="showVersions" class="version-box">
-                <div style="font-weight: 600; font-size: 12px; margin-bottom: 6px">
-                  法规版本归档记录（官方渠道仅提供现行版本时如实登记）
-                </div>
-                <div v-for="v in regDetail.versions" :key="v.version_no" class="sub" style="margin-bottom: 4px">
-                  版本 v{{ v.version_no }} · 状态: {{ v.legal_status }} · 解析来源: {{ v.text_source }} ·
-                  SHA-256: <code>{{ v.content_hash.slice(0, 16) }}…</code> · {{ v.note }}
-                </div>
-              </div>
-
-              <!-- 八项必备核心结构化属性（需求文档 1.3.3） -->
-              <div class="eight-attr-box" data-testid="user-eight-attributes">
-                <div style="font-weight: 700; font-size: 13px; color: #1e3a8a; margin-bottom: 6px">
-                  八项合规核心属性画像（点击下方条款中的义务标签可在原文中高亮依据片段）
-                </div>
-                <div class="eight-attr-grid">
-                  <div v-for="item in EIGHT_ATTR_LABELS" :key="item.key" class="eight-attr-cell">
-                    <div class="eight-attr-k">{{ item.label }}</div>
-                    <div class="eight-attr-v">
-                      {{ regDetail.regulation.eight_attributes?.[item.key] || '-' }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 单法规 1 跳关联关系面板（复用 ECharts 力导向图组件） -->
-              <div v-if="activeTab === 'center' && showMiniGraph && miniFgNodes.length" class="mini-graph-box">
-                <div class="sub" style="padding: 4px 8px; font-weight: 600">
-                  本法规一层关联关系面板（{{ miniFgNodes.length }} 个关联要素 / {{ miniFgEdges.length }} 条关系）
-                </div>
-                <KgForceGraph
-                  :nodes="miniFgNodes"
-                  :edges="miniFgEdges"
-                  :categories="fgCategories"
-                  height="280px"
-                />
-              </div>
-
-              <!-- 条款原文与受控中文左右双栏逐条对照 -->
-              <div class="dual-header">
-                <div>官方原文（点击右侧义务/关系芯片可高亮原文依据片段）</div>
-                <div>受术语表约束中译 · 抽取出的合规义务、数据类型与罚则</div>
-              </div>
-              <div class="dual-list">
-                <div
-                  v-for="cl in regDetail.clauses"
-                  :key="cl.clause_id"
-                  class="dual-row"
-                >
-                  <!-- 左栏：官方原文（支持高亮依据片段） -->
-                  <div class="dual-col orig-col">
-                    <div class="clause-meta">
-                      <el-tag size="small" effect="plain">条号 {{ cl.clause_number || cl.ordinal }}</el-tag>
-                      <span v-if="cl.heading" style="font-weight: 600; margin-left: 6px">{{ cl.heading }}</span>
-                      <span v-if="cl.section_path" class="sub" style="margin-left: 6px">[{{ cl.section_path }}]</span>
-                    </div>
-                    <div class="clause-text">
-                      <template
-                        v-for="(seg, idx) in splitByHighlight(cl.original_text, highlightedQuotes[cl.clause_id])"
-                        :key="idx"
-                      >
-                        <mark v-if="seg.mark" class="quote-highlight">{{ seg.text }}</mark>
-                        <span v-else>{{ seg.text }}</span>
-                      </template>
-                    </div>
-                  </div>
-
-                  <!-- 右栏：中文对照 + 术语悬停 + 关联义务/数据类型芯片 -->
-                  <div class="dual-col zh-col">
-                    <div class="clause-meta" style="display: flex; justify-content: space-between">
-                      <el-tag :type="cl.usable_as_legal_basis ? 'success' : 'warning'" size="small">
-                        {{ cl.status_badge }}
-                      </el-tag>
-                      <span v-if="cl.linked_edges.length" class="sub">
-                        点击下方关联要素芯片高亮左侧原文依据
-                      </span>
-                    </div>
-                    <div class="clause-text">
-                      {{ cl.translated_text || '（该条款为一般性条文，可按需触发术语受控翻译）' }}
-                    </div>
-
-                    <!-- 术语命中与悬停法定定义 -->
-                    <div
-                      v-if="cl.glossary_hits?.length || cl.unmatched_terms?.length"
-                      style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px"
-                    >
-                      <el-tooltip
-                        v-for="h in cl.glossary_hits"
-                        :key="h.source_term"
-                        placement="top"
-                        :content="`法定定义: ${h.statutory_definition || '-'} (依据: ${h.source_reference || '-'})`"
-                      >
-                        <el-tag size="small" type="success">
-                          术语: {{ h.source_term }}（{{ h.target_zh }}）
-                        </el-tag>
-                      </el-tooltip>
-                      <el-tooltip
-                        v-for="u in cl.unmatched_terms"
-                        :key="u.source_term"
-                        placement="top"
-                        :content="`解释: ${u.statutory_definition} (${u.source_reference})`"
-                      >
-                        <el-tag size="small" type="warning">
-                          术语解释: {{ u.source_term }}（{{ u.provisional_zh }}）
-                        </el-tag>
-                      </el-tooltip>
-                    </div>
-
-                    <!-- 抽取出的合规义务、数据类型、罚则芯片（点击高亮左栏原文依据片段） -->
-                    <div
-                      v-if="cl.linked_edges.length"
-                      style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px"
-                    >
-                      <el-tag
-                        v-for="le in cl.linked_edges"
-                        :key="le.edge_id"
-                        size="small"
-                        :effect="highlightedQuotes[cl.clause_id] === le.evidence_quote ? 'dark' : 'plain'"
-                        type="primary"
-                        style="cursor: pointer"
-                        data-testid="clause-obligation-chip"
-                        @click="toggleHighlightQuote(cl.clause_id, le.evidence_quote)"
-                      >
-                        🔍 {{ RELATION_LABEL[le.relation_type] || le.relation_type }} →
-                        {{ le.target_name_zh }}
-                      </el-tag>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-      </el-tab-pane>
-
-      <!-- 页签 2: 六要素 · 十二关系合规图谱（ECharts 合规地图 + 按节点类型显隐） -->
-      <el-tab-pane
-        name="graph"
-        :label="`六要素 · 十二关系合规图谱 (${graph.edges.length})`"
-      >
-        <!-- 按节点类型显示/隐藏控制栏 -->
-        <div class="filter-row" data-testid="user-kg-node-type-bar">
-          <span class="sub" style="font-weight: 600">按节点类型显示/隐藏：</span>
-          <el-tag
-            v-for="(meta, ntype) in NODE_TYPE_META"
-            :key="ntype"
-            :effect="isTypeVisible(ntype) ? 'dark' : 'plain'"
-            :style="{
-              cursor: 'pointer',
-              backgroundColor: isTypeVisible(ntype) ? meta.color : '#f4f4f5',
-              borderColor: isTypeVisible(ntype) ? meta.color : '#d4d7de',
-              color: isTypeVisible(ntype) ? '#ffffff' : '#909399',
-              textDecoration: isTypeVisible(ntype) ? 'none' : 'line-through',
-            }"
-            @click="toggleNodeType(ntype)"
-          >
-            {{ isTypeVisible(ntype) ? '✓ ' : '✕ ' }}{{ meta.label }} ({{
-              graph.node_counts_by_type?.[ntype] || 0
-            }})
-          </el-tag>
-          <el-button size="small" plain data-testid="user-kg-hide-hub-btn" @click="hideHubNodeTypes">
-            隐藏枢纽节点（国家/监管机构）
-          </el-button>
-          <el-button
-            v-if="visibleNodeTypes.length < ALL_NODE_TYPES.length"
-            size="small"
-            type="primary"
-            plain
-            @click="showAllNodeTypes"
-          >
-            显示全部 6 类要素 ({{ visibleNodeTypes.length }}/6)
-          </el-button>
-        </div>
-
-        <!-- 十二类语义关系筛选 -->
-        <div class="filter-row">
-          <span class="sub" style="font-weight: 600">十二类语义关系筛选：</span>
-          <el-tag
-            :type="relationFilter === '' ? 'primary' : 'info'"
-            style="cursor: pointer"
-            @click="relationFilter = ''"
-          >
-            全部 ({{ typeFilteredEdges.length }})
-          </el-tag>
-          <el-tag
-            v-for="(label, rtype) in RELATION_LABEL"
-            :key="rtype"
-            :type="relationFilter === rtype ? 'primary' : 'info'"
-            style="cursor: pointer"
-            @click="relationFilter = rtype"
-          >
-            {{ label }} ({{ graph.edge_counts_by_relation?.[rtype] || 0 }})
-          </el-tag>
-        </div>
-
-        <!-- ECharts 合规地图画布 -->
-        <div class="graph-canvas">
-          <div class="sub" style="padding: 4px 8px">
-            合规地图展示 {{ fgNodes.length }} 个节点 / {{ fgEdges.length }} 条关系（合并自
-            {{ filteredEdges.length }} 条可见证据边，已启用 {{ visibleNodeTypes.length }}/6 类节点）；滚轮缩放、拖拽节点、点击节点可筛选下方证据明细。
-          </div>
-          <KgForceGraph
-            v-if="activeTab === 'graph'"
-            :nodes="fgNodes"
-            :edges="fgEdges"
-            :categories="fgCategories"
-            :visible-types="visibleNodeTypes"
-            :selected-id="selectedNodeId"
-            height="500px"
-            @node-click="onGraphNodeClick"
-            @toggle-type="toggleNodeType"
+    <el-tabs v-model="tab">
+      <el-tab-pane label="法规浏览" name="library"
+        ><div class="library-layout" v-loading="busy">
+          <RegulationDirectory
+            :countries="directoryCountries"
+            :documents="filteredDocs"
+            :country="country"
+            :selected-id="detail?.regulation.id"
+            :loading="busy"
+            @country="chooseCountry"
+            @document="openDocument"
           />
+          <main class="reading-panel" v-loading="detailBusy">
+            <template v-if="detail">
+              <header class="document-heading">
+                <div>
+                  <div class="eyebrow">
+                    {{ detail.regulation.document_type_zh }} ·
+                    {{ detail.regulation.publisher }}
+                  </div>
+                  <h2>{{ detail.regulation.title }}</h2>
+                  <p>
+                    {{
+                      legalStatus[detail.regulation.legal_status] || detail.regulation.legal_status
+                    }}
+                    · 归档版本 {{ detail.regulation.version_no }} ·
+                    {{ detail.regulation.clauses_count }} 条
+                  </p>
+                </div>
+                <a
+                  :href="detail.regulation.source_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="source-link"
+                  >官方原文 ↗</a
+                >
+              </header>
+              <el-radio-group v-model="readingView" class="reading-view" aria-label="法规阅读方式">
+                <el-radio-button value="clauses">条款阅读</el-radio-button>
+                <el-radio-button value="relations">关系解读</el-radio-button>
+              </el-radio-group>
+              <RegulationRelations
+                v-if="readingView === 'relations'"
+                :key="`${detail.regulation.id}:${detail.version_id}`"
+                :document-id="detail.regulation.id"
+                :version-id="detail.version_id"
+                @basis="readRelationBasis"
+              />
+              <template v-else>
+                <div class="reading-tools">
+                  <el-input
+                    v-model="clauseSearch"
+                    clearable
+                    placeholder="查找条号或正文"
+                    aria-label="查找条款"
+                    @input="searchClauses"
+                  /><el-button text @click="showVersions = !showVersions">版本记录</el-button>
+                </div>
+                <div v-if="showVersions" class="versions">
+                  <div v-for="v in detail.versions" :key="v.version_no">
+                    归档版本 {{ v.version_no }} ·
+                    {{ legalStatus[v.legal_status] || v.legal_status }} ·
+                    {{ v.fetched_at?.slice(0, 10) || '日期未记录' }}
+                  </div>
+                </div>
+                <article
+                  v-for="c in pageClauses"
+                  :key="c.clause_id"
+                  :id="`clause-${c.clause_id}`"
+                  class="clause"
+                  :class="{ selected: selectedClause === c.clause_id }"
+                >
+                  <h3>
+                    {{ clauseLabel(c.clause_number) || c.ordinal
+                    }}<template v-if="c.heading"> · {{ c.heading }}</template>
+                  </h3>
+                  <div class="parallel">
+                    <section>
+                      <h4>原文</h4>
+                      <LegalText
+                        :text="c.original_text"
+                        :terms="docTerms"
+                        :clause-id="c.clause_id"
+                        :section-path="c.section_path"
+                      />
+                    </section>
+                    <section>
+                      <h4>中文对照</h4>
+                      <LegalText
+                        v-if="c.translated_text"
+                        :text="c.translated_text"
+                        :terms="docTerms"
+                        :clause-id="c.clause_id"
+                        :section-path="c.section_path"
+                      />
+                      <p v-else class="muted">暂无中文对照</p>
+                    </section>
+                  </div>
+                </article>
+                <el-empty v-if="!pageClauses.length" description="没有匹配的条款" /><el-pagination
+                  v-if="detail.clauses_total > 12"
+                  :current-page="page"
+                  @update:current-page="turnClausePage"
+                  :page-size="12"
+                  :total="detail.clauses_total"
+                  layout="prev, pager, next, total"
+                />
+              </template> </template
+            ><el-empty v-else-if="!detailBusy" description="选择一份法规开始阅读" />
+          </main></div
+      ></el-tab-pane>
+      <el-tab-pane label="合规主题" name="topics"
+        ><div class="topic-filters">
+          <el-radio-group v-model="topic" @change="topicPage = 1"
+            ><el-radio-button value="">主题总览</el-radio-button
+            ><el-radio-button v-for="[key, label] in topicOptions" :key="key" :value="key">{{
+              label
+            }}</el-radio-button></el-radio-group
+          ><span class="muted">{{ filteredTopics.length }} 个关联要点</span>
         </div>
-
-        <el-table :data="tableEdges" v-loading="loading" border stripe style="margin-top: 12px">
-          <el-table-column prop="source_name_zh" label="源要素" min-width="180" />
-          <el-table-column label="关系类型" width="150">
-            <template #default="{ row }">
-              <el-tag size="small" type="primary">
-                {{ RELATION_LABEL[row.relation_type] || row.relation_type }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="target_name_zh" label="目标要素" min-width="180" />
-          <el-table-column prop="evidence_quote" label="证据条款原文摘录" min-width="280" />
-          <el-table-column label="状态" width="150">
-            <template #default="{ row }">
-              <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
-                {{ row.usable_as_legal_basis ? '已复核(可作依据)' : '待律所核对' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-        </el-table>
+        <div v-if="!topic && !search" class="topic-overview">
+          <button
+            v-for="g in topicGroups"
+            :key="g.key"
+            class="topic-overview-card"
+            @click="chooseTopic(g.key)"
+          >
+            <h2>{{ g.label }}</h2>
+            <p>{{ g.documents }} 份法规与指南 · {{ g.count }} 个要点</p>
+            <span>查看适用条款 →</span>
+          </button>
+        </div>
+        <div v-else class="topic-grid" v-loading="busy">
+          <article
+            v-for="t in filteredTopics.slice((topicPage - 1) * 18, topicPage * 18)"
+            :key="t.id"
+            class="topic-card"
+          >
+            <div class="eyebrow">{{ t.topic_label }}</div>
+            <h2>{{ t.title }}</h2>
+            <p class="topic-document">
+              {{ t.document_title }} · {{ clauseLabel(t.clause_number) }}
+            </p>
+            <blockquote dir="auto">{{ t.quote }}</blockquote>
+            <el-button link type="primary" @click="seeBasis(t)">阅读条款与中文对照 →</el-button>
+          </article>
+        </div>
+        <el-empty
+          v-if="!busy && !filteredTopics.length"
+          description="该国当前没有匹配的主题要点，可从法规浏览查阅原文"
+        /><el-pagination
+          v-if="(topic || search) && filteredTopics.length > 18"
+          v-model:current-page="topicPage"
+          :page-size="18"
+          :total="filteredTopics.length"
+          layout="prev, pager, next, total"
+        />
       </el-tab-pane>
-
-      <!-- 页签 3: 法规条款跨文件检索 -->
-      <el-tab-pane
-        name="clauses"
-        :label="`法规条款与受控中译 (${clauses.length})`"
-      >
-        <el-table :data="clauses" v-loading="loading" border stripe>
-          <el-table-column prop="document_title" label="法规文件" width="230" />
-          <el-table-column prop="clause_number" label="条号" width="90" />
-          <el-table-column label="官方原文片段" min-width="260">
-            <template #default="{ row }">
-              <div class="text-box">{{ row.original_text }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column label="受术语表约束中译 (悬停查看法定定义)" min-width="300">
-            <template #default="{ row }">
-              <div class="text-box">{{ row.translated_text }}</div>
-              <div
-                v-if="row.glossary_hits?.length || row.unmatched_terms?.length"
-                style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px"
+      <el-tab-pane label="法律术语" name="terms"
+        ><div class="term-grid" v-loading="busy">
+          <article
+            v-for="t in filteredTerms.slice((termPage - 1) * 24, termPage * 24)"
+            :key="t.id"
+            class="term-card"
+          >
+            <div class="eyebrow">{{ t.source_label }}</div>
+            <h2>
+              {{ t.target_zh }}
+              <small v-if="t.rendering_label === '暂译'" class="muted">暂译</small>
+            </h2>
+            <p class="original-term" dir="auto">{{ t.source_term }}</p>
+            <p v-if="t.definition_zh">{{ t.definition_zh }}</p>
+            <details v-if="t.definition_original">
+              <summary>查看来源定义</summary>
+              <p dir="auto">{{ t.definition_original }}</p>
+            </details>
+            <div class="term-source">
+              {{ t.source_reference
+              }}<a
+                v-if="t.source_url"
+                :href="t.source_url"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <el-tooltip
-                  v-for="h in row.glossary_hits"
-                  :key="h.source_term"
-                  placement="top"
-                  :content="`法定定义: ${h.statutory_definition || '-'} (依据: ${h.source_reference || '-'})`"
-                >
-                  <el-tag size="small" type="success">
-                    {{ h.source_term }}（{{ h.target_zh }}）
-                  </el-tag>
-                </el-tooltip>
-                <el-tooltip
-                  v-for="u in row.unmatched_terms"
-                  :key="u.source_term"
-                  placement="top"
-                  :content="`解释: ${u.statutory_definition} (${u.source_reference})`"
-                >
-                  <el-tag size="small" type="warning">
-                    {{ u.source_term }}（{{ u.provisional_zh }}）
-                  </el-tag>
-                </el-tooltip>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="效力状态" width="165">
-            <template #default="{ row }">
-              <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
-                {{ row.status_badge }}
-              </el-tag>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
+                官方来源 ↗</a
+              >
+            </div>
+          </article>
+        </div>
+        <el-empty
+          v-if="!busy && !filteredTerms.length"
+          description="没有匹配的术语" /><el-pagination
+          v-if="filteredTerms.length > 24"
+          v-model:current-page="termPage"
+          :page-size="24"
+          :total="filteredTerms.length"
+          layout="prev, pager, next, total"
+      /></el-tab-pane>
     </el-tabs>
   </div>
 </template>
-
 <style scoped>
-.sub {
-  color: #606266;
-  font-size: 12px;
+.knowledge-page {
+  max-width: 1700px;
+  margin: auto;
 }
-.country-grid {
+.knowledge-search {
+  max-width: 650px;
+  margin: 0 0 20px;
+}
+.library-layout {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-}
-.country-card {
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-  background: #fafafa;
-}
-.country-card.active {
-  border-color: #409eff;
-  background: #ecf5ff;
-}
-.center-layout {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 14px;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
 }
-.reg-sidebar {
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  background: #fafafa;
-  max-height: 780px;
-  overflow-y: auto;
-  padding: 10px;
+.reading-panel {
+  background: white;
+  border: 1px solid #e3eaf1;
+  border-radius: 14px;
+  padding: 28px;
+  min-height: 480px;
+  min-width: 0;
 }
-.sidebar-title {
-  font-weight: 700;
+.document-heading {
+  display: flex;
+  gap: 20px;
+  align-items: start;
+  justify-content: space-between;
+  border-bottom: 1px solid #e8edf3;
+  padding-bottom: 20px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: #5a7792;
+}
+.document-heading h2 {
+  font-size: 21px;
+  line-height: 1.5;
+  margin: 8px 0 12px;
+}
+.document-heading p,
+.muted {
+  font-size: 13px;
+  color: #77869a;
+}
+.source-link {
+  flex-shrink: 0;
   font-size: 14px;
-  margin-bottom: 8px;
-  color: #1e293b;
+  color: #245c9a;
 }
-.tier-group {
-  margin-bottom: 10px;
+.reading-tools {
+  display: flex;
+  gap: 12px;
+  margin: 22px 0;
 }
-.tier-header {
+.reading-view {
+  margin-top: 22px;
+}
+.reading-tools .el-input {
+  max-width: 410px;
+}
+.versions {
+  padding: 14px 18px;
+  background: #f5f8fc;
+  font-size: 13px;
+  line-height: 2;
+}
+.clause {
+  scroll-margin-top: 24px;
+  padding: 24px 0;
+  border-top: 1px solid #ecf0f4;
+}
+.clause.selected {
+  background: #f1f7ff;
+  box-shadow: 0 0 0 12px #f1f7ff;
+}
+.clause h3 {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 18px;
+}
+.parallel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  font-size: 14px;
+}
+.parallel section {
+  min-width: 0;
+}
+.parallel section + section {
+  border-left: 1px solid #e8edf3;
+  padding-left: 28px;
+}
+.parallel h4 {
   font-size: 12px;
-  font-weight: 700;
-  color: #475569;
-  background: #e2e8f0;
-  padding: 4px 8px;
-  border-radius: 4px;
-  margin-bottom: 6px;
+  font-weight: 500;
+  color: #8492a3;
+  margin: 0 0 10px;
 }
-.reg-item {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid transparent;
+.topic-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+  gap: 20px;
+  margin: 16px 0 30px;
+}
+.topic-overview-card {
+  font: inherit;
+  text-align: left;
+  border: 1px solid #e3eaf1;
+  border-radius: 14px;
+  background: white;
+  padding: 28px;
   cursor: pointer;
-  margin-bottom: 4px;
-  background: #ffffff;
+  transition: box-shadow 0.2s;
 }
-.reg-item:hover {
-  border-color: #93c5fd;
+.topic-overview-card:hover {
+  box-shadow: 0 8px 24px #263c4b0d;
 }
-.reg-item.active {
-  border-color: #2563eb;
-  background: #eff6ff;
+.topic-overview-card h2 {
+  font-size: 18px;
+  margin: 0 0 16px;
+  color: #263c4b;
 }
-.reg-item-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: #1e293b;
-  line-height: 1.35;
+.topic-overview-card p {
+  font-size: 13px;
+  color: #77869a;
 }
-.reg-item-meta {
+.topic-overview-card span {
+  display: block;
+  color: #245c9a;
+  font-size: 14px;
+  margin-top: 24px;
+}
+.topic-filters {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
-  color: #64748b;
-  margin-top: 4px;
-}
-.reg-detail {
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  padding: 14px;
-  background: #ffffff;
-}
-.detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 10px;
-}
-.version-box {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  border-radius: 6px;
-}
-.eight-attr-box {
-  margin-top: 10px;
-  padding: 10px 12px;
-  background: #f8fafc;
-  border: 1px solid #dbeafe;
-  border-radius: 8px;
-}
-.eight-attr-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-.eight-attr-cell {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 6px 8px;
-}
-.eight-attr-k {
-  font-size: 11px;
-  font-weight: 700;
-  color: #1d4ed8;
-}
-.eight-attr-v {
-  font-size: 12px;
-  color: #334155;
-  margin-top: 2px;
-  line-height: 1.4;
-}
-.mini-graph-box {
-  margin-top: 10px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: #f8fafc;
-  padding: 4px;
-}
-.dual-header {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  font-weight: 700;
-  font-size: 13px;
-  padding: 8px 10px;
-  background: #f1f5f9;
-  border-radius: 6px;
-}
-.dual-list {
-  max-height: 520px;
-  overflow-y: auto;
-  margin-top: 6px;
-}
-.dual-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 10px 6px;
-}
-.dual-col {
-  font-size: 13px;
-  line-height: 1.55;
-}
-.clause-meta {
-  margin-bottom: 6px;
-  font-size: 12px;
-}
-.clause-text {
-  white-space: pre-wrap;
-  color: #1e293b;
-}
-.quote-highlight {
-  background-color: #fef08a;
-  color: #854d0e;
-  font-weight: 600;
-  padding: 1px 3px;
-  border-radius: 3px;
-}
-.filter-row {
-  margin: 8px 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  gap: 16px;
   align-items: center;
+  flex-wrap: wrap;
+  margin: 8px 0 24px;
 }
-.graph-canvas {
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-  background: #f8fafc;
-  padding: 6px;
+.topic-grid,
+.term-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
 }
-.text-box {
-  max-height: 110px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  font-size: 13px;
+.topic-card,
+.term-card {
+  background: white;
+  border: 1px solid #e3eaf1;
+  border-radius: 14px;
+  padding: 24px;
+  min-width: 0;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+.topic-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px #263c4b0a;
+}
+.topic-card h2,
+.term-card h2 {
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 10px 0;
+}
+.topic-document {
+  font-size: 12px;
+  color: #74869a;
+  line-height: 1.6;
+}
+.topic-card blockquote {
+  margin: 18px 0;
+  padding-left: 14px;
+  border-left: 2px solid #d8e5f2;
+  font-size: 14px;
+  line-height: 1.8;
+  max-height: 145px;
+  overflow: auto;
+}
+.term-card p,
+.term-card details {
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.original-term {
+  color: #617990;
+}
+.term-source {
+  margin-top: 18px;
+  font-size: 12px;
+  color: #78899b;
+  line-height: 1.8;
+}
+.term-source a {
+  color: #245c9a;
+}
+summary {
+  cursor: pointer;
+}
+.el-pagination {
+  margin-top: 24px;
+  justify-content: center;
+}
+@media (max-width: 1100px) {
+  .topic-grid,
+  .term-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .library-layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 16px;
+  }
+  .parallel {
+    grid-template-columns: 1fr;
+  }
+  .parallel section + section {
+    border: 0;
+    padding: 16px 0 0;
+  }
+}
+@media (max-width: 700px) {
+  .library-layout,
+  .topic-grid,
+  .term-grid {
+    grid-template-columns: 1fr;
+  }
+  .reading-panel {
+    padding: 20px;
+  }
+  .document-heading {
+    flex-direction: column;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .topic-card,
+  .term-card {
+    transition: none;
+  }
+  .topic-card:hover {
+    transform: none;
+  }
 }
 </style>

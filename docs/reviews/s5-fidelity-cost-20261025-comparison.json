@@ -1,0 +1,375 @@
+{
+  "before": {
+    "batch_id": "9c215fc1-85a9-45ee-9ea9-3417c3ac3019",
+    "retrieval_hits": 31,
+    "retrieval_expected": 32,
+    "faithful_findings": 74,
+    "findings_total": 80,
+    "supported_findings": 66,
+    "judged_findings": 74,
+    "total_tokens": 1100674,
+    "technical_error_cases": 1,
+    "human_review_count": 0,
+    "elapsed_seconds": 460.5474708999973,
+    "retrieval_tokens": 660201,
+    "cases_with_supported_final_findings": 27,
+    "cases_without_supported_final_findings": [
+      "S5-16",
+      "S5-25",
+      "S5-29",
+      "S5-30",
+      "S5-32"
+    ],
+    "supported_does_not_certify_question_completeness": true
+  },
+  "after": {
+    "batch_id": "b8620716-d6f0-47cc-abe6-7e5b60303d23",
+    "retrieval_hits": 31,
+    "retrieval_expected": 32,
+    "faithful_findings": 56,
+    "findings_total": 75,
+    "supported_findings": 56,
+    "judged_findings": 56,
+    "total_tokens": 1282616,
+    "technical_error_cases": 0,
+    "human_review_count": 0,
+    "elapsed_seconds": 699.1407145999838,
+    "retrieval_tokens": 610865,
+    "cases_with_supported_final_findings": 26,
+    "cases_without_supported_final_findings": [
+      "S5-24",
+      "S5-27",
+      "S5-28",
+      "S5-29",
+      "S5-31",
+      "S5-32"
+    ],
+    "supported_does_not_certify_question_completeness": true
+  },
+  "previous_unsupported_attempts": [
+    {
+      "question_id": "S5-16",
+      "old_finding_index": 0,
+      "old_clause_id": "3f961886-5bb3-401c-be0e-a9ed6835676a",
+      "old_reason": "结论大部分与原文一致，但原文规定申报由数据处理责任人“或其法定代表人”（son représentant légal）进行，结论表述为“或其他法定代表人”，义务主体表述有偏差，故非完整支持。",
+      "same_source_supported_now": true,
+      "other_final_supported_sources": [
+        "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7"
+      ],
+      "human_review": null,
+      "note": "其他法源获支持不等于原条款已修复或问题完整回答"
+    },
+    {
+      "question_id": "S5-19",
+      "old_finding_index": 2,
+      "old_clause_id": "3e7b5273-eef1-4f38-90b4-7076d614fc99",
+      "old_reason": "第52条核心内容及儿童提交家庭法官均有对应；但“个人数据传输均须符合本法规定条件”在引文中位于“الفصل 52”标题之前，不能确认属于第52条；期限起算点确被截断，结论已注明。",
+      "same_source_supported_now": false,
+      "other_final_supported_sources": [
+        "ac0987cd-0c8d-4673-a08d-745ea822caeb",
+        "ad8de395-2a39-459b-bf74-0956e4cadc42",
+        "1c89d768-54d4-425d-a0c9-6be0ceaa3e1e"
+      ],
+      "human_review": null,
+      "note": "其他法源获支持不等于原条款已修复或问题完整回答"
+    },
+    {
+      "question_id": "S5-22",
+      "old_finding_index": 2,
+      "old_clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+      "old_reason": "引文支持诚实、合法特定明确目的、适当不超范围、准确完整及后续不得为不相容目的处理，但引文还包含统计、历史或科学研究目的的例外；结论未提及该例外，表述过于绝对。",
+      "same_source_supported_now": false,
+      "other_final_supported_sources": [
+        "21cff2ce-868d-416c-984f-0a4f716edfdb"
+      ],
+      "human_review": null,
+      "note": "其他法源获支持不等于原条款已修复或问题完整回答"
+    },
+    {
+      "question_id": "S5-24",
+      "old_finding_index": 1,
+      "old_clause_id": "34c103a5-3777-455e-899b-c02a3c6c142d",
+      "old_reason": "引文第97条第3项还明确包括“身份”（الهوية），且第97条另有第1、2项涉及不同许可机关；结论只提健康情形或性生活并称依据公共卫生部长决定，范围不完整。",
+      "same_source_supported_now": false,
+      "other_final_supported_sources": [],
+      "human_review": null,
+      "note": "其他法源获支持不等于原条款已修复或问题完整回答"
+    },
+    {
+      "question_id": "S5-25",
+      "old_finding_index": 0,
+      "old_clause_id": "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+      "old_reason": "引文确实支持核心义务：除前条规定的豁免外，希望收集和处理个人性质数据者须依据按程序的تصريح告知经济与贸易部并换取收据。但结论将「المادة السابقة」译为「上一章条文」，而该词意为「前一条/上一条」，例外范围表述不符；其余对应基本成立。",
+      "same_source_supported_now": true,
+      "other_final_supported_sources": [],
+      "human_review": null,
+      "note": "其他法源获支持不等于原条款已修复或问题完整回答"
+    },
+    {
+      "question_id": "S5-27",
+      "old_finding_index": 0,
+      "old_clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+      "old_reason": "引文支持“未经明示同意或法律许可不得收集、披露、散布个人数据”及OCR受损说明；但引文还含“أو معا”（疑似“处理”一项），结论未涵盖该禁止行为，范围不完整。",
+      "same_source_supported_now": false,
+      "other_final_supported_sources": [],
+      "human_review": null,
+      "note": "其他法源获支持不等于原条款已修复或问题完整回答"
+    },
+    {
+      "question_id": "S5-32",
+      "old_finding_index": 0,
+      "old_clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+      "old_reason": "主体、行为及“法律未授权或未经同意”条件均有对应，罚金下限也对应；但引文罚金另含“5 مليون جنيه”的上限信息，结论仅写“不低于十万埃及镑”，未完整反映罚金范围。",
+      "same_source_supported_now": false,
+      "other_final_supported_sources": [],
+      "human_review": null,
+      "note": "其他法源获支持不等于原条款已修复或问题完整回答"
+    },
+    {
+      "question_id": "S5-32",
+      "old_finding_index": 3,
+      "old_clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+      "old_reason": "主体、行为、“以任何手段”及“法律未授权或未经同意”条件均有对应，罚金下限也对应；但引文罚金另含“5 مليون جنيه”的上限信息，结论仅写“不低于十万埃及镑”，未完整反映罚金范围。",
+      "same_source_supported_now": false,
+      "other_final_supported_sources": [],
+      "human_review": null,
+      "note": "其他法源获支持不等于原条款已修复或问题完整回答"
+    }
+  ],
+  "baseline_stability": {
+    "runs": [
+      {
+        "task_id": "ac63f152-35da-48eb-83c3-4dab2e0df7ce",
+        "status": "completed",
+        "tokens": 257728,
+        "retrieval_tokens": 158030,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 99.28,
+        "first_failed": false
+      },
+      {
+        "task_id": "4ec2008a-9d6b-4dc5-9fae-c736f3efc210",
+        "status": "completed",
+        "tokens": 247790,
+        "retrieval_tokens": 147576,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 73.02,
+        "first_failed": false
+      },
+      {
+        "task_id": "7ef3fd28-6bfd-4e5a-81dc-62cbb7fb7a02",
+        "status": "completed",
+        "tokens": 246799,
+        "retrieval_tokens": 153119,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 74.93,
+        "first_failed": false
+      },
+      {
+        "task_id": "1f4f58dd-edc3-4404-b239-6ed7d68dbc14",
+        "status": "completed",
+        "tokens": 265172,
+        "retrieval_tokens": 153928,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 107.43,
+        "first_failed": false
+      },
+      {
+        "task_id": "dd10923f-ad34-4a42-8eb3-1f1624430c1c",
+        "status": "completed",
+        "tokens": 271521,
+        "retrieval_tokens": 154230,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 111.69,
+        "first_failed": false
+      },
+      {
+        "task_id": "a2c2f4f1-61f6-4cbf-b0ae-acd07b4c3283",
+        "status": "completed",
+        "tokens": 250231,
+        "retrieval_tokens": 152230,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 80.98,
+        "first_failed": false
+      },
+      {
+        "task_id": "7da03ae8-8898-4ba7-a95c-f50de37b2db2",
+        "status": "completed",
+        "tokens": 264555,
+        "retrieval_tokens": 155514,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 95.31,
+        "first_failed": false
+      },
+      {
+        "task_id": "64ee90e7-b6ec-466c-a3e1-481af85ed370",
+        "status": "completed",
+        "tokens": 273037,
+        "retrieval_tokens": 152932,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 117.64,
+        "first_failed": true
+      },
+      {
+        "task_id": "a2919bb4-2654-4851-938e-1448c8b6dc47",
+        "status": "completed",
+        "tokens": 245652,
+        "retrieval_tokens": 153399,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 80.93,
+        "first_failed": false
+      },
+      {
+        "task_id": "9a125321-ec33-430f-b3e9-44470507a9f1",
+        "status": "completed",
+        "tokens": 259880,
+        "retrieval_tokens": 157914,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 89.08,
+        "first_failed": false
+      }
+    ],
+    "statuses": {
+      "completed": 10
+    },
+    "backtrack_distribution": {
+      "0": 9,
+      "1": 1
+    },
+    "first_failed": 1,
+    "known_tokens": 2582365,
+    "elapsed_seconds": 930.29,
+    "cache_hits": 0,
+    "retrieval_tokens": 1538872,
+    "planning_requests": 160
+  },
+  "release_stability": {
+    "runs": [
+      {
+        "task_id": "ebcf95ff-394c-428d-a4a5-835aeb3a8f83",
+        "status": "completed",
+        "tokens": 331244,
+        "retrieval_tokens": 146781,
+        "cache_hits": 0,
+        "planning_requests": 16,
+        "elapsed_seconds": 115.51,
+        "first_failed": false
+      },
+      {
+        "task_id": "a12bf8c5-0aeb-4b2f-adfd-166e3f5a679a",
+        "status": "completed",
+        "tokens": 187695,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 66.88,
+        "first_failed": false
+      },
+      {
+        "task_id": "d78f469d-856c-4dd0-bca2-0e0be8b69f56",
+        "status": "completed",
+        "tokens": 188836,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 68.96,
+        "first_failed": false
+      },
+      {
+        "task_id": "2587acb5-2bdc-4e67-8f76-ea268c5024b7",
+        "status": "completed",
+        "tokens": 199226,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 70.93,
+        "first_failed": false
+      },
+      {
+        "task_id": "1d4b81be-a82a-40c2-862f-5aba82d67516",
+        "status": "completed",
+        "tokens": 188690,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 66.94,
+        "first_failed": false
+      },
+      {
+        "task_id": "54144457-7d35-4bd7-b530-4d353a564ad4",
+        "status": "completed",
+        "tokens": 216403,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 81.1,
+        "first_failed": false
+      },
+      {
+        "task_id": "c3339b27-846c-441e-8ac6-28f242acacb5",
+        "status": "completed",
+        "tokens": 197634,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 67.04,
+        "first_failed": false
+      },
+      {
+        "task_id": "ddefb570-08a2-412c-9e75-1363f9133720",
+        "status": "completed",
+        "tokens": 182095,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 56.69,
+        "first_failed": false
+      },
+      {
+        "task_id": "5ad3840a-a5ee-4d51-9b87-77844dec0d58",
+        "status": "completed",
+        "tokens": 181553,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 78.96,
+        "first_failed": false
+      },
+      {
+        "task_id": "0182a083-2f45-49c5-b12c-89ad31290784",
+        "status": "completed",
+        "tokens": 191338,
+        "retrieval_tokens": 0,
+        "cache_hits": 8,
+        "planning_requests": 0,
+        "elapsed_seconds": 64.8,
+        "first_failed": false
+      }
+    ],
+    "statuses": {
+      "completed": 10
+    },
+    "backtrack_distribution": {
+      "0": 10
+    },
+    "first_failed": 0,
+    "known_tokens": 2064714,
+    "elapsed_seconds": 737.81,
+    "cache_hits": 72,
+    "retrieval_tokens": 146781,
+    "planning_requests": 16
+  },
+  "cold_eval_token_reduction": -0.16530053403641776,
+  "ten_report_token_reduction": 0.20045617099054547,
+  "note": "真实计费以供应商账单为准；缓存冷/热分开，拒答不计通过，人工复核仍待核对。"
+}

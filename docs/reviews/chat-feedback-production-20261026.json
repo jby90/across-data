@@ -1,0 +1,86 @@
+{
+  "release": "b95754f-ip",
+  "source_commit": "b95754f",
+  "backup_path": "/opt/cyshuhe-backups/20261026T140458Z-pre-chat-feedback",
+  "protected_data_unchanged": true,
+  "protected_digests": {
+    "documents": [
+      81,
+      "d7df2d74bddf744cd43d85d10f29fcde"
+    ],
+    "document_versions": [
+      81,
+      "3342928a42941bc7ba58feea8fe05292"
+    ],
+    "clauses": [
+      2744,
+      "7cee3c8c526c40a311869247292ec96b"
+    ],
+    "clause_translations": [
+      3464,
+      "16cc06aa7909d9d0d09ab4da6561f468"
+    ],
+    "kg_nodes": [
+      2419,
+      "9630fcaac4d04535b66b66327df9d694"
+    ],
+    "kg_edges": [
+      5259,
+      "0f21b6e4d279a9e04390bb794325a778"
+    ],
+    "glossary_terms": [
+      14,
+      "490d094c09d0e54fb6e5e3b85d09ed82"
+    ],
+    "review_points": [
+      4,
+      "5d497276ec30bec86d65260f8a2e52d3"
+    ],
+    "knowledge_audit_records": [
+      15301,
+      "5fb081f0d5caf95aacd4d5f1376522e1"
+    ],
+    "knowledge_change_proposals": [
+      473,
+      "9b7e47782b26304b1f190d9a5ba0b11a"
+    ],
+    "legal_term_definitions": [
+      552,
+      "c17385566fe786a53fe5d73444572e40"
+    ]
+  },
+  "archive_unchanged": true,
+  "archive_files": 80,
+  "archive_content_digest": "2b5e8016ed215784e2c9f4624fc7f3c00e568caab3c3538a962b052472bff5ce",
+  "migrations_executed": false,
+  "images": {
+    "api": {
+      "ref": "cyshuhe-api:b95754f-ip",
+      "id": "sha256:de3e8ecf4298a3095bbed6b90f7ba415a18738d2933ee367bffdb629be282e36",
+      "status": "running",
+      "health": "healthy"
+    },
+    "worker": {
+      "ref": "cyshuhe-api:b95754f-ip",
+      "id": "sha256:de3e8ecf4298a3095bbed6b90f7ba415a18738d2933ee367bffdb629be282e36",
+      "status": "running",
+      "health": null
+    },
+    "web-user": {
+      "ref": "cyshuhe-web-user:b95754f-ip",
+      "id": "sha256:283f07a2017935db00b6b1439132095d78839a7d0be20f0b6d2e29af8e79e02d",
+      "status": "running",
+      "health": null
+    },
+    "web-admin": {
+      "ref": "cyshuhe-web-admin:6b0efe8-ip",
+      "id": "sha256:0566c61378e3d95e75c595898e49aa3b50fa9852bf8404f137323fe29e8a2da7",
+      "status": "running",
+      "health": null
+    }
+  },
+  "db_gateway_admin_not_restarted": true,
+  "rls_forced_tables": 11,
+  "migration": "0023",
+  "runtime_role": "f|f"
+}

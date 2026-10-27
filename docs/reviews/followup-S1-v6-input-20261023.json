@@ -1,0 +1,96 @@
+{
+  "invalid_current": [
+    {
+      "translation_id": "2e4363e9-4608-4e37-8594-d74b1f665eb8",
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "issues": [
+        "CJK 字符占比未达标: 25.7% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "7. 100,001 and above $3,200\nMade this 21st day of November 2013.\nAUBECK KAM\nPermanent Secretary,\nMinistry of Communications\nand Information,\nSingapore.\n[Y03.002.001.EV30/13; AG/LLRD/SL/227A/2012/5 Vol. 1]",
+      "translated": "7. 100,001及以上 $3,200\n本文件于2013年11月21日订立。\nAUBECK KAM\n新加坡通讯及新闻部\n常任秘书\n[Y03.002.001.EV30/13; AG/LLRD/SL/227A/2012/5 第1卷]",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": true
+    },
+    {
+      "translation_id": "776e8358-5454-4786-8e7c-eb1df100ec55",
+      "clause_id": "12a105b8-0f27-45ce-9768-af1890aa8cb4",
+      "issues": [
+        "CJK 字符占比未达标: 20.0% < 30.0%",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 250000"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "5. 250,000 $0.0108 per number",
+      "translated": "5. 250,000 美元，每份 0.0108",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": true
+    },
+    {
+      "translation_id": "504564a5-c7fa-42a8-a0f3-21ba2e127480",
+      "clause_id": "74fe152f-5688-4cd6-99b3-2ca9cb322c90",
+      "issues": [
+        "CJK 字符占比未达标: 15.8% < 30.0%",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 100000"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "4. 100,000 $0.012 per number",
+      "translated": "4. 100,000 个，每个 0.012 $",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": true
+    },
+    {
+      "translation_id": "eab86653-f373-45fc-b735-136630779108",
+      "clause_id": "8a1dd9a1-eda9-4bee-8649-867c630fff73",
+      "issues": [
+        "CJK 字符占比未达标: 27.3% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "SG",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+      "source_url": "https://assets.egazette.gov.sg/2013/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/709.pdf",
+      "original": "$30\n2. Processing fee $30",
+      "translated": "$30\n2. 处理费 $30",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": true
+    },
+    {
+      "translation_id": "6c0d395c-b262-4c29-8681-f02f35149bb5",
+      "clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+      "issues": [
+        "CJK 字符占比未达标: 14.4% < 30.0%"
+      ],
+      "status": "translation_failed",
+      "country_code": "EG",
+      "document_title": "埃及内阁信息与决策支持中心 IDSC",
+      "source_url": "https://idsc.gov.eg/upload/DocumentLibrary/AttachmentA/10387/7.pdf",
+      "original": "– EU - 2016 April 27 2016/679,) EU (REGULATION ,)GDPR (,Regulation Protection Data General The - 14\n.2016.119.01.0001.01._L.OJ:uriserv=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https from retrieved\nTOC:2016:119:L:OJ=toc&ENG\nNo) EU (REGULATION ,Regulation) eIDAS (Services Authentication and Identification Electronic The - 15\nO:uriserv=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https from retrieved – EU 2014, July 23 910/2014,\nENG.2014.257.01.0073.01._L.J\n/content-legal/eu.europa.lex-eur://https from retrieved – EU 2023, May 31 ,Regulation assets-Crypto The - 16\n1114R:32023CELEX=uri?/ALL/EN\nfrom retrieved – EU 2022, December 14 ,regulation sector financial the for resilience operational digital The - 17\n2554R:32022CELEX=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https\nJanuary 12 on force into entered 2015, November 25 in published ,)2PSD (2, Directive Services Payment The - 18\n2366L32015A%3CELEX=uri?/TXT/en/content-legal/eu.europa.lex-eur://https from retrieved – EU - 2016,\n,(version 2015(\n:2007:319:0L:OJ=uri?do.LexUriServ/LexUriServ/eu.europa.lex-eur://https) version 2007 (2007 November 13\nPDF:en001:0036:\n– EU 2024, -3- 28 updated last 2014, MAY 15 ,)II MiFID (2 Directive Instruments Financial in markets The - 19\n0065L32014A%3celex=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https from retrieved",
+      "translated": "– 欧盟 - 2016年4月27日 2016/679，欧盟（REGULATION，）（GDPR，（通用数据保护条例）） - 14\n.2016.119.01.0001.01._L.OJ:uriserv=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https 检索自\nTOC:2016:119:L:OJ=toc&ENG\n第）欧盟（REGULATION，条例）（eIDAS（电子身份识别与信任服务）） - 15\nO:uriserv=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https 检索自 – 欧盟 2014年7月23日 910/2014，\nENG.2014.257.01.0073.01._L.J\n/content-legal/eu.europa.lex-eur://https 检索自 – 欧盟 2023年5月31日，加密资产条例 - 16\n1114R:32023CELEX=uri?/ALL/EN\n检索自 – 欧盟 2022年12月14日，金融部门数字运营韧性条例 - 17\n2554R:32022CELEX=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https\n2015年1月12日生效，2015年11月25日公布，（PSD2（第二版支付服务指令）） - 18\n2366L32015A%3CELEX=uri?/TXT/en/content-legal/eu.europa.lex-eur://https 检索自 – 欧盟 - 2016，\n，（版本 2015（\n:2007:319:0L:OJ=uri?do.LexUriServ/LexUriServ/eu.europa.lex-eur://https）版本 2007（2007年11月13日\nPDF:en001:0036:\n– 欧盟 2024年-3-28最后更新 2014年5月15日，（MiFID II（金融工具市场指令II）） - 19\n0065L32014A%3celex=uri?/TXT/EN/content-legal/eu.europa.lex-eur://https 检索自",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": true
+    },
+    {
+      "translation_id": "99a5a0a9-78f7-4ff4-8462-92bef20c0ddd",
+      "clause_id": "01124562-5dfa-47ca-9938-56111f3cc2aa",
+      "issues": [
+        "译文缺失原文数字或比例: 20"
+      ],
+      "status": "translation_failed",
+      "country_code": "EG",
+      "document_title": "埃及内阁信息与决策支持中心 IDSC",
+      "source_url": "https://idsc.gov.eg/upload/DocumentLibrary/AttachmentA/10387/7.pdf",
+      "original": "وبدأ تطوير تقنيات قطاع البنوك بإنشاء المجلس القومي للدفع )NPC )في عام .٢٠١٧ ويجب على\nالجهات التي ترغب في ممارسة أي أنشطة بنكية في مصر الحصول على الترخيص الالزم من البنك\nالمركزي المصري. ويشمل تعريف األنشطة المصرفية إصدار بطاقات الدفع، والنقود اإللكترونية،\nوبطاقات قيمة مخزنة، وبطاقات ذكية، وتشغيل أنظمة الدفع، والمعامالت المصرفية اإللكترونية\nو/ أو المحمولة، وأنشطة تحويل األموال .31\nوفي ١٢ يوليو ،٢٠٢٣ أصدر البنك المركزي مذكرة توجيهية تتعلق بتقديم الخدمات المصرفية عبر\nً القنوات والمنصات الرقمية عن طريق التكنولوجيا المالية )البنوك الرقمية(، على سبيل المثال، وفقا\nلبعض الشروط والموافقات. ويمكن للبنوك الرقمية تقديم جميع األنشطة المصرفية باستثناء منح\nاالئتمان للشركات الكبيرة، ولكن يمكنها منح االئتمان للعمالء الحاليين حتى انتهاء مدة االئتمان الحالي،\nشريطة أال يتجاوز هذا االئتمان ٪٢٠ من محفظة االئتمان اإلجمالية للبنك الرقمي.\nوتكون الكيانات التي تطلب ترخيص البنك الرقمي إما شركات مصرية مساهمة أو فروعا للبنوك األجنبية\n)بشرط االلتزام ببعض القيود(32.",
+      "translated": "银行业技术的发展始于2017年国家支付委员会（NPC）的设立。凡希望在埃及从事任何银行业活动的机构，必须获得埃及中央银行颁发的必要许可证。银行业活动的定义包括发行支付卡、电子货币、储值卡、智能卡、运营支付系统、电子和/或移动银行交易以及资金转账活动。31\n\n2023年7月12日，中央银行发布了一份指导性备忘录，涉及通过金融科技（数字银行）经由数字渠道和平台提供银行服务，例如，须符合某些条件和批准。数字银行可以提供所有银行业活动，但向大型企业发放信贷除外，但数字银行可以向现有客户发放信贷直至现有信贷期限届满，条件是该信贷不得超过数字银行总信贷组合的20%。\n\n申请数字银行许可证的实体应为埃及股份公司或外国银行的分行（须遵守某些限制）32。",
+      "gap_kind": "translation_quality_failure",
+      "context_revision": false
+    }
+  ]
+}

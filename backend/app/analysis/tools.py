@@ -11,11 +11,18 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.analysis.citation_policy import fully_reviewed
+from app.analysis.retrieval import RETRIEVAL_VERSION, ClauseIndex
+from app.core.config import get_settings
+from app.ingestion.layout_safety import layout_held_clause_ids
 from app.ingestion.models import Clause, Document, DocumentVersion
+from app.ingestion.safety import document_available
+from app.knowledge.graph_evidence import active_edge_filters
 from app.knowledge.models import ClauseTranslation, KgEdge, KgNode
+from app.knowledge.numeric_integrity import amounts, separate_explicit_dates
 
 # 每个维度的多语种检索关键词(英/法/阿)。仅用于检索候选条款,不代表结论。
 DIMENSION_KEYWORDS: dict[str, list[str]] = {
@@ -28,6 +35,10 @@ DIMENSION_KEYWORDS: dict[str, list[str]] = {
         "حماية البيانات",
         "scope",
         "application",
+        "application of act",
+        "champ d’application",
+        "s’applique",
+        "تطبق",
     ],
     "D2": [
         "personal data",
@@ -43,7 +54,7 @@ DIMENSION_KEYWORDS: dict[str, list[str]] = {
     ],
     "D3": [
         "transfer",
-        "outside singapore",
+        "abroad",
         "overseas",
         "cross-border",
         "transfert",
@@ -131,6 +142,19 @@ class ClauseCandidate:
     translated_text: str = ""
     score: float = 0.0
     matched_keywords: list[str] = field(default_factory=list)
+    heading: str = ""
+    language: str = ""
+    section_path: str | None = None
+    context_parent_id: str | None = None
+    search_hints: str = ""
+    instrument_identity: str = ""
+    instrument_role: str = ""
+    text_source: str = "text_layer"
+    source_nature: str = "unclassified"
+    source_review_status: str = "pending_review"
+    translation_review_status: str = "not_translated"
+    translation_id: str | None = None
+    terminology: list[dict] = field(default_factory=list)
 
 
 @dataclass
@@ -180,15 +204,44 @@ def clause_label(number: str | None, ordinal: int, page: int | None) -> str:
     return f"第{ordinal + 1}段"
 
 
+def clause_relevance(candidate: ClauseCandidate, keywords: list[str]) -> tuple[float, list[str]]:
+    """Rank actual clause content/heading; a repeated document title is not body evidence."""
+    body = _norm(candidate.text).casefold()
+    # Parsed heading preferred; leading source text handles numbered FR/AR clauses.
+    first_line = candidate.text.splitlines()[0] if candidate.text.splitlines() else ""
+    heading = _norm(candidate.heading or (first_line if len(first_line) <= 120 else ""))
+    heading = heading.casefold()[:220]
+    matched = [k for k in keywords if k in body]
+    if not matched:
+        return 0, []
+    heading_hits = sum(k in heading for k in keywords)
+    title_hits = sum(k in candidate.document_title.casefold() for k in keywords)
+    score = sum(min(body.count(k), 3) for k in matched) + 2 * len(matched)
+    return score + 8 * heading_hits + 0.15 * title_hits, matched
+
+
 class ToolBox:
     """一次分析任务的工具箱;记录每次调用供「任务过程」展示。"""
 
-    def __init__(self, session: AsyncSession, country_code: str):
+    def __init__(
+        self,
+        session: AsyncSession,
+        country_code: str,
+        cache_scope: str | None = None,
+        *,
+        citation_policy=None,
+        lock_reviews=False,
+    ):
+        self.lock_reviews = lock_reviews
+        self.citation_policy = citation_policy or get_settings().citation_policy
         self.session = session
         self.country_code = country_code.upper()
+        self.cache_scope = cache_scope
         self._seq = 0
         self.calls: list[ToolCall] = []
         self._candidates_cache: list[ClauseCandidate] | None = None
+        self._index: ClauseIndex | None = None
+        self.retrieval_tokens = 0
 
     def _record(
         self,
@@ -216,40 +269,87 @@ class ToolBox:
         """加载该国每份文件最新已解析版本的全部条款。"""
         if self._candidates_cache is not None:
             return self._candidates_cache
-        rows = list(
-            (
-                await self.session.execute(
-                    select(Clause, DocumentVersion, Document)
-                    .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
-                    .join(Document, Document.id == DocumentVersion.document_id)
-                    .where(Document.country_code == self.country_code)
-                    .where(DocumentVersion.state == "parsed")
-                )
-            ).all()
+        source_query = (
+            select(Clause, DocumentVersion, Document)
+            .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+            .join(Document, Document.id == DocumentVersion.document_id)
+            .where(Document.country_code == self.country_code)
+            .where(document_available())
+            .where(Document.relevance.notin_(("irrelevant", "out_of_scope")))
+            .where(DocumentVersion.state == "parsed")
+            .execution_options(populate_existing=True)
         )
+        if self.lock_reviews:
+            source_query = source_query.with_for_update(read=True)
+        rows = list((await self.session.execute(source_query)).all())
         latest: dict[uuid.UUID, int] = {}
         for _, ver, doc in rows:
             latest[doc.id] = max(latest.get(doc.id, 0), ver.version_no)
-        clause_ids = [c.id for c, ver, doc in rows if ver.version_no == latest[doc.id]]
-        trs = (
-            list(
-                (
-                    await self.session.execute(
-                        select(ClauseTranslation).where(ClauseTranslation.clause_id.in_(clause_ids))
-                    )
-                )
-                .scalars()
-                .all()
+        from app.updates.source_state import latest_observations_query
+
+        observed = dict((await self.session.execute(latest_observations_query(list(latest)))).all())
+
+        def eligible(ver, doc):
+            return (
+                ver.id == observed[doc.id]
+                if doc.id in observed
+                else ver.version_no == latest[doc.id]
             )
-            if clause_ids
-            else []
+
+        clause_ids = [c.id for c, ver, doc in rows if eligible(ver, doc)]
+        layout_held = set(await layout_held_clause_ids(self.session, clause_ids))
+        translation_query = (
+            select(ClauseTranslation)
+            .where(
+                ClauseTranslation.clause_id.in_(clause_ids),
+                ClauseTranslation.is_current.is_(True),
+                ClauseTranslation.quality_check_passed.is_(True),
+                ClauseTranslation.review_status.notin_(
+                    (
+                        "superseded",
+                        "not_translated",
+                        "translation_failed",
+                        "rejected",
+                        "stale",
+                    )
+                ),
+            )
+            .execution_options(populate_existing=True)
         )
-        tr_map = {t.clause_id: t for t in trs}
+        if self.lock_reviews:
+            translation_query = translation_query.with_for_update(read=True)
+        trs = list((await self.session.scalars(translation_query)).all()) if clause_ids else []
+        by_clause = {}
+        for t in trs:
+            by_clause.setdefault(t.clause_id, []).append(t)
+        # Multiple 'current' rows are an unresolved version conflict, not permission
+        # to choose an arbitrary approved translation from database row order.
+        tr_map = {cid: values[0] for cid, values in by_clause.items() if len(values) == 1}
         out: list[ClauseCandidate] = []
         for clause, ver, doc in rows:
-            if ver.version_no != latest[doc.id]:
+            if (
+                not eligible(ver, doc)
+                or clause.id in layout_held
+                or ver.legal_status == "repealed"
+                or ver.review_status == "rejected"
+            ):
                 continue
             tr = tr_map.get(clause.id)
+            source_status = (
+                "approved"
+                if ver.review_status == "approved" and not clause.needs_review
+                else "pending_review"
+            )
+            translation_status = (
+                tr.review_status
+                if tr
+                else "ambiguous_current"
+                if len(by_clause.get(clause.id, [])) > 1
+                else "not_translated"
+            )
+            reviewed = fully_reviewed(source_status, translation_status, clause.language or "")
+            if self.citation_policy == "reviewed_only" and not reviewed:
+                continue
             out.append(
                 ClauseCandidate(
                     clause_id=str(clause.id),
@@ -260,11 +360,122 @@ class ToolBox:
                     label=clause_label(clause.clause_number, clause.ordinal, clause.page_start),
                     text=clause.original_text,
                     source_url=doc.source_url,
-                    review_status=tr.review_status if tr else "pending_review",
+                    review_status="approved" if reviewed else "pending_review",
+                    source_review_status=source_status,
+                    translation_review_status=translation_status,
+                    translation_id=str(tr.id) if tr else None,
                     legal_status=ver.legal_status,
+                    heading=clause.heading or "",
+                    language=clause.language or "",
+                    section_path=clause.section_path,
                     translated_text=tr.translated_text if tr else "",
+                    text_source=ver.text_source,
                 )
             )
+        # Derive navigation links only from the immutable, hash-checked archive.
+        # No historical clause, translation, approval or citation is changed.
+        import asyncio
+
+        from app.analysis.source_context import fragment_links, source_drafts
+        from app.ingestion.archive import ArchiveStore
+
+        versions = {str(ver.id): ver for _, ver, _ in rows}
+        store = ArchiveStore(get_settings().archive_dir)
+        # Observations are comparison metadata, never a change to old source rows.
+        from app.ingestion.parsing import ParseError
+        from app.ingestion.source_observations import observation_text, validate_observation
+        from app.knowledge.history import payload_hash
+        from app.knowledge.models import KnowledgeAuditRecord
+
+        documents = {str(doc.id): doc for _, _, doc in rows}
+        observations = (
+            list(
+                (
+                    await self.session.scalars(
+                        select(KnowledgeAuditRecord).where(
+                            KnowledgeAuditRecord.action == "source_identity_observed",
+                            KnowledgeAuditRecord.target_id.in_(
+                                [doc.id for doc in documents.values()]
+                            ),
+                        )
+                    )
+                ).all()
+            )
+            if documents
+            else []
+        )
+        verified = {}
+        for observation in observations:
+            payload = observation.payload
+            version = versions.get(payload.get("version_id"))
+            document = documents.get(str(observation.target_id))
+            if (
+                version is None
+                or document is None
+                or observation.content_hash != payload_hash(payload)
+            ):
+                continue
+            try:
+                blob = store.read(version.archive_path)
+                if store.sha256(blob) != version.content_hash:
+                    continue
+                source = await asyncio.to_thread(observation_text, blob, version.mime_type)
+                identity = validate_observation(payload, version, document, source)
+                verified.setdefault(str(version.id), set()).add(
+                    (*identity, payload["source_nature"])
+                )
+            except (OSError, ValueError, ParseError):
+                continue
+        for c in out:
+            if len(verified.get(c.version_id, set())) == 1:
+                c.instrument_identity, c.instrument_role, c.source_nature = next(
+                    iter(verified[c.version_id])
+                )
+        for version_id in {c.version_id for c in out}:
+            group = [c for c in out if c.version_id == version_id]
+            labels = {c.label for c in group if c.heading}
+            if not any(
+                c.heading and any(c.label.startswith(n + ".") for n in labels) for c in group
+            ):
+                continue
+            ver = versions[version_id]
+            try:
+                content = store.read(ver.archive_path)
+                drafts = await asyncio.to_thread(source_drafts, content, ver.mime_type)
+                links = fragment_links(group, drafts)
+                for c in group:
+                    c.context_parent_id = links.get(c.clause_id)
+            except (OSError, ValueError):
+                # Unavailable/ambiguous source cannot prove a link; retain independent IDs.
+                continue
+        # Machine-reviewed graph labels are search vocabulary only, never legal
+        # evidence or an approval. Use the same current/source-bound eligibility as KG.
+        hint_rows = (
+            await self.session.execute(
+                select(KgEdge.evidence_clause_id, KgNode.name_zh, KgNode.name_orig)
+                .join(
+                    KgNode,
+                    or_(KgNode.id == KgEdge.source_node_id, KgNode.id == KgEdge.target_node_id),
+                )
+                .where(
+                    KgEdge.country_code == self.country_code,
+                    *active_edge_filters(),
+                    KgEdge.is_structural.is_(False),
+                    KgNode.node_type.in_(("OBLIGATION", "PENALTY", "DATA_CATEGORY")),
+                    KgNode.review_status.in_(("approved", "pending_review")),
+                    *(
+                        [KgEdge.review_status == "approved", KgNode.review_status == "approved"]
+                        if self.citation_policy == "reviewed_only"
+                        else []
+                    ),
+                )
+            )
+        ).all()
+        hints = {}
+        for cid, zh, orig in hint_rows:
+            hints.setdefault(str(cid), set()).update(x for x in (zh, orig) if x)
+        for c in out:
+            c.search_hints = "\n".join(sorted(hints.get(c.clause_id, [])))
         self._candidates_cache = out
         return out
 
@@ -281,11 +492,12 @@ class ToolBox:
             "clauses_total": len(cands),
             "clauses_usable": len(usable),
             "legal_status_counts": statuses,
+            "citation_policy": self.citation_policy,
         }
         self._record(
             "check_source_availability",
             "国别法源可用性前置检查",
-            {"country_code": self.country_code},
+            {"country_code": self.country_code, "citation_policy": self.citation_policy},
             f"{len(docs)} 份文件、{len(cands)} 条条款,其中可用于检索 {len(usable)} 条"
             f"(已过滤目录页/过短/乱码);现行状态分布 {statuses}",
             started,
@@ -294,33 +506,71 @@ class ToolBox:
         return result
 
     async def search_effective_clauses(
-        self, dimension: str, keywords: list[str] | None = None, top_k: int = 5
+        self,
+        dimension: str,
+        keywords: list[str] | None = None,
+        top_k: int = 5,
+        query: str | None = None,
+        config: dict | None = None,
     ) -> list[ClauseCandidate]:
         started = time.perf_counter()
         kws = [k.lower() for k in (keywords or DIMENSION_KEYWORDS.get(dimension, []))]
-        scored: list[ClauseCandidate] = []
-        for c in await self._load_candidates():
-            if not is_usable_clause_text(c.text):
-                continue
-            hay = f"{c.document_title} {c.text}".lower()
-            matched = [k for k in kws if k in hay]
-            if not matched:
-                continue
-            hits = sum(min(hay.count(k), 3) for k in matched)
-            score = hits + 2 * len(matched) + (1.5 if not c.label.startswith("第") else 0)
-            scored.append(
-                ClauseCandidate(**{**c.__dict__, "score": score, "matched_keywords": matched})
+        if self._index is None:
+            candidates = [c for c in await self._load_candidates() if is_usable_clause_text(c.text)]
+            self._index = ClauseIndex(candidates)
+        from app.analysis.workflow_engine import EIGHT_DIMENSIONS_SPEC
+
+        dimension_title = dict(EIGHT_DIMENSIONS_SPEC).get(dimension, "")
+        scored = self._index.rank(" ".join(kws) + " " + dimension_title, query)
+        planning = {}
+        if config and config.get("semantic_planning") and self._index.candidates:
+            from app.analysis.retrieval_planner import planned_search
+
+            scored, planning = await planned_search(
+                self._index,
+                " ".join(kws) + " " + dimension_title,
+                dimension_title,
+                query,
+                top_k,
+                config,
+                cache_scope=(
+                    self.country_code + ":" + self.citation_policy + ":" + self.cache_scope
+                )
+                if self.cache_scope
+                else None,
             )
-        scored.sort(key=lambda x: x.score, reverse=True)
-        top = scored[:top_k]
+            self.retrieval_tokens += planning["tokens"]
+        top = [
+            ClauseCandidate(
+                **{
+                    **c.__dict__,
+                    "score": score,
+                    "matched_keywords": [k for k in kws if k in c.text.lower()],
+                }
+            )
+            for c, score in scored[:top_k]
+        ]
         self._record(
             "search_effective_clauses",
-            "限定国家的法规条款关键词检索",
-            {"dimension": dimension, "keywords": kws[:6], "top_k": top_k},
-            f"命中 {len(scored)} 条,取前 {len(top)} 条: "
+            "限定国家的多语种问题检索与排序融合",
+            {
+                "dimension": dimension,
+                "keywords": kws[:6],
+                "top_k": top_k,
+                "query": query,
+                "retrieval_version": RETRIEVAL_VERSION,
+                "planning": planning,
+            },
+            (
+                f"可用 {len(self._index.candidates)} 条，"
+                f"规划候选池 {len(planning.get('pool_ids', []))} 条，"
+                f"返回 {len(top)} 条: "
+                if planning
+                else f"命中 {len(scored)} 条,取前 {len(top)} 条: "
+            )
             + ("; ".join(f"{t.document_title[:24]} {t.label}" for t in top) or "无"),
             started,
-            verified=bool(top),
+            verified=bool(top) and not planning.get("error"),
         )
         return top
 
@@ -331,7 +581,22 @@ class ToolBox:
             list(
                 (
                     await self.session.execute(
-                        select(KgEdge).where(KgEdge.evidence_clause_id.in_(ids)).limit(50)
+                        select(KgEdge)
+                        .where(
+                            KgEdge.evidence_clause_id.in_(ids),
+                            KgEdge.country_code == self.country_code,
+                            *active_edge_filters(),
+                            KgEdge.review_status.in_(("approved", "pending_review")),
+                            KgEdge.is_structural.is_(False),
+                            KgEdge.judge_verdict == "yes",
+                            KgEdge.extractor_model != "kg-rule-extractor-v1",
+                            *(
+                                [KgEdge.review_status == "approved"]
+                                if self.citation_policy == "reviewed_only"
+                                else []
+                            ),
+                        )
+                        .limit(50)
                     )
                 )
                 .scalars()
@@ -360,6 +625,17 @@ class ToolBox:
                 "review_status": e.review_status,
             }
             for e in edges
+            if e.source_node_id in nodes
+            and e.target_node_id in nodes
+            and nodes[e.source_node_id].review_status in ("approved", "pending_review")
+            and nodes[e.target_node_id].review_status in ("approved", "pending_review")
+            and (
+                self.citation_policy != "reviewed_only"
+                or (
+                    nodes[e.source_node_id].review_status == "approved"
+                    and nodes[e.target_node_id].review_status == "approved"
+                )
+            )
         ]
         self._record(
             "query_kg_obligations",
@@ -395,18 +671,22 @@ class ToolBox:
 def verify_finding(finding: dict[str, Any], clause_text: str) -> tuple[bool, list[str]]:
     """程序化核验:引用必须是条款原文的连续子串,且结论中的数字必须出现在原文里。"""
     issues: list[str] = []
-    quote = _norm(str(finding.get("quote") or ""))
-    text = _norm(clause_text)
-    if len(quote) < 15:
+    quote = str(finding.get("quote") or "")
+    if len(quote.strip()) < 15:
         issues.append("引用片段过短或为空")
-    elif quote not in text:
+    elif quote not in clause_text:
         issues.append("引用片段不是该条款原文的连续子串")
     obligation = str(finding.get("obligation") or "")
-    text_digits = re.sub(r"[,\s]", "", text)
-    for num in re.findall(r"\d[\d,\.]*%?", obligation):
-        token = re.sub(r"[,\s]", "", num).rstrip(".")
-        if token and token not in text_digits:
-            issues.append(f"结论中的数字「{num}」未出现在条款原文中")
+    rule_numbers, rule_dates, invalid_dates = separate_explicit_dates(obligation)
+    quote_numbers, quote_dates, _ = separate_explicit_dates(quote)
+    for value, percent in sorted(rule_numbers - quote_numbers):
+        issues.append(f"结论中的数字「{value}{'%' if percent else ''}」未出现在所选引文中")
+    for currency, value in sorted(amounts(obligation) - amounts(quote)):
+        issues.append(f"币种/金额不一致：{currency} {value}")
+    if invalid_dates:
+        issues.append("结论包含无效的明确日期")
+    if rule_dates - quote_dates:
+        issues.append("结论日期未获所选引文支持")
     return (not issues), issues
 
 

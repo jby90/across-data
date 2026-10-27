@@ -1,0 +1,116 @@
+{
+  "passed": true,
+  "old_rows_checked": {
+    "agent_workflow_configs": 16,
+    "analysis_messages": 25,
+    "analysis_step_traces": 6,
+    "analysis_tasks": 1,
+    "clause_translations": 3464,
+    "clauses": 2607,
+    "crawl_runs": 58,
+    "document_versions": 80,
+    "documents": 80,
+    "glossary_terms": 14,
+    "kg_edges": 3850,
+    "kg_nodes": 2419,
+    "knowledge_audit_records": 11614,
+    "knowledge_change_proposals": 472,
+    "organizations": 1,
+    "pipeline_events": 201,
+    "report_versions": 2,
+    "review_points": 4,
+    "source_sites": 20,
+    "users": 4
+  },
+  "row_additions": {
+    "agent_workflow_configs": 0,
+    "analysis_messages": 0,
+    "analysis_step_traces": 0,
+    "analysis_tasks": 0,
+    "clause_translations": 0,
+    "clauses": 0,
+    "crawl_runs": 0,
+    "document_versions": 0,
+    "documents": 0,
+    "glossary_terms": 0,
+    "kg_edges": 1409,
+    "kg_nodes": 0,
+    "knowledge_audit_records": 2883,
+    "knowledge_change_proposals": 0,
+    "organizations": 0,
+    "pipeline_events": 0,
+    "report_versions": 0,
+    "review_points": 0,
+    "source_sites": 0,
+    "users": 0
+  },
+  "pending_edge_retirements_with_full_snapshots": 1406,
+  "source_and_approval_overwrites": 0,
+  "archives_verified": 80,
+  "graph": {
+    "active_edges": 1588,
+    "semantic_edges": 1406,
+    "structural_edges": 182,
+    "by_country": {
+      "SG": 1231,
+      "EG": 25,
+      "TN": 166,
+      "MA": 118,
+      "LB": 48
+    },
+    "invalid_evidence": 0
+  },
+  "layout_held": {
+    "clauses": 18,
+    "by_country": {
+      "SG": 15,
+      "EG": 3
+    },
+    "active_graph_edges": 0
+  },
+  "parsed_graph_candidates": [
+    {
+      "id": "9fc69a7d-67fd-4e5b-9176-c79b1ff6f830",
+      "country": "EG",
+      "blocks": 17,
+      "linguistic_tables": 0,
+      "excluded_non_normative": 17,
+      "admitted_relations": 0,
+      "rejections": {},
+      "review_status": "pending_review",
+      "active": false
+    },
+    {
+      "id": "3dd13104-2717-429f-8d3a-24c99469b718",
+      "country": "SG",
+      "blocks": 4,
+      "linguistic_tables": 2,
+      "excluded_non_normative": 2,
+      "admitted_relations": 0,
+      "rejections": {
+        "semantic_judge": 2,
+        "fee_is_not_penalty": 2
+      },
+      "review_status": "pending_review",
+      "active": false
+    }
+  ],
+  "reports": [
+    {
+      "id": "6c1f5b1a-27c6-43d0-acc4-b5974da7c209",
+      "version": 1,
+      "citations": 25,
+      "held_citation_ids": [],
+      "unchanged": true
+    },
+    {
+      "id": "18804c72-6866-49e2-8c29-619381987a2b",
+      "version": 2,
+      "citations": 0,
+      "held_citation_ids": [],
+      "unchanged": true
+    }
+  ],
+  "human_approvals_created": 0,
+  "human_acceptance_passed": false
+}

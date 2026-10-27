@@ -1,0 +1,5233 @@
+{
+  "summary": {
+    "total_latest_clauses": 2607,
+    "eligible_latest_clauses": 2517,
+    "source_held_clauses": 90,
+    "current": 2432,
+    "missing_qualified_clauses": 715,
+    "identical_to_original": 0,
+    "current_engines": {
+      "llm": 1876,
+      "glossary_assisted": 556
+    },
+    "attempt_statuses": {
+      "machine_translated": 1904,
+      "translation_failed": 62,
+      "superseded": 623
+    },
+    "qualified_unique_clauses": 1802,
+    "invalid_current": 630,
+    "by_country": {
+      "MA": {
+        "clauses": 215,
+        "qualified": 214
+      },
+      "EG": {
+        "clauses": 100,
+        "qualified": 94
+      },
+      "TN": {
+        "clauses": 150,
+        "qualified": 69
+      },
+      "LB": {
+        "clauses": 329,
+        "qualified": 322
+      },
+      "SG": {
+        "clauses": 1723,
+        "qualified": 1103
+      }
+    },
+    "known_tokens_in": 1456503,
+    "known_tokens_out": 2397981,
+    "human_approved": 0
+  },
+  "invalid_current": [
+    {
+      "translation_id": "035ee720-3d74-46b7-a1a8-163e128d1d41",
+      "clause_id": "ced9dd45-5d79-4dc9-baa8-6a3080a268cd",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "6b72d21b-88d4-41df-98b0-81f8a3c8b217",
+      "clause_id": "24d357c5-3cee-491f-9c44-07aeafe4b6ea",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "19a34957-58e9-4904-aec1-e9ed19352631",
+      "clause_id": "7356f961-2906-4395-a4f8-4af3e6db834a",
+      "issues": [
+        "CJK 字符占比未达标: 21.7% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "575335eb-a376-4c2a-a957-8cc97387648b",
+      "clause_id": "0817743c-4fc6-4f49-94e2-eb027389edb8",
+      "issues": [
+        "CJK 字符占比未达标: 29.8% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "acdaca6a-fe07-4771-9911-108e858d31ea",
+      "clause_id": "aefc15e3-4307-4860-bf90-327c65ddcf37",
+      "issues": [
+        "CJK 字符占比未达标: 25.0% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "376d4439-d59a-4656-808c-3a6ac7fa2f19",
+      "clause_id": "2a9aaf16-4f9b-4f5f-9595-d60a6717232d",
+      "issues": [
+        "CJK 字符占比未达标: 28.6% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "338e9c81-8304-4d00-a3f1-0557caced788",
+      "clause_id": "f6aa3cbf-157a-4ea9-85a5-2a2b8cd46d9a",
+      "issues": [
+        "CJK 字符占比未达标: 22.7% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "bd607519-f03e-4de9-aba1-3c51edc25123",
+      "clause_id": "687bf468-7429-432c-8b7b-03852de82567",
+      "issues": [
+        "CJK 字符占比未达标: 28.6% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "1641b20f-cea8-40b9-9893-37b2e38dcfa4",
+      "clause_id": "3389b498-9802-4612-a946-fe7c73696291",
+      "issues": [
+        "CJK 字符占比未达标: 28.6% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "9dc708d8-8ad7-465a-9d76-63576017060e",
+      "clause_id": "70a58d26-b412-434f-9aa3-db7ba4e137d5",
+      "issues": [
+        "译文日期不一致: 2026-06-22"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "bbe0d2de-9464-4f5d-9ce9-44893d73ee86",
+      "clause_id": "010a33ca-aad6-4c58-a01c-6bec280143bd",
+      "issues": [
+        "CJK 字符占比未达标: 28.9% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "a83589ad-b439-472f-9034-41587b024515",
+      "clause_id": "2d827fb7-4cc8-46f7-9c50-7de2e16c879a",
+      "issues": [
+        "CJK 字符占比未达标: 28.6% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "e6d2fd91-3478-4d37-98ce-5f89d8b7ed64",
+      "clause_id": "9d1e9b5e-9b40-4200-ae7b-7bae197b774a",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "a0bd08e1-7279-404a-85b3-813d5ee2e27d",
+      "clause_id": "39298f52-c744-4812-9b5e-146ffeb4401b",
+      "issues": [
+        "CJK 字符占比未达标: 28.6% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "4ded02b9-e1aa-4a9a-bb0b-83f15e8a4443",
+      "clause_id": "1d11c121-72f8-482b-91a2-7ed391587973",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "23bec044-3410-4b31-a2fa-61b20433d2d3",
+      "clause_id": "83b4c705-1123-48a2-8f48-5bd3c4a28042",
+      "issues": [
+        "CJK 字符占比未达标: 28.9% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "fc37fd35-3113-4b10-a11d-b2c03e8e3cca",
+      "clause_id": "c2e147ff-c3ca-4a94-8241-1935b3b39d0c",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "0eb1c3eb-0f32-4113-a311-cc3e6b9b2776",
+      "clause_id": "4d411adc-c1fc-4c8e-bb84-b87d503002be",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "5246ed2f-7b1d-4cef-ade0-deda0b499d3e",
+      "clause_id": "0447e029-cde6-4f34-8a50-218ee91b757b",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "e603f8fb-b9d5-48f0-b3c6-aed29a22aa76",
+      "clause_id": "55016589-c959-4a5d-8d87-be3d3e6ed290",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "f24c94cd-1d97-433f-b304-918a796d61be",
+      "clause_id": "2ba32a50-00c5-4f0b-a3f3-c3a2eda58690",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "5ebeed3c-869f-48dc-9015-e3b8da301e17",
+      "clause_id": "ca175783-b959-496f-a4bb-35b73d1c47ec",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "e138b7bc-324b-4a79-bc05-de1670841ea0",
+      "clause_id": "13a3cf7c-8c68-4eac-8140-ff2a3e545a4e",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "3f4e12ce-b0d9-483e-8882-a43151dcd692",
+      "clause_id": "bff528b3-8f9d-4195-a12d-cfd3040a5701",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "1ca30a06-8ed0-42cb-8050-e3b70bae310b",
+      "clause_id": "852a8b72-47d8-4d02-81dc-57e22c1eefeb",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "ec4c7348-aebe-485e-870e-e1048aea977c",
+      "clause_id": "da644084-5f14-486a-9c6b-0c86647e3fee",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "6e81a784-291f-4da6-a731-bb6ef791c056",
+      "clause_id": "3ebcfed8-c8b8-4fb1-b27f-42aee8b160b6",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "9c47462a-0c55-48c7-bc0a-fd3cc860fbc3",
+      "clause_id": "fd8a1b46-70f7-46c0-aa1a-fbebf4822317",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "e60a0ef8-75e7-45c9-8087-f1150f159bda",
+      "clause_id": "2730bb26-52d9-49cd-a2fd-35b61ff313b6",
+      "issues": [
+        "译文缺失原文数字或比例: 27",
+        "译文缺失原文数字或比例: 211"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "12a7f7d1-2002-4aa2-99b5-12791c589a29",
+      "clause_id": "8a81e29a-859d-4872-bb3d-edbdc00c5fb1",
+      "issues": [
+        "译文缺失原文数字或比例: 2"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "d84ab4d3-3392-45bc-938f-40590510c39c",
+      "clause_id": "aca3aa6d-70c8-43af-b993-9faac5d48953",
+      "issues": [
+        "CJK 字符占比未达标: 12.0% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "a8321dcc-c8cc-4ba8-80bb-4cb46bfd5ec7",
+      "clause_id": "780397d4-2b8e-4e74-ad0e-0b40e0f02e88",
+      "issues": [
+        "CJK 字符占比未达标: 20.3% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "23cec63b-491e-4b08-9c8c-8b6dab3cd6b8",
+      "clause_id": "5454cc7b-f2cb-48c9-aafd-592007b184bd",
+      "issues": [
+        "CJK 字符占比未达标: 13.5% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "5b66b165-20b3-4c67-8fa2-9886bdc01fab",
+      "clause_id": "c2ba8815-a9ea-4303-a784-b8ae7316df59",
+      "issues": [
+        "CJK 字符占比未达标: 25.9% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "c3bc3630-d1dc-4091-8ba8-c4d5c320163b",
+      "clause_id": "b2f86f59-e58c-46be-a638-b2847d11de94",
+      "issues": [
+        "CJK 字符占比未达标: 12.3% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "aa3fb2b8-d1be-488c-87c8-9b45bdb1e14f",
+      "clause_id": "be84752c-95b9-4e42-8ec7-aa3323f6b68b",
+      "issues": [
+        "译文缺失原文数字或比例: 1",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "be8acf10-9845-4df3-813b-3662f981e1ee",
+      "clause_id": "4f0acc07-baee-4d35-b13a-56c7faf6fe94",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "8248dcab-5964-4646-be44-690096a434fe",
+      "clause_id": "0920a681-92bf-4055-8ca3-b5090ca6536f",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "e88d3aca-b802-47d9-85cb-31e7b533eca9",
+      "clause_id": "0ab45613-93d2-4c94-b658-c081d3ab0721",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%",
+        "译文缺失原文数字或比例: 40"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "0b7db9d4-368c-4261-a71f-35001b21990c",
+      "clause_id": "7b78a1e5-c45d-4482-8291-1b40caf0039a",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "4ae33e03-92fe-4d12-984e-79f930edbba7",
+      "clause_id": "f0ac9199-9f7b-46a4-b761-198e4ca2e647",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "adc4cede-eb5b-44b4-97af-347db6a6bd0b",
+      "clause_id": "753b6f52-476e-4b0f-9a1b-d26961d917bb",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%",
+        "译文缺失原文数字或比例: 3"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "598e028b-7a13-441d-a513-a0f99861abd5",
+      "clause_id": "04157f86-44a3-4362-8f9c-1b580a0447b7",
+      "issues": [
+        "译文缺失原文数字或比例: 40"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "5e465d04-dcef-4972-8f2b-f203375034d8",
+      "clause_id": "17a6cbc4-9f94-4b35-949f-fbe91303081a",
+      "issues": [
+        "译文缺失原文数字或比例: 50"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "4aaf16ce-1522-42b3-b160-25c46c8c4a63",
+      "clause_id": "7973c897-f859-4d63-a0d3-496488241b24",
+      "issues": [
+        "CJK 字符占比未达标: 28.8% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "a515d8f6-692d-434f-823b-c1888fff5301",
+      "clause_id": "9e1549a4-c186-4b2c-b259-3192e4090a3d",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "6fe110fa-ec5b-45e5-9d3b-acd9585584af",
+      "clause_id": "6eb30e61-a97c-4d16-8a5f-cecd1cfb8425",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "5302c89e-f48d-454a-b1aa-35a7d720884d",
+      "clause_id": "4fed0752-65f5-48c9-9dc1-b1398efc3553",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "16f73338-6110-4323-988b-e5f4999bd4e5",
+      "clause_id": "6c4c3538-17eb-4741-81ae-515c2933afc2",
+      "issues": [
+        "译文缺失原文数字或比例: 6",
+        "译文缺失原文数字或比例: 7",
+        "译文缺失原文数字或比例: 8"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "36a2deb1-b145-4326-8036-596790a7ecad",
+      "clause_id": "770e9826-2ca1-4915-9976-ecd143dba336",
+      "issues": [
+        "译文缺失原文数字或比例: 100"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "63d7eb6c-a24b-4494-8476-2d9929818e44",
+      "clause_id": "b1f9a38a-a59d-4458-be23-21e825c9ef69",
+      "issues": [
+        "CJK 字符占比未达标: 9.4% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "994873a6-a070-4eb1-aaaa-be1eeafa457e",
+      "clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+      "issues": [
+        "CJK 字符占比未达标: 14.9% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "640eb39e-0189-48cb-93f6-37131010f7ef",
+      "clause_id": "f97f1c8f-50cf-4684-9768-2af977da740b",
+      "issues": [
+        "译文缺失原文数字或比例: 20"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "82055f8a-5bf5-4407-a10e-6dae508b58d0",
+      "clause_id": "b6578d76-3e4f-4189-a1ae-6c498d5969f8",
+      "issues": [
+        "CJK 字符占比未达标: 14.0% < 30.0%",
+        "译文金额或币种不一致: EUR 14"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "e8bedc3d-7a11-4d6d-a8fe-ae0439f21d99",
+      "clause_id": "04860d97-8327-487a-b5b7-7fc806e463ad",
+      "issues": [],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "9fa235bc-d62d-4d5e-8c73-cd9ee4edfef2",
+      "clause_id": "01124562-5dfa-47ca-9938-56111f3cc2aa",
+      "issues": [
+        "译文缺失原文数字或比例: 20"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "9c2e9f6c-7288-4ed5-9784-f76e49b868cc",
+      "clause_id": "62b6fc8e-dfab-43f3-a98f-ef59942c7be1",
+      "issues": [
+        "CJK 字符占比未达标: 27.3% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "cb75ed7c-1809-4cc2-9f3a-e017b7ff74b7",
+      "clause_id": "d97cc5bd-2bae-4d33-9ee6-bad15b3e5b50",
+      "issues": [
+        "CJK 字符占比未达标: 23.9% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "10ff0465-db5b-4384-9b89-731cc73fb166",
+      "clause_id": "16c4a65a-3709-44d7-bc3b-3aafb7fdcebc",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 5000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "1c0d81f3-6f51-4d56-937d-75f7b1c4e6a6",
+      "clause_id": "44f225f5-448d-472f-a391-9572f2012023",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 5000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "b5925993-5e2f-494a-afe1-3a8bbf294cef",
+      "clause_id": "2d061ab3-1990-4735-aa9a-59e3af2a8f46",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 2000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "f9c05c8f-4562-4220-a55c-ab3eff00931f",
+      "clause_id": "201231f8-5fa6-45d1-a508-087dd4bf8877",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1000",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "761920e2-355b-427d-aab1-b145ec2559aa",
+      "clause_id": "c2a2e588-a181-430e-8baf-4240df081ede",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "d1d3a2f9-496a-4b4b-8db1-ece6dc66c6d2",
+      "clause_id": "46d85eb5-a09f-4f47-86e9-dbc49f3f80d7",
+      "issues": [
+        "译文缺失原文数字或比例: 3"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "e0835e36-3e43-4528-bd09-e07218df3141",
+      "clause_id": "d2fcefae-bc49-4d24-9cb5-03173270a25e",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "0011d65d-7e49-40cc-8eeb-4b29bdd5fdc6",
+      "clause_id": "3214922b-a62e-4f0a-8667-fe84f1f1a7ce",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10000",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 5000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "0ce5e64f-d475-48c4-9ffd-30aa13d48f72",
+      "clause_id": "d5cffc24-edad-47bc-905f-3aa26a6467c1",
+      "issues": [
+        "译文缺失原文数字或比例: 10",
+        "译文缺失原文数字或比例: 20",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 20",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 200000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "0d08f13a-5ccc-4cd8-814f-61e994936876",
+      "clause_id": "443931e8-1988-4b80-b354-c1480cd696e9",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1600",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 250",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 30",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 800"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "03f12c02-fea9-488c-a079-bc5ce5bc98e2",
+      "clause_id": "c5eff2fa-67f6-42f9-bc6a-e46ea69ac600",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1000",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 2000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "8ea9470d-a90b-4e48-a357-182418eb0d14",
+      "clause_id": "5efd5205-68fe-458a-b3b2-582b8a103461",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 2000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "dfb6f534-5e22-4885-97e7-4404be04111f",
+      "clause_id": "8057c5b0-3243-44c6-ad2a-3dbf15edccc8",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1.5"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "7e8eb7fa-c35e-4a9d-b748-871e54d0fda3",
+      "clause_id": "f18d1043-b26c-4a66-83ad-6933d537feef",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1600",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 250",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 30",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 800"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "9d01ab6a-1b77-4c44-8426-605092dda87a",
+      "clause_id": "d87bc6e8-adf5-4d92-b25a-b0610e1c4d84",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 25.68"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "166cbb47-ad32-4690-8a0c-697e6b688d4a",
+      "clause_id": "5fceb016-2474-4089-85aa-5da5db5db501",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 20",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 200000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "073f9d96-2340-4e23-8cdf-f9ebb599f9ae",
+      "clause_id": "42e6b947-5e46-4636-ad18-a85d77495d37",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0dcf10a8-fc70-4e64-a262-cc978c02b611",
+      "clause_id": "e7761d66-00bb-4a25-964b-692dc21823b8",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "10771482-fb3f-43b3-95aa-12cecab7eae6",
+      "clause_id": "302422fe-bf2e-4760-a35f-76fe2f68f23d",
+      "issues": [
+        "CJK 字符占比未达标: 6.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "10f01ee4-0a95-4e9c-b820-33fc71762892",
+      "clause_id": "03e83e4b-49e2-477c-ac80-d0f002c63ef7",
+      "issues": [
+        "CJK 字符占比未达标: 7.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "133ed11e-0cf9-43e2-9a65-5a610652a4b6",
+      "clause_id": "6c9f8394-7609-4b0a-a01c-b7bb9aa1e954",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "15c756b5-1bd7-4d2f-9090-276a10820d9b",
+      "clause_id": "de421668-3889-4342-9301-7cc168f829c8",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "185b3487-e38c-4b19-9b4f-a64ade6767bf",
+      "clause_id": "186ad5de-283d-4edd-82bd-844a0577a803",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "18bd2c53-6ec3-44ae-ba16-49dbef4fe961",
+      "clause_id": "9341eb85-b2c5-47e1-b4c4-7ddddfe89af3",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "19c73283-1064-40d7-9f18-92c598659eaf",
+      "clause_id": "78078c7c-872b-41c0-a66f-fe8b3119b9be",
+      "issues": [
+        "CJK 字符占比未达标: 3.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1be1a84c-eb81-44e0-b497-d81d4065b1c3",
+      "clause_id": "eeaeb03a-3bed-416b-bd59-d2bd5e5da2bc",
+      "issues": [
+        "CJK 字符占比未达标: 2.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1c1e2be6-ad9c-4867-9f3b-707217da9811",
+      "clause_id": "5acce350-af69-4455-856a-83e0c22bd438",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "21435c85-2095-4954-9023-5729a185f182",
+      "clause_id": "dfd96b6c-94d5-44fb-8f17-ac744a5520ad",
+      "issues": [
+        "CJK 字符占比未达标: 2.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2212850d-b93e-4834-879e-e2d309532c98",
+      "clause_id": "9c3f835b-dc59-4957-8bf2-5c8a8b0fe5f0",
+      "issues": [
+        "CJK 字符占比未达标: 4.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2251b367-97d6-41a7-9c7c-960db8ea56c0",
+      "clause_id": "357e0538-48fb-4ac7-bfd6-9152aceca082",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "24a92e7e-0bdb-4659-8fa3-31371e4c00a6",
+      "clause_id": "51340ac7-2fca-4b2b-82fb-84c2f26676bc",
+      "issues": [
+        "CJK 字符占比未达标: 1.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "282a5ded-6bd3-4774-a206-d5dc7f3d6a1d",
+      "clause_id": "33d28436-1211-41d9-bb18-5258c1529182",
+      "issues": [
+        "CJK 字符占比未达标: 3.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2894db0a-d6fd-4783-902c-d06cf0d2a22c",
+      "clause_id": "52650799-855d-400b-a210-b74cd783ac8c",
+      "issues": [
+        "CJK 字符占比未达标: 2.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "28de86bb-56e4-43cb-b8d5-3fca769fe9aa",
+      "clause_id": "6f4c35fd-ad80-4d04-a7b0-1049f245d2d9",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "29634d41-f8c6-4e89-b89b-428ee12f6467",
+      "clause_id": "ae971bb6-6177-4bd6-8592-42f79bc5ab66",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2d69e66d-7557-4bda-ad1c-3a6da948804a",
+      "clause_id": "d25a8811-a620-4545-92a5-b69b1acbfeba",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "30529964-f923-4ee1-84dd-af45de06839f",
+      "clause_id": "2d91a161-b5f1-4acf-abd9-8fa3c2a4cd4f",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "30e2440a-1aa8-40ae-af1d-7c9f938d1cca",
+      "clause_id": "644e1445-3868-4bd5-94e7-4ff68d8004f3",
+      "issues": [
+        "CJK 字符占比未达标: 2.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "32821dd0-3b80-4e2b-8b58-4f240c467c6e",
+      "clause_id": "a9099921-5aaa-413c-95a6-9f8b6530d067",
+      "issues": [
+        "CJK 字符占比未达标: 3.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "397e25e9-c33c-4d03-bee1-c1d3f4f0793c",
+      "clause_id": "f53bee7b-01da-4272-b2c7-cfd3b976ff00",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "44531f88-b6b7-4b74-ac7f-8b02e74cd762",
+      "clause_id": "30b4e9de-d7c9-41ba-b0a4-fc9a6f1e4638",
+      "issues": [
+        "CJK 字符占比未达标: 3.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4a09d87f-15fc-4430-837a-b71aba3dd311",
+      "clause_id": "d0d0aafd-1645-4735-ac24-40adb4fad910",
+      "issues": [
+        "CJK 字符占比未达标: 1.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4c8d5721-bbd5-4ee5-b75b-0c499105a816",
+      "clause_id": "4db4ae69-3cb5-4c1a-bbe3-6fdbf70b7500",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "509cac3a-b61c-45d0-af35-e73ca710dd72",
+      "clause_id": "4b3f875a-5e20-4be7-87d5-0029fd394298",
+      "issues": [
+        "CJK 字符占比未达标: 3.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6af189a8-f6af-4531-8048-ad0b34b8f278",
+      "clause_id": "cdb8ff60-5fd6-4c5f-aa74-45a4ca18ca31",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6ce52a24-7cc4-468c-a169-88a86308af29",
+      "clause_id": "4bf38af3-cece-4c78-8da7-ad0eaed4db6c",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6e025f0d-5f53-43de-957a-361bee48c891",
+      "clause_id": "4fd23617-b692-4b3f-bcbb-58bf8f8f02be",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "70688069-aa67-4e58-89a7-6354531ef5ec",
+      "clause_id": "e9fd1599-211d-4929-9b1d-65236ff6bdf8",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "72fef0e7-7d6e-4b02-a929-6d3fe904ecb1",
+      "clause_id": "a9e1ae06-2da2-4d16-9346-f90543ce6b3c",
+      "issues": [
+        "CJK 字符占比未达标: 2.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7906783d-3494-4214-87d7-3d152134d942",
+      "clause_id": "715f9648-7c8a-40d9-bc01-9c8e029ccbeb",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "79a5d504-cdb5-4767-b70b-dd5f5bab4bdc",
+      "clause_id": "c83d50ab-2bec-44c0-8025-d9ef894a2145",
+      "issues": [
+        "CJK 字符占比未达标: 4.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8090b9c1-f0f7-4b36-9283-c316e4d66308",
+      "clause_id": "33fce561-f22d-458d-b27d-e423a9166fb6",
+      "issues": [
+        "CJK 字符占比未达标: 1.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "81acb5a6-e2b3-4d6d-9db5-60ffef535600",
+      "clause_id": "6fb0a74d-af0a-46fc-8528-1b3c8c9603a1",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "90e96731-7a21-446c-b3ba-16bd8c9a8d5b",
+      "clause_id": "f9525907-bf88-461e-8ebc-a3408dbec19e",
+      "issues": [
+        "CJK 字符占比未达标: 3.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "911f1a3d-ab4a-493c-9777-91bf260ad3d5",
+      "clause_id": "fe0f7725-47f2-43db-ad48-bb081a776946",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "94559d9d-ab1a-4375-bd27-96814f231b43",
+      "clause_id": "09e86f9e-dce6-40af-b27c-acea3dcae611",
+      "issues": [
+        "CJK 字符占比未达标: 3.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9a5d4ad0-c613-483e-8093-525402df33f3",
+      "clause_id": "5d7d6279-c02d-4727-ac1d-c02e431453ea",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a2b722b8-1352-4640-83a5-15ecae9c26a9",
+      "clause_id": "809278e4-87b5-4699-ac26-78b25ba1c03e",
+      "issues": [
+        "CJK 字符占比未达标: 3.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a3152d95-5c42-4516-b593-ad97f3cf4a6f",
+      "clause_id": "a9fd8e5d-8746-4f26-91b2-c73f80f6f82c",
+      "issues": [
+        "CJK 字符占比未达标: 3.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a6d33992-9263-4e08-be0d-700b4eb35ee2",
+      "clause_id": "c6693ff9-1113-4040-b454-e5160f01913d",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a8aa5a26-0da5-425e-bd50-8dd6689c9d36",
+      "clause_id": "3126abd4-d20d-48bd-993a-087e009f9b27",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "aec2e563-67d9-4af0-98e8-71a0fbe43909",
+      "clause_id": "f2c49d05-809a-4ac6-a65b-c3f6bf975a38",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "afe46add-d717-4245-9b3b-0cadbdac7d09",
+      "clause_id": "029a9f8a-1cd0-41ad-9952-0d764929bf05",
+      "issues": [
+        "CJK 字符占比未达标: 3.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "bd2bed45-a083-4bd3-b3f1-edf7c4662718",
+      "clause_id": "60d5813f-86f8-485a-ad51-392a84467f17",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c0b77614-23ab-4897-9151-ca4e617fbdf6",
+      "clause_id": "e64083fe-6eff-4192-952b-d5965fa40c05",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c3f8e2bc-fdfb-4a9b-83b3-9316c0501797",
+      "clause_id": "be417cd4-d0fe-4778-a1ba-b975476b261b",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c57a1b26-543c-45d1-8b08-45069dbf8742",
+      "clause_id": "820cc35a-9c98-4acb-9837-b5ab421facb5",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c878e056-da79-4c2c-813d-6369f2180f47",
+      "clause_id": "39669473-8f04-4c99-9c63-5d3f3ec3a772",
+      "issues": [
+        "CJK 字符占比未达标: 4.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c8b883c2-6d2c-4bab-80a6-f5c207a4e5ed",
+      "clause_id": "b1b43cd6-d69d-42a4-b954-759115d04eca",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "cb5927fd-8154-46d1-902e-4ee49e62fed6",
+      "clause_id": "918bb0aa-ff8d-4e10-94a8-b4f6592d543d",
+      "issues": [
+        "CJK 字符占比未达标: 2.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d042e48f-96ea-47a2-91a5-e5a763ea651b",
+      "clause_id": "a3ed22a9-010b-483a-b226-f622668c0211",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d2bfa351-d24e-4b1e-a39e-ed0dd584e0e7",
+      "clause_id": "72724ff6-e2dd-4089-ac7a-fd918045daab",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d52084b1-a10d-4f13-9024-5e207b57a34c",
+      "clause_id": "b406328a-c4a0-4aaa-a5ec-9799b99cf372",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d851d9c3-82d4-4bff-82fe-f1f31a966a29",
+      "clause_id": "4faf13b0-111c-4e4d-a469-e745a3f1114d",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ddd049b1-1e78-40c5-a42e-f872a32f23f1",
+      "clause_id": "9b2276b6-1a95-4a84-b040-c4c0bb6722e7",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e2ab419d-bca5-47e4-b8e1-225f913d333b",
+      "clause_id": "d97cc5bd-2bae-4d33-9ee6-bad15b3e5b50",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e46f31af-a965-430a-830a-581d86295c1e",
+      "clause_id": "e74b50f9-5592-4332-82f9-a6a4e9b6903c",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ed4d3813-32e1-4fe0-bf1b-c474b102c456",
+      "clause_id": "8061deb0-c3df-44c8-844a-b8c439f41fcf",
+      "issues": [
+        "CJK 字符占比未达标: 2.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f0a6495a-99a2-44d9-b9ad-17beca5eae2f",
+      "clause_id": "9e88d259-251d-4fc7-a724-acd58396b31b",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f21b390a-64bf-4bc4-8105-c0873854058f",
+      "clause_id": "8b365d07-1a1e-4e81-ab21-cec57417eca9",
+      "issues": [
+        "CJK 字符占比未达标: 5.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f2a388ae-95f5-4b8d-b9d5-45a3bfb4a0bc",
+      "clause_id": "78ca9a4a-a1de-4f87-ad5d-9788baf97d5d",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "040724d6-dcff-4b23-bcfb-9891618c4a27",
+      "clause_id": "f5a2d4cd-2fed-434b-8194-cb59b78d0267",
+      "issues": [
+        "CJK 字符占比未达标: 5.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "094a8812-7e4e-447e-9cae-b5dcd9ab25d0",
+      "clause_id": "5c85ef7e-6a4d-405a-bfba-8513b534e23f",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0d1ba2b1-c60a-4654-85a9-608f8db585b2",
+      "clause_id": "a1e007d9-f890-4c70-b8b3-ec3010c854d2",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1583cd61-6724-45a5-b56d-0ff2ebcc065b",
+      "clause_id": "a00d2ff3-69f5-4ebe-86ea-2238bed3d35a",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "15fc6b8a-c7f5-4e49-9925-d36c054d6087",
+      "clause_id": "e141eb1f-f33d-4dec-bc3e-eefc860756e2",
+      "issues": [
+        "CJK 字符占比未达标: 5.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "162d5f75-2f98-47a0-98dc-d12012041f7d",
+      "clause_id": "d989da8b-9ee4-47ee-acfe-fc27962637d1",
+      "issues": [
+        "CJK 字符占比未达标: 5.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "222e7770-442f-4661-981e-236ace61b40d",
+      "clause_id": "e1533e5c-e0f3-4acf-a5b9-b61fc11f3e3f",
+      "issues": [
+        "CJK 字符占比未达标: 5.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "324628d6-ed62-4d94-90c4-fb3786ec4c59",
+      "clause_id": "238f1ad7-bf49-4e21-ad5e-6a2dd6697059",
+      "issues": [
+        "CJK 字符占比未达标: 5.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "33a1d277-a8f6-4579-ad32-c13d867c17cc",
+      "clause_id": "c349dab3-ecc1-4689-a6fb-15a9ed8d5197",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3705f629-fa53-4583-94c2-212f8e9139f5",
+      "clause_id": "ba4c0152-4989-45e2-9ce6-814e91caa124",
+      "issues": [
+        "CJK 字符占比未达标: 1.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3e13998f-77ea-4af1-af82-23fa41321082",
+      "clause_id": "c04cbb87-0ba7-441e-b432-dc0c8c879b21",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3e877ebf-2dc1-46aa-99b0-120690a5e953",
+      "clause_id": "e224c861-4ced-4e83-b875-dca36a9aafbc",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3ea04f5b-8b10-45b4-b59e-207a9ab29103",
+      "clause_id": "eba31533-4f6f-462f-ab9e-636502908279",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "420b0ff7-ab1d-4419-a03d-6adf0b378392",
+      "clause_id": "457f422a-dffa-4b50-93e4-033227c5e992",
+      "issues": [
+        "CJK 字符占比未达标: 4.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4aa8cc98-82f2-4b9d-ac71-e047554af566",
+      "clause_id": "6a5bb920-bc24-4b82-ae3b-cc67aed55086",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4eac13af-1e91-463b-a25b-7d7c63eedf90",
+      "clause_id": "366eb040-2b3e-47bf-9988-d9fd3e3336c2",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "55e117e3-831f-4636-a0bf-ef84e0e30aa6",
+      "clause_id": "120cc582-5b00-4c85-9381-9855bfc1f496",
+      "issues": [
+        "CJK 字符占比未达标: 1.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5640c58d-e20f-4ae6-9897-6896806d5377",
+      "clause_id": "e74bb054-41c0-4870-8dbc-0e586f60e537",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "577e380c-3159-42fd-8097-e8020e5df5f3",
+      "clause_id": "12950ada-d510-40a6-92d3-087f218d2ffe",
+      "issues": [
+        "CJK 字符占比未达标: 6.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "59565c0f-b4a1-4031-aa86-e7df8539e69b",
+      "clause_id": "8f974dd1-d670-41cd-afe7-6dc3e8ecc0ff",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5bc88c50-2ba1-4a76-b571-b3e125dd9cca",
+      "clause_id": "d9d8eda4-b5a4-4a5a-a298-65c78e228fcb",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6ac5f725-179f-4f96-a0d8-169460885c66",
+      "clause_id": "bad468f4-e198-4df4-87a6-cd2b569610e3",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6c634a8f-e7f4-42d2-8dcc-9de464bc79e3",
+      "clause_id": "d4dc9fa5-c9cf-4627-b7a1-51fedcd75b2d",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6fc3ae81-9212-418b-83e8-eac843a15dc3",
+      "clause_id": "54ea2d5f-4481-43e0-afcf-8e1e3747e124",
+      "issues": [
+        "CJK 字符占比未达标: 3.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "78a78278-8742-4c7a-a327-823ffde90298",
+      "clause_id": "a53a4947-70b9-4368-b1ee-7c4984513b64",
+      "issues": [
+        "CJK 字符占比未达标: 5.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7badb0c7-a8a3-4316-bdbe-7cd98420fded",
+      "clause_id": "96ad70a9-a7b9-4852-8602-93b09ccd8978",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7e35679d-a502-483d-99c1-f4ff45654b50",
+      "clause_id": "93d8567d-9a7f-40b9-b0a4-733642fdf79d",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7ee5d91d-885c-4448-8393-81a9d868cf01",
+      "clause_id": "06d4cdcf-e953-4d22-b024-347f683582cb",
+      "issues": [
+        "CJK 字符占比未达标: 1.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8171d0cc-63f3-4fbf-9680-c1af93443ca5",
+      "clause_id": "83b351c1-261f-468d-9401-137312ccb983",
+      "issues": [
+        "CJK 字符占比未达标: 7.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "88430a47-efd6-4b95-98df-7f01f496a65c",
+      "clause_id": "1cabd4ab-1e00-42a6-bff6-ec9d5f1ea88e",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8b1b1100-81e1-41a6-a573-d3f491437974",
+      "clause_id": "ecafd299-2981-4574-9514-a64069aa0121",
+      "issues": [
+        "CJK 字符占比未达标: 3.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8e98b1bf-c955-46e7-922f-08da1b804b8c",
+      "clause_id": "d182b705-81bb-49a5-9818-ea4c5a9e044b",
+      "issues": [
+        "CJK 字符占比未达标: 3.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "90fa7082-712f-4f83-a52b-d2bc0f31032b",
+      "clause_id": "b2874c4c-4e13-41dc-ba63-ac829ebe7d12",
+      "issues": [
+        "CJK 字符占比未达标: 8.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "92af1efa-01f0-46fe-b512-4d6f2e9998ff",
+      "clause_id": "07b39611-0e4d-44b0-a369-3986fd5fb7cf",
+      "issues": [
+        "CJK 字符占比未达标: 3.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "93f4790e-dec7-47ba-8d7f-6be07eca8925",
+      "clause_id": "6acfcab5-ab1c-4f14-9372-963803c1c975",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "949153e5-f081-45fd-bd6c-7f89a2ae2b55",
+      "clause_id": "96d05956-d53f-4845-b41b-490723d6a996",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9806ce37-7cfe-4301-9c3d-64c93cc2e656",
+      "clause_id": "3897133a-0f9c-47ad-ac56-005a39af4640",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9adb27f6-0ff3-42e5-9d4f-67be2cb43b3e",
+      "clause_id": "5af6a8da-405f-4343-80ae-0d2eb95830c7",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9fe21fe1-5fbd-4331-a182-2c38016473b8",
+      "clause_id": "58912aab-3f63-4f2f-ba6b-7ac03cbe6951",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a82d5a60-007b-4fe7-a689-fd2fc051d740",
+      "clause_id": "4af2f58c-1cb9-4cf8-9bcf-5061dd13ea6d",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ace0d377-17f9-42c5-9661-c070c47cda14",
+      "clause_id": "b8216850-33f9-45ad-97bc-0cc4ce229967",
+      "issues": [
+        "CJK 字符占比未达标: 7.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ae27762f-23cf-4a87-bd3c-49ae06f3bffd",
+      "clause_id": "c825326b-0983-4cc2-96b2-fcde98114398",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "aeb068de-5247-43ad-8d60-c9827026e7b8",
+      "clause_id": "87a503da-cefa-48ee-ab0c-a28977cbbb1b",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b20f1f89-790a-4a7f-b07a-284afc1dd0cf",
+      "clause_id": "44fe40b0-875d-4754-9b98-20431270e55e",
+      "issues": [
+        "CJK 字符占比未达标: 8.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b3c5cd02-b7dc-4fc7-bda1-d25a8738df5b",
+      "clause_id": "ee78e4ff-24fa-47c4-85d0-667464626e29",
+      "issues": [
+        "CJK 字符占比未达标: 3.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b85638a1-7e3a-4b98-a3c4-631df493158c",
+      "clause_id": "bdf70a5a-f115-440f-bd81-9108b83b4dbe",
+      "issues": [
+        "CJK 字符占比未达标: 3.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "bbdd1dcd-c8e2-49b6-b5da-7ae4d626644c",
+      "clause_id": "a298858e-13f8-474d-bbc9-a75212e46c79",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c2ac7e64-4c38-4b93-8ff1-33ae835e9bf6",
+      "clause_id": "81c0c855-3a50-42e4-b143-8fe805da1717",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c379cf08-78ff-48ae-a99e-740d244fc4e9",
+      "clause_id": "da4cb5b5-9a41-4512-91fb-7c91cb262979",
+      "issues": [
+        "CJK 字符占比未达标: 8.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d70dacf7-1b99-4242-8ec9-2d9edb8a94f0",
+      "clause_id": "fa0843c0-2ea2-486a-b61a-6e596219a5ad",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d7c7d467-a71c-457e-8a89-2c86e4e80619",
+      "clause_id": "de948e45-504a-4711-9b57-56a141e6da1f",
+      "issues": [
+        "CJK 字符占比未达标: 3.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d84094ad-adc4-4792-b2dc-93e01f06cddb",
+      "clause_id": "59d6b528-69b2-450f-87b8-6c100ee94663",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "dd49a751-bfb4-4d8d-a6ec-a77d04132ad1",
+      "clause_id": "95805965-e9ab-42a4-a016-1c3e038d31a5",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e31cbf87-aa2c-4646-ab1a-ed21add0bc4a",
+      "clause_id": "d323c794-47c4-404a-95dd-3fa67a9ef149",
+      "issues": [
+        "CJK 字符占比未达标: 9.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e5c4f902-3bf2-4631-b764-eb192955b1da",
+      "clause_id": "265fa793-79fd-4444-8b25-fbe4c30d472e",
+      "issues": [
+        "CJK 字符占比未达标: 5.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e687c6ff-7eb0-42bf-aef1-929e1ef3dc13",
+      "clause_id": "78438514-780b-43f8-8fd3-44a495cb5561",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ea3ed321-240d-44e4-a40f-42b65d995fed",
+      "clause_id": "cfeeec6f-7b55-4287-9547-310a233111b0",
+      "issues": [
+        "CJK 字符占比未达标: 7.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ec86e96b-25f5-43f1-83fd-e9264002d583",
+      "clause_id": "93371194-9154-46f7-b992-048af97e4cbe",
+      "issues": [
+        "CJK 字符占比未达标: 5.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ee4f17eb-5d3a-43c3-868e-8009c6892851",
+      "clause_id": "a24aab50-377e-4492-8b0e-3bf55e476560",
+      "issues": [
+        "CJK 字符占比未达标: 3.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "efc4a648-b93f-43c3-9ab0-1a1ca60ededa",
+      "clause_id": "ac00d3ca-85d5-441f-8929-db96ae8a50d9",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f3102990-e41f-462c-8dbd-9499351f38f3",
+      "clause_id": "d7b349ec-e713-4403-af7f-1b96cb92f851",
+      "issues": [
+        "CJK 字符占比未达标: 7.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f5610c63-41bd-463a-b41b-a294663d7436",
+      "clause_id": "01635ebc-5ef3-4d18-9abb-9e671db894dd",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f63c633c-548a-4642-a772-3fb1b940102f",
+      "clause_id": "8d615a40-6da9-44c2-b3cf-4022ca88ddb1",
+      "issues": [
+        "CJK 字符占比未达标: 5.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f700ed70-5f5d-4230-9658-af0e7e2eba8c",
+      "clause_id": "905c03af-14db-42a5-a797-bb76f71c61dc",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fa43ff30-2644-4c71-ac6b-33210fe9467b",
+      "clause_id": "207d6587-979c-4b49-a1d1-4aa34a306be7",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "05de5928-0339-45eb-b5c2-9fe233b6263d",
+      "clause_id": "36340304-6a66-4058-965b-54935f5319ad",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "074f3e1f-af0b-4776-af9e-c37228d99dbd",
+      "clause_id": "8b2ffa30-640a-4f8d-be0e-8eead6120fe6",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0acb4328-83aa-4755-9064-8f6f99b20c31",
+      "clause_id": "245d74fd-9384-4a9f-aae9-82b0ab2c4e15",
+      "issues": [
+        "CJK 字符占比未达标: 2.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0ba3c252-b0da-41ee-a07f-a40ae53bef97",
+      "clause_id": "455780e3-e2e1-40f4-a67d-76d73c9cbc98",
+      "issues": [
+        "CJK 字符占比未达标: 11.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0cb1df5b-2d0c-4370-9261-011a6c675402",
+      "clause_id": "fad5a02c-71ae-48dd-9826-cb5f9d68104e",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0cd23ed6-1394-46d6-b0c9-8f110bcc2b50",
+      "clause_id": "08c18e3a-5702-4bd3-8c32-6518b7b43664",
+      "issues": [
+        "CJK 字符占比未达标: 5.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0cfb81d0-5b30-44d8-bf28-34878a4a3df3",
+      "clause_id": "34f500b1-0197-4631-affc-50e3eb79db54",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1395fa31-e7a1-4eea-9411-cdcf5775edc5",
+      "clause_id": "7b323897-db55-4b86-acdd-1375af1dbf39",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1d9ba77a-a383-4db8-bd0e-e7bde51d0187",
+      "clause_id": "52aa9236-90fb-4904-83b8-d3e072f76745",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "254aebaf-11c4-4a57-8343-73078a2eb470",
+      "clause_id": "04ac5904-be83-4980-afb6-6f7e208a7a84",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "266aac5a-6cc3-4e40-b615-8ba82e057e53",
+      "clause_id": "844f7faf-35c1-4ac0-80fe-607a5f0d6d9d",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2aaa1575-6490-4ede-9be8-877284cadc3c",
+      "clause_id": "11258cb4-a99d-4f71-aa54-e8e8b86df371",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3944047d-f2eb-47a8-a967-45e43361afe2",
+      "clause_id": "7af0f6dd-f927-4daa-a38f-44512aec0fa6",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "39886f66-b6a7-42dc-b0d9-254bc92a4a6d",
+      "clause_id": "8a723cfb-2a20-4829-95be-42826d779141",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3f3d4748-8505-4c4d-9d4a-0bea85a04865",
+      "clause_id": "4dcd8ab6-7d47-4e96-ba71-114c8e6ee4db",
+      "issues": [
+        "CJK 字符占比未达标: 1.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4400da8c-94d5-4bd0-9715-017fee0d3ed5",
+      "clause_id": "a4955bd3-8ff8-4ced-a429-d4eba5dc3e69",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4e7b039e-5b68-4c26-9a30-94e74085c09b",
+      "clause_id": "c6472733-b76f-4fb2-a48d-2be4f6a094b8",
+      "issues": [
+        "CJK 字符占比未达标: 11.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "51668416-5e96-48ec-b8b5-5a0ea605820e",
+      "clause_id": "7a65331f-d66e-4f03-9ae7-c875d77a0b7b",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "538f26db-bb36-49b1-8f4e-b6033167e7ee",
+      "clause_id": "688e19a0-af1c-4c45-bb2a-8e825424e465",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "54ee07af-44ae-440e-ac78-f689b24abe13",
+      "clause_id": "fa43e0f4-dfc6-48aa-82ef-b0be81958d2f",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5a8ec615-8f72-4fdf-a562-8f23975e2448",
+      "clause_id": "57444e34-b416-48c8-bb31-4d3659a885ed",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "60f69821-5e8e-43ec-9bba-a3172f534358",
+      "clause_id": "11b14cc5-b8d5-4649-8491-ead34b64be4a",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6535f3e9-7478-4d47-b676-2167581fc72a",
+      "clause_id": "d0c9b082-b240-45c1-bc92-13be123c4392",
+      "issues": [
+        "CJK 字符占比未达标: 1.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "690f1802-d7f0-4008-b36a-d3c5316e73de",
+      "clause_id": "6352b2a3-2f11-4a4d-8109-e54a8020a616",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6c6e5b74-7e4f-43f7-97ab-22db772ada25",
+      "clause_id": "8cdf92dc-17c6-4ba0-ac70-47ee05e0db5b",
+      "issues": [
+        "CJK 字符占比未达标: 11.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6d6cbd6a-e1b6-485d-ab95-005747b17b0d",
+      "clause_id": "1a562bd0-b748-4176-bffc-a0ec944caac4",
+      "issues": [
+        "CJK 字符占比未达标: 3.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "72b2ce9d-cff8-4422-962c-dcb91e3d6099",
+      "clause_id": "f258418f-8f59-4d3a-9792-38bf86517e02",
+      "issues": [
+        "CJK 字符占比未达标: 6.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "73fc09fe-a5b2-4c24-8e90-0ec3b38150fb",
+      "clause_id": "49bbd2f0-0a97-476b-a0ec-6718b6f0c1ac",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7d1200e5-39b3-48be-a115-1941f27e5f5f",
+      "clause_id": "5033ed1a-ac5d-451d-ad5d-aeb7faf1a9d8",
+      "issues": [
+        "CJK 字符占比未达标: 4.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7d652244-03d7-4fce-8099-e63dd7530fa2",
+      "clause_id": "58c9811b-b694-438c-bd9c-538542c6cf8b",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7fe89ae6-30de-4920-9e53-d0254f529f81",
+      "clause_id": "2f454291-ed16-4517-b2ae-8fb304bf352d",
+      "issues": [
+        "CJK 字符占比未达标: 4.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "808e1230-e061-4632-8356-bc2352f18700",
+      "clause_id": "c18a63ba-bbfb-4802-8e7a-aa0c27b3ee43",
+      "issues": [
+        "CJK 字符占比未达标: 3.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "89ad84eb-133d-48c3-8ca5-06b1c21a22ea",
+      "clause_id": "cc5c416a-917c-4551-8dd5-965382405e4e",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "89fdebb3-3c64-44d4-80d5-d60b3d2a8638",
+      "clause_id": "fc46c529-a3f1-42d5-ba3c-362b08253b01",
+      "issues": [
+        "CJK 字符占比未达标: 6.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9f0d2698-5faf-4072-a3ae-baa0ed28a127",
+      "clause_id": "0bf5f962-5b95-43eb-a196-fd1fb4533a6d",
+      "issues": [
+        "CJK 字符占比未达标: 0.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a0b3b294-0d89-4b9b-8f92-6287242b4790",
+      "clause_id": "3f24e32a-c255-4095-a7a9-a69203c8d8ff",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a1aa6e87-a30d-445f-97b1-289eb82d2bc5",
+      "clause_id": "06bf62ca-4de0-4467-9e10-49786b692dab",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ae375779-28cb-45b8-b54c-067dcf8c6e13",
+      "clause_id": "c52b5705-1e2e-40f9-9555-a0d6e63862d2",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b17359f2-09a1-4b88-ad34-80b3acdececa",
+      "clause_id": "3e3165a9-b7a2-45f9-baa8-6478b5d8cd4e",
+      "issues": [
+        "CJK 字符占比未达标: 4.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "be802026-09f4-464e-848a-e88fb42d0600",
+      "clause_id": "5834a15b-d367-49ef-9360-1d57bc745d94",
+      "issues": [
+        "CJK 字符占比未达标: 6.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c0a2e624-c760-4c6d-93c5-f2a915721898",
+      "clause_id": "fdb4993b-c130-4cd0-b2cf-ca0cd32d178e",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c274ce15-6e02-40d3-8c79-23556e859c4b",
+      "clause_id": "04fabe4f-dd60-4552-b312-4e8f1b519cfc",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d1b9d7d2-007d-49ff-89a9-2bd3e14942a4",
+      "clause_id": "79e8dc6d-002f-4191-b994-4100571c7d77",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d5102810-d394-4d54-be49-2a03b661c4d8",
+      "clause_id": "de1ed598-cd25-49c9-8d3f-25475fa8b0df",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d665bcd4-eab6-422b-b7c8-97823a3f4d9f",
+      "clause_id": "ad7d5235-c9d5-44cd-ba58-b61fcf385c07",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "dc3bd2fa-f9ca-44ad-8978-59d396dde005",
+      "clause_id": "5e9eeb3a-bc7f-482a-a590-202c308f08f4",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "dc5d41a5-c4ab-4c11-bfc0-dcbca5978902",
+      "clause_id": "4013ab1f-cfff-4bc4-80c0-43e27139285e",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "dccbc35b-acf4-4e1e-87cf-cef0b5077369",
+      "clause_id": "6850aada-3218-4b17-928f-ac05604c511d",
+      "issues": [
+        "CJK 字符占比未达标: 2.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e1127f9e-9615-4056-b6e0-fbfdd1978736",
+      "clause_id": "5153469d-16f0-480f-a26b-8e5940ddd11a",
+      "issues": [
+        "CJK 字符占比未达标: 4.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e179924e-34b4-4c33-ad69-564ad226ffdf",
+      "clause_id": "9a53ca63-0f86-43ec-8f56-dff00ab8a7ad",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e81c7049-c0e8-494d-90a3-a967d2aebb90",
+      "clause_id": "a4cbe3bf-5581-40cf-a7d0-bb028ce47266",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ef4f579d-0d1b-495b-9a74-ff0c6e7f3270",
+      "clause_id": "a859e58d-bf10-488e-85fb-8cb7b33b399e",
+      "issues": [
+        "CJK 字符占比未达标: 2.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f070a16c-abd5-444c-bbaf-81dc8987bea9",
+      "clause_id": "62b6fc8e-dfab-43f3-a98f-ef59942c7be1",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f88bfc81-829e-4fe8-9aad-55ef685f644c",
+      "clause_id": "919d6048-5f4b-4392-8ccf-84656d2b6192",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fe25d2a7-333a-4f4e-9839-4e6b58f45545",
+      "clause_id": "5ab7bf3f-29bf-4fce-96b6-14f31f3a16b2",
+      "issues": [
+        "CJK 字符占比未达标: 8.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ff361a5f-e008-4bb7-9623-90011f6f2f5c",
+      "clause_id": "adc02fd4-35e1-4dc7-a8f4-c51acf5624cb",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0149d296-cd73-4cfd-a920-fad60cd2dc5b",
+      "clause_id": "e0d421f9-0523-4026-8451-50006e0b4a49",
+      "issues": [
+        "CJK 字符占比未达标: 4.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "021bb8ba-200e-4301-af1b-dab3c5cdd619",
+      "clause_id": "2fcfce13-0c29-459b-add8-da4d32725cc4",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0527fbda-f642-42a3-8256-3ea7845d9b66",
+      "clause_id": "c27b9548-cbd2-43f2-bebf-bfca31d68566",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1725d2e3-448a-4f39-877d-ae77d6d31ca8",
+      "clause_id": "2e8a6a39-de16-49ee-9700-882e9e039874",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1fc29c58-676d-487d-8019-81481606d492",
+      "clause_id": "58025b28-87c5-4ad8-bda6-cbbb1d5698b9",
+      "issues": [
+        "CJK 字符占比未达标: 3.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2f5ec982-b0bf-4780-a89d-c2414c220cd5",
+      "clause_id": "3d60b8db-2033-4bcd-b1ed-b0513614c62b",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3b25ea18-dd06-4e02-84c4-e9d7c6b09227",
+      "clause_id": "0f7487bd-0c22-482c-8043-c8dc40caa517",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "41f82e7f-d40d-45b4-b8a5-6b4d0b8be4ac",
+      "clause_id": "d5bec008-6580-4abb-a4e8-3c3ac1e67822",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "428b23e9-4f3d-4be0-aa0c-ec9d67acc263",
+      "clause_id": "4ac68850-4573-48e8-97b5-4dddfe0a3bd8",
+      "issues": [
+        "CJK 字符占比未达标: 0.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "528dd1cf-f30e-45b7-84b0-ed2e0ff3aa81",
+      "clause_id": "397ab333-0ddd-41e5-9be4-48447932be7b",
+      "issues": [
+        "CJK 字符占比未达标: 2.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "543e11be-106b-4ca5-8032-572c63943380",
+      "clause_id": "076831d0-9e39-4d5c-a139-4b32cffc6b8d",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5795c2de-046f-495b-a2c8-34735bb8e195",
+      "clause_id": "cd68904e-d33e-4704-a138-352945870a4c",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5b3073d3-4ed9-4c91-88ca-eb60c211bf30",
+      "clause_id": "db911d46-358b-47a5-9469-00b22cf64b72",
+      "issues": [
+        "CJK 字符占比未达标: 6.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5b33cced-d7ce-4148-a964-5b4fdb2437e3",
+      "clause_id": "5fceb016-2474-4089-85aa-5da5db5db501",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "61a573a3-8936-4133-85ee-86c03296dcf4",
+      "clause_id": "3a7325a8-08df-405c-a875-4f5b3ac7c837",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6baa856f-4c73-4678-a4a8-833fd7fa0871",
+      "clause_id": "b1c76e06-c1f1-4a67-993b-56ce1718c941",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "738ca052-5f6f-4bee-9f46-0645d9be6ca2",
+      "clause_id": "4597a23a-cb41-4521-af20-a54cb55925c1",
+      "issues": [
+        "CJK 字符占比未达标: 9.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7d0da004-cc1d-4c81-8ae3-13c4a420f8fc",
+      "clause_id": "83136ddd-d493-4a2b-b86d-8dfa18f18f14",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7f9e6389-ac6c-4900-923b-7ca4c6f3aab8",
+      "clause_id": "55d6c96d-effb-469c-93f4-e579c10b8795",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8507d1d7-3d7a-400a-ab3a-731cfa6ee77a",
+      "clause_id": "d2d03d64-74ce-463c-b060-3c612ace4c0b",
+      "issues": [
+        "CJK 字符占比未达标: 0.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "85d64af0-862d-4596-b676-eb5fa00369c8",
+      "clause_id": "5dbc0061-73d0-4c65-b985-cc7f219cf651",
+      "issues": [
+        "CJK 字符占比未达标: 3.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "86bf2bca-b4db-4025-8160-b34ba05e6486",
+      "clause_id": "623891f0-3126-4e21-9359-1a452691189f",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8cc7040e-9897-4830-ab24-82a15e96baf5",
+      "clause_id": "7d600e90-c33a-41a7-a942-55b4d695f1d7",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9a92a4a8-29f1-4ae2-8159-ad54929c7776",
+      "clause_id": "f10f741a-1028-4de1-ba35-eaff6a6640ee",
+      "issues": [
+        "CJK 字符占比未达标: 12.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9f9997ca-3b2a-47ac-9418-44f4ee53693e",
+      "clause_id": "42d03799-41f7-4628-9c62-7f6fcb5378c5",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a6f82b67-51c4-4427-80da-71b97d745234",
+      "clause_id": "d713bd7e-60d8-4704-bd82-600327e28747",
+      "issues": [
+        "CJK 字符占比未达标: 4.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b21d0888-e668-48db-b764-76ad18d25c4f",
+      "clause_id": "3748f47a-a3cf-47f0-bd29-c28604e8294f",
+      "issues": [
+        "CJK 字符占比未达标: 3.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d0e50b32-095e-4296-9a8c-f9a48e67d760",
+      "clause_id": "b09a8699-dc46-407c-8b94-e182adc392cf",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "da314c3f-c559-4fda-9a67-8370adc7f6ef",
+      "clause_id": "096a03bf-3ea3-4739-9cd5-f47dcb9a3a67",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "dcafd768-41ea-432f-ac97-1156ae8f1c1a",
+      "clause_id": "6ce522ec-a284-4ad2-9127-6525b32ec7e9",
+      "issues": [
+        "CJK 字符占比未达标: 4.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e17c225f-6337-4a02-8ab0-6f8733692035",
+      "clause_id": "70343d35-4479-47a0-a452-6ff517cbb1c9",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e8c3d139-729c-44e2-a328-b1905be3a969",
+      "clause_id": "3ae6d385-d86b-4158-8404-719f7b7b7ac1",
+      "issues": [
+        "CJK 字符占比未达标: 4.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ea9d21ce-1db9-435f-90dc-66eca6ed6a1a",
+      "clause_id": "76e173d8-982b-4b0c-a249-d6f6df37b60e",
+      "issues": [
+        "CJK 字符占比未达标: 7.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ee961c7f-a602-4517-8e52-afbbdf344234",
+      "clause_id": "39965289-943c-470b-9121-35032927ea68",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "eea6e8d4-17b5-4d94-9d06-9c6576ad00c6",
+      "clause_id": "3da33116-1730-4355-89b6-ceb23ed49fe4",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4dbb64fe-56cc-4306-970b-c15487d565a4",
+      "clause_id": "ded60ce1-5ead-415f-a2de-a3511e9eb5a9",
+      "issues": [
+        "CJK 字符占比未达标: 1.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6bf5babb-c8d6-4f67-bd0e-b8c726218f19",
+      "clause_id": "a5aa8a97-3435-4151-87da-a731bcb213bc",
+      "issues": [
+        "CJK 字符占比未达标: 2.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "796ea852-8c34-4cde-8792-dd2b5473dea3",
+      "clause_id": "310ec954-e127-495a-80f2-726aa161d6ac",
+      "issues": [
+        "CJK 字符占比未达标: 3.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "81f7225f-10c1-45e7-88a9-7d2711f7ac4b",
+      "clause_id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "988928f9-009a-4c43-9b76-f4f6007c8b10",
+      "clause_id": "428142a7-6555-4c98-987b-66634d3fbb84",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a377aa0d-06cd-418c-b0d7-5c023cccaa9a",
+      "clause_id": "aa17c0fe-f363-4439-b134-ab4e7fd1311d",
+      "issues": [
+        "CJK 字符占比未达标: 5.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a4aefc2f-8299-49fe-929b-5d91f561ad5d",
+      "clause_id": "cdaadda9-e82e-4dd0-be68-c86405d6f8af",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a7699cf5-c22f-4fef-9eba-af126972da8a",
+      "clause_id": "4a68af63-3af9-49a0-affb-778f1863a382",
+      "issues": [
+        "CJK 字符占比未达标: 8.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a8a53c29-7533-41f6-922d-db0c7f93ebd6",
+      "clause_id": "00aefae1-3219-415a-9b9a-b5131b094623",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "db7eeb03-bb0e-4e97-b36a-17c745e05f93",
+      "clause_id": "c0a9adb6-2b66-4f23-b829-a56d41b2801e",
+      "issues": [
+        "CJK 字符占比未达标: 0.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1e566824-5ca4-4d05-a6a6-7c63bd8fb43a",
+      "clause_id": "f990ed6d-bc6a-42d7-ace4-32fd00509cef",
+      "issues": [
+        "CJK 字符占比未达标: 8.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2a1c23e8-c3cb-4495-9def-7cdfe7942428",
+      "clause_id": "4f655cc8-8e9b-4b21-87b9-01b8637a382c",
+      "issues": [
+        "CJK 字符占比未达标: 3.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2ddd824e-42a9-429c-b4a2-9fb16bbf744f",
+      "clause_id": "6f9a5152-9971-43d1-99fb-49bd793047bd",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "516f36d6-7aee-4832-beac-582a3bbe17c5",
+      "clause_id": "3810aed2-83be-449d-bc68-c8f2c9738c04",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5d62d663-23b7-41e4-8150-6c61766f9a46",
+      "clause_id": "48c700e8-c3be-4fbe-a674-f49365011c07",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9dd4d543-b6a8-4c67-a3f5-cdfb21c842a8",
+      "clause_id": "f23084d0-a897-425a-abdc-4d63da7a7e3b",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a18ffed4-4b2a-4c34-9052-d967759c876a",
+      "clause_id": "bdb2a397-313d-4403-864a-84802a67ec7c",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "faa8fed7-0428-4db7-8fe0-335ccecd851f",
+      "clause_id": "9ef8c234-0809-47c6-b761-63e9bfb0d5a9",
+      "issues": [
+        "CJK 字符占比未达标: 0.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "142fdad0-8453-4249-aa58-1dd781d7af38",
+      "clause_id": "21572fed-2496-461d-965d-5cbd4e820416",
+      "issues": [
+        "CJK 字符占比未达标: 5.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2c56f2f7-b8d3-450b-b67b-4438bf51d9a4",
+      "clause_id": "857c8d29-04b2-404c-8cf1-81e893afc95d",
+      "issues": [
+        "CJK 字符占比未达标: 1.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "48111e74-2349-4f70-b591-beeb7942c902",
+      "clause_id": "44f8027d-e245-48ec-9b07-f537dfe6a41b",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4a072e8c-4eea-457e-a4fe-327aa5f2ca47",
+      "clause_id": "113ab480-0aeb-4cf7-9b5e-db4becc319ef",
+      "issues": [
+        "CJK 字符占比未达标: 0.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5a80bcd3-c421-4ea5-bd5c-52ff349adfa8",
+      "clause_id": "d87bc6e8-adf5-4d92-b25a-b0610e1c4d84",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "642fdc12-5528-4ade-8bd7-f250b9664e48",
+      "clause_id": "31cd9a96-06d3-4f32-b102-f596070abc4b",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9716100d-dbb0-40ea-98b7-4f6a40edcaee",
+      "clause_id": "9885ae7b-34d8-4109-9f7b-ee7cc8fe2ef8",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b4e1c3d2-027e-454c-9d08-b12cdfb4778a",
+      "clause_id": "a6b4cbb1-7ea2-49cb-ae19-158f7daa0778",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "cb62bff6-a569-45b7-aec6-b28b7abcc933",
+      "clause_id": "efccaaba-7ba3-4093-854e-8576bbdbe960",
+      "issues": [
+        "CJK 字符占比未达标: 2.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d80e8d6b-f0e5-4822-a2d0-7c96a37951f0",
+      "clause_id": "b2719a38-85ce-4c1c-a256-66a8569a9292",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ee8d6586-603a-4ffb-84a5-88fce6f85ed4",
+      "clause_id": "debe0594-c520-4f35-95a2-c88946b265de",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2b8e917f-d583-4aaa-bad1-8a64c3c61921",
+      "clause_id": "6b1e90d0-821c-4e10-9f7c-ec79371ac58d",
+      "issues": [
+        "CJK 字符占比未达标: 3.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6898ab9b-3d8b-4ade-a84c-05d08d4cff98",
+      "clause_id": "5123bd94-ed32-412c-92db-9e7de7287f97",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6918171e-4a65-4a15-9ebe-ef034fa43b6f",
+      "clause_id": "5d9962f3-514e-4e43-80ba-211bdb68f482",
+      "issues": [
+        "CJK 字符占比未达标: 5.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "74fddc5c-abe7-415a-a2ad-790ddf7865a9",
+      "clause_id": "1c189839-d04d-4137-8f76-9ed6c2f37ac1",
+      "issues": [
+        "CJK 字符占比未达标: 1.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "97d0b488-a5d1-4fcb-a4d2-abde503d8453",
+      "clause_id": "13a61bc3-2ec3-4d39-bc06-8c59490accd9",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d23f8c26-f09d-4358-b46a-3baba4986f3e",
+      "clause_id": "c0867fc8-2211-4209-ac1c-a7118942f3c7",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e9c4b155-33ec-4f6c-a557-ce3936cbd703",
+      "clause_id": "0a2b3113-f269-47c4-95a1-2752b8292c46",
+      "issues": [
+        "CJK 字符占比未达标: 2.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ec60a1bc-04ce-49d9-98e7-de1b1f2fddde",
+      "clause_id": "db342c0a-dbb2-4285-b003-9feb016167d5",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f0c284c1-5724-4486-a416-893ec40c2ef2",
+      "clause_id": "1012d51e-42c6-4d72-8ff8-d184b4f88b58",
+      "issues": [
+        "CJK 字符占比未达标: 1.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7b0c9037-ead2-4805-bd8d-9d11c71dad84",
+      "clause_id": "4e2ae23d-df60-44e9-97e1-12d74817f1f9",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7cf48436-0716-4283-82fc-cd65af9628d0",
+      "clause_id": "6d8dea7b-cd42-45ec-8ee5-6f308800b81b",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "86aae235-d8b4-4fba-a58e-998cae2c3863",
+      "clause_id": "f18d1043-b26c-4a66-83ad-6933d537feef",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8872daab-84b6-4503-b62e-eabeb1187850",
+      "clause_id": "53a94ae2-cd3f-41e0-a1b6-483ad923d3b8",
+      "issues": [
+        "CJK 字符占比未达标: 3.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "96fd60f4-5fdd-4c48-9b8a-bd7a36a53e97",
+      "clause_id": "fc09227f-3af0-4bef-8391-0035b40cf7e2",
+      "issues": [
+        "CJK 字符占比未达标: 5.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "97490df8-0f83-42de-9aa7-01d93e4b24c4",
+      "clause_id": "41d46a1a-5398-4502-be9c-fc311635146f",
+      "issues": [
+        "CJK 字符占比未达标: 5.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fb083255-5fcd-41dd-9ade-20e417fdbe19",
+      "clause_id": "7cc3c173-bfd6-4e8c-99ef-04fe05eb5648",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0afd3a2b-9117-4824-8bab-472a4178e55c",
+      "clause_id": "1f2ee8a4-5b14-4801-aeec-64b8d8e8ed53",
+      "issues": [
+        "CJK 字符占比未达标: 5.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "14cd0209-dcfb-4381-bc9b-6523aa1231d9",
+      "clause_id": "8f3f7287-7a78-444c-8eca-f73db3d72c53",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7f6ca36c-7095-4724-9109-f0553fd1b307",
+      "clause_id": "4e9e32e5-7bb1-4b9f-996d-722ad06805ca",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d0eef9c7-ab51-4c41-8fa5-80e82f46ff41",
+      "clause_id": "13c20bec-b87a-444b-a1a7-5d231ab8c78e",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f2c333e9-6be7-4d50-a8ab-cdd704b9be0b",
+      "clause_id": "4c8728ec-0394-4aaf-a51c-e5e5026c12db",
+      "issues": [
+        "CJK 字符占比未达标: 3.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "05a7b3be-467a-4dfd-b3e4-d32347d8c9f6",
+      "clause_id": "9a845dcd-c7e0-4249-9456-0fee86b3ca9b",
+      "issues": [
+        "CJK 字符占比未达标: 3.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "49d74106-01d4-42d1-895d-f2f5a924dd81",
+      "clause_id": "d7af72b7-0b56-4f6b-9ff2-3b462d24e0e2",
+      "issues": [
+        "CJK 字符占比未达标: 7.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5673aa55-4260-448c-9169-d2a4446893fb",
+      "clause_id": "dd30bf88-15a7-45fd-ad1f-0f7c68f24387",
+      "issues": [
+        "CJK 字符占比未达标: 1.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "87d70f6f-b3d8-40bc-9c47-4ac8d392aae4",
+      "clause_id": "8fcf851f-af2d-4daa-8254-5ec6cdf8bb4f",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9bc62182-a147-4851-8c40-23e322d5acec",
+      "clause_id": "5cd5f704-f599-48fa-9e37-94064fe67409",
+      "issues": [
+        "CJK 字符占比未达标: 3.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "edb8d20a-870e-4b84-bd63-e67dba86334a",
+      "clause_id": "58990e73-67ec-48e9-9b57-18029bf6ccbf",
+      "issues": [
+        "CJK 字符占比未达标: 4.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "210e1be1-840b-4ae4-a8fc-9b742723c6cc",
+      "clause_id": "c1de3efa-fdf0-4161-93e9-af6e816c7b0c",
+      "issues": [
+        "CJK 字符占比未达标: 5.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2cb538e3-c172-4611-aed3-d729b2408966",
+      "clause_id": "c4368a59-512b-4282-b60b-2ae3a0498360",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4592757e-1f43-4a12-b5d6-a947ecd165f0",
+      "clause_id": "dd45144d-b082-461b-b8bd-7ca9a90bfa01",
+      "issues": [
+        "CJK 字符占比未达标: 1.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a0756911-64dd-4faa-9dfd-677de455d30f",
+      "clause_id": "370f767a-9f1c-497b-950c-48a4fc15f6bc",
+      "issues": [
+        "CJK 字符占比未达标: 4.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b2cb47a0-778d-4d32-9bd6-02f4d98c6e26",
+      "clause_id": "e8c41b42-55f4-4118-a9f2-88b15ba7788b",
+      "issues": [
+        "CJK 字符占比未达标: 7.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d3b6ca3f-4fa1-4051-80dd-a9d514a333ac",
+      "clause_id": "d3cc5097-cfe6-41a7-af55-b3b4a0706c47",
+      "issues": [
+        "CJK 字符占比未达标: 3.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d4128ed5-3166-4424-a4b3-b333758139bc",
+      "clause_id": "63cef251-2b5e-4152-a1bc-7600fd5101d9",
+      "issues": [
+        "CJK 字符占比未达标: 10.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "21107c7d-898a-4fe9-b3b7-d0e368aaaa59",
+      "clause_id": "7d5ac572-f014-4ec0-bd77-f5d1e4699a27",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7c6b4a46-c895-4fe3-a4e6-6101b29a2b88",
+      "clause_id": "a02c6d14-9aa0-4fd6-b253-e926528f635c",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8476020c-236e-42ce-bfbb-d9d2e5f79861",
+      "clause_id": "1add3bb9-8638-464a-9a21-09ef5ee41149",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a20c9c82-ddbe-4159-8612-14d17b2cd7b9",
+      "clause_id": "f4c3ba60-8de3-413e-9fe1-b8d57c7cf325",
+      "issues": [
+        "CJK 字符占比未达标: 7.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3fde6e64-8720-4d81-9fc4-793e2b822731",
+      "clause_id": "babb8eda-4f51-4b03-a84b-33ed6166572a",
+      "issues": [
+        "CJK 字符占比未达标: 3.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "530a2edb-b0d3-4446-b785-31422e8006fa",
+      "clause_id": "1da96f6f-a2a6-473d-9e2b-42828b68f653",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7aced3c1-1ca6-4a1e-bb6a-17ad08206a00",
+      "clause_id": "1cdf56b5-efe8-43a0-8ffb-8256cae7e637",
+      "issues": [
+        "CJK 字符占比未达标: 5.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "36f75362-ab54-4c86-9674-f0db83e5cb4e",
+      "clause_id": "e12322ad-4d69-4e28-b79b-7462afeccd9f",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "416e0d70-e6cb-437c-ae36-e5add96697b6",
+      "clause_id": "8057c5b0-3243-44c6-ad2a-3dbf15edccc8",
+      "issues": [
+        "CJK 字符占比未达标: 4.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "518b8a9c-0944-4bf5-bb68-ce13702dae03",
+      "clause_id": "93da47ec-f67c-46fd-8657-315588bf083e",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1eb8c2c4-6231-4478-96f0-9b1a47915df3",
+      "clause_id": "58e0b7d1-5d38-432c-9d18-0ff2bce96fc0",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7671bbfa-79d5-4efb-b2fa-adff248718ec",
+      "clause_id": "279584a9-ab22-4afe-9de6-5b5061860e01",
+      "issues": [
+        "CJK 字符占比未达标: 3.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "92cdfd09-2921-4e53-a1ba-608bce655a5f",
+      "clause_id": "5afb14f1-9073-452d-8404-ee2b2a4174bc",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a168fa38-86cf-40a6-894b-91fc891c09fd",
+      "clause_id": "aedb0051-6549-4618-809e-d4353a8e49c6",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1eb48352-a7f9-42a7-a226-453633830e0e",
+      "clause_id": "1bf1986b-bdc8-49c0-9e26-4d909065e0b6",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7dc12e0c-78a1-4688-8237-b7be097fe846",
+      "clause_id": "e6151dd1-93f6-4ef6-bfd3-335931361182",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "83978fa7-af18-46d6-b8e3-f54cffe03025",
+      "clause_id": "5e7d9642-01f4-4cae-b94e-89dd818cf99e",
+      "issues": [
+        "CJK 字符占比未达标: 2.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "840bd74c-94fe-4f6e-8cd4-fb633dfc2712",
+      "clause_id": "d1604752-562a-47f8-af7b-1305b0d5d9d0",
+      "issues": [
+        "CJK 字符占比未达标: 5.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8a875986-7bd6-422b-8e4f-7c6739de801e",
+      "clause_id": "bea3fecc-47bc-4a2a-b58f-d9ee38df8ec0",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a6e92d95-00df-473a-8261-5e4ea5b69cf2",
+      "clause_id": "152e4de8-d71c-4fe4-9fdd-ca5cf39b8fab",
+      "issues": [
+        "CJK 字符占比未达标: 4.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fb6294db-25b3-4a06-a110-f20d68048827",
+      "clause_id": "c50844a4-1198-4110-9b2c-558610419b20",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4bc64db5-c79e-4240-a5ce-ba753fbaafd9",
+      "clause_id": "be804039-f895-482d-a8fc-c5d814ae0468",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "586ae197-4f7b-47bc-803b-51616a1f6ab2",
+      "clause_id": "ae5cf01e-ae6f-4c04-8142-f5c0e8162edc",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "70d36f18-ef98-4670-b581-89cc0dbb9efa",
+      "clause_id": "5efd5205-68fe-458a-b3b2-582b8a103461",
+      "issues": [
+        "CJK 字符占比未达标: 3.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a0931eeb-0cf4-41a7-8cd8-a833adab7def",
+      "clause_id": "1793c90f-11e5-40ae-b5cf-d6e3c717cf64",
+      "issues": [
+        "CJK 字符占比未达标: 3.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a81a8558-1332-4306-aeb0-b5e3b138d43d",
+      "clause_id": "855cdb4d-2a13-42eb-b02c-07ff9a399442",
+      "issues": [
+        "CJK 字符占比未达标: 6.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b8cd0df1-2fb6-4889-af1a-ef3db71390e2",
+      "clause_id": "555c235d-0928-44da-b308-bf031bbba5f0",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c9c0ff58-ae09-46d5-b06a-28638668cecc",
+      "clause_id": "8c52566f-fb25-480c-985b-061683572a5b",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d83790c4-5e0c-4510-adf2-34e9a9c19e6c",
+      "clause_id": "76c52d39-e304-4a44-be4f-28f079fc6d4d",
+      "issues": [
+        "CJK 字符占比未达标: 5.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e8642ad9-9906-48e1-8b23-418c6a93b407",
+      "clause_id": "94767ba3-b3a4-4f6e-acbf-d083a4a741d2",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0acd8172-ba9e-4c8c-9cd9-5f854025dc8f",
+      "clause_id": "39006052-d76b-42a3-8d17-07c41b07d99a",
+      "issues": [
+        "CJK 字符占比未达标: 2.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0af1df14-90a0-402d-ad4d-50bb1eaff224",
+      "clause_id": "1ce652f9-5849-4fb0-82cf-c64d05a08b76",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "11c545df-a974-4239-b4b8-ecd54d683fe1",
+      "clause_id": "f399e05a-a42b-44af-9094-7a2bd8a78061",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "208788f3-9cc4-4266-8c28-81c1cc3be01d",
+      "clause_id": "01dc3a1a-1188-40ca-a95e-cd16b1cd9891",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "31b95a00-8cee-4da3-8263-744b9a019fa0",
+      "clause_id": "7e6a3909-d022-4c02-9191-311637d119ae",
+      "issues": [
+        "CJK 字符占比未达标: 3.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4e75998b-61eb-4bf7-9a3e-861d644d0dc4",
+      "clause_id": "414dc6e8-cf59-431b-844b-d2f2e7b8ea98",
+      "issues": [
+        "CJK 字符占比未达标: 13.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "70edd315-7745-487c-a98d-54c725268a29",
+      "clause_id": "3da6c9ba-b8af-4aea-ad24-9b58fe5a43a2",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "77d5fd55-663c-410f-9ad4-9bf455da9a56",
+      "clause_id": "9102323e-1a5d-455a-979d-de8a23ed2683",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "95c533f5-ce80-4908-be78-9950b9926e96",
+      "clause_id": "9f1353bc-c650-483f-b7f0-1fddfc9cf29b",
+      "issues": [
+        "CJK 字符占比未达标: 2.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "964777e9-3744-4d19-87e8-f30324e09927",
+      "clause_id": "498fa238-5cd9-4856-be10-b2812ee31044",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "50e1f166-cf78-4dfe-9de8-5b1ec958d871",
+      "clause_id": "9a2b88bb-1ef7-4022-a06c-0aa3d621b479",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a7c6fa89-071a-458d-87b5-74d0726f6eb2",
+      "clause_id": "1fa9c447-48c3-4e7b-8f79-972693f164cb",
+      "issues": [
+        "CJK 字符占比未达标: 2.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "af4c9204-fc90-4305-ba8f-5e2e9cdf0c76",
+      "clause_id": "71ea8a28-080a-439f-a67d-e6ce640736bb",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c2d6f5a0-6bc2-4951-a5d4-e87a25107eb1",
+      "clause_id": "1400204b-4cca-49c4-bf44-da3d23fd4b5e",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "cda5f985-51e3-41aa-83e0-ec84523bb838",
+      "clause_id": "c5eff2fa-67f6-42f9-bc6a-e46ea69ac600",
+      "issues": [
+        "CJK 字符占比未达标: 5.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e0c54767-4d19-4d06-bf6c-6917e93e5edf",
+      "clause_id": "0eb02726-c20a-4a61-afc8-6b5854b03add",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2d120636-5500-4510-8281-adaa5ce64327",
+      "clause_id": "306dbbc7-b201-4a81-beb9-1025938a8b4d",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "629ed297-6310-4392-ad33-9d87891759b0",
+      "clause_id": "d08827cc-3c89-468c-bde3-01830548de5e",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a593ac66-9283-4319-aee1-4aa4f25e0a98",
+      "clause_id": "a02f50a9-2010-4f39-ba52-781eddd3e809",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c653bf06-a44b-4efd-827a-2ae28e6875e5",
+      "clause_id": "309fe713-233b-412b-8b4f-b5d4c6593957",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1515c902-3aa9-45f1-afeb-9cb919ba3ecc",
+      "clause_id": "443931e8-1988-4b80-b354-c1480cd696e9",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2b6a0ead-e88a-426f-83fc-14b693ca2896",
+      "clause_id": "d623a364-9142-4939-b58a-7a78e8a963ea",
+      "issues": [
+        "CJK 字符占比未达标: 1.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "748a0b9e-3420-4e7c-8b68-cbb017c539e3",
+      "clause_id": "7863ff79-b328-4cad-ad63-6479ce31581c",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b5714369-732f-47e7-8966-c55a8102fe3e",
+      "clause_id": "863c7209-05cb-4168-9716-549702ac49a4",
+      "issues": [
+        "CJK 字符占比未达标: 4.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b77d9041-12da-4056-bbf5-07140b43a4af",
+      "clause_id": "e27957c8-0eac-4393-8fbe-17e68f0f0a69",
+      "issues": [
+        "CJK 字符占比未达标: 0.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "cd6159a1-1883-41e7-9ad3-782326a96d29",
+      "clause_id": "cf62e706-dabe-437e-9041-88879d75fc37",
+      "issues": [
+        "CJK 字符占比未达标: 1.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f1497a3c-c66d-42ae-a4b1-658e54169c97",
+      "clause_id": "ea7028d2-e2c0-4f1d-b825-1742fd81013e",
+      "issues": [
+        "CJK 字符占比未达标: 3.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "394f5e9b-f1c6-4686-987c-4c9d53980662",
+      "clause_id": "09af5b96-d89b-4329-b685-f64d5e19afd9",
+      "issues": [
+        "CJK 字符占比未达标: 4.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "779b788e-4577-4152-b6a6-50fc9fe786dd",
+      "clause_id": "e21ca646-6c1c-4918-ae52-eb7eb9a8e53d",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "828f9569-7254-4c48-94b4-24addc3d026e",
+      "clause_id": "12fd3965-a6e7-47b3-bfc4-617c0daf565e",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9a623fc5-a604-4ee2-83d9-693fbdabc694",
+      "clause_id": "32b78fda-094b-4665-81fb-614d36762bb5",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "acc65211-be99-41a6-9562-b131942e377c",
+      "clause_id": "838369ed-76b3-40bf-bdf7-9603f459dd49",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ebe5675e-0c53-4977-91bf-e96ec69bc9b3",
+      "clause_id": "508342cd-f0e5-4fad-8678-1237b57c32b8",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "26b05115-7c5a-424f-939c-7b49a5d206d6",
+      "clause_id": "8529017d-a8cd-4034-ac38-aa2cb18b83ca",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "453ca128-e2ea-4b6e-929d-e4632ec3852e",
+      "clause_id": "f1b0d81b-e1bd-46aa-b819-96ee8a2cf399",
+      "issues": [
+        "CJK 字符占比未达标: 3.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a07c5749-7fdc-4d3c-bd88-9d55ef071431",
+      "clause_id": "d5cffc24-edad-47bc-905f-3aa26a6467c1",
+      "issues": [
+        "CJK 字符占比未达标: 3.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b9411db1-939e-4ac6-bfb9-fbc3a97cbe3e",
+      "clause_id": "a1ab1203-4ad7-4f9f-943a-8329c408d629",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ccd39b02-6169-4e91-9c9b-58c1dfb84ee3",
+      "clause_id": "bc0b2b1c-02f7-439a-9ed5-99d478275b40",
+      "issues": [
+        "CJK 字符占比未达标: 4.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0e4ad383-cdf8-45ec-be5b-e373de512929",
+      "clause_id": "32485757-430c-4fbb-960b-9723749ecc4b",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "333c0266-b543-4ed8-8d2b-8fa927d22ff9",
+      "clause_id": "31cdf32a-7b82-4fe9-a143-28f3e9ee78b6",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6483a853-fe55-4289-8d5c-f86463840a61",
+      "clause_id": "8b20d5d1-e894-4eaf-a3e1-4115216e32e4",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "72e85753-3d04-4304-b5e3-687408fb3c45",
+      "clause_id": "88345e28-b0ff-4cdb-a2fd-ee388dfb880d",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e394db55-3b97-4309-b0c2-659277a7637e",
+      "clause_id": "ae0363ad-7e7d-4dce-88f2-d7c3ebe466b2",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0d2a5a18-fcb2-4df2-bc02-1187fcc9f4e2",
+      "clause_id": "6d984529-8cf3-4994-a5d9-f04d00031bb3",
+      "issues": [
+        "CJK 字符占比未达标: 3.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3959c2f3-ff1d-4703-b6a3-f045d34a3c2f",
+      "clause_id": "8b50319e-0c66-434f-b870-06d18a54b329",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "66774e57-585e-4b77-be4b-bbb6dac7f9de",
+      "clause_id": "a471eca3-c95d-488a-ab71-354370a8df80",
+      "issues": [
+        "CJK 字符占比未达标: 3.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b4a31e31-55cc-489e-b2c9-2352a5050627",
+      "clause_id": "e16a220d-26e1-412c-9f07-ad28f7d951a4",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "095f9073-0260-40e5-9e82-4fb4052535e4",
+      "clause_id": "d4d50138-4e75-4d3b-b57f-9345ce44df70",
+      "issues": [
+        "CJK 字符占比未达标: 12.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "31098837-7efc-4d1b-b535-83ea16f00880",
+      "clause_id": "3214922b-a62e-4f0a-8667-fe84f1f1a7ce",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "66bbfc9e-3595-4361-ad40-1536028e7024",
+      "clause_id": "65a77cec-bdbc-4e0a-8bdc-e7154a919cdc",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b9ea1b19-0d6c-4ebe-8caf-f089909b29c8",
+      "clause_id": "01ad305d-6293-4214-a6d4-c763c34fa078",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d45c3655-25b6-44a0-8850-a7fcd4d07182",
+      "clause_id": "27beb650-9808-4e77-8770-4dd452beef30",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "161760b1-a906-4717-a2e1-2c48e68686a3",
+      "clause_id": "51c32d08-f740-4978-93ff-be47c2f7ac79",
+      "issues": [
+        "CJK 字符占比未达标: 4.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4ca77a40-726f-4270-8aff-39ab72dc8c84",
+      "clause_id": "6fc99258-6791-4feb-8cdd-d27bcb460090",
+      "issues": [
+        "CJK 字符占比未达标: 7.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fe33521b-7bfb-4d1a-a50c-401e7605938a",
+      "clause_id": "7bfc6162-bfd9-47fb-9727-7de4c235fe68",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ee5afc88-170d-4084-9e42-2cae12284583",
+      "clause_id": "c26a6b16-14fc-4b86-b374-2dea10c4e0e2",
+      "issues": [
+        "CJK 字符占比未达标: 0.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "febb6fa1-553e-4641-ab22-cf912def9b8c",
+      "clause_id": "06b0002e-485e-4ea9-b0cb-0b242d0790d1",
+      "issues": [
+        "CJK 字符占比未达标: 7.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "095bf86e-6151-48e4-9fe2-76a15017ccec",
+      "clause_id": "d2fcefae-bc49-4d24-9cb5-03173270a25e",
+      "issues": [
+        "CJK 字符占比未达标: 5.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "11086649-fdd6-4ef0-956c-6ef42cca2ab5",
+      "clause_id": "717a0038-9e83-4c68-b5ec-b2b24eec717a",
+      "issues": [
+        "CJK 字符占比未达标: 4.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3ec76098-c6c6-4006-b401-aa6aa8300a95",
+      "clause_id": "b57a8e46-19db-4150-9e89-cc4ec9cdb19a",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "74895ab3-66fb-4f46-9f26-a1eaee8a58ef",
+      "clause_id": "13b675f7-8c6b-43aa-9b10-78ecc09a9f06",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c3ea991c-5475-457a-8ed8-0372a2e2a196",
+      "clause_id": "01faedbe-d707-4627-9ca1-3a611a578b5d",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "11521f32-8251-4aa7-8d7e-9886816cdc99",
+      "clause_id": "ca25e751-6057-40b0-baba-a354c1f8f8a4",
+      "issues": [
+        "CJK 字符占比未达标: 2.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4382cdfa-b048-415e-af99-2bfe75ab0576",
+      "clause_id": "3700be66-f0ad-4dfa-ad3b-435a3f5d1be5",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4e21c66a-ce57-4d70-98f5-d845363c9f18",
+      "clause_id": "47ed024f-3c2a-42d1-a1ac-c46bfbfb3d8a",
+      "issues": [
+        "CJK 字符占比未达标: 3.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "67433eac-9d72-4e96-a692-131ff0fd416c",
+      "clause_id": "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+      "issues": [
+        "CJK 字符占比未达标: 11.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "af0463bb-01b3-4256-8a41-9935b9897e4e",
+      "clause_id": "e28008ea-a025-4dca-8c50-0429ce50da3b",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e7754bc8-f759-47fb-a9f9-647b241124d2",
+      "clause_id": "db6cb693-12c4-442f-8be8-754b0ecef288",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "28a173d3-64db-4e56-81ad-c90f26282323",
+      "clause_id": "55d3fed5-3d5c-4102-90ed-c709412b68c6",
+      "issues": [
+        "CJK 字符占比未达标: 5.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6876a19c-915a-4273-8f16-c7fbffdea5b4",
+      "clause_id": "8ee646f7-27a7-4c37-aec2-5d9d16c24c96",
+      "issues": [
+        "CJK 字符占比未达标: 1.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "93854ad2-494c-409e-83d6-742ebd154aba",
+      "clause_id": "00888a3b-473a-4b0d-939d-c8724b08ff10",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3df947d4-02cb-4389-908b-7553450a2eb7",
+      "clause_id": "5f9a96a9-d313-4983-8004-20d7f6ff3c2f",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "75363409-6c80-49f9-a069-a0ab43c7d860",
+      "clause_id": "d810b83c-5923-42c3-8e8c-4b7891fc1633",
+      "issues": [
+        "CJK 字符占比未达标: 7.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "dbf68a24-12d9-4b88-8d77-dea053f4fb87",
+      "clause_id": "f8acc386-dc8a-4333-bd21-4276822d9ffa",
+      "issues": [
+        "CJK 字符占比未达标: 1.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "36c0385c-a540-40a0-83a3-2b75fdc80be8",
+      "clause_id": "a15b1775-2a38-4762-9c86-1f96aa896602",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b29f16dd-4781-4f43-a12a-5921fea5f143",
+      "clause_id": "bf847b77-a8a1-4979-ac52-0614ff8b82e5",
+      "issues": [
+        "CJK 字符占比未达标: 7.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "297f5619-39aa-4985-8873-db9e2eefaf63",
+      "clause_id": "5b12881d-60b4-4a98-9b02-ee54742ac9d2",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d1715bac-dce6-4de1-98f6-05e48750d4e3",
+      "clause_id": "a31849a8-9e38-4cd5-9d04-9d7618aef0a6",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fda7c82f-90ab-4c9c-b5c4-ccc11990f4d1",
+      "clause_id": "be5722e0-f678-495d-8b65-0e24515a0ef4",
+      "issues": [
+        "CJK 字符占比未达标: 5.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b4d099d1-8249-45b0-9f84-96fe21afd99d",
+      "clause_id": "4a76c1f6-c976-49d2-9d5a-6bb0ca6f6dac",
+      "issues": [
+        "CJK 字符占比未达标: 3.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fce9b070-9f49-41f5-9204-29ccf46ea810",
+      "clause_id": "cc4900be-8344-4a37-9d49-3106821ec0bc",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "775659ea-fb66-491b-96b7-b6b2a214d90e",
+      "clause_id": "a3ff27a5-f840-4b98-905b-853e4be1d2b5",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f702bd0e-7c44-453d-a4f1-b8cf84b5f5cf",
+      "clause_id": "559f90a9-7054-4a02-8f57-bd2832986151",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9121a364-12f8-4d39-ac73-6e078b04401f",
+      "clause_id": "d7fd8ca0-68dd-4a0e-a721-f88a4e0b16c7",
+      "issues": [
+        "CJK 字符占比未达标: 0.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "984145d8-8162-4fad-aa01-41a84430217d",
+      "clause_id": "d4c5b1aa-9e5a-4fbc-80b1-33cce02efd43",
+      "issues": [
+        "CJK 字符占比未达标: 2.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a0445bc9-22ab-4a17-beaa-6d10ff1752ae",
+      "clause_id": "8baf4378-5471-4806-b967-a079d94c7fe6",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b5743328-f3cd-42b7-b118-c12d083ad7d0",
+      "clause_id": "a2381b81-f46e-4757-86e8-0498a1497eea",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4b380546-b35d-4075-bb93-04b8f0a0634d",
+      "clause_id": "af2fbf8e-f21c-424f-9d28-98e103e2f558",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a7827bb6-443e-407c-884c-508deba6e256",
+      "clause_id": "9d84a983-e04b-421e-a06b-e7bcc728b2e5",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f15590dc-d794-43cc-93d5-bf2a92ef0d08",
+      "clause_id": "3efe249d-1db5-4b5c-b188-58d9e1150540",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0ad4ca92-258d-4f1e-af11-b266309b198f",
+      "clause_id": "f3008067-caac-4513-ba5a-835192de96a9",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3eca4511-2365-4283-b3c7-13598ff2e005",
+      "clause_id": "8b8c125c-9f4c-4829-b70c-9d0e3943489c",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "505e232a-c969-474c-ba24-964bd79e3357",
+      "clause_id": "6a8d0b97-d6f4-45f0-84c9-d153fa316732",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "27d0c984-d399-4b17-ae74-a60a34e91c6e",
+      "clause_id": "46d85eb5-a09f-4f47-86e9-dbc49f3f80d7",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b2ccaa92-f47f-4134-a2f3-be7d57f1bf0e",
+      "clause_id": "20208eb1-2614-4b2f-993c-909b4f5b69e9",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "db7fe95e-29f4-46b8-a789-a68400455099",
+      "clause_id": "eb992720-81e0-45b2-ba63-862d6bc35f01",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7e234f68-3339-4366-8ede-2e4967929f62",
+      "clause_id": "d4416180-8521-40d2-823f-f843e9a0c5aa",
+      "issues": [
+        "CJK 字符占比未达标: 0.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d080e0a0-549e-49aa-a7b1-0f2f84940b73",
+      "clause_id": "8f2533e9-d355-4538-8bf6-59ddb5a95d26",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "60d36000-1ed1-4b08-a462-fa607b5e1a48",
+      "clause_id": "907f7c3f-9411-4dd3-a6da-7c9272756b9b",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6125341d-2919-498d-abe8-3d41ad0cb927",
+      "clause_id": "205b9cbe-bc81-4b05-8ea9-160c88ed3b19",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d7c11e50-b8e3-48a6-b0c8-8503d08b1d90",
+      "clause_id": "a5e050d9-326c-4b23-ae5b-862d33adf4b6",
+      "issues": [
+        "CJK 字符占比未达标: 0.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0cdda28c-b52e-47a7-a057-83ae10321a73",
+      "clause_id": "9f70c2a9-5b66-442a-93b4-bcfa0a0babb5",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "76790a3e-2de8-46f7-9d3c-d44936374092",
+      "clause_id": "ea69ddcd-97b9-4132-9dfe-0a9c8ae2b2ff",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5418eeaf-d223-4298-b6b0-f334084437a2",
+      "clause_id": "dcf8dcbc-efc4-4041-abec-a441d299d879",
+      "issues": [
+        "CJK 字符占比未达标: 8.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a0b962d7-0bd0-4da8-8242-381f6cc8ec33",
+      "clause_id": "c2a2e588-a181-430e-8baf-4240df081ede",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fb13f655-a327-4d77-966c-d16b7ef827bc",
+      "clause_id": "4794a1fc-9137-4dea-a3f8-352fd185ee24",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "381e3ef8-1449-40c2-9f2e-b1eaa764f8b8",
+      "clause_id": "e892648a-0d9c-48b0-8997-131120c54a5e",
+      "issues": [
+        "CJK 字符占比未达标: 0.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "93581c71-4358-42fc-83f6-326f583a6fa4",
+      "clause_id": "aadb384b-319c-44a1-a67b-3b16db8c5e7a",
+      "issues": [
+        "CJK 字符占比未达标: 0.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e9e10dfe-638a-41ce-8a98-88d1638a9e87",
+      "clause_id": "20bcbd8e-30a4-4ebd-82f9-f5c701280800",
+      "issues": [
+        "CJK 字符占比未达标: 3.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f3281497-1837-492b-9a19-d1f2042daabe",
+      "clause_id": "527b9ba9-8a7c-4053-9d35-d4f629106ef4",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1efa64e2-e20c-4162-9382-69dfaf14cd7a",
+      "clause_id": "5998f613-4fee-4b36-9512-5dfc87b5390d",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "30670012-4629-4152-8600-6e09cdbffd6a",
+      "clause_id": "2a9f7f50-c045-45a7-bfdc-1ff05e1db903",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4ca4715e-c840-4db5-adca-19cc3c8ddc9e",
+      "clause_id": "8da17c34-68c9-4951-a81c-8b6e8f0d76c8",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "bbc5b016-75dd-458a-8cba-81f5a73dc5e4",
+      "clause_id": "2ea017a3-fec9-4e02-ae82-862a9fadb98b",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c1557473-ff4d-42dc-b2f8-76a952620409",
+      "clause_id": "83c87a07-d127-4e00-9f93-252190e1b82c",
+      "issues": [
+        "CJK 字符占比未达标: 2.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0b822819-1900-45fa-891d-94742b55616a",
+      "clause_id": "f956622c-daf8-4f67-bbf7-ef3a2a839969",
+      "issues": [
+        "CJK 字符占比未达标: 2.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f12a269e-7053-44c8-9f7a-8798b5a50ec5",
+      "clause_id": "41a5463c-7b8e-4987-aa4a-efaddf07dcb4",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2532dcc8-7698-49c5-9983-615d39bbca46",
+      "clause_id": "d4afbad3-cae6-4992-8ea5-586b68f2b556",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2f615044-501d-489d-93a5-559d4d058721",
+      "clause_id": "2d3922c2-e296-4c4f-adee-aef5d75adb8c",
+      "issues": [
+        "CJK 字符占比未达标: 2.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b247fd3d-768a-489c-8a0c-9c5490f0e440",
+      "clause_id": "b162660b-5dc0-4125-8245-15ad62417501",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3c026e99-6e32-47d3-94d7-16e0d67fadd0",
+      "clause_id": "9937d28c-d299-46ac-b877-c3fd2ce677a2",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "95ed64f4-1dbe-44a4-b024-2f3a805d0c26",
+      "clause_id": "019413d7-b780-40b9-bf83-677c28450756",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b09a8b4f-412e-44f9-bcb0-9359e6d7cd49",
+      "clause_id": "d1fcab0b-99e7-4c00-9f37-bc4bc88d64c8",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b2ef4077-925a-4587-a864-1b644ae98822",
+      "clause_id": "854f6f95-d5c3-48a5-b467-1ddcbfe4af46",
+      "issues": [
+        "CJK 字符占比未达标: 2.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0a265c2e-f688-489d-b56d-3468c2794412",
+      "clause_id": "a615f950-3581-4364-b562-b385d163ef73",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4c63cef4-aaee-4985-b022-5839f4f98847",
+      "clause_id": "d6541677-e11d-4300-bde1-d7147e661db1",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6cc2d8be-e505-410b-b337-c75ac902a0e8",
+      "clause_id": "201231f8-5fa6-45d1-a508-087dd4bf8877",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b972aace-5a28-4223-9866-a05211b76721",
+      "clause_id": "b3be2f81-bec1-482d-86ea-6197d63408e1",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e5c88052-01cc-4b3f-97b8-61a2321010bc",
+      "clause_id": "b23c9b98-a65f-41af-a749-6ff4e074e80e",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "555d7376-20c9-4221-b619-b35e2019b575",
+      "clause_id": "c316e560-dd85-4b87-9145-16964d3020da",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "631de613-c62a-470b-be49-89a8f3389edf",
+      "clause_id": "e3ab3e4a-2f51-4526-abae-a7e2b1b7b455",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c04edc23-970d-4717-9075-fe966f7ba3a7",
+      "clause_id": "19f3099c-84d7-4da8-83fc-633b13c48536",
+      "issues": [
+        "CJK 字符占比未达标: 4.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2c134f02-0476-4c85-bace-236e6eb84202",
+      "clause_id": "966b2a94-4638-4535-8873-f920730f81b1",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "53d9ca14-c319-4493-9283-67f30c692cf3",
+      "clause_id": "151f553e-1907-4e86-88f5-5832609b97e9",
+      "issues": [
+        "CJK 字符占比未达标: 0.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6dcb61ab-d0c8-4bf7-994e-72e55b1fe4b0",
+      "clause_id": "6a772d58-487c-46d8-b802-0d370b579107",
+      "issues": [
+        "CJK 字符占比未达标: 0.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ac9ad8dd-b942-402b-b7be-9f0fdd93a93d",
+      "clause_id": "ac924f14-d78b-4cc6-88c4-b1d863916528",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "db40f4d9-0c72-4ea9-95e8-df369efd7e21",
+      "clause_id": "98688ff4-c419-4471-aea5-705b531bb574",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "922a7630-a2d5-4a04-a069-c62a313ea3fa",
+      "clause_id": "e4aed6a8-6c3f-424b-98c6-2620ad3ccba7",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b0164f27-14be-4ed5-a424-a432aff44547",
+      "clause_id": "fd025cb7-f66e-4b73-bfd1-b276f8a25401",
+      "issues": [
+        "CJK 字符占比未达标: 1.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5d903697-4c62-46d3-9507-d55fac384c5a",
+      "clause_id": "2d061ab3-1990-4735-aa9a-59e3af2a8f46",
+      "issues": [
+        "CJK 字符占比未达标: 8.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5eaf23ae-365e-4406-b03c-26f78f38b593",
+      "clause_id": "c705eb7d-e529-44ce-9ba6-f158e8fd7a4a",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "80078933-b2d8-4735-88d0-5b949f0115e9",
+      "clause_id": "981cb22a-231b-4104-9a37-12b2e30c445c",
+      "issues": [
+        "CJK 字符占比未达标: 0.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "903d6824-595c-41b1-9871-df636c84f14c",
+      "clause_id": "9b5ad0b5-e9e7-4b20-ba4c-96432086cc8a",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ff26b275-f833-4aab-9ad7-767d43ff3034",
+      "clause_id": "0644d85f-0351-4688-9254-9958aa140fc2",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "298e69b0-e5bd-4958-bb69-95ff242e4813",
+      "clause_id": "81c75f60-d13f-4952-a80b-b59023037943",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "366b0d18-0734-4bed-9227-a80a1e0dc80d",
+      "clause_id": "91daf7bb-d1dd-4913-a516-7d81c3e02fcd",
+      "issues": [
+        "CJK 字符占比未达标: 4.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c51cdb25-c185-476a-9ded-3328d35265be",
+      "clause_id": "c3d69b5b-fcb6-47f5-8b21-a7d37c11bf0b",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "14f46993-375a-44e2-8235-871ed5ffa290",
+      "clause_id": "44f225f5-448d-472f-a391-9572f2012023",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e04c47a7-85d6-4457-9e97-4fdbdf8a3045",
+      "clause_id": "16c4a65a-3709-44d7-bc3b-3aafb7fdcebc",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "eb6bac94-324f-4a48-b573-ae5fe9521a3c",
+      "clause_id": "be964da6-9d32-4174-b14a-e44d0038b88d",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7519f680-ff2a-4ae9-92fb-b4d260ae5295",
+      "clause_id": "8d5ca940-61df-436d-b813-62d931fdbdae",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2efd7a1c-d34d-44fa-832e-e1184ed3aeda",
+      "clause_id": "0aac5819-f228-4952-95ef-cf48e120c463",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b667f1c2-fb3c-40fd-ba26-370d4c3d5a34",
+      "clause_id": "4d3e116e-01be-4b1c-a18f-2c9c05722b3f",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2a692c90-f3e9-41cb-a507-a39a2ab9cff5",
+      "clause_id": "aa6d215f-66ac-4190-95ef-7b104977270f",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4d1d27c7-4e4d-4cec-8e43-ecb84122b5b3",
+      "clause_id": "157d8a76-3b75-4f6c-ad11-7e9e642e3ffb",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4ded7290-0851-44bf-9d59-8739ef35c949",
+      "clause_id": "c423f17c-b266-4dae-b5dc-33f1647d55d1",
+      "issues": [
+        "CJK 字符占比未达标: 0.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "50013443-51b3-4380-9c81-30d951043210",
+      "clause_id": "5475be63-fc48-4f11-a17a-e2588e6af03d",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f4062fbe-c824-4e4c-8270-7d2f341b8380",
+      "clause_id": "62dd1bf6-7a36-4b55-bbf8-99ab4a0c49d4",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "0af1d41a-095b-4d74-b4bd-076518155f1f",
+      "clause_id": "d6b6c85b-0fd2-486f-8bc1-6c0ed728691b",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "136d86c5-1c2f-46ea-8a2e-ceed0e59ffa3",
+      "clause_id": "d3bd4a57-58f2-445d-940c-aa8d4831e71b",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b58347f1-a57a-4343-a959-68fb1094d832",
+      "clause_id": "a18e376b-7228-48d4-b282-4f7fcb92c8f7",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6f49c698-8998-44f4-8d2b-9355bd95731f",
+      "clause_id": "6d475ef3-d53e-48b5-8210-319292473271",
+      "issues": [
+        "CJK 字符占比未达标: 0.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b0d64c42-5cc1-4bd7-b9cd-64a1809dec40",
+      "clause_id": "2845ca09-e7be-4994-a105-7a10b93029a4",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2a56d61a-a822-4d83-aad0-7d1c5f33e12e",
+      "clause_id": "ce543dd1-7d86-4444-9d6b-dcbb8b9b4b8c",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "80fd094b-a992-45d7-a0e8-989ad6d7ad8c",
+      "clause_id": "af820235-72a7-4b4c-bb49-94638c434114",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8107368b-99dc-487a-a5e1-4e90764f71f4",
+      "clause_id": "6005a4b2-5089-486f-83de-6767b204f0e9",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fa501284-0cb2-4574-9ad7-4e6208251a79",
+      "clause_id": "16565b71-baa1-4b78-aca9-456cf882f09a",
+      "issues": [
+        "CJK 字符占比未达标: 0.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2f375da0-8bf3-4cd9-b07c-be9fcaf42e4a",
+      "clause_id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9d6ff7cf-9cc1-4eef-84cb-6a3bffbbab79",
+      "clause_id": "900b5fd0-11bf-4d01-9509-11b7576cf48e",
+      "issues": [
+        "CJK 字符占比未达标: 7.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a12ca875-ef51-4804-822f-7fa8e2fa5454",
+      "clause_id": "2afba666-d221-49f6-b320-f277461ecde2",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f8736fb1-5f83-4cc2-8d5f-585bbaa44f72",
+      "clause_id": "70ec09a4-2fd5-4fad-8b9a-bd7add880c30",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "35aa379e-2732-4f8f-b83d-828b09b1ed47",
+      "clause_id": "42bd2004-81dc-4364-aeb7-bba24d1e8a6f",
+      "issues": [
+        "CJK 字符占比未达标: 0.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4d87bb2b-9948-419d-b128-0fdf9d653331",
+      "clause_id": "8330a029-71b0-4e07-b989-0455f8abdf28",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b4389056-64bf-40a2-8a9c-a049be6925c6",
+      "clause_id": "a49629e5-2dad-4ff9-8279-36af7ec0a9ba",
+      "issues": [
+        "CJK 字符占比未达标: 2.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3e663d8e-f271-4a4a-a113-508683214769",
+      "clause_id": "2a674307-b329-4521-ab11-9796c659c0bd",
+      "issues": [
+        "CJK 字符占比未达标: 2.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "365a7fbb-6cca-4483-832d-ba7ecf5cec39",
+      "clause_id": "c89b139e-f213-4073-aeca-13e68a342438",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9403713b-ec46-485a-bab8-56235ebba5db",
+      "clause_id": "9995e838-c61d-409b-95bf-23325647c9b5",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ae472cfb-ac0d-46a8-9c16-64954a97c906",
+      "clause_id": "088bf5f1-43e4-475c-aa80-cdd8945c0282",
+      "issues": [
+        "CJK 字符占比未达标: 2.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "558ff41d-de84-4937-a41e-3afba8789725",
+      "clause_id": "fb6b36d3-34b9-4970-b5e3-40f63b3b10b4",
+      "issues": [
+        "CJK 字符占比未达标: 0.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a0df5ba3-a4b5-4492-a8c4-b0c1ec14ccd3",
+      "clause_id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+      "issues": [
+        "CJK 字符占比未达标: 2.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "08297d5e-12ed-4ba0-a217-7c99ef297956",
+      "clause_id": "a6791693-ae56-44c2-8429-81bda52ee9ff",
+      "issues": [
+        "CJK 字符占比未达标: 1.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "1289dd59-500c-4d4f-b0e8-5d3a581b9751",
+      "clause_id": "c7fddee1-c02a-48e8-9273-a535296e7ace",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7def1940-c002-4cc8-9561-c8ff5d922b18",
+      "clause_id": "61514193-a67c-4ca8-aeea-443ce50a0078",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ef9162a4-4daf-4b63-8389-45f9c9c6dfac",
+      "clause_id": "f9ecf0e4-1d08-4d2b-aac1-3c16b10c2c19",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "55d1bd86-5adf-4d75-bd87-d36d09751acc",
+      "clause_id": "75147958-7651-4987-8064-a13eddfeefc2",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2ae376cd-b6d6-42a4-959d-97099946560a",
+      "clause_id": "801cdbfd-f9b1-4891-a27c-265b76d5c04f",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b960aad6-6c0f-4429-97ab-0cb89d99a267",
+      "clause_id": "d12e20de-ff32-4381-8055-d1c3c59c965a",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c4c0cbab-1fbc-4da4-8d30-1ff18061ca4a",
+      "clause_id": "68cd0cc5-d153-46cc-a4df-a82156e06f1b",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ee898794-8c04-4ff2-848b-fa09724b1032",
+      "clause_id": "0c3977fa-82f9-4c27-bbf2-d84dc2625c92",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f9901a5b-9635-40b9-8207-9817e0cbd952",
+      "clause_id": "bafd3820-b0c3-42b9-b834-4262bcfe0d4f",
+      "issues": [
+        "CJK 字符占比未达标: 1.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b7c28526-46cc-46be-8d53-117a04987b09",
+      "clause_id": "e2b1def4-3e64-408a-b847-fd3c15c1d1cf",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a380a87f-39bb-4ec1-8bbb-8ac3eceeafc5",
+      "clause_id": "3bb3e9d6-c592-41d2-9ced-de95b8b4a29f",
+      "issues": [
+        "CJK 字符占比未达标: 2.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "9bbaed58-9639-4752-a4a8-2f6eb0e66589",
+      "clause_id": "b9e24b0b-4a97-4c63-af99-c11d6c047d03",
+      "issues": [
+        "CJK 字符占比未达标: 3.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ea3be333-1bc5-4f8f-95a7-2cbe5d167560",
+      "clause_id": "60185acd-9066-4121-b881-1db9ad002ea1",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8cfc9a7a-4435-4257-9615-418118b395ae",
+      "clause_id": "a324d919-cd87-4af6-b729-ba87520b6db7",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "74ec3317-2035-4c3d-96d6-3cb6caa31239",
+      "clause_id": "4ec97e3b-4585-4d69-9e71-7863a95086a3",
+      "issues": [
+        "CJK 字符占比未达标: 1.2% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5ff46348-fa95-4866-87a1-937acc05a516",
+      "clause_id": "4674ed1d-7ec9-4db9-bd03-8c6a9f6cd7af",
+      "issues": [
+        "CJK 字符占比未达标: 3.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8d2e594d-e3ff-4f3d-abbb-ac0476921ccb",
+      "clause_id": "f453649e-f22b-49c5-adb9-04da1fda3bed",
+      "issues": [
+        "CJK 字符占比未达标: 3.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "703c7544-4d94-4122-990d-1257d188fd1d",
+      "clause_id": "4ac63298-ca3a-4182-82c4-1734cf3ca241",
+      "issues": [
+        "CJK 字符占比未达标: 3.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "4d03bc2c-18a1-40e6-8972-cddb763edc39",
+      "clause_id": "15e74606-a6b0-486a-8d37-e05f183beb50",
+      "issues": [
+        "CJK 字符占比未达标: 2.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5a950569-e5a5-4985-b728-82253503fc96",
+      "clause_id": "045bf499-3744-4fe6-b107-8d74365fbcaa",
+      "issues": [
+        "CJK 字符占比未达标: 3.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "92c50dc9-dc04-4b79-8c6f-a65f4e3d270a",
+      "clause_id": "bba8314b-96ac-4d61-9d45-c57babeb0afc",
+      "issues": [
+        "CJK 字符占比未达标: 1.8% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "09f1c6ef-400b-4dce-a4ea-00d3f3d8e79f",
+      "clause_id": "5d88103d-6b1b-4bf5-ac38-f7efe3e2f314",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "fbd57b0b-6f50-4d4e-a670-95d8e0c70fbb",
+      "clause_id": "7de2887a-3c2c-4e61-8487-4d7cb42b7e1d",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6452caa3-934c-40e9-a7cb-47bcbeb81946",
+      "clause_id": "fbc84cf8-c3d7-4ec0-8c07-ccd3f4e8da39",
+      "issues": [
+        "CJK 字符占比未达标: 2.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b4722cfa-0265-4322-9c51-b7529f1af149",
+      "clause_id": "b74b20bc-2242-41d4-bed2-232e90125d9f",
+      "issues": [
+        "CJK 字符占比未达标: 1.7% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "6c08cb20-c373-4e1e-bd27-fa05fccb1f46",
+      "clause_id": "96b6fe0a-8ae6-460a-aa49-4d288c8dfef4",
+      "issues": [
+        "CJK 字符占比未达标: 5.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7f4f87d4-2f26-4420-94b6-5e2e4ca13ed9",
+      "clause_id": "cf41c84e-c467-4d3d-8e7d-d3784c73b137",
+      "issues": [
+        "CJK 字符占比未达标: 3.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "48e0dc07-d094-4247-8ca6-ea4bb0c851fd",
+      "clause_id": "2bc7c1e1-c315-4bad-8305-381c0b832a27",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d0aa4bf2-7b3d-46b6-8952-3ccd9f3ae36b",
+      "clause_id": "745efc08-39ba-4684-9375-1a88c00b24c1",
+      "issues": [
+        "CJK 字符占比未达标: 5.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "7ce6cf82-61bd-4dc0-874d-7ec1c0e8e034",
+      "clause_id": "553cf236-fbfd-40d4-aaa3-72bfca3b412a",
+      "issues": [
+        "CJK 字符占比未达标: 1.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ba024f09-9d76-4986-a732-ee2ad55ae35b",
+      "clause_id": "0b4e2933-a613-4f85-a992-0b89de830c44",
+      "issues": [
+        "CJK 字符占比未达标: 1.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "43ebfd30-344c-4b17-b898-b3134bf31b8d",
+      "clause_id": "83256a3c-dc86-46a0-8cd6-4753897346bf",
+      "issues": [
+        "CJK 字符占比未达标: 1.9% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a802b77a-e8a1-4c51-bb2b-b681720cc58f",
+      "clause_id": "cd826583-6cbd-47c5-8cef-878cc9014d41",
+      "issues": [
+        "CJK 字符占比未达标: 1.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "784cd5d0-abdd-4c24-a842-1ccf142ef777",
+      "clause_id": "b58f9117-5240-409a-b728-6a626d5a4997",
+      "issues": [
+        "CJK 字符占比未达标: 1.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "17c05440-9bc1-4250-95dc-bf912bd8f57d",
+      "clause_id": "722af3a5-847f-4676-bc8b-c361516f66e3",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d450efe1-0099-41aa-a4bf-60639df443c5",
+      "clause_id": "ac0987cd-0c8d-4673-a08d-745ea822caeb",
+      "issues": [
+        "CJK 字符占比未达标: 2.4% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2ae3dc88-d09c-476e-8fc6-0cb2fa4c2713",
+      "clause_id": "fec2aee5-e6e5-4dd5-8244-49ccc88c64fa",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "cbe84e0c-50d9-46fd-9bdf-dbc405623822",
+      "clause_id": "24952052-c606-42ef-8c04-5563b3a5a3bb",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "2c3ae896-5445-4c47-8bc6-834f66132673",
+      "clause_id": "a512c66f-63e4-4849-a93a-6f782821b3e8",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "74e3dc40-9d16-43f0-815f-23a8117e65dc",
+      "clause_id": "77458678-4dc2-406e-9902-368507541a66",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ea173274-212c-4150-9097-e07d080439dc",
+      "clause_id": "6eb25602-ac44-4971-b42a-27583cc2e458",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "369b1fe0-3d25-4576-b3ac-ec026357aa41",
+      "clause_id": "fa97fda7-0a6d-4e2f-8358-2ff64016d853",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8ccf8622-9e06-4f6a-ad79-030cbfeee436",
+      "clause_id": "dc34bfa9-d8f7-4607-94e6-8b3f1d42f47b",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "74bef7f5-be2d-474c-8d7e-6ad7b05aff2a",
+      "clause_id": "a0aa4715-be1c-475c-9674-c9843707e9df",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "874038df-52e6-4a45-b2fd-10eb066c97c8",
+      "clause_id": "fdaf270f-4323-4425-af25-c429cda93cb3",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "a491e9ec-931b-482a-882e-4c2fdfe3e65b",
+      "clause_id": "2e66a07e-1697-4128-81b4-ddccbab292bf",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "5e29855f-5302-41c3-a04e-f3206847bc6c",
+      "clause_id": "d3a5563d-05c8-4a42-84f2-4bf24cce0694",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "bc21f234-8ff0-4459-8a02-9040f22186bd",
+      "clause_id": "65e0b0b9-d25c-474d-a095-82f0f7c3b81d",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "c21a487a-07d9-47b2-8c3a-93c5d0394c0a",
+      "clause_id": "69752482-1722-4d27-88ac-d48c0228415b",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "b61559f3-19e8-410c-a051-0735da2baba8",
+      "clause_id": "2ebf4034-e483-4990-9371-50437bb2f27f",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "794c09bf-447f-4e36-b497-ba242900d10c",
+      "clause_id": "9d8815d0-5207-41b5-b61d-a1012c65a486",
+      "issues": [
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "e61c3c27-c0ce-47b2-9487-ddd9b90a2217",
+      "clause_id": "5b3b1019-8efc-422f-8326-ca0317d16bee",
+      "issues": [
+        "译文与原文完全相同",
+        "CJK 字符占比未达标: 0.0% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "75339f06-df8b-4752-a35f-38239db575e4",
+      "clause_id": "2b9145c2-04b8-4524-949d-c506d0a48d7a",
+      "issues": [
+        "CJK 字符占比未达标: 5.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "d9249a12-ffa2-4344-9c68-58b5b97a0427",
+      "clause_id": "b573fbec-5309-4e6a-8eee-1fe88ab17aa1",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "ae493f16-e8d5-49f7-800c-2ca50994ac81",
+      "clause_id": "d8510f3d-1486-4a8e-9ac4-c903033ee09a",
+      "issues": [
+        "CJK 字符占比未达标: 0.1% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "f3c37f16-b8e9-48ab-a777-6dd60cf97b88",
+      "clause_id": "f7f696e5-2699-469e-b58a-f5740f36f7ac",
+      "issues": [
+        "CJK 字符占比未达标: 1.5% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "75a22f2c-7391-4d50-8468-86c3b93e6406",
+      "clause_id": "0c45954e-f4d8-4401-a52d-cbac2c0cebbc",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "3c48294e-a6ee-4e69-b145-c825743abdd3",
+      "clause_id": "97650f77-0a9d-436d-81f6-8445da851634",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "8d393812-983c-45d5-8e81-abdd17f45cd8",
+      "clause_id": "8b1b1299-9dea-4afe-942d-a86db8e94948",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "90faafd5-23a0-4374-af92-41402535ffec",
+      "clause_id": "1f0f9364-e074-4871-bcbf-f32ea8f8bf16",
+      "issues": [
+        "CJK 字符占比未达标: 0.6% < 30.0%"
+      ],
+      "status": "superseded"
+    },
+    {
+      "translation_id": "35830d26-5457-4a28-a902-2d2ac29745e0",
+      "clause_id": "dfb6a653-f77a-479e-ba6c-e5bf8564125a",
+      "issues": [
+        "CJK 字符占比未达标: 0.3% < 30.0%"
+      ],
+      "status": "superseded"
+    }
+  ],
+  "human_samples": [
+    {
+      "country_code": "SG",
+      "translation_id": "2295661e-1c04-40ed-a576-0fffb30adb1b",
+      "clause_id": "025e6584-8e2d-4cd1-8854-b63dfe7eaa36",
+      "clause_number": "14.1",
+      "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/065.pdf",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Appeal) Regulations 2021",
+      "version_id": "bf708123-9ad4-46e7-abc7-502f1e588809",
+      "content_hash": "e55dea1c9de137dac55094dd420f05822458dbd308c22c30a37acda56e184d68",
+      "original": "(ii) subject to paragraph (2), conduct a hearing in such\nmanner as the Appeal Committee thinks fit.\n(2) The appellant cannot on appeal tender any evidence that the\nCommission did not have at the time when the Commission made the\nappealable decision, unless the Appeal Committee is satisfied that —\n(a) the evidence could not with reasonable diligence have been\nobtained and provided to the Commission at that time;\n(b) the evidence, if given, would have had an important\ninfluence on the result of the case though it need not be\ndecisive; and\n(c) the evidence is credible.\n(3) If an appellant fails to appear at the hearing of the appeal, the\nAppeal Committee may, if satisfied that the appellant was duly\nnotified of the hearing date, treat the appeal by that appellant as\nwithdrawn.\n(4) The Appeal Committee hearing an appeal may confirm, vary or\nset aside the appealable decision and, in particular, may make any\ndirection or decision under section 48Q(5) of the Act.\n(5) Where the Appeal Committee determines an appeal or an\napplication related to the appeal, or where an appeal or an application\nrelated to the appeal is withdrawn, the Appeal Committee may make\nsuch consequential orders as the Appeal Committee thinks fit.\n(6) The Appeal Committee may, if the Appeal Committee wishes to\nprepare and certify the written grounds of its direction or decision",
+      "translated": "(ii) 在符合第(2)款的规定下，以上诉委员会认为适当的方式进行聆讯。\n(2) 上诉人在上诉中不得提交委员会在作出可上诉决定时并未掌握的任何证据，除非上诉委员会信纳——\n(a) 该证据在当时即使尽合理努力亦无法取得并提供予委员会；\n(b) 该证据倘若提交，本会对案件结果产生重要影响，尽管无须具有决定性；及\n(c) 该证据是可信的。\n(3) 如上诉人没有在上诉聆讯中出席，上诉委员会如信纳该上诉人已获妥为通知聆讯日期，可将该上诉人的上诉视为撤回。\n(4) 聆讯上诉的上诉委员会可确认、更改或撤销可上诉决定，尤其可根据本条例第48Q(5)条作出任何指示或决定。\n(5) 凡上诉委员会裁定某宗上诉或与该宗上诉有关的申请，或凡某宗上诉或与该宗上诉有关的申请被撤回，上诉委员会可作出其认为适当的相应命令。\n(6) 上诉委员会如希望拟备和核证其指示或决定的书面理由，可——",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "SG",
+      "translation_id": "c88777ec-cab2-43b5-bc42-015df5d3af11",
+      "clause_id": "7b1a5bfb-aa81-4f99-abe2-ef90a086d44c",
+      "clause_number": "6",
+      "source_url": "https://assets.egazette.gov.sg/2014/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/368.pdf",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Prescribed Law Enforcement Agencies) Notification 2014",
+      "version_id": "897dc4ca-b005-4250-aae3-cac102adb815",
+      "content_hash": "17910d1d4feb09278ecda06580409544b08d6d860eb3ac3533e611e083f2a8d2",
+      "original": "6. Singapore Police Force.",
+      "translated": "6. 新加坡警察部队。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "EG",
+      "translation_id": "4638553b-4e3c-4a3e-83ed-ea2746d71bba",
+      "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+      "clause_number": "‎(TV)‏",
+      "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+      "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+      "content_hash": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+      "original": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل فى غير الأحوال المصرح بها قانونًا أو بدون موافقة الشخص المعنى بالبيانات .\nالجريدة الرسمية - العدد 74 مكرر (ه) فى ‎V0‏ يولية سنة ‎VV 78١‏\nوتكون العقوبة الحبس مدة لا تقل عن ستة شهور وبغرامة لا تقل عن ‎tle‏ ألف جنيه\nنى جنيه ‎ahs‏ بإحدى هاتين العقوبتين . إذا ارتكب ذلك مقابل الحصول على\n‎j‏ أو بقصد تغريض الشخص المعنى بالبيانات للخط ‎gh‏ الضرر .\nكل مثل قانونق\n‎gps‏ هذا القائون .",
+      "translated": "第（TV）2条\n凡持有、控制或处理、收集、处理、披露、提供或以任何方式交易个人数据，且未经法律许可或未经数据主体同意者，处以不低于十万埃及镑、不超过5百万埃及镑的罚金。\n官方公报——第74号增刊（ه），于V0年7月VV 78١\n如实施上述行为以获取利益或意图使数据主体遭受损害，则处以不低于六个月监禁及不低于tle千埃及镑、不超过ahs千埃及镑的罚金，或二者之一。\n本法任何类似规定\ngps本法。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "EG",
+      "translation_id": "698e60e2-d744-4b1d-a4e2-5516d33b8e39",
+      "clause_id": "f554a66d-d275-4bc9-95b0-ed9cef54f52b",
+      "clause_number": "18.1",
+      "source_url": "https://www.tra.gov.eg/wp-content/uploads/2023/08/IoT-Framework-AR.pdf",
+      "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+      "version_id": "1329d254-3b6b-42b9-9698-49bfb143f1d1",
+      "content_hash": "11566a8620fac916e49a0c3362f1324fb68069832317b48d6cf97cacfcf1edd7",
+      "original": "اإلخالل بالظروف الطارئة والقوة القاهرة والمعايير المنصوص عليها بالترخيص.\nثالثا التعريفة: :ً\n يحق مقدم خدمات انترنت األشياء الحصول على تعريفة من المستخدمين نظير تقديم خدمات انترنت االشياء و يلتزم\nمقدم الخدمة بالحصول على موافقة الجهاز الكتابية المسبقة على تعريفة خدمات انترنت االشياء أو العروض التر ويجية\nالخاصة بتقديم هذه الخدمات.\n يلتزم مقدم خدمات انترنت األشياء بأن يتخذ اإلجراءات الالزمة وعلى نفقته لنشر تعريفة الخدمات التي يقدمها\nللمستخدمين المتعاقدين معه وجعلها معلومة للكافة، وأن يقدمها لمن يطلبها بال مقابل.\nاربعا أمن المعلومات: :ً\n يلتزم مقدم خدمات انترنت األشياء بعمل تقرير سنوي فني تقييمي لألمن السيب ارني ويتكون من أختبار ات األختراقات و\nاالختبارات الخاصة بنقاط الضعف المتعارف عليها بما يلى )tests vulnerability and penetration )وتكون\nهذه االختبارات من شركات ذات سمعه و خبره مسبقة في هذا المجال و تقدم للجهاز.\n يلتزم مقدم خدمات انترنت األشياء بعمل تقرير فوري فني تقييمي لألمن السيب ارني في حاله حدوث تغي ارت كبيره وهامه\nفي التطبيقات او االجهزه الخاصه بالخدمه أو حين يطلب منه ذالك بشكل عاجل و خاص و يتكون من أختبارات\nاألختراقات و األختبارات الخاصه بنقاط الضعف المتعارف عليها بما يلى) vulnerability and penetration\ntests )وتكون هذه االختبا ارت من شركات ذات سمعه و خبره مسبقه في هذا المجال و تقدم للجهاز.",
+      "translated": "违反紧急情况、不可抗力及许可证规定的标准。\n第三，资费：\n物联网服务提供商有权就提供物联网服务向用户收取资费，服务提供商有义务就物联网服务资费或提供该等服务的特别促销方案取得主管部门事先书面同意。\n物联网服务提供商有义务采取必要措施并自费公布其向与其签约用户提供的服务资费，使之为所有人所知，并相应地向请求者提供该资费信息。\n第四，信息安全：\n物联网服务提供商有义务编制年度网络安全技术评估报告，报告应包括渗透测试和已知漏洞测试（tests vulnerability and penetration），该等测试应由在该领域具有良好声誉和既往经验的公司进行，并提交给主管部门。\n物联网服务提供商有义务在服务的应用程序或设备发生重大重要变更时，或当被紧急且专门要求时，立即编制网络安全技术评估报告，报告应包括渗透测试和已知漏洞测试（vulnerability and penetration tests），该等测试应由在该领域具有良好声誉和既往经验的公司进行，并提交给主管部门。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "TN",
+      "translation_id": "4bb92be9-3d82-434a-b820-18408ad464af",
+      "clause_id": "891b9258-47f4-4948-9d23-570ea9f0e7d1",
+      "clause_number": "7.1",
+      "source_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+      "version_id": "ef435dee-6930-496b-8d22-23b4819a7999",
+      "content_hash": "7b12a8ddddba535f4afb61ab95f9f9be411fdecc31cda1e9242145853edf2735",
+      "original": "الشخصية باستعمال الحيلة أو العنف أو التهديد.\nالفصل 89 يعاقب بالسجن مدة عام وبخطية قدرها خمسة آلاف\nدينار كل من تعمد إحالة المعطيات الشخصية لغاية تحقيق منفعة لنفسه\nأو لغيره أو لإلحاق مضرة بالمعني بالأمر.\nالفصل 90 يعاقب بالسجن مدة عام وبخطية قدرها خمسة آلاف\nدينار كل من :\nالمنصوص عليه بالفصل 7 أو الحصول على الترخيص المنصوص عليه\nبالفصلين 15 و69 من هذا القانون أو يستمر في معالجة المعطيات بعد\nمنع المعالجة أى سحب الترخيصء.\n. ينشر المعطيات الشخصية المتعلقة بالصحة رغم تحجير الهيئة\nالمنصوص عليه بالفقرة الثانية من الفصل 65 من هذا القانون»\n. يقوم بنقل المعطيات الشخصية إلى الخارج دون ترخيص ‎Bag‏\nعدد 61\nالرائد الرسمي للجمهورية التونسية -- 30 جويلية 2004\n. يحيل المعطيات الشخصية دون موافقة المعني بالأمر أو موافقة\nالهيئتة في الصور المنصوص ‎Yale‏ بهذا القانون.\nدينار المسؤول عن المعالجة أو المناول الذي يواصل معالجة المعطيات\nالشخصية رغم اعتراض المعني بالأمر وفق أحكام الفصل 42 من هذا\nالقانون.\nالفصل 92 يعاقب بالسجن مدة ثمانية أشهر وبخطية قدرها ثلاثة\nآلاف دينار المسؤول عن المعالجة أو المناول الذي يعمد إلى الحد من\nحق النفاذ أو الحرمان منه في غير الصور المنصوص عليها بالفصل 35\nمن هذا القانون.\nالفصل 93 يعاقب بالسجن مدة ثلاثة أشهر وبخطية قدرها ثلاثة\nآلاف دينار كل من يتعمد بمناسبة معالجة المعطيات الشخصية نشرها\nبطريقة تسىء لصاحبها أو لحياته الخاصة.\nويكون العقاب بالسجن مدة شهر وبخطية قدرها ألف دينار إذا تم\nالنشر دون قصد الإضرار.\nويمكن للمعني بالأمر أن يطلب من المحكمة أن تأذن بنشر مضمون",
+      "translated": "通过诡计、暴力或威胁使用个人数据。\n\n第89条 处1年监禁和5,000第纳尔罚金，凡故意转交个人数据以为自己或他人谋取利益，或对数据主体造成损害的。\n\n第90条 处1年监禁和5,000第纳尔罚金，对下列人员：\n本法第7条规定的，或取得本法第15条和第69条规定的许可，或在禁止处理或撤销许可后继续处理数据的；\n尽管本法第65条第二款规定的机构禁止，仍发布与健康有关的个人数据的；\n未经许可将个人数据传输到国外的；\n在本法规定的情形下，未经数据主体同意或机构同意转交个人数据的；\n第纳尔。处理控制者或分包处理者，尽管数据主体依照本法第42条规定提出反对，仍继续处理个人数据的。\n\n第61号 突尼斯共和国官方公报 -- 2004年7月30日\n\n第92条 处8个月监禁和3,000第纳尔罚金，处理控制者或分包处理者在本法第35条规定情形之外，故意限制或剥夺查阅权的。\n\n第93条 处3个月监禁和3,000第纳尔罚金，凡在处理个人数据时故意以损害数据主体或其私生活的方式发布该数据的。\n如果发布无意造成损害，处1个月监禁和1,000第纳尔罚金。\n数据主体可请求法院准许发布其内容。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "TN",
+      "translation_id": "5f420867-ad63-433a-8a8a-08a977a87786",
+      "clause_id": "ad38ccf2-a3b1-46ce-9fa6-0aa11e101751",
+      "clause_number": "2.1",
+      "source_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+      "version_id": "ef435dee-6930-496b-8d22-23b4819a7999",
+      "content_hash": "7b12a8ddddba535f4afb61ab95f9f9be411fdecc31cda1e9242145853edf2735",
+      "original": "‏الفصل 25 2 يمكن للهيئة أن تقرر إحالة المعطيات الشخصية فى\nحالة التوقف عن النشاط للأسباب المذكورة بالفصل المتقدم وذلك في\nالصورتين الآتيتين :\n‏أولا : إذا ‎ai,‏ أن تلك المعطيات صالحة ‎GY‏ تستخدم في أغراض\n‏ثانيا : إذا اقترح من تولى الإعلام إحالة كل المعطيات الشخصية أو\nبعضها إلى شخص طبيعي أو معنوي يحدد هويته بدقة. وفي هذه الحالة\nيمكن للهيئة أن تقرر الموافقة على إحالة المعطيات الشخصية إلى\nالشخص المقترح. ولا تتم الإحالة فعليا إلا بعد الحصول على موافقة\nالمعني ‎oi pols‏ وليه ‎of‏ ورثته المتلقاة بأي وسيلة تترك أثرا كتابيا.\n‏وفي صورة عدم حصول هذه الموافقة خلال ثلاثة أشهر من طلبهاء\nيجب إعدام المعطيات الشخصية.\n‏الفصل 26 في حالة توقف نشاط المسؤول عن المعالجة أو\nالمناول للأسباب المذكورة بالفصل 24 من هذا القانونء يمكن للمعني\nبالأمر ‎si‏ ورثته أو كل شخص له مصلحة أو النيابة العمومية أن يطلبوا\nفى كل وقت من ‎Gal diag‏ التدابير الملائمة ‎ast‏ المعطيات\nالشخصية وحمايتها أو إعدامها.\n‏صفحة 2086\n‏الرائد الرسمي للجمهورية التونسية -- 30 جويلية 2004\n‏وعلى الهيئة أن تصدر قرارها في أجل عشرة أيام بداية من تاريخ\n‏تعهدها.\n‏في حقوق المعني بالأمر\nالفرع الأول\nفى الموافقة\n‏الفصل 27 فيما عدا الصور المنصوص عليها بهذا القانون أو\nبالقوانين الجاري بها ‎heal‏ لا يمكن معالجة المعطيات الشخصية إلا\nبالموافقة الصريحة والكتابية للمعني بالأمر. وإذا كان قاصرا ‎ol‏ محجورا\nعليه أو غير قادر على الإمضاءء تخضع الموافقة إلى القواعد القانونية\nالعامة.\n‏وللمعني بالأمر أو وليه الرجوع في الموافقة في كل وقت.",
+      "translated": "第25条 2 委员会可以决定在前条所述原因导致停止活动的情况下，在以下两种情形中移交个人数据：\n第一：如果该等数据适合用于目的；\n第二：如果负责告知的人提议将全部或部分个人数据移交给其身份被准确确定的自然人或法人。在此情形下，委员会可以决定同意将个人数据移交给所提议的人。只有在获得数据主体、其监护人或其继承人以任何留下书面痕迹的方式作出的同意后，才实际进行移交。\n如果未在提出请求后三个月内获得该同意，必须销毁个人数据。\n第26条 如果处理负责人或分包处理者因本法第24条所述原因停止活动，数据主体或其继承人、任何有利害关系的人或检察机关可以随时要求委员会采取适当措施保护个人数据、保护或销毁之。\n第2086页\n突尼斯共和国官方公报——2004年7月30日\n委员会应自受理之日起十天之内作出决定。\n数据主体的权利\n第一目\n同意\n第27条 除本法或现行法律规定的情形外，未经数据主体明确书面同意，不得处理个人数据。如果数据主体是未成年人、被禁治产人或无能力签名者，同意适用一般法律规则。\n数据主体或其监护人可随时撤回同意。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "MA",
+      "translation_id": "8d5e47a0-5ce6-4932-9ae4-55a7d32c6244",
+      "clause_id": "d2260559-4f6f-464a-91b2-3cd2bc9f5a08",
+      "clause_number": "4.3",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+      "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+      "version_id": "0e326db8-2429-4006-8ddb-0b12e0f63688",
+      "content_hash": "0a930a84d692c5b7e82a328970c52f10c52ee55ba75bb974918f0694a901365b",
+      "original": "modifiant le décret royal n° 330-66 du 10 moharrem 1387\n(21 avril 1967) portant règlement général de comptabilité\npublique.\nLE PREMIER MINISTRE,\nVu le décret royal n° 330-66 du 10 moharrem 1387 (21 avril\n1967) portant règlement général de comptabilité publique tel\nqu’il a été modifié et compltété ;\nVu Ja décision de la chambre constitutionnelle de la Cour\nsuprême n° 14 du 6 joumada II 1399 (3 mai 1979) ;\nSur proposition du ministre de l’économie et des finances ;\nAprès examen par le conseil des ministres réuni le\n11 joumada I 1430 (7 mai 2009),\nDECRETE :\nARTICLE PREMIER. — Les articles 17, 41 et 86 du décret\nroyal n° 330-66 du 10 moharrem 1387 (21 avril 1967) susvisé\nsont modifiés et complétés comme suit :\n« Article 17, Chaque poste comptable dispose d’une seule\n« caisse et en cas de besoin, d’un compte courant postal ou d’un\n« compte de dépôt au Trésor .\n« En aucun cas l'intitulé du compte courant postal ou du\n«compte de dépôt au Trésor ne peut être libellé au nom\n« personnel du comptale. »\n« Article 41. — Le paiement est l’acte wc. eee de sa dette.\n« Sous réserve des exceptions prévues par les lois et\n« règlement le paiement ne peut intervenir avant, soit l’exécution\n(AU SETVICE, ner rene nnnenerenrneere d'allocation.\n« Par dérogation au principe de l'exécution du service\n« prévu à l’alinéa précédent, il peut être procédé au paiement :",
+      "translated": "修改关于公共会计总条例的1387年穆哈兰姆月10日（1967年4月21日）第330-66号皇家法令。\n总理，\n鉴于经修改和补充的关于公共会计总条例的1387年穆哈兰姆月10日（1967年4月21日）第330-66号皇家法令；\n鉴于最高法院宪法庭1399年主马达·阿赫拉月6日（1979年5月3日）第14号裁决；\n根据经济和财政部长的提议；\n经1430年主马达·乌拉月11日（2009年5月7日）召开的内阁会议审议后，\n兹颁布：\n第一条。——上述1387年穆哈兰姆月10日（1967年4月21日）第330-66号皇家法令的第17条、第41条和第86条修改和补充如下：\n“第17条，每个会计单位仅有一个现金柜，必要时有一个邮政活期账户或一个国库存款账户。\n“任何情况下，邮政活期账户或国库存款账户的户名不得以会计人员个人名义开立。”\n“第41条。——支付是其债务的 wc. eee 行为。\n“除法律和条例规定的例外外，支付不得在（AU SETVICE, ner rene nnnenerenrneere d'allocation）执行之前进行。\n“作为对上款规定的服务执行原则的例外，可进行支付：”",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "MA",
+      "translation_id": "b300d869-c52b-4dd1-b445-d27555e49336",
+      "clause_id": "c2970107-ac76-41a6-8070-2d858059defb",
+      "clause_number": "4.2",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+      "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+      "version_id": "0e326db8-2429-4006-8ddb-0b12e0f63688",
+      "content_hash": "0a930a84d692c5b7e82a328970c52f10c52ee55ba75bb974918f0694a901365b",
+      "original": "informations prévues à l’article 44 du présent décret, les mesures\nou le dispositif destinés à garantir un niveau de protection\nsuffisant de la vie privée ainsi que des libertés et droits\nfondamentaux des personnes.\nConcernant les autorisations de transfert, la CNDP se\nprononce, selon la procédure régissant les autorisations, prévue\npar la loi n° 09-08 susvisées et ces textes d’application.\nART. 49.— Toute\nmentionnées aux articles 46, 47 et 48 du présent décret doit être\nmodification des informations\nportée à la connaissance de la CNDP dans un délai de 8 jours\nouvrables.\nART. 50.— Le transfert, prévu au sein d’un groupe\nd’entreprises ou à l’adresse de plusieurs destinataires pour les\nmêmes catégories de données et les mêmes finalités, peut faire\nl’objet d’une déclaration commune.\nN° 5744 — 24 joumada II 1430 (18-6-2009)\nART. 51, — Le ministre de l’industrie, du commerce et des\nnouvelles technologies et le ministre de l’économie et des\nfinances sont chargés, chacun en ce qui le concerne, de\nl'exécution du présent décret, qui sera publié au Bulletin officiel.\nFait 4 Rabat, le 25 journada I 1430 (21 mai 2009).\nABBAS EL FASSI.\nPour contreseing :\nLe ministre de l’industrie,\ndu commerce et des nouvelles\ntechnologies,\nAHMED REDA CHAML\nLe ministre de l’économie\net des finances,\nSALAHEDDINE MEZOUAR.\nDécret n° 2-07-1237 du 1* joumada IE 1430 (26 mai 2009)",
+      "translated": "本法令第44条规定的信息，旨在保证对私人生活以及个人的自由和基本权利提供充分保护的措施或机制。\n关于转移授权，CNDP依据上述第09-08号法律及其实施文本规定的、规范授权的程序作出决定。\n第49条——本法令第46、47和48条提及的任何信息修改，必须在8个工作日内告知CNDP。\n第50条——在企业集团内部或向多个接收方针对相同数据类别和相同目的进行的转移，可以作出共同申报。\n第5744号——1430年第二主马达月24日（18-6-2009）\n第51条——工业、商业和新技术部长以及经济和财政部长，各自在其职责范围内，负责执行本法令；本法令将在官方公报上公布。\n于拉巴特作出4，1430年主马达·阿瓦尔月25日（2009年5月21日）。\nABBAS EL FASSI。\n副署：\n工业、商业和新技术部长，\nAHMED REDA CHAML\n经济和财政部长，\nSALAHEDDINE MEZOUAR。\n第2-07-1237号法令，1430年主马达·伊 IE 1日（2009年5月26日）",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "LB",
+      "translation_id": "3ca29dce-a729-414b-835b-23db0f9a1ccc",
+      "clause_id": "9c56439e-4e84-4c89-8b3d-43ed3b45935e",
+      "clause_number": "١.1",
+      "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "version_id": "ee99bccb-9fc2-4afa-a223-65a43c00891e",
+      "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+      "original": "Monnaie Electronique et numérique/ : ) والرقميــــة الإلكترونيــــة النقــــود\nMoney Electronic or Digital ( هـي وحـدات تسـمى وحـدات نقـد إلكترونـي يمكـن حفظهـا\nعلى دعامة إلكترونية .\nّم\nهـو) : Fournisseur d'accès/Network Service provider ) الاتصـال خدمـة مقـد\nمن  يمكـ ن المسـتخدم مـن ولـوج شـبكة اتصـالات إلكترونيـة ويـوفر لـه خـدمات نقـل المعلومـات مب\nً\nاشـرة.\nيمكن أن يتضمن تقديم هذه الخدمات تخزيناً انتقالياً مؤقتاً للمعلومات رسـلة\nُ\nالم شـرط لا أن يـؤدي إلـى\nالمخز وشـرط أن يسـتعمل أي تعديل في البيانات نـة،\nهـذا التخـزين لحسـن تنفيـذ الخدمـة لا وأن يتعـدى ّ\nالوقت اللازم لإتمامها .\nمستضـيف البيانـات ( : host Data/données de Hébergeur (هـو مـن يقـوم بتخـزين\nأيـاً تكـن طبيعتهـا، لحسـاب الغيـر، مقابـل عـوض أو دون عـوض، ويضـعها فـي متنـاول المعلومـات\nالجمهور من خلال خدمات الاتصال المباشر .\nالمعلومـات المتعلقـة بحركـة البيانـات ( data Traffic /trafic de Données(: هـي أيـة\nمعلومـــات متعلقـــة بعمليـــة إتصـــال بو اســـطة نظـــام حاســـب آلـــي مـــرتبط بشـــبكة معلوماتيـــة . تصـــدر\nهـــذه المعلومـــات عـــن نظـــام حاســـب آلـــي مـــرتبط بالشـــبكة، وتـــدل علـــى مصـــدر الإتصـــال ومتلقيـــه\nوخط سير المعلومات والوقت والتاريخ والحجم والمدة الزمنية ما أو شابه ذلك من المعلومات .\nاسـم الموقـع ( Name Domain/domaine de Nom : (امـ هـو يـوازي بـالرموز الأبجديـة أو\nالرقمية أو خلافه العنوان الرقمي المعين لموقع إلكتروني على شبكة الإنترنت .",
+      "translated": "电子货币和数字/电子货币（Monnaie Electronique et numérique／Money Electronic or Digital）是称为电子货币单位的单位，可以保存在电子载体上。\n\n接入服务提供者/网络服务提供者（Fournisseur d'accès／Network Service provider）是提供服务的人，使用户能够接入电子通信网络，并直接向其提供信息传输服务。提供这些服务可包括对信息进行临时性的中转存储，条件是该存储不得导致对已存储数据作出任何修改，并且该存储不得超过完成服务所必需的时间。\n\n数据托管人（Hébergeur de données／Data host）是无论其性质如何，为他人有偿或无偿存储信息，并通过直接连接服务将其提供给公众的人。\n\n与数据流量有关的信息（trafic de Données／traffic data）是与通过连接至信息网络的自动计算机系统进行通信过程有关的任何信息。这些信息由连接至网络的自动计算机系统产生，并表明通信的来源和接收方、信息路径、时间、日期、大小、时长或类似信息。\n\n域名（Nom de domaine／Domain Name）是以字母、数字或其他符号表示的、与互联网上网站特定数字地址相对应的名称。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "LB",
+      "translation_id": "8aa8da69-591c-4648-bd33-3299241fdf52",
+      "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+      "clause_number": "١.2",
+      "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "version_id": "ee99bccb-9fc2-4afa-a223-65a43c00891e",
+      "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+      "original": ":(Données à caractère personnel/Personal Data)الشخصي الطابع ذات البيانات\nهي جميع أنواع المعلومات المتعلقة بشخص طبيعي التـي ّ تمكـن مـن التعريـف بـه، علـى نحـو مب اشـر\nأو غير مباشر، بما في ذلك عن طريق مقارنة المعلومات المتعددة المصادر أو التقاطع فيما بينها .\nTraitement des Données à caractère personnel/ )الشخصـي الطـابع ذات البيانـات معالجـة\nData Personal of Processing (: هي كـل عمليـة أو مجموعـة عمليـات تقـع علـى هـذه البيانـات\nمهمــا كانــت الوســيلة المســتخدمة، لاســيما عمليــات التجميــع والتســجيل والتنظــيم والحفــظ والتكييــف\nوالتعـديل والإقتطــاع والقــ ءةرا والإســتعمال والنقــل والنســخ والنشـر والمحــو والإتــلاف وكــل شــكل آخــر\nلوضع المعلومات تحت التصرف .\nصاحب البيانـات ذات الطـابع الشخصـي: ( المعـروف أيضـاً بالشـخص المعنـي بالبيانـات ذات الطـابع\nالشخصي) هو الشخص الطبيعي الذي تتعلق به هذه البيانات .\nالمسـؤول عـن معالجـة البيانـات ذات الطـابع الشخصـي: هـو الشـخص الطبيعـي أو المعنـوي الـذي\nيحدد أهداف المعالجة وأساليبها .\nرسـل\nُ\nالم إليـه البيانـات ذات الطـابع الشخصـي: هـو الشـخص خـول\nُ\nالم اسـتلا م البيانـات ذات الطـابع\nالشخصي، وهو غير الشخص المعني بالمعالجة أو المسؤول عن المعالجة أو مـن ينجزهـا لا. تعتبـر\nبحكم رسل\nُ\nقانوناً ضمن مهامها طلب بيانات ذات طابع شخصي . الم إليه السلطات العامة المخولة",
+      "translated": "个人数据（Données à caractère personnel/Personal Data）：系指与自然人有关的、能够直接或间接识别该自然人的一切类型信息，包括通过比较多来源信息或信息交叉比对的方式。\n个人数据处理（Traitement des Données à caractère personnel/Processing of Personal Data）：系指对该等数据实施的任何操作或一组操作，无论所采用的手段为何，尤其是收集、记录、组织、存储、调整、修改、提取、读取、使用、传输、复制、发布、删除、销毁以及将信息置于可支配状态的一切其他形式。\n个人数据主体：（亦称个人数据所涉个人）系指该等数据所涉的自然人。\n个人数据处理控制者：系指确定处理目的和处理方式的自然人或者法人。\n个人数据接收方：系指被授权接收个人数据的人，其并非处理所涉个人、处理控制者或执行处理者。依法在其职权范围内请求个人数据的公共机关不视为个人数据接收方。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    }
+  ]
+}

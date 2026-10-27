@@ -38,7 +38,7 @@ class Document(Base):
     __table_args__ = (
         UniqueConstraint("site_id", "source_url", name="uq_documents_site_url"),
         CheckConstraint(
-            "relevance IN ('relevant','irrelevant','needs_review')",
+            "relevance IN ('relevant','related','irrelevant','out_of_scope','needs_review')",
             name="ck_documents_relevance",
         ),
     )
@@ -65,6 +65,10 @@ class Document(Base):
         String(16), default="relevant", server_default="relevant"
     )
     relevance_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # 相关性判定来源: rule(规则初判) / llm(大模型) / manual(人工覆盖,自动流程不得改写)
+    relevance_source: Mapped[str] = mapped_column(
+        String(16), default="rule", server_default="rule"
+    )
 
 
 class LegalStatus(enum.StrEnum):
@@ -111,6 +115,7 @@ class DocumentVersion(Base):
     page_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     char_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     parse_strategy: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    parsed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # 文本来源:PDF 文字层,或 OCR(OCR 文本必须人工核对,准确率不能当作原文)

@@ -1,0 +1,21 @@
+{
+  "backup": "/opt/cyshuhe-backups/20261025T150629Z-new-platform",
+  "files": [
+    {
+      "file": "archive.tar.gz",
+      "bytes": 35429912,
+      "sha256": "536433f7a72c0240404ffafd17bed3d76ee9c6dcad618e0aebbe183f9bdcfccb"
+    },
+    {
+      "file": "database.dump",
+      "bytes": 19195723,
+      "sha256": "b8624b02667eabaacad040f145a2b09070dc0d8a98295af04879db3f5c9f3667"
+    },
+    {
+      "file": "release.json",
+      "bytes": 823,
+      "sha256": "6a054df75da6a045b0a0d2fd3dc91ae1535445f9e0097bfe407790b51f0dd087"
+    }
+  ],
+  "note": "New platform after demonstration; no container environment or API key stored. Archive CRC verified; database dump not restored in this step."
+}

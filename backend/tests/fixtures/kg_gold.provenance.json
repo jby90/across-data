@@ -1,0 +1,10 @@
+{
+  "fixture": "kg_gold.json",
+  "purpose": "offline_rule_contracts_only",
+  "source_verification": "not_established",
+  "human_review_status": "pending",
+  "human_confirmed_count": 0,
+  "reviewer": null,
+  "acceptance_metrics": null,
+  "note": "Legacy fixtures contain unverified constructed statements. Do not treat expected_valid or passing rule tests as official-law accuracy or human-confirmed gold. Export actual source-bound candidates for human review separately."
+}

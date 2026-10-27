@@ -10,10 +10,17 @@ import re
 import threading
 import unicodedata
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import pypdfium2 as pdfium
 from bs4 import BeautifulSoup
+
+from app.ingestion.source_layout import (
+    is_english_page,
+    is_reference_page,
+    ltr_page,
+    resolve_unmapped_hyphens,
+)
 
 # 平均每页字符数低于此值,判定为扫描件(没有文字层)
 NEEDS_OCR_MIN_CHARS_PER_PAGE = 30
@@ -30,6 +37,7 @@ class ParseError(Exception):
 class ParsedDocument:
     kind: str  # pdf / html / text
     pages: list[str]
+    layout_events: list[dict] = field(default_factory=list)
 
     @property
     def char_count(self) -> int:
@@ -71,15 +79,34 @@ def _normalise_pdf_text(text: str) -> str:
     return "\n".join(line.rstrip() for line in lines if line.strip())
 
 
-def parse_pdf(content: bytes) -> list[str]:
+def parse_pdf(content: bytes, *, layout_events: list[dict] | None = None) -> list[str]:
     try:
         with _PDFIUM_LOCK:
             doc = pdfium.PdfDocument(content)
             try:
-                return [
-                    _normalise_pdf_text(doc[i].get_textpage().get_text_range())
-                    for i in range(len(doc))
-                ]
+                pages = []
+                for i in range(len(doc)):
+                    page = doc[i]
+                    text_page = page.get_textpage()
+                    try:
+                        text = _normalise_pdf_text(text_page.get_text_range())
+                        # Restrict geometric ordering to English bibliography pages;
+                        # Arabic/mixed text and normative multi-column pages stay untouched.
+                        if text.count("://https") >= 3 and is_english_page(text):
+                            try:
+                                layout = ltr_page(text_page)
+                                if is_reference_page(layout["text"]):
+                                    layout = resolve_unmapped_hyphens(page, text_page, layout)
+                                    text = layout["text"]
+                                    if layout_events is not None:
+                                        layout_events.append({"page_number": i + 1, **layout})
+                            except ValueError as exc:
+                                raise ParseError(f"参考文献页 {i + 1} 版面核验失败: {exc}") from exc
+                        pages.append(text)
+                    finally:
+                        text_page.close()
+                        page.close()
+                return pages
             finally:
                 doc.close()
     except pdfium.PdfiumError as e:
@@ -90,7 +117,21 @@ def parse_html(content: bytes) -> list[str]:
     soup = BeautifulSoup(content, "html.parser")
     for tag in soup(["script", "style", "noscript", "nav", "footer", "header"]):
         tag.decompose()
-    lines = [" ".join(line.split()) for line in soup.get_text("\n").splitlines()]
+    # Reusable structural adapter: choose the narrowest container containing all
+    # numbered legal headings. No site selectors, law names or expected articles.
+    from app.ingestion.clauses import match_header
+
+    numbered = [h for h in soup.find_all(re.compile(r"^h[1-6]$")) if match_header(h.get_text())]
+    root = soup
+    if len(numbered) >= 3:
+        candidates = [
+            t
+            for t in soup.find_all(["main", "article", "section", "div"])
+            if all(h in t.descendants for h in numbered)
+        ]
+        if candidates:
+            root = min(candidates, key=lambda t: len(t.get_text()))
+    lines = [" ".join(line.split()) for line in root.get_text("\n").splitlines()]
     return ["\n".join(line for line in lines if line)]
 
 
@@ -267,7 +308,8 @@ def text_layer_garbled(pages: list[str], language: str) -> str | None:
 def parse_document(content: bytes, mime: str) -> ParsedDocument:
     kind = detect_kind(content, mime)
     if kind == "pdf":
-        return ParsedDocument(kind, parse_pdf(content))
+        events = []
+        return ParsedDocument(kind, parse_pdf(content, layout_events=events), events)
     if kind == "html":
         return ParsedDocument(kind, parse_html(content))
     return ParsedDocument(kind, [_decode(content)])

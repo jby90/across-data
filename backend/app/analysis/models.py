@@ -4,20 +4,24 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
+    BigInteger,
     Boolean,
     CheckConstraint,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.core.rls import TenantOwnedMixin
 
 
 class AgentWorkflowConfig(Base):
@@ -26,6 +30,9 @@ class AgentWorkflowConfig(Base):
     __tablename__ = "agent_workflow_configs"
     __table_args__ = (
         UniqueConstraint("workflow_key", "version_no", name="uq_workflow_key_version"),
+        Index(
+            "uq_workflow_active", "workflow_key", unique=True, postgresql_where=text("is_active")
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -38,6 +45,7 @@ class AgentWorkflowConfig(Base):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
     readonly_locked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    runtime_schema_version: Mapped[str | None] = mapped_column(String(32), nullable=True)
     nodes_json: Mapped[list[dict]] = mapped_column(JSONB, nullable=False, default=list)
     edges_json: Mapped[list[dict]] = mapped_column(JSONB, nullable=False, default=list)
     change_note: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -55,10 +63,11 @@ class AnalysisTask(Base):
     """多智能体合规分析任务表(支持普通企业用户按租户隔离发起、追问补充事实、生成八维度报告)。"""
 
     __tablename__ = "analysis_tasks"
+    citation_policy: Mapped[str | None] = mapped_column(String(40), nullable=True)
     __table_args__ = (
         CheckConstraint(
             "status IN ('collecting_facts','ready_to_run','running','completed',"
-            "'partial_sample','failed')",
+            "'partial_sample','failed','awaiting_user_facts')",
             name="ck_analysis_tasks_status",
         ),
     )
@@ -90,6 +99,24 @@ class AnalysisTask(Base):
     total_duration_ms: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     mcp_calls_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     backtrack_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    fact_followup_rounds: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    pending_user_facts_json: Mapped[list[dict]] = mapped_column(
+        JSONB, nullable=False, default=list, server_default="[]"
+    )
+    fact_followup_history_json: Mapped[list[dict]] = mapped_column(
+        JSONB, nullable=False, default=list, server_default="[]"
+    )
+    analysis_checkpoint_json: Mapped[dict] = mapped_column(
+        JSONB, nullable=False, default=dict, server_default="{}"
+    )
+    workflow_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("agent_workflow_configs.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
     workflow_version_no: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -102,7 +129,7 @@ class AnalysisTask(Base):
     )
 
 
-class AnalysisStepTrace(Base):
+class AnalysisStepTrace(TenantOwnedMixin, Base):
     """多智能体协同步骤轨迹表(记录每个 Agent 节点输入输出、MCP 工具调用、核验与退回补证)。"""
 
     __tablename__ = "analysis_step_traces"
@@ -112,6 +139,12 @@ class AnalysisStepTrace(Base):
         UUID(as_uuid=True),
         ForeignKey("analysis_tasks.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
+    )
+    workflow_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("agent_workflow_configs.id", ondelete="RESTRICT"),
+        nullable=True,
         index=True,
     )
     seq_no: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -133,11 +166,15 @@ class AnalysisStepTrace(Base):
     )
 
 
-class ReportVersion(Base):
+class ReportVersion(TenantOwnedMixin, Base):
     """八维度安全评估报告不可变版本表(支持整份与按维度拆分、编辑、对比与导出)。"""
 
     __tablename__ = "report_versions"
-    __table_args__ = (UniqueConstraint("task_id", "version_no", name="uq_report_task_version"),)
+    citation_policy: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    __table_args__ = (
+        UniqueConstraint("task_id", "version_no", name="uq_report_task_version"),
+        Index("ix_report_versions_citation_snapshot", "dimensions_json", postgresql_using="gin"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     task_id: Mapped[uuid.UUID] = mapped_column(
@@ -163,7 +200,7 @@ class ReportVersion(Base):
     )
 
 
-class AnalysisMessage(Base):
+class AnalysisMessage(TenantOwnedMixin, Base):
     """分析对话消息:用户与助手的逐轮问答(信息采集全部在对话里完成)。"""
 
     __tablename__ = "analysis_messages"
@@ -184,3 +221,19 @@ class AnalysisMessage(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class AnalysisEvent(Base):
+    """Committed metadata outbox for authenticated/replayable progress streams."""
+
+    __tablename__ = "analysis_events"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    task_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("analysis_tasks.id", ondelete="CASCADE"), index=True
+    )
+    org_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=True, index=True
+    )
+    event_type: Mapped[str] = mapped_column(String(40))
+    payload: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

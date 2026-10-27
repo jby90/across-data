@@ -37,7 +37,7 @@ ALLOWED = [
 CONDITIONAL = [r"MPL", r"Mozilla Public", r"LGPL", r"Lesser General Public", r"CC-BY-4.0"]
 
 
-SELF_PACKAGES = {"cyshuhe-backend"}  # 本项目自身,不检查
+SELF_PACKAGES = {"cyshuhe-backend", "@cyshuhe/shared", "@cyshuhe/web-user", "@cyshuhe/web-admin"}
 
 
 def load_overrides() -> dict[str, str]:

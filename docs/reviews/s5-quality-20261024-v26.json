@@ -1,0 +1,3740 @@
+{
+  "completed_cases": 32,
+  "total_cases": 32,
+  "recall_at_5": 0.53125,
+  "retrieval_hits": 17,
+  "retrieval_expected": 32,
+  "quote_fidelity": 0.8222222222222222,
+  "faithful_findings": 37,
+  "findings_total": 45,
+  "fact_consistency": 0.9142857142857143,
+  "supported_findings": 32,
+  "judged_findings": 35,
+  "judge_coverage": 0.7777777777777778,
+  "llm_judged": true,
+  "human_review_count": 0,
+  "human_review_status": "0/32 未经人工复核",
+  "total_tokens": 417520,
+  "technical_error_cases": 3,
+  "note": "工程来源标注集，非人工金标准。事实一致性为独立模型对结论是否获引文支持的判断（llm_judged），不代表法律准确率。未生成/未判定项不计为通过，另列覆盖率。",
+  "cases": [
+    {
+      "model": "deepseek-flash",
+      "tokens": 16267,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "19.4 The Personal Data Protection Regulations 2021 specify the conditions under which\nan organisation may transfer personal data overseas. In essence, an organisation\nmay transfer personal data overseas if it has taken appropriate steps to ensure that\nthe overseas recipient is bound by legally enforceable obligations or specified\ncertifications to provide the transferred personal data a standard of protection that\nis comparable to that under the PDPA.",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "abc976bc-7df5-449b-85b1-57eb6bd33001",
+          "quote_end": 455,
+          "obligation": "根据《2021年个人数据保护条例》，组织向境外传输个人数据前，须采取适当步骤确保境外接收方受可法律强制执行的义务或指定认证约束，为传输的个人数据提供与《个人数据保护法》相当的保护标准；满足该条件方可传输。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2
+          ],
+          "business_fact": "向境外研发中心传输遥测与个人数据前须满足什么？",
+          "anchor_quote_end": 455,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "0dd38b143d2acaf12c8e85f661e96b97773b7fb64fbbc0e3f947a220fb401f5f",
+          "selected_sentence_ids": [
+            1,
+            2
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "19.1 Section 26 of the PDPA limits the ability of organisations to transfer personal data to\nanother organisation outside Singapore in circumstances where it relinquishes\npossession or direct control over the personal data. Such circumstances include\ntransferring personal data to another company within the same group for centralised\ncorporate functions, or to a data intermediary for data processing. In situations\nwhere personal data transferred or situated overseas remains in the possession or\ncontrol of an organisation, the organisation has to comply with all the Data\nProtection Provisions. ",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "c9ab0ba5-ceda-4608-82dd-424bd4b29cdf",
+          "quote_end": 599,
+          "obligation": "组织将个人数据传输给新加坡境外另一组织，且丧失对该个人数据的占有或直接控制时，PDPA第26条限制其传输能力；该情形包括为集中化公司职能向同一集团内另一公司传输，或向数据处理的数据中介传输。若传输至境外或位于境外的个人数据仍由组织占有或控制，该组织须遵守所有数据保护条款。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "向境外研发中心传输遥测与个人数据前须满足什么？",
+          "anchor_quote_end": 599,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "e70c74dbddfe98df04ba5efe9b69b23201fca06884c892d965d4ece7ae9fda9c",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "In essence, an organisation may\ntransfer personal data overseas if it has taken appropriate steps to ensure that it will\ncomply with the Data Protection Provisions in respect of the transferred personal\ndata while such personal data remains in its possession or under its control; and if\nthe personal data is transferred to a recipient in a country or territory outside\nSingapore, that the recipient is bound by legally enforceable obligations to provide\nto the personal data transferred a standard of protection that is comparable to that\nunder the PDPA. In this regard, legally enforceable obligations include obligations\nimposed on the recipient under:\na) any law;\nb) any contract that:\ni. requires the recipient to provide to the personal data transferred\nto the recipient a standard of protection that is at least comparable\nto the protection under the PDPA; and\nii. specifies the countries and territories to which the personal data\nmay be transferred under the contract;\nc) any binding corporate rules that33:\n33 Such binding corporate rules may be adopted in instances where a recipient is an organisation related to the\ntransferring organisation and is not already subject to other legally enforceable obligations (as described in those\nRegulations) in relation to the transfer. The Regulations further provide that the recipient is related to the\ntransferring organisation if:\na) the recipient, directly or indirectly, controls the transferring organisation;\nb) the recipient is, directly or indirectly, controlled by the transferring organisation; or\nc) the recipient and the transferring organisation are, directly or indirectly, under the control of a common\nperson.\n",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "8b2ffa30-640a-4f8d-be0e-8eead6120fe6",
+          "quote_end": 1812,
+          "obligation": "组织可向境外传输个人数据，但须已采取适当步骤，确保在其持有或控制该数据期间遵守《数据保护条款》；接收方位于新加坡境外时，须受可法律强制执行义务约束，为所传数据提供与《PDPA》相当的保护标准。此类义务包括：法律；合同（须要求至少同等保护并指明可传输的国家/地区）；约束性公司规则（仅限接收方与传输方为关联组织且未受其他可法律强制执行义务约束，关联指直接或间接控制、被控制或共同控制）。",
+          "risk_level": "HIGH",
+          "quote_start": 132,
+          "sentence_ids": [
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "business_fact": "向境外研发中心传输遥测与个人数据前须满足什么？",
+          "anchor_quote_end": 1812,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 132,
+          "source_text_sha256": "e2ae7dae99379f32172dd626d203e08ca1c94b19ad32ed83a21b5797e80019b2",
+          "selected_sentence_ids": [
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文明确载明《2021年个人数据保护条例》下传输条件：采取适当步骤确保境外接收方受法律强制执行义务或指定认证约束，提供与PDPA相当的保护标准；结论与之完全一致。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文完整覆盖结论各点：第26条限制在丧失占有或直接控制时向境外另一组织传输；包括集团内集中职能传输和数据中介处理；若数据仍由组织占有或控制则须遵守全部数据保护条款。",
+          "supported": "yes"
+        },
+        {
+          "index": 2,
+          "reason": "引文支持结论全部要素：传输须确保持有或控制期间遵守数据保护条款；境外接收方须受法律强制执行义务约束并提供相当保护；义务包括法律、合同（至少同等保护并指明可传输国家/地区）、约束性公司规则及其关联组织和未受其他义务约束的限制。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "abc976bc-7df5-449b-85b1-57eb6bd33001",
+          "clause_number": "19.4",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "c9ab0ba5-ceda-4608-82dd-424bd4b29cdf",
+          "clause_number": "19.1",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "8ccf531d-b7c8-4863-b558-03f9373bcdeb",
+          "clause_number": "3.23",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "9d04d66a-0087-4109-86a0-8c18515058ff",
+          "clause_number": "19.8.2",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "8b2ffa30-640a-4f8d-be0e-8eead6120fe6",
+          "clause_number": "19.2",
+          "document_title": "The Transfer Limitation Obligation chapter 19 historical guidance"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-03",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D3",
+      "findings_total": 3,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 34.816,
+      "judged_findings": 3,
+      "expected_clauses": [
+        {
+          "clause_id": "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "26",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Transfer of personal data outside Singapore\n26.—(1) An organisation must not transfer any personal data to a\ncountry or territory outside Singapore except in accordance with\nrequirements prescribed under this Act to ensure that organisations\nprovide a standard of protection to personal data so transferred that is\ncomparable to the protection under this Act.\n(2) The Commission may, on the application of any organisation,\nby written notice exempt the organisation from any requirement\nprescribed pursuant to subsection (1) in respect of any transfe",
+          "source_text_sha256": "af115bb055e771fa119062bf054569ef16970e45248fd293420cc154db670353"
+        }
+      ],
+      "faithful_findings": 3,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "向境外研发中心传输遥测与个人数据前须满足什么？",
+      "retrieval_expected": 1,
+      "supported_findings": 3,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "境外保护标准及法定条件，不能仅凭签合同认定合规"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 13071,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Public agencies are excluded from the application of the Data Protection Provisions.\nOrganisations that provide services to public agencies may either have obligations\nunder the PDPA as data controllers or as data intermediaries.\n",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "d5d8fcfd-a190-4b4f-80b7-78829289b72e",
+          "quote_end": 230,
+          "obligation": "公共机构不适用《数据保护规定》。向公共机构提供服务的组织，可能依PDPA分别作为数据控制者或数据中介承担义务。",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 230,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "10fe2e85b935599c201bfb43f70efa90eea12c1ca1dc178faa18d48169735a64",
+          "selected_sentence_ids": [
+            1,
+            2
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "21.1 In data protection, the concept of accountability refers to how an organisation\ndischarges its responsibility for personal data in its possession or which it has control\nover83. This may include situations where the organisation can determine the\npurposes for which the personal data is collected, used or disclosed, or the manner\nand means by which the data is processed. This general concept of accountability is\nin Part 3 of the PDPA on “General Rules with Respect to Protection of and\nAccountability for Personal Data” and premised on section 11(2) within Part 3 of the\nPDPA, which states, “An organisation is responsible for personal data in its\npossession or under its control.”.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "dd3ec147-106e-4eb3-a116-24a4f42a8778",
+          "quote_end": 690,
+          "obligation": "PDPA第3部分第11(2)条规定，组织对其占有或控制的个人数据负责；问责制指组织如何履行该责任，可包括组织能决定个人数据收集、使用或披露的目的，或处理的方式与手段的情形。",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 690,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "a57f52c726200d7c355654d63c842e0ed6f427b3ac5117f4f501b4821fbd1405",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "gap_note": "候选依据未提供PDPA适用范围条款的完整原文，无法据此确定车联网数据处理是否受一般数据保护法约束。",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文明确说明公共机构被排除适用《数据保护规定》，并向公共机构提供服务的组织可能依PDPA作为数据控制者或数据中介承担义务，结论被完整支持。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文说明问责制涉及组织如何履行对其占有或控制的个人数据的责任，并包含组织可决定收集、使用或披露目的或处理方式与手段的情形，且以PDPA第3部分第11(2)条为基础；结论与引文一致。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "d5d8fcfd-a190-4b4f-80b7-78829289b72e",
+          "clause_number": "3.20",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "9a845dcd-c7e0-4249-9456-0fee86b3ca9b",
+          "clause_number": "9",
+          "document_title": "Personal Data Protection Act 2012 - Personal Data Protection Regulations 2014"
+        },
+        {
+          "clause_id": "4d29a055-d5f0-47bc-b126-bf579bdc35ed",
+          "clause_number": "0.1",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "dd3ec147-106e-4eb3-a116-24a4f42a8778",
+          "clause_number": "21.1",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "a4d8176f-7b61-4c72-8b08-0fc8d72a1be8",
+          "clause_number": "2.4",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-01",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D1",
+      "findings_total": 2,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 25.576,
+      "judged_findings": 2,
+      "expected_clauses": [
+        {
+          "clause_id": "9885ae7b-34d8-4109-9f7b-ee7cc8fe2ef8",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "4",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Application of Act\n4.—(1) Parts 3, 4, 5, 6, 6A and 6B do not impose any obligation\non —\n(a) any individual acting in a personal or domestic capacity;\n(b) any employee acting in the course of his or her\nemployment with an organisation;\n(c) any public agency; or\n(d) any other organisations or personal data, or classes of\norganisations or personal data, prescribed for the purposes\nof this provision.\n[40/2020]\n(2) Parts 3, 4, 5, 6 (except sections 24 and 25), 6A (except\nsections 26C(3)(a) and 26E) and 6B do not impose any obligation on\na data inter",
+          "source_text_sha256": "cd0a0f1cfa1c7afcf3ba22eb5dcf0710f17d238503ab76fd28242e5ada35569b"
+        }
+      ],
+      "faithful_findings": 2,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "企业车联网数据处理是否受一般数据保护法约束？",
+      "retrieval_expected": 1,
+      "supported_findings": 2,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "检查适用范围及例外，不把所有主体一概纳入"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 10341,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Number of data elements in the dataset and availability of other information\nThe rule of thumb is that there should be at least two data elements in the dataset\nbefore individuals can be identified. Sometimes, more than two data elements may\nbe required before an individual can be identified. This depends very much on the\nspecificity and nature of the data elements. For example, the combination of name\nand NRIC number is usually sufficient to identify individuals, but email addresses may\nneed to be combined with customer shopping preferences and purchase history\nbefore individuals can be identified from this combination of data elements. In\ndetermining whether the dataset is personal data, an organisation should not\noverlook the availability of other information it has or is likely to have access to. For\nexample, a unique customer ID that can link a mailing list to the CRM system.\n",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "22e9c070-a7fd-40e5-9595-79a1e05223ae",
+          "quote_end": 1195,
+          "obligation": "在判断数据集是否属于个人数据时，组织不应忽视其拥有或可能获取的其他信息；识别个人所需数据元素数量并不固定，经验上通常至少两个，但有时需多于两个，取决于数据元素的具体性和性质。",
+          "risk_level": "MEDIUM",
+          "quote_start": 301,
+          "sentence_ids": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 1195,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 301,
+          "source_text_sha256": "3d33d675f19a91e0a8c2132a5281169679733d65c71ca1efcce14ff740f153cc",
+          "selected_sentence_ids": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ],
+      "gap_note": "其他候选条款分别涉及研究例外、数据泄露通知和访问请求，与判断车外影像能否间接识别个人是否构成个人数据无直接关系；缺少针对车外影像或间接识别的专门条款。",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文明确说明判断个人数据时组织不应忽视其拥有或可能获取的其他信息，并指出经验上通常至少需要两个数据元素、有时需多于两个，取决于数据元素的具体性和性质，结论各部分均被完整支持。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "e86d4068-399f-45a5-adff-1f078a78fc2c",
+          "clause_number": "16.9",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "5831b62e-2d6d-4829-8840-ff490bb3962b",
+          "clause_number": "4",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "c1c54055-20a8-45df-a4b3-3094a42dd96c",
+          "clause_number": "20.9",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "22e9c070-a7fd-40e5-9595-79a1e05223ae",
+          "clause_number": "3.4",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "5c291ff6-5a0f-4c5c-9af5-756a55099986",
+          "clause_number": "15.11",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-02",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D2",
+      "findings_total": 1,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 25.414,
+      "judged_findings": 1,
+      "expected_clauses": [
+        {
+          "clause_id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "2",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Interpretation\n2.—(1) In this Act, unless the context otherwise requires —\n“advisory committee” means an advisory committee appointed\nunder section 7;\n“Appeal Committee” means a Data Protection Appeal\nCommittee constituted under section 48P(4), read with the\nSeventh Schedule;\n“Appeal Panel” means the Data Protection Appeal Panel\nestablished by section 48P(1);\n“authorised officer”, in relation to the exercise of any power or\nperformance of any function or duty under any provision of\nthis Act, means a person to whom the exercise of that power\nor ",
+          "source_text_sha256": "960d2647c931964c56c0fb471a695b04dd39be948766951c040aae356bc48f8c"
+        }
+      ],
+      "faithful_findings": 1,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "车外影像能间接识别个人时如何判断个人数据？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "根据个人数据定义判断可识别性"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 7909,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [],
+      "gap_note": "候选条款未提供关于采集个人数据（车主语音）前须告知目的并取得同意的直接规则；缺少PDPA中收集个人数据同意/告知义务的具体条款或等效依据。",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "b23c9b98-a65f-41af-a749-6ff4e074e80e",
+          "clause_number": "46",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "559f90a9-7054-4a02-8f57-bd2832986151",
+          "clause_number": "15.34",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "66e22222-e862-45ee-8a56-1073cd6ce6e4",
+          "clause_number": "4.93",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "5e6f8ed8-74cb-45ac-84c6-5a1577d9ca2c",
+          "clause_number": "17.1",
+          "document_title": "Road Traffic Act - Road Traffic (Autonomous Motor Vehicles) Rules 2017"
+        },
+        {
+          "clause_id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+          "clause_number": "25",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-04",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D4",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 17.434,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "c50844a4-1198-4110-9b2c-558610419b20",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "13",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Consent required\n13. An organisation must not, on or after 2 July 2014, collect, use or\ndisclose personal data about an individual unless —\n(a) the individual gives, or is deemed to have given, his or her\nconsent under this Act to the collection, use or disclosure,\nas the case may be; or\n(b) the collection, use or disclosure (as the case may be)\nwithout the individual’s consent is required or authorised\nunder this Act or any other written law.",
+          "source_text_sha256": "d9a7d458b03460146429306aa339e5f88acc251900f950fdcc2681045ccfb976"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "采集车主语音前是否需要同意？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "同意及法定例外须结合事实"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 11528,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "18.1 Section 25 of the PDPA requires an organisation to cease to retain its documents\ncontaining personal data, or remove the means by which the personal data can be\nassociated with particular individuals, as soon as it is reasonable to assume that the\npurpose for which that personal data was collected is no longer being served by\nretention of the personal data, and retention is no longer necessary for legal or\nbusiness purposes. This obligation to cease to retain personal data is referred to in\nthese Guidelines as the Retention Limitation Obligation.\nHow long personal data can be retained",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "6563286a-c737-4170-983e-81ffb0a4217f",
+          "quote_end": 596,
+          "obligation": "依据PDPA第25条，组织在合理认为其收集个人数据的目的不再因保留该数据而得到实现，且保留不再为法律或商业目的所必需时，应停止保留包含该个人数据的文件，或移除使该个人数据可与特定个人关联的手段（留存限制义务）。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 596,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "0c8e75798d341d197f836df0584bc2baace8239ec0bd2bab5216d2fc2b3ac31b",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "18.9 Where there is no longer a need for an organisation to retain personal data, it must\ntake prompt action to ensure it does not hold such personal data in either one of the\ntwo ways set out under the PDPA. That is, an organisation may cease to retain the\ndocuments containing personal data or it may remove the means by which the\npersonal data may be associated with particular individuals (that is, to anonymise\nthe data).",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "1f365a8d-f84c-4b82-8f9b-fb34a6903878",
+          "quote_end": 426,
+          "obligation": "组织在不再需要保留个人数据时，必须及时采取行动，确保其不再以PDPA规定的两种方式之一持有该个人数据：停止保留包含个人数据的文件，或移除使该个人数据可与特定个人相关联的手段（即对该数据进行匿名化）。",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 426,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "ce97664c4094ec8d9b9cd42395cf1108aa57f3232b6b211b145f0a40f7145995",
+          "selected_sentence_ids": [
+            1,
+            2
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "18.2 The Retention Limitation Obligation prevents organisations from retaining personal\ndata in perpetuity where it does not have legal or business reasons to do so. Holding\npersonal data for an indeterminate duration of time increases the risk of a\ncontravention of the Data Protection Provisions. However, as each organisation has\nits own specific business needs, the Retention Limitation Obligation does not specify\na fixed duration of time for which an organisation can retain personal data. Instead,\nthe duration of time for which an organisation can legitimately retain personal data\nis assessed on a standard of reasonableness, having regard to the purposes for which\nthe personal data was collected and other legal or business purposes for which\nretention of the personal data may be necessary.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "e12c5bd9-b910-43b8-8b97-5019725af0e2",
+          "quote_end": 802,
+          "obligation": "组织不得在没有法律或业务理由的情况下无限期保留个人数据；个人数据可合法保留的时长应按合理性标准评估，并考虑收集该数据的目的及保留可能必要的其他法律或业务目的；该保留限制义务未规定固定保留期限。",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 802,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "3406770e0078b7f86d679d3561bde8b89a21fb6faba6cbe7017aa22c9ddb3786",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文完整对应第25条：当有合理理由认为收集目的已不再因保留而实现，且保留不再为法律或商业目的所必需时，组织应停止保留相关文件或移除关联手段，并明确称为留存限制义务。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文说明在不再需要保留个人数据时必须及时行动，并列出两种方式：停止保留包含个人数据的文件，或移除使数据可与特定个人关联的手段（即匿名化）。",
+          "supported": "yes"
+        },
+        {
+          "index": 2,
+          "reason": "引文涵盖不得无法律或业务理由无限期保留、按合理性标准并结合收集目的及其他法律或业务目的评估保留时长，以及未规定固定保留期限。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "e12c5bd9-b910-43b8-8b97-5019725af0e2",
+          "clause_number": "18.2",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "4193d701-47d1-4e11-9cd4-c8b0ae944035",
+          "clause_number": "4.42",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "a2f2ab42-5126-44ab-b837-22b66dd6b200",
+          "clause_number": "15.41",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "1f365a8d-f84c-4b82-8f9b-fb34a6903878",
+          "clause_number": "18.9",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "6563286a-c737-4170-983e-81ffb0a4217f",
+          "clause_number": "18.1",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-05",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D5",
+      "findings_total": 3,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 19.854,
+      "judged_findings": 3,
+      "expected_clauses": [
+        {
+          "clause_id": "623a4ec2-ad56-456c-929d-311cf8e5f293",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "25",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Retention of personal data\n25. An organisation must cease to retain its documents containing\npersonal data, or remove the means by which the personal data can be\nassociated with particular individuals, as soon as it is reasonable to\nassume that —\n(a) the purpose for which that personal data was collected is no\nlonger being served by retention of the personal data; and\n(b) retention is no longer necessary for legal or business\npurposes.",
+          "source_text_sha256": "7867b7b6b2515c30cd1dec614b5b5010f22a2199bdce8e57854957dcd1c8b503"
+        }
+      ],
+      "faithful_findings": 3,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "个人数据可以无限期保存吗？",
+      "retrieval_expected": 1,
+      "supported_findings": 3,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "目的不再必要时停止留存或去标识，不给出虚构固定天数"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 12274,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Financial penalties\n48J.—(1) Subject to subsection (2), the Commission may, if it is\nsatisfied that —\n(a) an organisation has intentionally or negligently\ncontravened any provision of Part 3, 4, 5, 6, 6A or 6B; or\n(b) a person has intentionally or negligently contravened —\n(i) any provision of Part 9; or\n(ii) section 48B(1),\nrequire, by written notice, the organisation or person (as the case may\nbe) to pay a financial penalty.\n[40/2020]\n(2) Subsection (1) does not apply in relation to any contravention of\na provision of this Act, the breach of which is an offence under this\nAct.\n[40/2020]\n(3) A financial penalty imposed on an organisation under\nsubsection (1)(a) must not exceed the maximum amount to be\nprescribed, which in no case may be more than $1 million.\n[40/2020]\n(4) A financial penalty imposed on a person under subsection (1)(b)\nmust not exceed the maximum amount to be prescribed, which in no\ncase may be more than the following:\n(a) in the case of an individual — $200,000;\n(b) in any other case — $1 million.\n[40/2020]\n(5) For the purposes of subsections (3) and (4), different maximum\namounts may be prescribed in respect of contraventions of different\nprovisions of this Act.\n",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+          "quote_end": 1200,
+          "obligation": "委员会如确信组织故意或过失违反第3、4、5、6、6A或6B部任何规定，或某人故意或过失违反第9部任何规定或第48B(1)条，可经书面通知要求该组织或该人支付财务处罚；但该违反在本法下构成犯罪时不适用。对组织的处罚不得超过规定上限，任何情况下不得超过$1 million；对个人的处罚，个人不超过$200,000，其他情形不超过$1 million；不同条文可规定不同上限。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "business_fact": "违法处理个人数据的财务处罚条款在哪里？",
+          "anchor_quote_end": 1200,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "4cffa3abaeee144c9c456c1a3cc2551ed235f8877275eb057b2bcae080b036a1",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "FINANCIAL PENALTIES\nMaximum amount of financial penalties\n10A.—(1) The maximum amount prescribed for the purposes\nof section 48J(3) of the Act is —\n(a) in the case of a contravention on or after 1 October\n2022 by an organisation whose annual turnover in\nSingapore exceeds $10 million — 10% of the annual\nturnover in Singapore of the organisation; and\n(b) in any other case — $1 million.\n(2) The maximum amount prescribed for the purposes of\nsection 48J(4) of the Act is —\n1 S 768/2022\n(a) in the case of an individual — $200,000; and\n(b) in any other case — $1 million.\n(3) The maximum amount prescribed for the purposes of\nsection 48J(4A) of the Act is —\n(a) in the case of an individual — $200,000;\n(b) in the case of a contravention on or after 1 October\n2022 by a person whose annual turnover in Singapore\nexceeds $20 million — 5% of the annual turnover of\nthe person in Singapore; and\n(c) in any other case — $1 million.”.\n",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "5fceb016-2474-4089-85aa-5da5db5db501",
+          "quote_end": 928,
+          "obligation": "依所引规定，就《Act》第48J(3)条，最高财务处罚为：对2022年10月1日或之后违法且在新加坡年营业额超过$10 million的组织，为新加坡年营业额的10%；其他情形为$1 million。就第48J(4)条：个人为$200,000；其他情形为$1 million。就第48J(4A)条：个人为$200,000；对2022年10月1日或之后违法且在新加坡年营业额超过$20 million的人，为新加坡年营业额的5%；其他情形为$1 million。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "违法处理个人数据的财务处罚条款在哪里？",
+          "anchor_quote_end": 928,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "7e0a0cdb69a6b27809813bd76be0ff732bf7f8d29901c0178f73a66e52a3e70f",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文完整涵盖委员会可要求支付财务处罚的主体、违反条文、书面通知、构成犯罪时不适用，以及组织和个人处罚上限及不同条文可设不同上限，结论与之相符。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文逐项规定第48J(3)、48J(4)、48J(4A)条下的最高处罚、营业额门槛、比例及个人与其他情形上限，结论均被完整支持。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+          "clause_number": "48J",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "5fceb016-2474-4089-85aa-5da5db5db501",
+          "clause_number": "10A",
+          "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Enforcement) (Amendment) Regulations 2022"
+        },
+        {
+          "clause_id": "87b7fbf3-b7e7-4e89-806d-8cceaa3f5582",
+          "clause_number": "48J.2",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "76c52d39-e304-4a44-be4f-28f079fc6d4d",
+          "clause_number": "17",
+          "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Appeal) Regulations 2021"
+        },
+        {
+          "clause_id": "c1c54055-20a8-45df-a4b3-3094a42dd96c",
+          "clause_number": "20.9",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-06",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D6",
+      "findings_total": 2,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 20.789,
+      "judged_findings": 2,
+      "expected_clauses": [
+        {
+          "clause_id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "48J",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Financial penalties\n48J.—(1) Subject to subsection (2), the Commission may, if it is\nsatisfied that —\n(a) an organisation has intentionally or negligently\ncontravened any provision of Part 3, 4, 5, 6, 6A or 6B; or\n(b) a person has intentionally or negligently contravened —\n(i) any provision of Part 9; or\n(ii) section 48B(1),\nrequire, by written notice, the organisation or person (as the case may\nbe) to pay a financial penalty.\n[40/2020]\n(2) Subsection (1) does not apply in relation to any contravention of\na provision of this Act, the breach of ",
+          "source_text_sha256": "4cffa3abaeee144c9c456c1a3cc2551ed235f8877275eb057b2bcae080b036a1"
+        }
+      ],
+      "faithful_findings": 2,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "违法处理个人数据的财务处罚条款在哪里？",
+      "retrieval_expected": 1,
+      "supported_findings": 2,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "处罚上限与适用条件须以引文为准"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 6996,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [],
+      "gap_note": "缺少关于数据合规负责人任命要求，以及该任命与车联网企业属地市场准入认证、申报材料或流程节点之间关联的直接依据；现有候选条款未涉及数据合规负责人任命。",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "ce6b5392-dbb0-477b-8f52-e9e6d9c69c00",
+          "clause_number": "27",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+          "clause_number": "25",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "ae0363ad-7e7d-4dce-88f2-d7c3ebe466b2",
+          "clause_number": "24",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "a6b4cbb1-7ea2-49cb-ae19-158f7daa0778",
+          "clause_number": "6",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "be84752c-95b9-4e42-8ec7-aa3323f6b68b",
+          "clause_number": "21.14",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-07",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D7",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 11.566,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "c52be03e-14e1-4ed4-bd2e-a63a1d210296",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "11",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Compliance with Act\n11.—(1) In meeting its responsibilities under this Act, an\norganisation must consider what a reasonable person would\nconsider appropriate in the circumstances.\n(2) An organisation is responsible for personal data in its possession\nor under its control.\n(3) An organisation must designate one or more individuals to be\nresponsible for ensuring that the organisation complies with this Act.\n(4) An individual designated under subsection (3) may delegate to\nanother individual the responsibility conferred by that designation.\n(5) An",
+          "source_text_sha256": "63ac1188dca27adaed6c93847899a3329303461c9b3ab986a9975a98dada8e7f"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "数据合规负责人任命与车联网企业准备有关吗？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "数据保护负责人是治理义务，不等同车辆准入许可"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 9451,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "17.1 Section 24 of the PDPA requires an organisation to make reasonable security\narrangements to protect personal data in its possession or under its control in order\nto prevent (a) unauthorised access, collection, use, disclosure, copying, modification\nor disposal, or similar risks; and (b) the loss of any storage medium or device on which\npersonal data is stored. This obligation of organisations to protect personal data is\nreferred to in these Guidelines as the Protection Obligation.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "c9fb7efd-b689-4f26-9165-6b729880e0b1",
+          "quote_end": 490,
+          "obligation": "根据《个人数据保护法》第24条，组织须对其占有或控制的个人数据作出合理的安全安排，以防止：(a) 未经授权的访问、收集、使用、披露、复制、修改、处置或类似风险；(b) 存储个人数据的任何存储介质或设备的丢失。该保护个人数据的义务在本指南中称为保护义务。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 490,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "3c92405e602d25079b13016a40427f479ad46d264ed68b7eaa2635d8a55d30f6",
+          "selected_sentence_ids": [
+            1,
+            2
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "结论完整对应引文：第24条要求组织对占有或控制的个人数据作出合理安全安排，防止(a)未经授权访问、收集、使用、披露、复制、修改、处置或类似风险，以及(b)存储个人数据的介质或设备丢失，并说明该义务在本指南中称为保护义务。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "c9fb7efd-b689-4f26-9165-6b729880e0b1",
+          "clause_number": "17.1",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "fd83b508-690f-4597-b805-33c89e6bbf2d",
+          "clause_number": "20.21",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        },
+        {
+          "clause_id": "db6cb693-12c4-442f-8be8-754b0ecef288",
+          "clause_number": "26A",
+          "document_title": "Personal Data Protection Act 2012"
+        },
+        {
+          "clause_id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+          "clause_number": "25",
+          "document_title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations"
+        },
+        {
+          "clause_id": "09f8319e-2420-49d3-98a7-74326a021f50",
+          "clause_number": "4.2",
+          "document_title": "Advisory Guidelines on Key Concepts in the PDPA"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-08",
+      "temperature": 0.0,
+      "country_code": "SG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D8",
+      "findings_total": 1,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 22.269,
+      "judged_findings": 1,
+      "expected_clauses": [
+        {
+          "clause_id": "26aee55a-dc11-42b5-adc2-34e28765be74",
+          "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "version_no": 1,
+          "clause_number": "24",
+          "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+          "document_title": "Personal Data Protection Act 2012",
+          "original_excerpt": "Protection of personal data\n24. An organisation must protect personal data in its possession or\nunder its control by making reasonable security arrangements to\nprevent —\n(a) unauthorised access, collection, use, disclosure, copying,\nmodification or disposal, or similar risks; and\n(b) the loss of any storage medium or device on which\npersonal data is stored.\n[40/2020]",
+          "source_text_sha256": "2cf5d1a0492765f9c852055d4f4ca9019b3400e7ddb2a3884ae3a41eff6cd341"
+        }
+      ],
+      "faithful_findings": 1,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "应如何防止车联网数据被未经授权访问？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "采取合理安全安排，避免编造认证要求"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 4372,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [],
+      "gap_note": "缺少规定数据保护法适用范围（包括属地适用范围、车辆用户信息处理是否纳入）的直接依据；现有候选条款涉及保密义务、数据出境手续、查阅权、申报豁免和直接营销，均不能直接回答平台处理车辆用户信息的适用范围。",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "f3e72f00-5854-4c76-8601-b1444809c124",
+          "clause_number": "26",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "c9b7418e-295f-4a4d-93ff-367ceefa169d",
+          "clause_number": "2.3",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "6005a4b2-5089-486f-83de-6767b204f0e9",
+          "clause_number": "18",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "2845ca09-e7be-4994-a105-7a10b93029a4",
+          "clause_number": "10",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-09",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D1",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 5.697,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "d3bd4a57-58f2-445d-940c-aa8d4831e71b",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "2",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 2\n1- La présente loi s’applique au traitement des données à caractère personnel,\nautomatisé en tout ou en partie, ainsi qu’au traitement non automatisé de\ndonnées à caractère personnel contenues ou appelées à figurer dans des fichiers\nmanuels ;\n2- La présente loi s’applique au traitement des données à caractère personnel\nrépondant à la définition du paragraphe 1 ci-dessus :\na) Lorsqu’il est effectué par une personne physique ou morale dont le\nresponsable est établi sur le territoire marocain. Le responsable d’un\ntraitement qui exerce un",
+          "source_text_sha256": "1fa7901f49a4e4f288ddbfb8dfdcad35fdcc44ed73db0bf6442d8fa79773f4e3"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "平台处理车辆用户信息适用何种范围？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "自动和非自动处理的适用范围"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 16800,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Article 4\nLe traitement des données, à caractère personnel ne peut être effectué que si la\npersonne concernée a indubitablement donné son consentement à l’opération ou à\nl’ensemble des opérations envisagées.\nLes données à caractère personnel objet du traitement ne peuvent être\ncommuniquées à un tiers que pour la réalisation de fins, directement liées aux\nfonctions du cédant et du cessionnaire et sous réserve du consentement préalable,\nde la personne concernée.\nToutefois, ce consentement n’est pas exigé si le traitement est nécessaire :\na) au respect d’une obligation légale à laquelle est soumis la personne\nconcernée ou le responsable du traitement ;\nb) à l’exécution d’un contrat auquel la personne concernée, est partie ou à\nl’exécution de mesures précontractuelles prises à la demande de celle-ci ;\nc) à la sauvegarde d’intérêts vitaux de la personne concernée, si elle est\nphysiquement ou juridiquement dans l’incapacité de donner un\nconsentement ;\nd) à l’exécution d’une mission d’intérêt public ou relevant de l’exercice de\nl’autorité publique, dont est investi le responsable du traitement ou le\ntiers auquel les données sont communiquées ;\ne) à la réalisation de l’intérêt légitime poursuivi par le responsable du\ntraitement ou par le destinataire, sous réserve de ne pas méconnaître\nl’intérêt ou les droits et libertés fondamentaux de la personne concernée.\n",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "6d475ef3-d53e-48b5-8210-319292473271",
+          "quote_end": 1374,
+          "obligation": "处理个人数据原则上须经当事人明确同意；向第三方传输须为与转让方和受让方职能直接相关的目的并事先取得当事人同意。但为履行当事人或控制者应遵守的法定义务、履行当事人作为一方的合同或应其请求采取先合同措施、在当事人因身体或法律上无能力同意时保护其重大利益、执行控制者或数据接收第三方所负公共利益任务或公共权力、实现控制者或接收方合法利益且不侵害当事人权益和基本自由的，无需同意。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "处理个人数据前是否需要同意？",
+          "anchor_quote_end": 1374,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "75e4c3e78743f29984bd2dabb32d7d234f96eceb73e8b486d1d1a431f0b299f7",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "Les organismes qui sont susceptibles de recevoir\ncommunication de données dans le cadre d’une disposition légale ne sont pas\nconsidérées comme destinataires, notamment la Commission nationale de\ncontrôle de la protection des données à caractère personnel instituée à\nl’article 27 ci-après et dénommée la Commission nationale ;\n9- « consentement de la personne concernée » : toute manifestation de\nvolonté, libre, spécifique et informée, par laquelle la personne concernée\naccepte que les données à caractère personnel la concernant fassent l’objet\nd’un traitement ;\n10- « cession ou communication » : toute divulgation ou information d’une",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+          "quote_end": 1349,
+          "obligation": "定义：“当事人的同意”指当事人作出的任何自由、特定、知情的意思表示，据此当事人接受与其有关的个人数据被进行处理。",
+          "risk_level": "MEDIUM",
+          "quote_start": 710,
+          "sentence_ids": [
+            2
+          ],
+          "business_fact": "处理个人数据前是否需要同意？",
+          "anchor_quote_end": 1349,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 710,
+          "source_text_sha256": "f4e79b2790e49af6bde436249ce95b5c1356655d02955f3430ecc47ab80dea1e",
+          "selected_sentence_ids": [
+            2
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文完整涵盖处理须经同意、向第三方传输须与转让方和受让方职能直接相关并事先同意，以及a-e各项无需同意的法定情形；结论的义务主体、条件、例外和范围与引文一致。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文第9项完整定义了“当事人同意”为自由、特定、知情的意思表示，并据此接受与其有关的个人数据被处理；结论与定义一致。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+          "clause_number": "premier.2",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "2845ca09-e7be-4994-a105-7a10b93029a4",
+          "clause_number": "10",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "6d475ef3-d53e-48b5-8210-319292473271",
+          "clause_number": "4",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "9f926914-d84e-423d-9fc6-7f9cccec86dd",
+          "clause_number": "6",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-10",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D4",
+      "findings_total": 2,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 34.361,
+      "judged_findings": 2,
+      "expected_clauses": [
+        {
+          "clause_id": "6d475ef3-d53e-48b5-8210-319292473271",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "4",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 4\nLe traitement des données, à caractère personnel ne peut être effectué que si la\npersonne concernée a indubitablement donné son consentement à l’opération ou à\nl’ensemble des opérations envisagées.\nLes données à caractère personnel objet du traitement ne peuvent être\ncommuniquées à un tiers que pour la réalisation de fins, directement liées aux\nfonctions du cédant et du cessionnaire et sous réserve du consentement préalable,\nde la personne concernée.\nToutefois, ce consentement n’est pas exigé si le traitement est nécessaire :\na) au re",
+          "source_text_sha256": "75e4c3e78743f29984bd2dabb32d7d234f96eceb73e8b486d1d1a431f0b299f7"
+        }
+      ],
+      "faithful_findings": 2,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "处理个人数据前是否需要同意？",
+      "retrieval_expected": 1,
+      "supported_findings": 2,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "同意与合法例外"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 3856,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [],
+      "gap_note": "候选条款涉及职业保密、健康与遗传数据授权、安全措施、查阅权和跨境传输，均未直接规定车辆位置数据的留存原则或留存期限，缺少可直接适用的留存规则依据。",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "f3e72f00-5854-4c76-8601-b1444809c124",
+          "clause_number": "26",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "ae80c1eb-b1cf-4e57-9add-5c0dab654c18",
+          "clause_number": "1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+          "clause_number": "23",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "c9b7418e-295f-4a4d-93ff-367ceefa169d",
+          "clause_number": "2.3",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-11",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D5",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 2.316,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "a18e376b-7228-48d4-b282-4f7fcb92c8f7",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "3",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 3\n1- Les données à caractère personnel doivent être :\na) traitées loyalement et licitement ;\nb) collectées pour des finalités déterminées explicites et légitimes, et ne pas\nêtre traitées ultérieurement de manière incompatible avec finalités ;\nc) adéquates, pertinentes et non excessives, au regard des finalités pour\nlesquelles elles sont collectées, et pour lesquelles, elles sont traitées\nultérieurement ;\nd) exactes et, si nécessaire, mises à jour. Toutes les mesures raisonnables\ndoivent être prises, pour que les données inexactes ou inc",
+          "source_text_sha256": "cfa8fc8c8424086c8014e751103171f17e443fa895638b9a06793cde979fec4f"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "车辆位置数据应遵守何种留存原则？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "必要性和保存期限，不设臆造固定期限"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 17780,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Article 43\nLe responsable d’un traitement ne peut transférer des données à caractère personnel\nvers un Etat étranger que si cet Etat assure un niveau de protection suffisant de la vie\nprivée et des libertés et droits fondamentaux des personnes à l’égard du traitement\ndont ces données font l’objet ou peuvent faire l’objet.\nLe caractère suffisant du niveau de protection assuré par un Etat s’apprécie\nnotamment en fonction des dispositions en vigueur dans cet Etat, des mesures de\nsécurité qui y sont appliquées, des caractéristiques propres du traitement telles que\nses fins et sa durée, ainsi que de la nature, de l’origine et de la destination des\ndonnées traitées.\nLa Commission nationale établit la liste des Etats répondant aux critères définis aux\nalinéas 1 et 2 ci-dessus.",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "3fc6861e-286a-471b-83a9-40fa4633b9c1",
+          "quote_end": 780,
+          "obligation": "数据控制者仅当外国确保对个人数据所涉处理中的私人生活及个人的基本自由与权利提供充分保护时，才可向该国转移个人数据；充分性尤其依据该国现行规定、安全措施、处理目的与期限及数据性质、来源和目的地评估；国家委员会制定符合上述标准的国家名单。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "向境外云平台传输个人数据的保护条件是什么？",
+          "anchor_quote_end": 780,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "bd419ad4735863ac750bccb290cc3b92d106d7b65bb2a6ee2bc250ebc793fb86",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "protection suffisant au sens de l’article 43 de la loi n° 09-08\nsusvisée doivent contenir, les indications suivantes :\n1) les nom et adresse de la personne communiquant les\ndonnées ;\n2) les nom et adresse du destinataire des données ;\n3) le nom et la description complète du fichier ;\n4) les catégories de données personnelles transférées ;\n5) les personnes concernées et leur nombre approximatif ;\n6) le but du traitement des données effectué par le\ndestinataire ;\n7) le mode et la fréquence des transferts envisagés ;\n8) la date du premier transfert.\nART. 47. — Lorsqu’en vertu de l’article 44 de la loi n° 09-08\nsusvisée, le responsable du traitement envisage un transfert de\ndonnées a caractére personnel vers un pays qui ne figure pas\ndans la liste fixée par la CNDP prévue à l’article 43 de la même\nloi et qu’il invoque pour justifier ce transfert l’une des\ndérogations prévues aux 1° et 2e alinéa de l’article 44 de la\nloin° 09-08 susvisée, il indique à la CNDP,\ninformations prévues à l’article précédent, le cas précis de\noutre les\ndérogation qu’il invoque à l’appui de sa demande.\n",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "quote_end": 1091,
+          "obligation": "依第47条，当控制者拟向不在CNDP依第43条确定名单上的国家传输个人数据，并援引第44条第1°项和第2款所列例外时，须在其请求中向CNDP指明上一节所列信息——包括数据提供方与接收方名称地址、文件名称及完整说明、传输的个人数据类别、相关当事人及大致人数、接收方处理目的、传输方式和频率、首次传输日期——并说明其援引的具体例外情形。",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "向境外云平台传输个人数据的保护条件是什么？",
+          "anchor_quote_end": 1091,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "88722e182dd7dd78ace6021372bceb81ba333f1326ae0d56d4c81cd024ba11bc",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "Article 60\nEst puni d’un emprisonnement de trois mois à un an et d’une amende de 20.000 à\n200.000 DH ou de l’une de ces deux peines seulement, quiconque effectue un\ntransfert de données à caractère personnel vers un Etat étranger, en violation des\ndispositions des articles 43 et 44 de la présente loi.",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "86c35695-9944-422a-b837-f30c95738cd5",
+          "quote_end": 302,
+          "obligation": "任何人违反本法第43条和第44条的规定，向外国传输个人数据的，处三个月至一年监禁，并处20.000至200.000 DH罚金，或者仅处以上两项刑罚中的一项。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1
+          ],
+          "business_fact": "向境外云平台传输个人数据的保护条件是什么？",
+          "anchor_quote_end": 302,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "59bac4c60128b3a69842e94482cd358f3b5595ac041186d3163ffe2dc4bad737",
+          "selected_sentence_ids": [
+            1
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文完整涵盖转移条件、充分性评估因素及国家委员会制定名单，与结论一致。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文第47条及所列信息完整对应结论中的适用情形、所需信息和例外说明义务。",
+          "supported": "yes"
+        },
+        {
+          "index": 2,
+          "reason": "引文第60条完整规定违反第43、44条向外国传输数据的监禁和罚金刑，与结论一致。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "91bfec96-3e74-4614-8206-d2eab4cbaaa3",
+          "clause_number": "24",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "86c35695-9944-422a-b837-f30c95738cd5",
+          "clause_number": "60",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "157d8a76-3b75-4f6c-ad11-7e9e642e3ffb",
+          "clause_number": "4",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "3fc6861e-286a-471b-83a9-40fa4633b9c1",
+          "clause_number": "43",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-12",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D3",
+      "findings_total": 3,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 32.211,
+      "judged_findings": 3,
+      "expected_clauses": [
+        {
+          "clause_id": "3fc6861e-286a-471b-83a9-40fa4633b9c1",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "43",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 43\nLe responsable d’un traitement ne peut transférer des données à caractère personnel\nvers un Etat étranger que si cet Etat assure un niveau de protection suffisant de la vie\nprivée et des libertés et droits fondamentaux des personnes à l’égard du traitement\ndont ces données font l’objet ou peuvent faire l’objet.\nLe caractère suffisant du niveau de protection assuré par un Etat s’apprécie\nnotamment en fonction des dispositions en vigueur dans cet Etat, des mesures de\nsécurité qui y sont appliquées, des caractéristiques propres du trait",
+          "source_text_sha256": "bd419ad4735863ac750bccb290cc3b92d106d7b65bb2a6ee2bc250ebc793fb86"
+        }
+      ],
+      "faithful_findings": 3,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "向境外云平台传输个人数据的保护条件是什么？",
+      "retrieval_expected": 1,
+      "supported_findings": 3,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "目的国充分保护及评估因素"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 9057,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Article 51\nSans préjudice des sanctions pénales, lorsqu’il apparaît, à la suite de la mise en\nœuvre du traitement objet de la déclaration ou de l’autorisation prévue à l’article 12\nde la présente loi, que ce traitement porte atteinte à la sûreté ou à l’ordre public ou\nest contraire à la morale et aux bonnes mœurs, la Commission nationale peut, sans\ndélais, retirer, selon le cas, le récépissé de la déclaration ou l’autorisation.",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "71169f5b-b69e-425b-ba04-e3c805b48363",
+          "quote_end": 431,
+          "obligation": "在不影响刑事制裁的情况下，如果在本法第12条规定的申报或授权所涉处理实施后，发现该处理危害安全或公共秩序，或者违反道德和善良风俗，国家委员会可以视情形立即撤回申报回执或授权。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1
+          ],
+          "business_fact": "处理危害公共秩序时监管机关可采取什么措施？",
+          "anchor_quote_end": 431,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "04b70d8aaef3c47a3365fae1652e084daddfb6b9c3fe591c3da30bf205466c20",
+          "selected_sentence_ids": [
+            1
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文完整对应结论中的前提、条件、主体及撤回对象，未发现范围或数字不符。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "71169f5b-b69e-425b-ba04-e3c805b48363",
+          "clause_number": "51",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+          "clause_number": "58",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "a922bc44-ad6a-4d0e-bf42-2286c46522b8",
+          "clause_number": "27",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "58916f40-cef0-4c0d-8773-6c7a603d8b59",
+          "clause_number": "premier.1",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "f3e72f00-5854-4c76-8601-b1444809c124",
+          "clause_number": "26",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-13",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D6",
+      "findings_total": 1,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 16.615,
+      "judged_findings": 1,
+      "expected_clauses": [
+        {
+          "clause_id": "71169f5b-b69e-425b-ba04-e3c805b48363",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "51",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 51\nSans préjudice des sanctions pénales, lorsqu’il apparaît, à la suite de la mise en\nœuvre du traitement objet de la déclaration ou de l’autorisation prévue à l’article 12\nde la présente loi, que ce traitement porte atteinte à la sûreté ou à l’ordre public ou\nest contraire à la morale et aux bonnes mœurs, la Commission nationale peut, sans\ndélais, retirer, selon le cas, le récépissé de la déclaration ou l’autorisation.",
+          "source_text_sha256": "04b70d8aaef3c47a3365fae1652e084daddfb6b9c3fe591c3da30bf205466c20"
+        }
+      ],
+      "faithful_findings": 1,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "处理危害公共秩序时监管机关可采取什么措施？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "可撤回申报回执或许可"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 13832,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Article 23\n1- Le responsable du traitement doit mettre en œuvre les mesures techniques et\norganisationnelles appropriées pour protéger les données à caractère personnel\ncontre la destruction accidentelle ou illicite, la perte accidentelle, l’altération, la\ndiffusion ou l’accès non autorisé, notamment lorsque le traitement comporte\ndes transmissions de données dans un réseau, ainsi que contre toute autre forme\nde traitement illicite. Ces mesures doivent assurer, compte tenu de l’Etat de\nl’art et des coûts liés à leur mise en œuvre, un niveau de sécurité approprié\nau regard des risques présentés par le traitement et de la nature des données à\nprotéger ;\n2- Le responsable du traitement, lorsque le traitement est effectué pour son\ncompte, doit choisir un sous-traitant qui apporte des garanties suffisantes au\nregard des mesures de sécurité technique et d’organisation relative aux\ntraitements à effectuer et il doit veiller au respect de ces mesures ;\n3- La réalisation du traitement en sous-traitance doit être régie par un contrat ou\nun acte juridique qui lie le sous-traitant au responsable du traitement et qui\nprévoit notamment que le sous-traitant n’agit que sous la seule instruction du\nresponsable du traitement et que les obligations visées au paragraphe 1 ci￾dessus lui incombent également ;\n4- Aux fins de la conservation des preuves, les éléments du contrat ou de l’acte\njuridique relatif à la protection des données et les exigences portant sur les\nmesures visées au paragraphe 1 ci-dessus, sont consignés par écrit ou sous une\nautre forme équivalente.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+          "quote_end": 1572,
+          "obligation": "数据控制者须采取适当的技术和组织措施，保护个人数据免受意外或非法销毁、意外丢失、篡改、传播或未经授权访问，尤其当处理涉及网络数据传输时，并防止其他任何形式的非法处理；这些措施应在考虑技术水平和实施成本的情况下，针对处理所呈现的风险和待保护数据的性质，确保适当的安全水平。",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 1572,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "7d2a225224cd452bb5783facc78a7f00ad42b4dd494306481f275d6ba8300491",
+          "selected_sentence_ids": [
+            1,
+            2
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "Article 58\nEst puni d’un emprisonnement de trois mois à un an et d’une amende de 20.000 à\n200.000 DH ou de l’une de ces deux peines seulement, quiconque aura procédé ou\nfait procéder à un traitement de données à caractère personnel sans mettre en\nœuvre les mesures visant à préserver la sécurité des données prévues aux articles 23\net 24 ci-dessus.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+          "quote_end": 348,
+          "obligation": "任何人实施或使他人实施个人数据处理，而未落实前述第23条和第24条规定的数据安全保护措施的，处三个月至一年监禁，并处20.000至200.000 DH罚金，或仅处其中一种刑罚。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 348,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "d1da9800ea394920863ebac79738de527a2d3503632ead0ec70dd1f9b98206e5",
+          "selected_sentence_ids": [
+            1
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文第23条第1款完整对应结论中的义务主体、保护范围、网络传输情形、风险与数据性质考量、技术水平和成本因素及适当安全水平要求。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文第58条完整对应结论中的行为方式、未落实第23条和第24条安全措施的条件、监禁刑期及罚金数额，并包含可仅处其中一种刑罚。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+          "clause_number": "23",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "f3e72f00-5854-4c76-8601-b1444809c124",
+          "clause_number": "26",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+          "clause_number": "58",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel"
+        },
+        {
+          "clause_id": "c2970107-ac76-41a6-8070-2d858059defb",
+          "clause_number": "4.2",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        },
+        {
+          "clause_id": "bde2b5d3-812c-4c5e-8a27-ce30df42c3bd",
+          "clause_number": "4.1",
+          "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-14",
+      "temperature": 0.0,
+      "country_code": "MA",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D8",
+      "findings_total": 2,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 26.761,
+      "judged_findings": 2,
+      "expected_clauses": [
+        {
+          "clause_id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+          "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+          "version_no": 1,
+          "clause_number": "23",
+          "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+          "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "original_excerpt": "Article 23\n1- Le responsable du traitement doit mettre en œuvre les mesures techniques et\norganisationnelles appropriées pour protéger les données à caractère personnel\ncontre la destruction accidentelle ou illicite, la perte accidentelle, l’altération, la\ndiffusion ou l’accès non autorisé, notamment lorsque le traitement comporte\ndes transmissions de données dans un réseau, ainsi que contre toute autre forme\nde traitement illicite. Ces mesures doivent assurer, compte tenu de l’Etat de\nl’art et des coûts liés à leur mise en œuvre, un niveau de ",
+          "source_text_sha256": "7d2a225224cd452bb5783facc78a7f00ad42b4dd494306481f275d6ba8300491"
+        }
+      ],
+      "faithful_findings": 2,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "企业如何保护传输中的数据？",
+      "retrieval_expected": 1,
+      "supported_findings": 2,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "技术和组织安全措施"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 9270,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Art. 4 : Au sens de la présente loi, on entend par données à caractère personnel toutes les\ninformations quelle que soit leur origine ou leur forme et qui permettent directement ou\nindirectement à identifier une personne physique ou la rendent identifiable, à l’exception des\ninformations liées à la vie publique ou considérées comme telles par la loi.\n Article. 5 : Est réputée identifiable, la personne physique susceptible d’être identifiée, directement ou\nindirectement, à travers plusieurs données ou symboles qui concernent notamment son identité,\nses caractéristiques physiques, physiologiques, génétiques, psychologiques, sociales,\néconomiques ou culturelles.",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "c298f1b4-5305-48f4-b7b2-704807f5a7a7",
+          "quote_end": 667,
+          "obligation": "本法所称个人数据，是指无论来源或形式如何，可直接或间接识别自然人或使自然人可被识别的所有信息，但涉及公共生活或依法律被视为公共生活的信息除外。可识别自然人，是指可通过多项数据或符号直接或间接被识别的人，这些数据或符号尤其涉及其身份、身体、生理、遗传、心理、社会、经济或文化特征。",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "哪些车主信息构成个人数据？",
+          "anchor_quote_end": 667,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "9944ae325552e62470a3c23ec51bd3f859a363093df1364b06ed58a61a89af37",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文完整包含个人数据定义及其公共生活例外，并完整包含可识别自然人的定义与所列特征，结论与引文一致。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "15e74606-a6b0-486a-8d37-e05f183beb50",
+          "clause_number": "23",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "c298f1b4-5305-48f4-b7b2-704807f5a7a7",
+          "clause_number": "4",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "fbcbb070-7a26-4aed-bdbe-6ba8cd44222e",
+          "clause_number": "79",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "2bc7c1e1-c315-4bad-8305-381c0b832a27",
+          "clause_number": "38",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "404014b1-cad7-4904-acb1-8bddfde89a57",
+          "clause_number": "96",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-15",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D2",
+      "findings_total": 1,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 21.555,
+      "judged_findings": 1,
+      "expected_clauses": [
+        {
+          "clause_id": "c298f1b4-5305-48f4-b7b2-704807f5a7a7",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "4",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 4 : Au sens de la présente loi, on entend par données à caractère personnel toutes les\ninformations quelle que soit leur origine ou leur forme et qui permettent directement ou\nindirectement à identifier une personne physique ou la rendent identifiable, à l’exception des\ninformations liées à la vie publique ou considérées comme telles par la loi.\n Article. 5 : Est réputée identifiable, la personne physique susceptible d’être identifiée, directement ou\nindirectement, à travers plusieurs données ou symboles qui concernent notamment son identi",
+          "source_text_sha256": "9944ae325552e62470a3c23ec51bd3f859a363093df1364b06ed58a61a89af37"
+        }
+      ],
+      "faithful_findings": 1,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "哪些车主信息构成个人数据？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "直接或间接识别自然人及法定边界"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 26032,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Art. 8 : Dans les cas où la présente loi exige l’obtention d’une autorisation de l’Instance pour le\ntraitement des données à caractère personnel, la demande d’autorisation doit comprendre\nnotamment les informations suivantes :\n - Le nom, prénom et domicile du responsable du traitement, et s’il est une personne morale,\nsa dénomination sociale, son siège social et l’identité de son représentant légal.\n - L’identité des personnes concernées par les données à caractère personnel et leurs domiciles.\n - Les finalités du traitement et ses normes.\n - les catégories du traitement, son lieu et la date du traitement.\n - Les données à caractère personnel dont le traitement est envisagé, ainsi que leur origine.\n - Les personnes ou les autorités susceptibles de prendre connaissance de ces données eu égard\nà leur fonction.\n - Les bénéficiaires des données objet du traitement.\n - Le lieu de conservation des données à caractère personnel objet du traitement et sa durée.\n - Les mesures prises pour assurer la confidentialité du traitement et sa sécurité.\n -La description des bases des données auxquelles le responsable du traitement est\ninterconnecté.\n -L’engagement de procéder au traitement des données à caractère personnel conformément\naux dispositions prévues par la loi.\n - La déclaration que les conditions prévues par l’article 22 de la présente loi sont réunies.\n En cas de changement intervenant dans les mentions énumérées ci-dessus, l’autorisation de\nl’instance doit être obtenue.\nLa demande d’autorisation est présentée par le responsable du traitement ou son représentant\nlégal.\n L’autorisation n’exonère pas de la responsabilité à l’égard des tiers.\n Les conditions de la présentation de la demande d’autorisation et ses procédures sont fixées\npar décret.\n",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+          "quote_end": 1769,
+          "obligation": "本法要求就个人数据处理取得Instance授权时，授权申请须载明：处理责任人及其法定代表人的身份与住所（法人还包括名称、注册地和法定代表人身份）、数据主体身份与住所、处理目的与规范、处理类别地点日期、拟处理数据及来源、可接触人员或机关、接收方、保存地点与期限、保密安全措施、互联数据库说明、依法处理承诺及第22条条件具备声明等。上述事项变更须重新取得授权；申请由处理责任人或其法定代表人提出；授权不免除对第三方的责任；申请条件与程序由法令规定。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 1769,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 1150,
+          "source_text_sha256": "a0640218a0d0f890b2d393bcad9905191275bdfcf87abf2b5a393ee2bce4e688",
+          "selected_sentence_ids": [
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "الباب الثاني\nشروط معالجة المعطيات الشخصية\nالقسم الأول\nفي الإجراءات الأولية لمعالجة المعطيات الشخصية\nمسبق يودع بمقر الهيئة الوطنية لحماية المعطيات الشخصية مقابل\nوصل أو بواسطة رسالة مضمونة الوصول مع الإعلام بالبلوغ أو بأي\nوسيلة أخرى تترك أثرا كتابيا.\nويقدم التصريح من قبل المسؤول عن المعالجة أو ممثله القانوني.\nولا يعفي التصريح من المسؤولية إزاء الغير.\nوتضبط شروط تقديم التصريح وإجراءاته بأمر.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "cb785147-f2dd-4edd-a00d-815b2364d07b",
+          "quote_end": 1383,
+          "obligation": "依据本节个人数据处理初步程序，申报应事先提交至国家个人数据保护机构总部，方式为换取收据、以挂号信并告知到达，或采用其他留有书面痕迹的方式；申报由处理负责人或其法定代表提交；申报不免除对第三方的责任；提交申报的条件和程序由命令规定。",
+          "risk_level": "MEDIUM",
+          "quote_start": 992,
+          "sentence_ids": [
+            9,
+            10,
+            11,
+            12
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 1383,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 992,
+          "source_text_sha256": "bdaa4805218a1662eadbcaee3664761de1be3d5902a7528a2b534030083b11a6",
+          "selected_sentence_ids": [
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "Art. 90 : Est puni d’un an d’emprisonnement et d’une amende de cinq mille dinars, quiconque :\n - effectue intentionnellement un traitement des données à caractère personnel sans présenter\nla déclaration prévue à l’article 7 ou sans l’obtention de l’autorisation prévue aux articles 15 et\n69 de la présente loi, ou continue d’effectuer le traitement des données après l’interdiction de\ntraitement ou le retrait de l’autorisation ;\n - diffuse les données à caractère personnel relatives à la santé nonobstant l’interdiction de\nl’Instance mentionnée au deuxième paragraphe de l’article 65 de la présente loi ;\n - transfert les données à caractère personnel à l’étranger sans l’autorisation de l’Instance ;\n- communique les données à caractère personnel sans le consentement de la personne\nconcernée ou l’accord de l’Instance dans les cas prévus par la présente loi.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "ad8de395-2a39-459b-bf74-0956e4cadc42",
+          "quote_end": 862,
+          "obligation": "任何人故意实施下列行为之一：未提交第7条规定的声明或未获得第15条和第69条规定的授权而处理个人数据，或在禁止处理或撤销授权后继续处理；违反第65条第二款所述Instance禁令传播健康数据；未经Instance授权向国外传输个人数据；未经数据主体同意或法律规定的Instance同意传播个人数据，处一年监禁和五千第纳尔罚款。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 862,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "15ea8758543fdd90cfd6ba1e92d3ac996a5df5dffcfb84f67aff5f4cc341c846",
+          "selected_sentence_ids": [
+            1
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文逐项列明授权申请应载明的事项、变更须重新授权、申请主体、不免除第三方责任及由法令规定程序，结论均有对应依据。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文支持事先提交至国家机构总部、以收据/挂号信/其他书面痕迹方式、由负责人或其法定代表提交、不免除第三方责任及条件程序由命令规定。",
+          "supported": "yes"
+        },
+        {
+          "index": 2,
+          "reason": "处罚、行为类型、条文编号和刑罚款项均有对应，但引文仅在第一项处理行为中明示“故意”，结论将“故意”概括适用于所列全部行为，范围略有扩大。",
+          "supported": "partial"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "61514193-a67c-4ca8-aeea-443ce50a0078",
+          "clause_number": "第2页",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "ad8de395-2a39-459b-bf74-0956e4cadc42",
+          "clause_number": "90",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+          "clause_number": "2.2",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+          "clause_number": "8",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "cb785147-f2dd-4edd-a00d-815b2364d07b",
+          "clause_number": "0.1",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-16",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D7",
+      "findings_total": 3,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 62.835,
+      "judged_findings": 3,
+      "expected_clauses": [
+        {
+          "clause_id": "3f961886-5bb3-401c-be0e-a9ed6835676a",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "7",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 7 : Toute opération de traitement des données à caractère personnel est soumise à une déclaration\npréalable déposée au siège de l’Instance nationale de protection des données à caractère\npersonnel contre récépissé ou notifiée par lettre recommandée avec accusé de réception ou par\ntout autre moyen laissant une trace écrite.\n La déclaration est effectuée par le responsable du traitement ou son représentant légal.\n La déclaration n’exonère pas de la responsabilité à l’égard des tiers.\n Les conditions et les procédures de la présentation de la",
+          "source_text_sha256": "acf4de012ed96687fd809aae683f88bf389325ae33bc49c86c5c967912b9ddfe"
+        }
+      ],
+      "faithful_findings": 3,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "处理个人数据前应办理什么手续？",
+      "retrieval_expected": 1,
+      "supported_findings": 2,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "事先向监管机关申报"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 12833,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "b74b20bc-2242-41d4-bed2-232e90125d9f",
+          "clause_number": "30",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "b58f9117-5240-409a-b728-6a626d5a4997",
+          "clause_number": "49",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+          "clause_number": "2.2",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "cb785147-f2dd-4edd-a00d-815b2364d07b",
+          "clause_number": "0.1",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "074d0e23-0d0c-4a1a-a109-bdee864c1bd6",
+          "clause_number": "4.1",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-17",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "模型JSON Schema/事实键校验连续失败: fact_key 不在用户已提供事实中",
+      "dimension_code": "D4",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 29.216,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "da860a72-090f-4df3-b568-c168d1fc2bb8",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "10",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 10 : La collecte des données à caractère personnel ne peut être effectuée que pour des finalités\nlicites, déterminées et explicites.",
+          "source_text_sha256": "f0df2d23973cfe99c86285bcc3e8229106fd0c0b15cd4fe7549e4f4a51cc1db8"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "采集车辆用户资料应如何确定目的？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "合法、确定和明确的目的"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 18837,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "إذا وجد نزاع حول صحة معطيات شخصية يجب على\nالمسؤول عن المعالجة والمناول التنصيص على أنها محل منازعة إلى\nحين انتهاء النزاع.\nالفصل 40 يمكن للمعني بالأمر أو ورثته أو وليه المطالبة بإصلاح\nالمعطيات الشخصية الخاصة به أو إتمامها أو تعديلها أو توضيحها أو\nأو إعدامها إذا كان جمعها أى استعمالها مخالفا لأحكام هذا القانون.\nكما يمكنه أن يطلب تسلم نسخة من المعطيات دون مصاريف بعد\nالقيام بالإجراء المطلوب والتنصيص على ما لم ينجز منه.\n",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "6e8d81e1-c268-4837-a0fa-aa4e89661eda",
+          "quote_end": 1230,
+          "obligation": "若个人数据的准确性存在争议，处理负责人和处理者必须将该数据标注为争议对象，直至争议结束。",
+          "risk_level": "MEDIUM",
+          "quote_start": 811,
+          "sentence_ids": [
+            8,
+            9,
+            10
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 1230,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 811,
+          "source_text_sha256": "a7ef5da71f0760ac9e15ef667fb4b3112ea879ec049992ce7c01d0b9c1e770a8",
+          "selected_sentence_ids": [
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": " La personne concernée, ses héritiers ou son tuteur peuvent présenter à l’Instance, le cas\néchéant, une demande afin de prendre toutes les mesures appropriées pour empêcher la\ndestruction ou la dissimulation des données à caractère personnel. L’instance doit statuer sur la\ndemande dans un délai de sept jours à compter de la date de l’introduction de la demande.\n La destruction ou la dissimulation de ces données est interdite dès la présentation de la\ndemande.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "2bc7c1e1-c315-4bad-8305-381c0b832a27",
+          "quote_end": 1577,
+          "obligation": "数据主体、其继承人或其监护人可向Instance提出请求，要求采取一切适当措施防止个人数据被销毁或隐匿；Instance须自提出请求之日起七日内对该请求作出裁定；自请求提出之时起，禁止销毁或隐匿上述数据。",
+          "risk_level": "HIGH",
+          "quote_start": 1114,
+          "sentence_ids": [
+            5,
+            6,
+            7
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 1577,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 1114,
+          "source_text_sha256": "584b7b1cba562bf3762c182de4893fababcef61ce6f25624bbeab719e1203997",
+          "selected_sentence_ids": [
+            5,
+            6,
+            7
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文明确：个人数据准确性存在争议时，处理负责人和处理者须标注为争议对象直至争议结束；义务主体、条件与范围均与结论对应。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文支持向Instance请求防止销毁或隐匿、七日内裁定及自请求时禁止销毁或隐匿；但结论遗漏了引文中的“le cas échéant”（必要时/视情况）这一限定，范围不完全一致。",
+          "supported": "partial"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "6e8d81e1-c268-4837-a0fa-aa4e89661eda",
+          "clause_number": "3.1",
+          "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية"
+        },
+        {
+          "clause_id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+          "clause_number": "8",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "4ac63298-ca3a-4182-82c4-1734cf3ca241",
+          "clause_number": "22",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "fbcbb070-7a26-4aed-bdbe-6ba8cd44222e",
+          "clause_number": "79",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "2bc7c1e1-c315-4bad-8305-381c0b832a27",
+          "clause_number": "38",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-18",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D5",
+      "findings_total": 2,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 49.854,
+      "judged_findings": 2,
+      "expected_clauses": [
+        {
+          "clause_id": "b77b769e-8e4f-487d-9073-f548e906c466",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "11",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 11 : Les données à caractère personnel doivent être traitées loyalement, et dans la limite nécessaire\nau regard des finalités pour lesquelles elles ont été collectées. Le responsable du traitement doit\négalement s’assurer que ces données sont exactes, précises et mises à jour.",
+          "source_text_sha256": "ca86275021b8c73272cd141119678d414f7d7a9f145bea3c197c4ee359587259"
+        }
+      ],
+      "faithful_findings": 2,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "长期存储的车主信息应满足什么质量原则？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "忠实、必要、准确并更新；不杜撰具体天数"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 12287,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Art. 90 : Est puni d’un an d’emprisonnement et d’une amende de cinq mille dinars, quiconque :\n - effectue intentionnellement un traitement des données à caractère personnel sans présenter\nla déclaration prévue à l’article 7 ou sans l’obtention de l’autorisation prévue aux articles 15 et\n69 de la présente loi, ou continue d’effectuer le traitement des données après l’interdiction de\ntraitement ou le retrait de l’autorisation ;\n - diffuse les données à caractère personnel relatives à la santé nonobstant l’interdiction de\nl’Instance mentionnée au deuxième paragraphe de l’article 65 de la présente loi ;\n - transfert les données à caractère personnel à l’étranger sans l’autorisation de l’Instance ;\n- communique les données à caractère personnel sans le consentement de la personne\nconcernée ou l’accord de l’Instance dans les cas prévus par la présente loi.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "ad8de395-2a39-459b-bf74-0956e4cadc42",
+          "quote_end": 862,
+          "obligation": "任何人向境外传输个人数据而未取得Instance授权的，处一年监禁和五千第纳尔罚金。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 862,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "15ea8758543fdd90cfd6ba1e92d3ac996a5df5dffcfb84f67aff5f4cc341c846",
+          "selected_sentence_ids": [
+            1
+          ]
+        }
+      ],
+      "gap_note": "缺少规定跨境传输授权条件与办理程序的具体条款原文。",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文明确规定，未经Instance授权向境外传输个人数据者，处一年监禁和五千第纳尔罚金，与结论完全一致。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "4a79eabc-164b-4864-b4f5-82acd6945351",
+          "clause_number": "63",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+          "clause_number": "8",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "abd7720d-d30e-40be-bc6c-48be331cc640",
+          "clause_number": "81",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "7de2887a-3c2c-4e61-8487-4d7cb42b7e1d",
+          "clause_number": "28",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "ad8de395-2a39-459b-bf74-0956e4cadc42",
+          "clause_number": "90",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-19",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D3",
+      "findings_total": 1,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 33.992,
+      "judged_findings": 1,
+      "expected_clauses": [
+        {
+          "clause_id": "ac0987cd-0c8d-4673-a08d-745ea822caeb",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "52",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 52 : Dans tous les cas, l’obtention de l’autorisation de l’Instance pour effectuer le transfert des\ndonnées à caractère personnel vers l’étranger est obligatoire.\n L’Instance doit statuer sur la demande d’autorisation dans un délai maximum d’un mois à\npartir de la présentation de la demande.\n Lorsque les données à caractère personnel à transférer concernent un enfant, la demande est\nprésentée au juge de la famille.\nCHAPITRE V\nDe quelques catégories particulières de traitement\nSection I - Du traitement des données à caractère personnel par ",
+          "source_text_sha256": "d6143b6900eb853ae51486f5a49282d2b4b3eb50a513e17257a5499ae94dc01b"
+        }
+      ],
+      "faithful_findings": 1,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "将数据传往海外须办理什么授权？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "强制事先授权及儿童数据的特殊程序"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 10256,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "Art. 18 :\nToute personne qui effectue, personnellement ou par une tierce personne, le traitement des\ndonnées à caractère personnel est tenue à l’égard des personnes concernées de prendre toutes\nles précautions nécessaires pour assurer la sécurité de ces données et empêcher les tiers de\nprocéder à leur modification, à leur altération ou à leur consultation sans l’autorisation de la\npersonne concernée.",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "6049572a-1552-4ed2-b5f6-69fc3a6c47c0",
+          "quote_end": 403,
+          "obligation": "根据本条，任何自行或通过第三方处理个人数据的人，对数据主体负有义务：采取一切必要预防措施，确保该数据的安全，并防止第三方未经数据主体授权而修改、篡改或查阅该数据。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 403,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "f1d2d49eec8db4743692e66dbd194b82ae6e5c4f164fd85eb4ae3d783cbf0208",
+          "selected_sentence_ids": [
+            1
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "Art. 19 :\n Les précautions prévues à l’article 18 de la présente loi doivent :\n - empêcher que les équipements et les installations utilisés dans le traitement des données à\ncaractère personnel soient placés dans des conditions ou des lieux permettant à des personnes\nnon autorisées d’y accéder ;\n - empêcher que les supports des données puissent être lus, copiés, modifiés ou déplacés par\nune personne non autorisée ;\n - empêcher l’introduction non autorisée de toute donnée dans le système d’information, ainsi\nque toute prise de connaissance, tout effacement ou toute radiation des données enregistrées ;\n - empêcher que le système de traitement d’information puisse être utilisé par des personnes\nnon autorisées ;\n- garantir que puissent être vérifiés à posteriori l’identité des personnes ayant eu accès au\nsystème d’information, les données qui ont été introduites dans le système, le moment de cette\nintroduction ainsi que la personne qui l’a effectuée ;\n - empêcher que les données puissent être lues, copiées, modifiées, effacées ou radiées, lors de\nleur communication où du transport de leur support ;\n - sauvegarder les données par la constitution de copies de réserve sécurisées ;",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "e9f0ded9-c38d-49e0-bdd1-0f406a12209b",
+          "quote_end": 1192,
+          "obligation": "本法第18条规定的预防措施必须：防止用于处理个人数据的设备与设施处于未经授权人员可访问的条件或地点；防止数据载体被未经授权人员读取、复制、修改或移动；防止任何数据被未经授权引入信息系统，以及防止已记录数据被知悉、删除或擦除；防止信息系统被未经授权人员使用；保证可事后核验曾访问信息系统的人员身份、引入系统的数据、引入时间及操作人；防止数据在通信或载体运输中被读取、复制、修改、删除或擦除；通过建立安全的备份副本保存数据。",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 1192,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "6f094abc781aa8fe8f22fe40555d8912ba0956fc111957261448fcd396deb2b9",
+          "selected_sentence_ids": [
+            1
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文完整对应结论：处理个人数据者（自行或通过第三方）对数据主体负有采取一切必要预防措施、确保数据安全并防止第三方未经授权修改、篡改或查阅的义务。",
+          "supported": "yes"
+        },
+        {
+          "index": 1,
+          "reason": "引文第19条逐项列出的预防措施与结论所列各项完全对应，包括设备访问、载体读取复制修改移动、数据未经授权引入及已记录数据知悉删除擦除、系统使用、事后核验、通信运输中保护及安全备份副本。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "fbcbb070-7a26-4aed-bdbe-6ba8cd44222e",
+          "clause_number": "79",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "6049572a-1552-4ed2-b5f6-69fc3a6c47c0",
+          "clause_number": "18",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "f9628f8e-a16b-4c74-a062-558a40652235",
+          "clause_number": "42",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "e9f0ded9-c38d-49e0-bdd1-0f406a12209b",
+          "clause_number": "19",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        },
+        {
+          "clause_id": "f453649e-f22b-49c5-adb9-04da1fda3bed",
+          "clause_number": "21",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-20",
+      "temperature": 0.0,
+      "country_code": "TN",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D8",
+      "findings_total": 2,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 18.252,
+      "judged_findings": 2,
+      "expected_clauses": [
+        {
+          "clause_id": "6049572a-1552-4ed2-b5f6-69fc3a6c47c0",
+          "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+          "version_no": 1,
+          "clause_number": "18",
+          "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+          "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "original_excerpt": "Art. 18 :\nToute personne qui effectue, personnellement ou par une tierce personne, le traitement des\ndonnées à caractère personnel est tenue à l’égard des personnes concernées de prendre toutes\nles précautions nécessaires pour assurer la sécurité de ces données et empêcher les tiers de\nprocéder à leur modification, à leur altération ou à leur consultation sans l’autorisation de la\npersonne concernée.",
+          "source_text_sha256": "f1d2d49eec8db4743692e66dbd194b82ae6e5c4f164fd85eb4ae3d783cbf0208"
+        }
+      ],
+      "faithful_findings": 2,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "如何防止第三方擅自更改或查看数据？",
+      "retrieval_expected": 1,
+      "supported_findings": 2,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "安全预防和防止未经许可访问"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 14743,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "المادة ٨٥:\nتطبق الأحكام الواردة في هذا الباب علـى جميـع المعالجـات الآليـة وغيـر الآليـة للبيانـات ذات الطـابع\nالشخصي. لكنها لا تطبق علـى المعالجـات المتعلقـة بالنشـاطات الشخصـية التـي ي قـوم بهـا الشـخص\nحصرياً لحاجاته .\n",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "quote_end": 221,
+          "obligation": "本章规定适用于对个人数据的全部自动化与非自动化处理；但个人仅为自身需要而专门从事的个人活动所涉处理不适用。",
+          "risk_level": "LOW",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2
+          ],
+          "business_fact": "自动与非自动车辆数据处理是否都在范围内？",
+          "anchor_quote_end": 221,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "24612abf619cb31e43e5a7d9654f5f1155d94e4cc5eb50ef0112685907ed61bb",
+          "selected_sentence_ids": [
+            1,
+            2
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "Traitement des Données à caractère personnel/ )الشخصـي الطـابع ذات البيانـات معالجـة\nData Personal of Processing (: هي كـل عمليـة أو مجموعـة عمليـات تقـع علـى هـذه البيانـات\nمهمــا كانــت الوســيلة المســتخدمة، لاســيما عمليــات التجميــع والتســجيل والتنظــيم والحفــظ والتكييــف\nوالتعـديل والإقتطــاع والقــ ءةرا والإســتعمال والنقــل والنســخ والنشـر والمحــو والإتــلاف وكــل شــكل آخــر\nلوضع المعلومات تحت التصرف .\n",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "quote_end": 678,
+          "obligation": "个人数据处理，是指无论采用何种手段，对个人数据进行的任何一项操作或一组操作，尤其包括收集、记录、组织、保存、调整、修改、摘取、读取、使用、传输、复制、发布、删除、销毁以及任何其他使信息处于可支配状态的形式。",
+          "risk_level": "LOW",
+          "quote_start": 258,
+          "sentence_ids": [
+            2
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 678,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 258,
+          "source_text_sha256": "e2ed2ee250c6d5016306610dd8fb9f8dda191d4a6d231a6a8097d3af2626ccf4",
+          "selected_sentence_ids": [
+            2
+          ]
+        }
+      ],
+      "gap_note": "未提供车辆专门法律或D1属地数据法规体系的其他范围条款；现有依据仅为个人数据一般法的适用范围与处理定义。",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "clause_number": "٨٥",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+          "clause_number": "٩٩",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "clause_number": "٨٧",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "clause_number": "١.2",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "9c56439e-4e84-4c89-8b3d-43ed3b45935e",
+          "clause_number": "١.1",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": "1 validation error for JudgeResponse\ntype\n  Extra inputs are not permitted [type=extra_forbidden, input_value='json_object', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/extra_forbidden",
+      "question_id": "S5-21",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D1",
+      "findings_total": 2,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 25.586,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٨٥",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٨٥:\nتطبق الأحكام الواردة في هذا الباب علـى جميـع المعالجـات الآليـة وغيـر الآليـة للبيانـات ذات الطـابع\nالشخصي. لكنها لا تطبق علـى المعالجـات المتعلقـة بالنشـاطات الشخصـية التـي ي قـوم بهـا الشـخص\nحصرياً لحاجاته .\n لا يمكـن الاتفـاق علـى مخالفـة الأحكـام الـواردة فـي هـذا البـاب التـي ـنظم\nت حقـوق الأشـخاص المعنيـين ُ\nبالمعالجـات وموجبـات المسـؤولين عـن هـذه المعالجـات. كمـا أنـه لا يمكـن الاحتجـاج بـأي اتفـاق أو\nبأي بند مخالف أو بأي تعهد بمشيئة منفردة .",
+          "source_text_sha256": "24612abf619cb31e43e5a7d9654f5f1155d94e4cc5eb50ef0112685907ed61bb"
+        }
+      ],
+      "faithful_findings": 2,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "自动与非自动车辆数据处理是否都在范围内？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "适用范围及个人家庭活动例外"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 13553,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": false,
+          "quote": "المادة ٨٨:\nعلى المسؤو ل عن معالجة البيانات ذات الطابع الشخصـي أو ممثلـه إعـلام الأشـخاص الـذين تسـتقى\nمنهم البيانات ذات الطابع الشخصي بما يلي :\n١ - هوية المسؤول عن المعالجة أو هوية ممثله .\n٢ - أهداف المعالجة .\n٣ - الطابع الإل أو ميزا الاختياري للإجابة على الأسئلة المطروحة .\n٤ - النتائج ال قد تي تترتب على عدم الإجابة .\n٥ - الأشخاص الذين سترسل إليهم البيانات .\n٦ - حق الوصول إلى المعلومات وتصحيحها والوسائل المعدة لذلك .\n",
+          "_issues": [
+            "原文第3项关于回答所提问题的强制性或选择性、第4项关于不回答后果的表述存在OCR缺损，无法在不猜测的情况下形成完整规则。"
+          ],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "21cff2ce-868d-416c-984f-0a4f716edfdb",
+          "quote_end": 421,
+          "obligation": "",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "business_fact": "车主数据收集应说明哪些目的？",
+          "_generation_gap": "原文第3项关于回答所提问题的强制性或选择性、第4项关于不回答后果的表述存在OCR缺损，无法在不猜测的情况下形成完整规则。",
+          "anchor_quote_end": 421,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "a736fdf8dcd2cead30203a538d7a98676a8b869e67eb9d559bd1c801fb50c292",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "clause_number": "١.2",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "8cfea491-9d6e-412f-a503-cf2b21a6bbcb",
+          "clause_number": "٩٢",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "21cff2ce-868d-416c-984f-0a4f716edfdb",
+          "clause_number": "٨٨",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "9c56439e-4e84-4c89-8b3d-43ed3b45935e",
+          "clause_number": "١.1",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-22",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D4",
+      "findings_total": 1,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 24.213,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٨٧",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٨٧:\nع\nّ\nُجم\nت البيانات ذات الطابع الشخصي بأمانة ولأهداف مشروعة ومحددة وصريحة .\nيجـب أن تكـون البيانـات ملائمـة وغيـر مت جـاوزة للأهـداف المعلنـة، وأن تكـون صـحيحة وكاملـة وأن\nتبقى ميومة بالقدر اللازم .\n لا يمكن في مرحلة لاحقة معالجة هذه البيانات لأهداف لا تتوافق مـع الغايـات المعلنـة، لـم مـا يتعلـق\nالأمر بمعالجة بيانات لأهداف إحصائية أو تاريخية أو للبحث العلمي .",
+          "source_text_sha256": "8e6e1cba420319fc8116a31767406b5afc0a10fb03bd41428ed3ba2e4353a064"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "车主数据收集应说明哪些目的？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "诚信、合法明确目的及相容用途"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 9086,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [],
+      "gap_note": null,
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+          "clause_number": "٩٩",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "clause_number": "٨٧",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "clause_number": "١.2",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "clause_number": "٨٥",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-23",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": "模型JSON Schema/事实键校验连续失败: fact_key 不在用户已提供事实中",
+      "dimension_code": "D5",
+      "findings_total": 0,
+      "retrieval_hits": 0,
+      "elapsed_seconds": 13.014,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٩٠",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٩٠:\n لا يكـون حفـظ البيانـات ذات الطـابع الشخصـي مشـروعاً إلا خـلال الفتـرة المبينـة فـي التصـريح عـن\nيرخ المعالجة أو رراقال في الذي ص\nّ\nبها .",
+          "source_text_sha256": "060afee21381408ddac492ca511ff910dc0a5074918ac7d7bacffc6c2d29fe8e"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "个人数据可以超出申报期间保存吗？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "仅限申报或批准期间"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 13984,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "المادة ٩١:\nُمنـع\nي جمـع البيانـات ذات الطـابع الشخصـي أو معالجتهـا، إذا كانـت تكشـف، بصـورة مباشـرة أو غيـر\nمباشرة، عن الحالة الصحية أو الهوية أو ثيةراو ال الحياة الجنسية للشخص المعني .\n لا يسري هذا المنع في الحالات التالية :\n١ - عندما يكون الشخص المعني قد وضع هذه البيانات في متناول الجمهـور أو وافـق راصـ ع حةً لـى\nمعالجتها، لم ما يوجد مانع قانوني .\n٢ - عندما يكون تجميع البيانات أو معالجتها ضروريين لوضع تشـخيص طبـي أو تقـديم عـلاج طبـي\n من قبل عضو في مهنة صحية .\n٣ - عند إثبات أو حق الدفاع عنه أمام القضاء .\n٤ - في حال الحصول على ترخيص وفق أحكام المادة ٩٧ من هذا القانون .",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "467af361-5577-4df4-ab74-1a0dd0eda162",
+          "quote_end": 576,
+          "obligation": "禁止收集或处理直接或间接揭示数据主体健康状况、身份或性生活的个人数据；但数据主体已将这些数据置于公众可获取范围或明确同意处理且无法律禁止，或为卫生专业人员作出医学诊断或提供医疗治疗所必需，或为在法院证明或捍卫权利，或依本法第97条获得许可的除外。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 576,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "79583fca9ac89d42444365c5b99b0d402d1429679bd338dfc2a3c50eb4fc09fe",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "结论完整覆盖第91条的禁止范围及四项例外，义务主体、条件、范围和许可条款均与引文相符。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "clause_number": "٨٧",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+          "clause_number": "٩٩",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "80349556-bd83-4c65-b262-46184f494235",
+          "clause_number": "٨٦",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "467af361-5577-4df4-ab74-1a0dd0eda162",
+          "clause_number": "٩١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-24",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D2",
+      "findings_total": 1,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 36.232,
+      "judged_findings": 1,
+      "expected_clauses": [
+        {
+          "clause_id": "467af361-5577-4df4-ab74-1a0dd0eda162",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٩١",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٩١:\nُمنـع\nي جمـع البيانـات ذات الطـابع الشخصـي أو معالجتهـا، إذا كانـت تكشـف، بصـورة مباشـرة أو غيـر\nمباشرة، عن الحالة الصحية أو الهوية أو ثيةراو ال الحياة الجنسية للشخص المعني .\n لا يسري هذا المنع في الحالات التالية :\n١ - عندما يكون الشخص المعني قد وضع هذه البيانات في متناول الجمهـور أو وافـق راصـ ع حةً لـى\nمعالجتها، لم ما يوجد مانع قانوني .\n٢ - عندما يكون تجميع البيانات أو معالجتها ضروريين لوضع تشـخيص طبـي أو تقـديم عـلاج طبـي\n من قبل عضو في مهنة صحية .\n٣ - عند إثبات أو حق الدفاع عنه أمام القضاء .\n٤ - في حال الحصول على ترخيص وفق أحكام ",
+          "source_text_sha256": "79583fca9ac89d42444365c5b99b0d402d1429679bd338dfc2a3c50eb4fc09fe"
+        }
+      ],
+      "faithful_findings": 1,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "健康或遗传数据有何特殊限制？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "敏感数据原则禁止及限定例外"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 17053,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": false,
+          "quote": "المادة ٩٥:\nباستثناء الإعفاءات المنصوص عليها في المادة السابقة، يجـب علـى مـن يرغـب بجمـع البيانـات ذات\nالطــابع الشخصــي ومعالجتهــا، إعــلام وزارة الاقتصــاد والتجــارة بموجــب تصــريح وفــق الأصــول لقــاء\nإيصال .",
+          "_issues": [
+            "依据限定生成Schema失败: [{'type': 'value_error', 'loc': (), 'msg': 'Value error, 必须且只能返回一条完整有依据的规则或明确证据缺口', 'ctx': {'error': ValueError('必须且只能返回一条完整有依据的规则或明确证据缺口')}}]"
+          ],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+          "quote_end": 215,
+          "obligation": "",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 215,
+          "_generation_error": "依据限定生成Schema失败: [{'type': 'value_error', 'loc': (), 'msg': 'Value error, 必须且只能返回一条完整有依据的规则或明确证据缺口', 'ctx': {'error': ValueError('必须且只能返回一条完整有依据的规则或明确证据缺口')}}]",
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "e28647e3731df909409793b7bdb80feb8507c1046b38b7258bba13e5ea262e85",
+          "selected_sentence_ids": [
+            1
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "المادة ٩٦:\nيجب أن يتضمن التصريح م\nّ\nالمقد إلى وزارة الإقتصاد والتجارة وفق المادة السابقة، المعلومات التالية :\n١ - غايات المعالجة .\n٢ - البيانات ذات الطابع الشخصي موضوع المعالجة ومصدرها .\n٣ - فئات الأشخاص المعنيين .\n٤ - الأشخاص الثالثين او فئاتهم الذين يمكن إطلاعهم على البيانات .\n٥ - مدة الإحتفاظ بالبيانات .\n٦ - هوية وعنوان المسؤول عن المعالجة .\n",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "4492beb2-cde2-4a70-9078-947e7e1453aa",
+          "quote_end": 347,
+          "obligation": "依据前条向经济与贸易部提交的申报，必须包含以下信息：处理目的；受处理的个人数据及其来源；数据主体类别；可获知该数据的第三方或其类别；数据保留期限；处理负责人的身份和地址。",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 347,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "d2c96f2321bdf554bf02120c13526b382481fa4aef5ac77b3b0c56a2f2e37ce5",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "_ok": false,
+          "quote": "المادة ١٠٦ :\nيعاقب راغبال مة من مليون ليـرة لبنانيـة إلـى ثلاثـين مليـون ليـرة لبنانيـة وبـالحبس مـن ثلاثـة أشـهر حتـى\nثلاث سنوات أو بإحدى هاتين العقوبتين :\n - كـل مـن أقـدم علـى معالجـة بيانـات ذات طـابع شخصـي د ون تقـديم تصـريح، أو دون الاستحصـال\nعلى ترخيص مسبق قبل المباشرة بعمله وفقاً لأحكام الفصل الثالث من هذا الباب .\n",
+          "_issues": [
+            "结论中的数字「100」未出现在所选引文中",
+            "结论中的数字「3」未出现在所选引文中",
+            "结论中的数字「3000」未出现在所选引文中"
+          ],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "6c0f4d5a-1762-4f65-a2c5-279761750925",
+          "quote_end": 324,
+          "obligation": "依原文，任何人未提交申报，或未依本编第三章规定在开始处理前取得事先许可，即处理个人数据的，处100万至3000万黎巴嫩镑罚金、3个月至3年监禁，或仅处其中一种处罚。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 324,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "6cace7917541bf9d9846afc20db0039edddd4b0f8309e08f30c0eb4661f4c2a6",
+          "selected_sentence_ids": [
+            1
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 1,
+          "reason": "引文第96条完整列出向经济与贸易部提交申报须包含的六项信息，与结论逐项一致。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "6c0f4d5a-1762-4f65-a2c5-279761750925",
+          "clause_number": "١٠٦",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+          "clause_number": "٩٥",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "4492beb2-cde2-4a70-9078-947e7e1453aa",
+          "clause_number": "٩٦",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+          "clause_number": "٩٩",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-25",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D7",
+      "findings_total": 3,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 31.595,
+      "judged_findings": 1,
+      "expected_clauses": [
+        {
+          "clause_id": "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٩٥",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٩٥:\nباستثناء الإعفاءات المنصوص عليها في المادة السابقة، يجـب علـى مـن يرغـب بجمـع البيانـات ذات\nالطــابع الشخصــي ومعالجتهــا، إعــلام وزارة الاقتصــاد والتجــارة بموجــب تصــريح وفــق الأصــول لقــاء\nإيصال .",
+          "source_text_sha256": "e28647e3731df909409793b7bdb80feb8507c1046b38b7258bba13e5ea262e85"
+        }
+      ],
+      "faithful_findings": 1,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "企业开始收集个人资料前要向谁申报？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "除豁免外向经济贸易部申报"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 11262,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": false,
+          "quote": " لا يمكـن رراقـ لأي قضـائي أو إداري يسـتوجب تقييمـاً لتصـرف الإنسـان أن يعتمـد علـى معالجـة آليـة\nللبيانات فقط، تهدف إلى تحديد صفات الشخص أو إلى تقييم بعض جوانب شخصيته .\n",
+          "_issues": [
+            "所给引文存在OCR损坏，主语/适用对象（“司法或行政……”）不完整，无法确定该禁止性规则具体约束何种决定或程序；关键条件残缺，不能据此形成完整规则。"
+          ],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "80349556-bd83-4c65-b262-46184f494235",
+          "quote_end": 414,
+          "obligation": "",
+          "risk_level": "MEDIUM",
+          "quote_start": 244,
+          "sentence_ids": [
+            2
+          ],
+          "business_fact": "可否完全依靠自动处理作出个人评价决定？",
+          "_generation_gap": "所给引文存在OCR损坏，主语/适用对象（“司法或行政……”）不完整，无法确定该禁止性规则具体约束何种决定或程序；关键条件残缺，不能据此形成完整规则。",
+          "anchor_quote_end": 414,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 244,
+          "source_text_sha256": "e618fa31f069ad04c021190a65e7c93d88299bba21fbcd7fa012768b9caaef38",
+          "selected_sentence_ids": [
+            2
+          ]
+        }
+      ],
+      "gap_note": "该依据仅涉及需评价人的行为的司法或行政裁决，未提供企业车联网场景下自动化个人评价决定的一般规则；原文该句存在轻微OCR损坏，关键限定需核验，不能猜测补全。",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "clause_number": "١٠١",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "b3cf2404-4048-4628-ac26-42041e621557",
+          "clause_number": "١٠٣",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "clause_number": "١.2",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "80349556-bd83-4c65-b262-46184f494235",
+          "clause_number": "٨٦",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        },
+        {
+          "clause_id": "c8514f5c-dd5b-4fc3-b6cf-5dc14de62718",
+          "clause_number": "٨٥",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-26",
+      "temperature": 0.0,
+      "country_code": "LB",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D8",
+      "findings_total": 1,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 28.213,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "80349556-bd83-4c65-b262-46184f494235",
+          "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "version_no": 1,
+          "clause_number": "٨٦",
+          "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "original_excerpt": "المادة ٨٦:\nلكـــل شـــخص الحـــق فـــي الاطـــلاع والا راعتـــ ض أمـــام المســـؤول عـــن معالجـــة البيانـــات ذات الطـــابع\nالشخصــي علــى المعلومــات والتحاليــل المســتعملة فــي المعالجــات الآليــة المتعلقــة بــه والمتــذرع بهــا\nبوجهه .\n لا يمكـن رراقـ لأي قضـائي أو إداري يسـتوجب تقييمـاً لتصـرف الإنسـان أن يعتمـد علـى معالجـة آليـة\nللبيانات فقط، تهدف إلى تحديد صفات الشخص أو إلى تقييم بعض جوانب شخصيته .\nالفصل الثاني :\nتجميع المعلومات ذات الطابع الشخصي ومعالجتها",
+          "source_text_sha256": "e618fa31f069ad04c021190a65e7c93d88299bba21fbcd7fa012768b9caaef38"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "可否完全依靠自动处理作出个人评价决定？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "访问异议及不得仅依自动处理的限制"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 19588,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "):\nلا يجوز جمع البيانات الشخصية أو معا أو الإفصاح عنها أو إفشائها بأى\nوسيلة من الوسائل إلا بمؤافقة ضريخة من اله ‎call‏ بالببياتات : أو فى الأخوال\nالمصرح بها قانونًا .\n",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "quote_end": 174,
+          "obligation": "不得以任何方式收集、获取、披露或传播个人数据，除非获得明确同意或属于法律允许的情形。",
+          "risk_level": "HIGH",
+          "quote_start": 7,
+          "sentence_ids": [
+            2
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 174,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 7,
+          "source_text_sha256": "97803677169eb33f4c1ad5188c5acc7351970f82048dc7c58a96657b76c8dca0",
+          "selected_sentence_ids": [
+            2
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "ويجب على الشخص المعني بالبيانات إعطاء\nموافقة صريحة لجمع البيانات أو معالجتها أو الكشف عنها أو النقل. ",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "c35a5e67-81eb-4647-9b0d-fdd72722d383",
+          "quote_end": 699,
+          "obligation": "数据相关人须对数据的收集、处理、披露或传输给予明确同意。",
+          "risk_level": "HIGH",
+          "quote_start": 598,
+          "sentence_ids": [
+            5
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 699,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 598,
+          "source_text_sha256": "0f8c23a91ece7911bd91fa56ec80b3593102c2e29bd86c518d0c976f2dd3c769",
+          "selected_sentence_ids": [
+            5
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文支持“不得以任何方式收集、披露或传播个人数据，除非明确同意或法律允许”，但结论中的“获取”未在引文中明确对应，行为范围不完全一致。",
+          "supported": "partial"
+        },
+        {
+          "index": 1,
+          "reason": "引文明确要求数据相关人对收集、处理、披露或传输给予明确同意，与结论完整对应。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "491f1c58-391e-4d36-9a52-4fc426326a01",
+          "clause_number": "第19页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "clause_number": "(؟):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "c35a5e67-81eb-4647-9b0d-fdd72722d383",
+          "clause_number": "第36页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "a0aa4715-be1c-475c-9674-c9843707e9df",
+          "clause_number": "第15页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "clause_number": "‎)١0(‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-27",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D4",
+      "findings_total": 2,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 49.518,
+      "judged_findings": 2,
+      "expected_clauses": [
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "(؟):",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة (؟):\nلا يجوز جمع البيانات الشخصية أو معا أو الإفصاح عنها أو إفشائها بأى\nوسيلة من الوسائل إلا بمؤافقة ضريخة من اله ‎call‏ بالببياتات : أو فى الأخوال\nالمصرح بها قانونًا .\nالجريدة الرسمية-العدو ‎VA‏ مكزر (ه) فى ‎V0‏ يوليةاسنة ‎Vi VV‏\nويكون للشخص المعنى بالبيانات الحقوق الآتية :\nبالبياناية|الشخصية الخاصة به الموجودة ‎Gal‏ أى حائز أو متحكم أو معالج\nل إليها أو الحصول عليها .\n‎LA‏ الاحتفاظ ببياناته الش:\n‏دأو معالجتها .\n‏المحدد لها.\n‎Lig) iid LAU! suey‏ القاتون! 2 والإجراءات والضوابط والمعايير\n‏القياسية للجمع والمعالجة والحفظ والتأمين لهذه البيانا",
+          "source_text_sha256": "97803677169eb33f4c1ad5188c5acc7351970f82048dc7c58a96657b76c8dca0"
+        }
+      ],
+      "faithful_findings": 2,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "收集和披露个人数据应满足什么条件？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "确认同意或法定处理条件；OCR受损处保持待核查"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 6615,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [],
+      "gap_note": "缺少可直接支撑“控制者和处理者保护职责”的完整、可读依据：候选Law No.151相关段落OCR受损，主体、条件、义务内容及例外不完整，无法在不猜测的情况下提取；其余候选为金融科技或欧盟金融战略内容，不涉及该职责。",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "17caed9c-1157-4b13-abfc-59c528838f7a",
+          "clause_number": "第38页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "clause_number": "‎)١0(‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "29ecf7ff-f0e1-473a-bd58-a3a6152a4e1b",
+          "clause_number": "第25页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "39d94b9f-54ff-49fb-b0c9-b4987264917a",
+          "clause_number": "第28页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-28",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D8",
+      "findings_total": 0,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 11.109,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "(0):",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة (0): 9\n. )لأ\nمع مراعاة احكام المادة )¥\\\nBi cE REL nail A\n‏التنفيذية ووفقًا للحالات المشروعة والقان”!‎\n‏من المركز أو المتحكم أو من أى ذى صفة ب‎\n‏بنطاق عملية المعالجة وموضوعها وطبيعتها ونوع‎\nad ‏العرض اله‎\nت الشخصية واتفاقها وكفايتها مع\nوقكين المركز من التفتيش والرقابة للتأكد\n‎١‏ - الحصول على ترخيص أو تصريح من\n‎VY‏ - يلتزم المعالج خارج جمهورية مصر ‎mil‏ ن ممشل له فى جمهورية مصر العربية\n‏وذلك على ‎rl‏ الى عيب اللقحة السفيلية.\n‏مل على البيانات الشخصية .\nالجريدة الرسمية - العدد ‎VA‏ مكرر (ه) فى 18 ‎١١ 7 des dle‏\nوفى حال وجود أكثر من معالج « يلت",
+          "source_text_sha256": "9e84d4d569bd9029ca9760acb5fd9f07ed042390dfb2d32504fba6104d94d217"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "控制者和处理者有哪些保护职责？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "以可读原文为限，不补全OCR受损职责"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 18774,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": false,
+          "quote": "وفيما عدا الأحوال المصرح بها قانونًا ‎J ge‏ على موافقة كتابية وصريحة\nوفى حالة إجراء أى عملية مما ذكر تتعلق ببيانات الأطفال ‎٠‏ يلزم موافقة ولى الأمر .\nVO VWs Redd V0 ‏فى‎ (a) Se VA ‏العيو‎ = digas II Bay\nويجب ألا تكون مشاركة الطفل فى لعبة أو مسابقة أو أى نشاط آخر مشروطة بتقديم\nللطفل يويد على ما هو ضرورى للمشاركة فى ذلك .\n",
+          "_issues": [
+            "所给引文OCR受损且主语/义务主体不明：儿童数据处理需监护人同意的规则未明确义务主体及完整触发条件；活动不得以提供数据为条件的规则中关键宾语（数据名称）残缺，无法在不猜测的情况下形成一条完整有依据的原子规则。"
+          ],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+          "quote_end": 384,
+          "obligation": "",
+          "risk_level": "MEDIUM",
+          "quote_start": 61,
+          "sentence_ids": [
+            3,
+            4
+          ],
+          "business_fact": "儿童或敏感信息处理应注意什么？",
+          "_generation_gap": "所给引文OCR受损且主语/义务主体不明：儿童数据处理需监护人同意的规则未明确义务主体及完整触发条件；活动不得以提供数据为条件的规则中关键宾语（数据名称）残缺，无法在不猜测的情况下形成一条完整有依据的原子规则。",
+          "anchor_quote_end": 384,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 61,
+          "source_text_sha256": "ba064af0472c49c2e7404517370e186ba37b411e20b6a64ec6e9542c49e363c6",
+          "selected_sentence_ids": [
+            3,
+            4
+          ]
+        },
+        {
+          "_ok": true,
+          "quote": "ً يقصد بها خدمات ربط األجهزة بعضها ببعض ونقل البيانات او\nسلكيا السلكيا\n.4 خدمات انترنت االشياء IoT:\nيقصد بها الخدمة التي تقوم على استخدام وسائل تقنية لتمكيــن االتصــال اآللــي بيــن األشياء لتبادل البيانات فيما بينها\nوتحليلها ومعالجتها واتاحتها للمستخدمين، مع األخذ في اإلعتبار أن الشئ هو اى جسم مادى يتم اضافة هوية ر قمية/الكترونية\nله لتمكينه من إجراء االتصاالت مثل الثالجات، السيارات، و محطات الطاقة، وغيرها.\n",
+          "_issues": [],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "77458678-4dc2-406e-9902-368507541a66",
+          "quote_end": 641,
+          "obligation": "物联网服务（IoT）指基于技术手段使物之间能够自动通信，以交换、分析、处理数据并向用户提供的服务；其中“物”指被添加数字或电子身份、从而能够进行通信的任何物理对象，例如汽车、冰箱、电站等。",
+          "risk_level": "MEDIUM",
+          "quote_start": 229,
+          "sentence_ids": [
+            4
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "anchor_quote_end": 641,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 229,
+          "source_text_sha256": "1f562ea52c0de4412834102e6d7474baf23ce334ecba89763601a458ce2f5d40",
+          "selected_sentence_ids": [
+            4
+          ]
+        }
+      ],
+      "gap_note": "儿童数据处理条款的关键前提、行为类型及“上述操作”范围因原文受损不完整；候选材料缺少明确的敏感信息分类和汽车核心数据专门定义。",
+      "judgments": [
+        {
+          "index": 1,
+          "reason": "引文完整涵盖结论中的定义：基于技术手段实现物之间自动通信、交换分析处理数据并向用户提供，以及“物”为被添加数字/电子身份以进行通信的任何物理对象，并列举冰箱、汽车、电站等示例。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "266409bc-969b-4d6b-9291-b86cdac6c42f",
+          "clause_number": "3.1",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+          "clause_number": "(؟١):‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "17caed9c-1157-4b13-abfc-59c528838f7a",
+          "clause_number": "第38页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "77458678-4dc2-406e-9902-368507541a66",
+          "clause_number": "第4页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-29",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D2",
+      "findings_total": 2,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 38.535,
+      "judged_findings": 1,
+      "expected_clauses": [
+        {
+          "clause_id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "(؟١):‏",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة (؟١):‏\n‎a‏\n‏يحظر على المتحكم\nشخ ‎Ee oe ee oe‏\nمنالمركز.\nوفيما عدا الأحوال المصرح بها قانونًا ‎J ge‏ على موافقة كتابية وصريحة\nوفى حالة إجراء أى عملية مما ذكر تتعلق ببيانات الأطفال ‎٠‏ يلزم موافقة ولى الأمر .\nVO VWs Redd V0 ‏فى‎ (a) Se VA ‏العيو‎ = digas II Bay\nويجب ألا تكون مشاركة الطفل فى لعبة أو مسابقة أو أى نشاط آخر مشروطة بتقديم\nللطفل يويد على ما هو ضرورى للمشاركة فى ذلك .\nبير والضوابط التى تحددها اللائحة التنفيذية لهذا القانون .",
+          "source_text_sha256": "ba064af0472c49c2e7404517370e186ba37b411e20b6a64ec6e9542c49e363c6"
+        }
+      ],
+      "faithful_findings": 1,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "儿童或敏感信息处理应注意什么？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "核对明确同意和儿童监护要求，受损处不推断"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 21150,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": false,
+          "quote": "مادة ‎)١0(‏ 4\nاستثناء من حكم |\n‎a‏\n‏الشخصية إلى دولة لا يتوافر ذ\n5 3\nوذلك فى الحالات الآتية :\n‎-١‏ المحافظة على حياة الشخص المعنى\n‎SS‏ وتوفير الرعاية الطبية أو العلاج\nأو إدارة الخدمات الصحية له .\n‏؟ - تنفيذ التزامات بما يضمن إثبات حق أو ممارسته أمام جهات العدالة أو الدفاع عنه .\n‎Eel 15‏ الدبو مكار اله إلى لابين ما\n‏\" - إبرام عقد ‎١‏ أو تنفيذ عقد مبرم بالفعل . أو سيتم إبرامه بين المسئول عن المعالجة\n‏الما تيي بنباية المسلجة العلفة..\nو الزام ل\n‎ih‏ . ",
+          "_issues": [
+            "所给引文OCR受损严重：第10条开头“استثناء من حكم”之后及“إلى دولة لا يتوافر ذ”处关键条件残缺，无法确定该例外所针对的跨境传输基础规则、是否以不具备充分保护水平为前提，以及义务主体；合同例外中“المسئول عن المعالجة”后的主体与范围亦损坏。仅能辨认医疗、司法权利和合同等例外事项，不能据此形成完整原子规则。"
+          ],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "quote_end": 452,
+          "obligation": "",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "business_fact": "向境外传输个人数据是否存在限定例外？",
+          "_generation_gap": "所给引文OCR受损严重：第10条开头“استثناء من حكم”之后及“إلى دولة لا يتوافر ذ”处关键条件残缺，无法确定该例外所针对的跨境传输基础规则、是否以不具备充分保护水平为前提，以及义务主体；合同例外中“المسئول عن المعالجة”后的主体与范围亦损坏。仅能辨认医疗、司法权利和合同等例外事项，不能据此形成完整原子规则。",
+          "anchor_quote_end": 452,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "4da24a9e2c6ca07a7e71447ef21bf590b8bac89ad2282827337ed34fdcc10811",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "_ok": false,
+          "quote": " يلتزم مقدم خدمات التليفون المحمول بخطة الترقيم القومية التي يصدرها الجهاز واى تعديالت عليها كما تلتزم بسداد\nمقابل الترقيم المذكور ومواعيد السداد المذكورين في الخطة المشار اليها.\n يلتزم مقدم خدمات التليفون المحمول باتخاذ كافة اإلجراءات والخطوات المؤسسية والفنية الالزمة لحماية وسرية\nالمعلومات والبيانات الخاصة بمستخدمي الخدمة والحركة على الشبكة.\n يلتزم مقدم خدمات التليفون المحمول بعدم نقل الحركة الخاصة بخدمات انترنت االشياء خارج جمهورية مصر العربية\nأو استخدام أي جزء من مكونات الشبكة المستخدمة في تقديم خدمات انترنت االشياء خارج جمهورية مصر العربية\nهاز مسبقاً. ",
+          "_issues": [
+            "证据引文末句关于物联网服务流量及网络组件跨境使用的禁止性规定中，涉及事先批准/例外条件的关键措辞OCR受损（“هاز مسبقاً”），主语虽可识别为移动电话服务提供商，但该禁止的完整限定或例外无法从原文确定，不能猜测补全，故无法形成完整规则。"
+          ],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "65e0b0b9-d25c-474d-a095-82f0f7c3b81d",
+          "quote_end": 566,
+          "obligation": "",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "_generation_gap": "证据引文末句关于物联网服务流量及网络组件跨境使用的禁止性规定中，涉及事先批准/例外条件的关键措辞OCR受损（“هاز مسبقاً”），主语虽可识别为移动电话服务提供商，但该禁止的完整限定或例外无法从原文确定，不能猜测补全，故无法形成完整规则。",
+          "anchor_quote_end": 566,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 348,
+          "source_text_sha256": "7c00d4b6803c150389443588d0ade3184229fd3907df6eaf4a5487da458302c3",
+          "selected_sentence_ids": [
+            3
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "d0969f10-d8b5-4a81-80bc-7c5f47ead87a",
+          "clause_number": "第1页",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "e0db79b7-bcf8-459d-94a9-8ccdd6933c99",
+          "clause_number": "9.1",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "clause_number": "‎)١0(‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "65e0b0b9-d25c-474d-a095-82f0f7c3b81d",
+          "clause_number": "第24页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-30",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D3",
+      "findings_total": 2,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 41.472,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "‎)١0(‏",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة ‎)١0(‏ 4\nاستثناء من حكم |\n‎a‏\n‏الشخصية إلى دولة لا يتوافر ذ\n5 3\nوذلك فى الحالات الآتية :\n‎-١‏ المحافظة على حياة الشخص المعنى\n‎SS‏ وتوفير الرعاية الطبية أو العلاج\nأو إدارة الخدمات الصحية له .\n‏؟ - تنفيذ التزامات بما يضمن إثبات حق أو ممارسته أمام جهات العدالة أو الدفاع عنه .\n‎Eel 15‏ الدبو مكار اله إلى لابين ما\n‏\" - إبرام عقد ‎١‏ أو تنفيذ عقد مبرم بالفعل . أو سيتم إبرامه بين المسئول عن المعالجة\n‏الما تيي بنباية المسلجة العلفة..\nو الزام ل\n‎ih‏ . دولة أخرىيوفقًا لتشريعاتهاالقددة والساريق.\n‎wim ep‏ طراف تكون\n‎ee\n‏تجر ”آلا امال « ‎dey‏ الأ أت ال",
+          "source_text_sha256": "4da24a9e2c6ca07a7e71447ef21bf590b8bac89ad2282827337ed34fdcc10811"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "向境外传输个人数据是否存在限定例外？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "核对原文列明例外，OCR缺损不补全"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 15493,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": true,
+          "quote": "مادة (19):\nيجوز للمركز إلغاء الترخيص أو الة\nمن الحالات الآتية :\n. ‏مخالفة شروط الترخيص أو التصريح أو الاعتماد‎ - ١\n‎i‏ الاعتماد بعد إصداره فى أى\n6 الجريدة الرسمية — ‎VA call‏ مكزر (ه) فى 18 يوليةاسنة .م\n؟ - عدم سداد رسوم تجديد الترخيص أو التصريح أو الاعتماد .\nلترخيص أو التصريح أو الاعتماد للغير دون موافقة المركز .\n",
+          "_issues": [],
+          "fact_key": "scenario",
+          "quote_zh": "",
+          "clause_id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+          "quote_end": 316,
+          "obligation": "中心可在下列情形之一撤销许可证、许可或认证：违反许可证、许可或认证条件；未缴纳许可证、许可或认证续期费用；未经中心同意将许可证、许可或认证转让给他人。",
+          "risk_level": "HIGH",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "business_fact": "监管机关在什么情况下可以撤销许可？",
+          "anchor_quote_end": 316,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "9b0b0f549926537892866a3fd1ab3114aaa5d4289b7ad421092f35c762905218",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      ],
+      "gap_note": "原文存在OCR受损，部分撤销情形表述不完整；未发现其他直接规定撤销许可条件的完整条款。",
+      "judgments": [
+        {
+          "index": 0,
+          "reason": "引文第19条规定中心可撤销许可证、许可或认证，并列出三项情形：违反许可证/许可/认证条件、未缴纳续期费用、未经中心同意将许可证/许可/认证转让给他人，与结论三项一一对应。",
+          "supported": "yes"
+        }
+      ],
+      "retrieved": [
+        {
+          "clause_id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+          "clause_number": "(19):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "a0aa4715-be1c-475c-9674-c9843707e9df",
+          "clause_number": "第15页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "6920f564-9dcd-4f0c-88ce-0f6001cf402f",
+          "clause_number": "第20页",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "561bd1c4-9ce2-4443-8433-b491e5df5df9",
+          "clause_number": "17.1",
+          "document_title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework"
+        }
+      ],
+      "llm_judged": true,
+      "judge_error": null,
+      "question_id": "S5-31",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D7",
+      "findings_total": 1,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 27.405,
+      "judged_findings": 1,
+      "expected_clauses": [
+        {
+          "clause_id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "(19):",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة (19):\nيجوز للمركز إلغاء الترخيص أو الة\nمن الحالات الآتية :\n. ‏مخالفة شروط الترخيص أو التصريح أو الاعتماد‎ - ١\n‎i‏ الاعتماد بعد إصداره فى أى\n6 الجريدة الرسمية — ‎VA call‏ مكزر (ه) فى 18 يوليةاسنة .م\n؟ - عدم سداد رسوم تجديد الترخيص أو التصريح أو الاعتماد .\nلترخيص أو التصريح أو الاعتماد للغير دون موافقة المركز .\nالمتحكم أو المعالج .\nYX (1) ‏مادة‎\nيكون للمركز موازنة خاصة تعد على فط ت'الهيئات الاقتصادية طبقنًا للقواعد\nالتى تحددها لائحة المركز وتتبع قواعد النظام ‎GL‏ الموحد . وذلك دون التقيد بالقواعد\nوالنظم الحكومية ‎lars.‏ السنة المالية للمركز ",
+          "source_text_sha256": "9b0b0f549926537892866a3fd1ab3114aaa5d4289b7ad421092f35c762905218"
+        }
+      ],
+      "faithful_findings": 1,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "监管机关在什么情况下可以撤销许可？",
+      "retrieval_expected": 1,
+      "supported_findings": 1,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "许可条件违反等可读事项，不扩展残缺信息"
+      ]
+    },
+    {
+      "model": "deepseek-flash",
+      "tokens": 13170,
+      "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+      "findings": [
+        {
+          "_ok": false,
+          "quote": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل فى غير الأحوال المصرح بها قانونًا أو بدون موافقة الشخص المعنى بالبيانات .\nالجريدة الرسمية - العدد 74 مكرر (ه) فى ‎V0‏ يولية سنة ‎VV 78١‏\nوتكون العقوبة الحبس مدة لا تقل عن ستة شهور وبغرامة لا تقل عن ‎tle‏ ألف جنيه\nنى جنيه ‎ahs‏ بإحدى هاتين العقوبتين . إذا ارتكب ذلك مقابل الحصول على\n‎j‏ أو بقصد تغريض الشخص المعنى بالبيانات للخط ‎gh‏ الضرر .\n",
+          "_issues": [
+            "引文存在OCR损坏：基础罚金“مائة ألف جنيه 5 مليون جنيه”关系不明，加重罚金“tle ألف جنيه”“ahs”及“j”“gh”等关键数额与条件残缺，无法在不猜测的情况下完整确定处罚幅度和加重情节。"
+          ],
+          "fact_key": "business_operation",
+          "quote_zh": "",
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "quote_end": 520,
+          "obligation": "",
+          "risk_level": "MEDIUM",
+          "quote_start": 0,
+          "sentence_ids": [
+            1,
+            2,
+            3
+          ],
+          "business_fact": "企业车联网与车辆用户数据处理；具体细节未提供",
+          "_generation_gap": "引文存在OCR损坏：基础罚金“مائة ألف جنيه 5 مليون جنيه”关系不明，加重罚金“tle ألف جنيه”“ahs”及“j”“gh”等关键数额与条件残缺，无法在不猜测的情况下完整确定处罚幅度和加重情节。",
+          "anchor_quote_end": 520,
+          "selection_version": "legal-units-v2",
+          "anchor_quote_start": 0,
+          "source_text_sha256": "1569e15e854f3d3dd04884437223c9626b00b0927197f4ef516872c009d53093",
+          "selected_sentence_ids": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "gap_note": "",
+      "judgments": [],
+      "retrieved": [
+        {
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "clause_number": "‎(TV)‏",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "491f1c58-391e-4d36-9a52-4fc426326a01",
+          "clause_number": "第19页",
+          "document_title": "埃及内阁信息与决策支持中心 IDSC"
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "clause_number": "(0):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "26aa86d7-ac41-485b-bd3a-66d050a16789",
+          "clause_number": ")80(",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        },
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "clause_number": "(؟):",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)"
+        }
+      ],
+      "llm_judged": false,
+      "judge_error": null,
+      "question_id": "S5-32",
+      "temperature": 0.0,
+      "country_code": "EG",
+      "human_review": null,
+      "source_drift": [],
+      "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+      "analysis_error": null,
+      "dimension_code": "D6",
+      "findings_total": 1,
+      "retrieval_hits": 1,
+      "elapsed_seconds": 27.577,
+      "judged_findings": 0,
+      "expected_clauses": [
+        {
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "version_no": 1,
+          "clause_number": "‎(TV)‏",
+          "archive_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+          "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "original_excerpt": "مادة ‎(TV)‏ 2\n‏يعاقب بغرامة لا تقل عن مائة ألف جنيه 5 مليون جنيه كل حائز أو متحكم\nأو معالج جمع أو عالج أو أفشى أو أتاح أو تداول بَبَااكاشخصية معالجة ‎sh Wig SU)‏ وسيلة\nمن الوسائل فى غير الأحوال المصرح بها قانونًا أو بدون موافقة الشخص المعنى بالبيانات .\nالجريدة الرسمية - العدد 74 مكرر (ه) فى ‎V0‏ يولية سنة ‎VV 78١‏\nوتكون العقوبة الحبس مدة لا تقل عن ستة شهور وبغرامة لا تقل عن ‎tle‏ ألف جنيه\nنى جنيه ‎ahs‏ بإحدى هاتين العقوبتين . إذا ارتكب ذلك مقابل الحصول على\n‎j‏ أو بقصد تغريض الشخص المعنى بالبيانات للخط ‎gh‏ الضرر .\nكل مثل قانونق\n‎gps‏ هذا القائو",
+          "source_text_sha256": "1569e15e854f3d3dd04884437223c9626b00b0927197f4ef516872c009d53093"
+        }
+      ],
+      "faithful_findings": 0,
+      "retrieval_version": "query-bm25-rrf-v1",
+      "scenario_question": "未经许可处理个人数据的处罚依据在哪里？",
+      "retrieval_expected": 1,
+      "supported_findings": 0,
+      "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+      "workflow_version_no": 26,
+      "expected_conclusion_points": [
+        "罚则文字和数字有OCR风险，金额不得猜测"
+      ]
+    }
+  ],
+  "batch_id": "9beef1f1-17fc-468e-8fd1-dcb0ba1b27ea",
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "workflow_version_id": "97f93d37-f27d-43df-9173-4590d08a0ad8",
+  "elapsed_seconds": 297.9702261999919
+}

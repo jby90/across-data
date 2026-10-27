@@ -4,7 +4,6 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.analysis.models import (
@@ -44,7 +43,7 @@ REQUIRED_FACTS_SPEC: list[dict[str, Any]] = [
         "fact_key": "exterior_video_and_gnss",
         "dimension_code": "D2",
         "question_zh": "车辆是否采集车外高清摄像头视频（含街景行人面孔、周边车牌）及高精度 GNSS 轨迹数据？是否在车端或边缘端执行实时匿名化/脱敏？",
-        "why_needed": "决定是否触发新加坡 PDPA 个人数据认定（人脸/车牌可识别自然人）及 LTA 路测传感器记录规范。",
+        "why_needed": "用于判断数据是否可能识别自然人，以及需要检索哪些个人数据保护和车辆记录要求。",
         "suggested_options": [
             "采集 8 路环视视频与厘米级 GNSS，车端对人脸/车牌实时模糊处理后回传研发云",
             "采集原始视频与高精度轨迹，未脱敏直接回传境外算法训练中心",
@@ -55,9 +54,9 @@ REQUIRED_FACTS_SPEC: list[dict[str, Any]] = [
         "fact_key": "cross_border_mechanism",
         "dimension_code": "D3",
         "question_zh": "跨境数据接收方所在国家/地区，以及拟采用的合法出境保障机制（如集团内部具有约束力的协议、标准合同条款 DPA、转移影响评估 TIA 或属地监管事先许可）？",
-        "why_needed": "用于对照新加坡 PDPA 第 26 条（Transfer Limitation Obligation）、突尼斯 INPDP 事先授权、埃及 PDPC 跨境许可证等核心条款。",
+        "why_needed": "用于区分目标国家、境外接收方所在地与传输方式，检索适用的跨境保障和许可要求。",
         "suggested_options": [
-            "传输至中国重庆/上海研发中心，已签署对标 PDPA 第三附表保护标准的跨境数据处理协议 (DPA) 并完成 TIA",
+            "传输至境外研发中心，已签署跨境数据处理协议并完成转移影响评估；接收方所在地另行说明",
             "传输至境外云平台，尚未签署跨境数据保护合同或申请属地监管许可",
             "采用本地云专区存储，仅向境外传输聚合脱敏后的统计分析结果",
         ],
@@ -66,29 +65,29 @@ REQUIRED_FACTS_SPEC: list[dict[str, Any]] = [
         "fact_key": "consent_and_notice",
         "dimension_code": "D4",
         "question_zh": "面向车主、乘客、路测安全员及车外公众的隐私告知与同意获取方式是什么？是否任命属地数据保护官 (DPO)？",
-        "why_needed": "对应 PDPA 第 13-15 条（同意与告知义务）与第 11(3) 条（强制指定 DPO 并公开联系方式）。",
+        "why_needed": "用于核对目标国家对告知、同意及数据保护负责人的适用要求。",
         "suggested_options": [
-            "车机首次激活弹窗明示同意 + 车身张贴路测视觉采集告示 + 已任命新加坡本地 DPO 并公示邮箱",
+            "车机首次激活弹窗明示同意，车身张贴路测视觉采集告示，已指定数据保护联系人并公示邮箱",
             "仅在购车合同通用条款中默认勾选，尚未单独告知跨境接收方且未任命本地 DPO",
         ],
     },
     {
         "fact_key": "retention_and_blackbox",
         "dimension_code": "D5",
-        "question_zh": "车载数据记录器（黑匣子/EDR）故障与接管数据的本地法定留存期限，以及云端个人数据的到期销毁策略？",
-        "why_needed": "新加坡《道路交通(自动驾驶汽车)规则》强制要求路测记录留存不少于 3 年，而 PDPA 第 25 条要求目的达成后立即停止留存或匿名化。",
+        "question_zh": "车载数据记录器（黑匣子/EDR）的故障与接管数据，目前或计划保存多久、存在哪里？云端个人数据采用什么到期销毁策略？不确定的期限可以说明尚未确定。",
+        "why_needed": "用于将您的保存计划与目标国家适用的记录保存、目的限制和销毁要求进行对照。",
         "suggested_options": [
-            "LTA 自动驾驶黑匣子安全与接管日志在新加坡境内加密留存 3 年；研发诊断个人数据满 180 天自动销毁",
+            "车辆安全与接管日志在当地加密保存，具体期限尚待确定；研发诊断个人数据按业务需要设置到期销毁",
             "所有采集数据无固定留存期限，长期保存在云端对象存储中",
         ],
     },
     {
         "fact_key": "local_admission_and_safety_operator",
         "dimension_code": "D7",
-        "question_zh": "是否已向属地交通与通信主管部门（如新加坡 LTA、埃及 NTRA）提交道路测试许可或车联网通信终端型号核准，并配置持证安全员与第三方责任险？",
+        "question_zh": "是否已向属地交通或通信主管部门提交道路测试、车联网通信终端等相关申请？是否已配置安全员与第三方责任险？请说明实际准备情况。",
         "why_needed": "决定 D7 属地市场准入认证、申报材料与流程节点的合规缺口。",
         "suggested_options": [
-            "已准备 LTA 自动驾驶路测申请包、配备经培训的隨车安全员 (Safety Operator) 并投保第三方责任险",
+            "已准备属地道路测试申请材料、配备经培训的随车安全员并投保第三方责任险",
             "处于前期法规调研阶段，尚未提交属地路测准入申请与车载通信核准",
         ],
     },
@@ -563,6 +562,7 @@ def export_workflow_dsl(cfg: AgentWorkflowConfig) -> dict[str, Any]:
     return {
         "kind": "cyshuhe.agent_workflow",
         "schema_version": cfg.dsl_version,
+        "runtime_schema_version": cfg.runtime_schema_version,
         "exported_at": datetime.now(UTC).isoformat(),
         "security_policy": {
             "readonly_locked": True,
@@ -595,131 +595,16 @@ async def validate_and_import_workflow_dsl(
     dsl_payload: dict[str, Any],
     change_note: str,
     user_id: uuid.UUID | None,
-    activate_immediately: bool = True,
+    activate_immediately: bool = False,
 ) -> AgentWorkflowConfig:
-    """校验并导入多智能体编排配置 JSON，强制保持生产只读安全锁并生成新版本。"""
-    workflow_section = dsl_payload.get("workflow") or {}
-    graph_section = workflow_section.get("graph") or dsl_payload.get("graph") or {}
-    nodes = graph_section.get("nodes") or dsl_payload.get("nodes")
-    edges = graph_section.get("edges") or dsl_payload.get("edges")
-
-    if not isinstance(nodes, list) or len(nodes) < 3:
-        raise ValueError("导入失败：工作流配置必须包含至少 3 个智能体节点 (workflow.graph.nodes)")
-    if not isinstance(edges, list) or len(edges) < 2:
-        raise ValueError("导入失败：工作流配置必须包含至少 2 条有向连接边 (workflow.graph.edges)")
-
-    node_ids: set[str] = set()
-    normalized_nodes: list[dict[str, Any]] = []
-    for idx, n in enumerate(nodes):
-        if not isinstance(n, dict) or not n.get("node_id") or not n.get("title"):
-            raise ValueError(f"导入失败：第 {idx + 1} 个节点缺少 node_id 或 title")
-        nid = str(n["node_id"])
-        node_ids.add(nid)
-        copy_n = dict(n)
-        # 强制锁定只读属性，确保导入的配置在管理端同样不可直接调参或改代码
-        copy_n["readonly_locked"] = True
-        copy_n.setdefault(
-            "lock_reason",
-            "生产运行锁定：仅允许查看流程与连接详情，禁止在线调试模型参数或修改节点代码",
-        )
-        normalized_nodes.append(copy_n)
-
-    normalized_edges: list[dict[str, Any]] = []
-    for idx, e in enumerate(edges):
-        if not isinstance(e, dict):
-            raise ValueError(f"导入失败：第 {idx + 1} 条连线格式非法")
-        src = str(e.get("source_node_id") or "")
-        dst = str(e.get("target_node_id") or "")
-        if src not in node_ids or dst not in node_ids:
-            raise ValueError(f"导入失败：连线 {src} -> {dst} 引用了不存在的节点 ID")
-        normalized_edges.append(dict(e))
-
-    existing_versions = list(
-        (
-            await session.execute(
-                select(AgentWorkflowConfig)
-                .where(AgentWorkflowConfig.workflow_key == WORKFLOW_KEY)
-                .order_by(AgentWorkflowConfig.version_no.desc())
-            )
-        )
-        .scalars()
-        .all()
-    )
-    next_ver = (existing_versions[0].version_no + 1) if existing_versions else 1
+    from app.analysis.workflow_runtime import import_version
 
     if activate_immediately:
-        for old in existing_versions:
-            old.is_active = False
-
-    app_meta = dsl_payload.get("app") or {}
-    new_cfg = AgentWorkflowConfig(
-        workflow_key=WORKFLOW_KEY,
-        version_no=next_ver,
-        name=str(app_meta.get("name") or "汽车数据跨境八维度合规评估多智能体工作流"),
-        description=str(
-            app_meta.get("description")
-            or "涵盖信息采集追问、MCP 法规检索、八维度分析、程序化子串核验与退回补证、报告编制及 72h 修订联动的生产级多智能体工作流。"
-        ),
-        dsl_version=str(dsl_payload.get("schema_version") or "cyshuhe-dify-dsl/1.0"),
-        is_active=activate_immediately,
-        readonly_locked=True,
-        nodes_json=normalized_nodes,
-        edges_json=normalized_edges,
-        change_note=change_note.strip() or f"导入配置版本 v{next_ver}",
-        created_by=user_id,
-    )
-    session.add(new_cfg)
-    await session.commit()
-    await session.refresh(new_cfg)
-    return new_cfg
-
-
-BASELINE_REV = "r3"
+        raise ValueError("导入不能自动激活；请保存后由管理员显式激活版本")
+    return await import_version(session, dsl_payload, change_note, user_id)
 
 
 async def ensure_workflow_config(session: AsyncSession) -> AgentWorkflowConfig:
-    """确保存在与当前实现一致的内置基线编排;基线升级时追加新版本,不覆盖历史版本。"""
-    marker = f"[baseline-{BASELINE_REV}]"
-    rows = list(
-        (
-            await session.execute(
-                select(AgentWorkflowConfig)
-                .where(AgentWorkflowConfig.workflow_key == WORKFLOW_KEY)
-                .order_by(AgentWorkflowConfig.version_no.desc())
-            )
-        )
-        .scalars()
-        .all()
-    )
-    active = next((r for r in rows if r.is_active), None)
-    has_baseline = any((r.change_note or "").startswith(marker) for r in rows)
-    if has_baseline and active is not None:
-        return active
-    if has_baseline:
-        target = next(r for r in rows if (r.change_note or "").startswith(marker))
-        target.is_active = True
-        await session.commit()
-        return target
+    from app.analysis.workflow_runtime import ensure_baseline
 
-    for r in rows:
-        r.is_active = False
-    cfg = AgentWorkflowConfig(
-        workflow_key=WORKFLOW_KEY,
-        version_no=(rows[0].version_no + 1) if rows else 1,
-        name="汽车数据跨境八维度合规评估多智能体工作流",
-        description=(
-            "输入触发 → 信息采集与追问 → 关键词检索法规条款 → "
-            "八维度分析(DeepSeek) ↔ 程序化依据子串核验(含退回补证回路) → "
-            "八维度报告编制 → 法规修订联动。"
-        ),
-        dsl_version="cyshuhe-dify-dsl/1.0",
-        is_active=True,
-        readonly_locked=True,
-        nodes_json=DEFAULT_WORKFLOW_NODES,
-        edges_json=DEFAULT_WORKFLOW_EDGES,
-        change_note=f"{marker} 内置基线,与实际流水线一致(工具与模型均为真实调用)",
-    )
-    session.add(cfg)
-    await session.commit()
-    await session.refresh(cfg)
-    return cfg
+    return await ensure_baseline(session)

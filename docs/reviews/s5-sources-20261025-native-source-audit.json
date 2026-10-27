@@ -1,0 +1,148 @@
+{
+  "total_clauses": 137,
+  "sampled_clauses": [
+    {
+      "clause_id": "06aa9317-e0ca-4d6f-a72f-90d1a3e7f6b7",
+      "clause_number": "108",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "d8780d0d-4f65-43d5-b6cb-3aa968c90d16",
+      "clause_number": "97",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "c663e85d-39af-463e-a980-9806e9fb38fc",
+      "clause_number": "57",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "41d9241f-6266-48bf-8e54-66bbb4682563",
+      "clause_number": "50",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "2ab01d02-3df4-4279-bbf8-fc92a9d44b2e",
+      "clause_number": "113",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "19dee441-ee1c-42bc-958c-3dafc4b64e92",
+      "clause_number": "18",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "419800ee-88ee-4bd0-aaa7-b6f2c585da4f",
+      "clause_number": "104",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "35f971f1-2e3f-465c-8056-c182416dc59a",
+      "clause_number": "93",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "9aec471b-71d2-442e-8dd5-41850af12bf3",
+      "clause_number": "36",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "8dd26c41-88a5-4c26-a0f1-608d0f3226b1",
+      "clause_number": "34",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "902afa49-a629-4937-9f06-355e3cc21bd7",
+      "clause_number": "13",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "6f17bc83-84ef-4999-9fe9-42a571626c37",
+      "clause_number": "86",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "10ad2522-2b77-422d-9a8a-429f714ef064",
+      "clause_number": "112",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "695e5528-6ae8-4ed9-a731-f31f930a7df3",
+      "clause_number": "99",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "b8fa9748-f966-45fc-bc7f-d9c9e2b5f410",
+      "clause_number": "19",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "ef215902-f3c6-4424-a7c0-5b93be82574f",
+      "clause_number": "91",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "76c2f376-5ffb-46e5-9410-cda4df59032d",
+      "clause_number": "21",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "1aa77527-95ba-495c-89f6-2a4494e550fb",
+      "clause_number": "123",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "98900b78-9980-4748-b417-6a3b4afd4619",
+      "clause_number": "11",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    },
+    {
+      "clause_id": "eb22161c-6306-4b59-9609-63c7f6c231bd",
+      "clause_number": "15",
+      "hash_passed": true,
+      "source_substring_passed": true,
+      "needs_review": true
+    }
+  ],
+  "errors": 0,
+  "human_reviewed": false,
+  "review_type": "programmatic_source_integrity_only"
+}

@@ -1,0 +1,43 @@
+{
+  "release_tag": "c0ec889",
+  "application_source_commit": "c0ec889",
+  "tls_enabled": true,
+  "public_user_url": "https://47.116.46.81/",
+  "public_admin_url": "https://47.116.46.81/admin/",
+  "images": {
+    "api": {
+      "ref": "cyshuhe-api:c0ec889",
+      "id": "sha256:fb130f934d8046f30ded0f6c2488a50ba8e20970a957d2532db3135ce20e5dae"
+    },
+    "web-user": {
+      "ref": "cyshuhe-web-user:c0ec889",
+      "id": "sha256:5af575be313d3eb07e8bedb672db8abec214d6e9f58f79144f3eea5d6b2445c0"
+    },
+    "web-admin": {
+      "ref": "cyshuhe-web-admin:c0ec889",
+      "id": "sha256:6bcd5ca8753ab81f373afda92a697c7e8fa2731e581ea140c0d70ee27c0654e9"
+    }
+  },
+  "migration": "0022",
+  "manual_review": "pending",
+  "note": "Only admin metric-scope label changed in c0ec889; API/user content unchanged and not restarted. Unified release aliases point to matching image IDs. Documentation may have a later commit.",
+  "component_source_commits": {
+    "api": "f8d510e",
+    "web-user": "f8d510e",
+    "web-admin": "c0ec889"
+  },
+  "running_images": {
+    "api": {
+      "ref": "cyshuhe-api:f8d510e",
+      "id": "sha256:fb130f934d8046f30ded0f6c2488a50ba8e20970a957d2532db3135ce20e5dae"
+    },
+    "web-user": {
+      "ref": "cyshuhe-web-user:f8d510e",
+      "id": "sha256:5af575be313d3eb07e8bedb672db8abec214d6e9f58f79144f3eea5d6b2445c0"
+    },
+    "web-admin": {
+      "ref": "cyshuhe-web-admin:c0ec889",
+      "id": "sha256:6bcd5ca8753ab81f373afda92a697c7e8fa2731e581ea140c0d70ee27c0654e9"
+    }
+  }
+}

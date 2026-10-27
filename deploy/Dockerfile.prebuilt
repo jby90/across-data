@@ -1,0 +1,4 @@
+# Build the frontend locally to avoid Node's build peak on a 2 GB prototype host.
+FROM nginx:1.28-alpine
+COPY static.conf /etc/nginx/conf.d/default.conf
+COPY dist/ /usr/share/nginx/html/

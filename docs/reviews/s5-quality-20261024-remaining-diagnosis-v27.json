@@ -1,0 +1,292 @@
+{
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "source_batch": "f8b6cfa8-59cf-4e7d-abcc-659d79bc46d1",
+  "miss_counts": {
+    "ranked_below_five": 15
+  },
+  "unsupported_count": 1,
+  "misses": [
+    {
+      "question_id": "S5-02",
+      "country_code": "SG",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "5668d448-9c5e-4d55-8ad5-6647a71c6acc",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "2",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Interpretation\n2.—(1) In this Act, unless the context otherwise requires —\n“advisory committee” means an advisory committee appointed\nunder section 7;\n“Appeal Committee” means a Data Protection Appeal\nCommittee constituted under section 48P(4), read with the\nSeventh Schedule;\n“Appeal Panel” means the Data Protection Appeal Panel\nestablished by section 48P(1);\n“authorised officer”, in relation to the exercise of any power or\nperformance of any function or duty under any provision of\nthis Act, means a person to whom the exercise of that power\nor ",
+        "source_text_sha256": "960d2647c931964c56c0fb471a695b04dd39be948766951c040aae356bc48f8c"
+      },
+      "rank": 712,
+      "text_length": 1350,
+      "original_text": "Interpretation\n2.—(1) In this Act, unless the context otherwise requires —\n“advisory committee” means an advisory committee appointed\nunder section 7;\n“Appeal Committee” means a Data Protection Appeal\nCommittee constituted under section 48P(4), read with the\nSeventh Schedule;\n“Appeal Panel” means the Data Protection Appeal Panel\nestablished by section 48P(1);\n“authorised officer”, in relation to the exercise of any power or\nperformance of any function or duty under any provision of\nthis Act, means a person to whom the exercise of that power\nor performance of that function or duty under that provision\nhas been delegated under section 38 of the\nInfo-communications Media Development Authority\nAct 2016;\n“Authority” means the Info-communications Media\nDevelopment Authority established by section 3 of the\nInfo-communications Media Development Authority\nAct 2016;\n“benefit plan” means an insurance policy, a pension plan, an\nannuity, a provident fund plan or other similar plan;\n“business” includes the activity of any organisation, whether or\nnot carried on for purposes of gain, or conducted on a regular,\nrepetitive or continuous basis, but does not include an\nindividual acting in his or her personal or domestic capacity;\n“business contact information” means an individual’s name,\nposition name or title, business telephone number, business"
+    },
+    {
+      "question_id": "S5-03",
+      "country_code": "SG",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "26",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Transfer of personal data outside Singapore\n26.—(1) An organisation must not transfer any personal data to a\ncountry or territory outside Singapore except in accordance with\nrequirements prescribed under this Act to ensure that organisations\nprovide a standard of protection to personal data so transferred that is\ncomparable to the protection under this Act.\n(2) The Commission may, on the application of any organisation,\nby written notice exempt the organisation from any requirement\nprescribed pursuant to subsection (1) in respect of any transfe",
+        "source_text_sha256": "af115bb055e771fa119062bf054569ef16970e45248fd293420cc154db670353"
+      },
+      "rank": 11,
+      "text_length": 913,
+      "original_text": "Transfer of personal data outside Singapore\n26.—(1) An organisation must not transfer any personal data to a\ncountry or territory outside Singapore except in accordance with\nrequirements prescribed under this Act to ensure that organisations\nprovide a standard of protection to personal data so transferred that is\ncomparable to the protection under this Act.\n(2) The Commission may, on the application of any organisation,\nby written notice exempt the organisation from any requirement\nprescribed pursuant to subsection (1) in respect of any transfer of\npersonal data by that organisation.\n(3) An exemption under subsection (2) —\n(a) may be granted subject to such conditions as the\nCommission may specify in writing; and\n(b) need not be published in the Gazette and may be revoked at\nany time by the Commission.\n(4) The Commission may at any time add to, vary or revoke any\ncondition imposed under this section."
+    },
+    {
+      "question_id": "S5-01",
+      "country_code": "SG",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "9885ae7b-34d8-4109-9f7b-ee7cc8fe2ef8",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "4",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Application of Act\n4.—(1) Parts 3, 4, 5, 6, 6A and 6B do not impose any obligation\non —\n(a) any individual acting in a personal or domestic capacity;\n(b) any employee acting in the course of his or her\nemployment with an organisation;\n(c) any public agency; or\n(d) any other organisations or personal data, or classes of\norganisations or personal data, prescribed for the purposes\nof this provision.\n[40/2020]\n(2) Parts 3, 4, 5, 6 (except sections 24 and 25), 6A (except\nsections 26C(3)(a) and 26E) and 6B do not impose any obligation on\na data inter",
+        "source_text_sha256": "cd0a0f1cfa1c7afcf3ba22eb5dcf0710f17d238503ab76fd28242e5ada35569b"
+      },
+      "rank": 165,
+      "text_length": 2062,
+      "original_text": "Application of Act\n4.—(1) Parts 3, 4, 5, 6, 6A and 6B do not impose any obligation\non —\n(a) any individual acting in a personal or domestic capacity;\n(b) any employee acting in the course of his or her\nemployment with an organisation;\n(c) any public agency; or\n(d) any other organisations or personal data, or classes of\norganisations or personal data, prescribed for the purposes\nof this provision.\n[40/2020]\n(2) Parts 3, 4, 5, 6 (except sections 24 and 25), 6A (except\nsections 26C(3)(a) and 26E) and 6B do not impose any obligation on\na data intermediary in respect of its processing of personal data on\nbehalf of and for the purposes of another organisation pursuant to a\ncontract which is evidenced or made in writing.\n[40/2020]\n(3) An organisation has the same obligation under this Act in\nrespect of personal data processed on its behalf and for its purposes\nby a data intermediary as if the personal data were processed by the\norganisation itself.\n(4) This Act does not apply in respect of —\n(a) personal data about an individual that is contained in a\nrecord that has been in existence for at least 100 years; or\n(b) personal data about a deceased individual, except that the\nprovisions relating to the disclosure of personal data and\nsection 24 (protection of personal data) apply in respect of\npersonal data about an individual who has been dead for\n10 years or less.\n(5) Except where business contact information is expressly\nmentioned, Parts 3, 4, 5, 6 and 6A do not apply to business contact\ninformation.\n[40/2020]\n(6) Unless otherwise expressly provided in this Act —\n(a) nothing in Parts 3, 4, 5, 6, 6A and 6B affects any authority,\nright, privilege or immunity conferred, or obligation or\nlimitation imposed, by or under the law, including legal\nprivilege, except that the performance of a contractual\nobligation is not an excuse for contravening this Act; and\n(b) the provisions of other written law prevail to the extent that\nany provision of Parts 3, 4, 5, 6, 6A and 6B is inconsistent\nwith the provisions of that other written law.\n[40/2020]"
+    },
+    {
+      "question_id": "S5-04",
+      "country_code": "SG",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "c50844a4-1198-4110-9b2c-558610419b20",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "13",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Consent required\n13. An organisation must not, on or after 2 July 2014, collect, use or\ndisclose personal data about an individual unless —\n(a) the individual gives, or is deemed to have given, his or her\nconsent under this Act to the collection, use or disclosure,\nas the case may be; or\n(b) the collection, use or disclosure (as the case may be)\nwithout the individual’s consent is required or authorised\nunder this Act or any other written law.",
+        "source_text_sha256": "d9a7d458b03460146429306aa339e5f88acc251900f950fdcc2681045ccfb976"
+      },
+      "rank": 174,
+      "text_length": 447,
+      "original_text": "Consent required\n13. An organisation must not, on or after 2 July 2014, collect, use or\ndisclose personal data about an individual unless —\n(a) the individual gives, or is deemed to have given, his or her\nconsent under this Act to the collection, use or disclosure,\nas the case may be; or\n(b) the collection, use or disclosure (as the case may be)\nwithout the individual’s consent is required or authorised\nunder this Act or any other written law."
+    },
+    {
+      "question_id": "S5-05",
+      "country_code": "SG",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "623a4ec2-ad56-456c-929d-311cf8e5f293",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "25",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Retention of personal data\n25. An organisation must cease to retain its documents containing\npersonal data, or remove the means by which the personal data can be\nassociated with particular individuals, as soon as it is reasonable to\nassume that —\n(a) the purpose for which that personal data was collected is no\nlonger being served by retention of the personal data; and\n(b) retention is no longer necessary for legal or business\npurposes.",
+        "source_text_sha256": "7867b7b6b2515c30cd1dec614b5b5010f22a2199bdce8e57854957dcd1c8b503"
+      },
+      "rank": 94,
+      "text_length": 439,
+      "original_text": "Retention of personal data\n25. An organisation must cease to retain its documents containing\npersonal data, or remove the means by which the personal data can be\nassociated with particular individuals, as soon as it is reasonable to\nassume that —\n(a) the purpose for which that personal data was collected is no\nlonger being served by retention of the personal data; and\n(b) retention is no longer necessary for legal or business\npurposes."
+    },
+    {
+      "question_id": "S5-07",
+      "country_code": "SG",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "c52be03e-14e1-4ed4-bd2e-a63a1d210296",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "11",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Compliance with Act\n11.—(1) In meeting its responsibilities under this Act, an\norganisation must consider what a reasonable person would\nconsider appropriate in the circumstances.\n(2) An organisation is responsible for personal data in its possession\nor under its control.\n(3) An organisation must designate one or more individuals to be\nresponsible for ensuring that the organisation complies with this Act.\n(4) An individual designated under subsection (3) may delegate to\nanother individual the responsibility conferred by that designation.\n(5) An",
+        "source_text_sha256": "63ac1188dca27adaed6c93847899a3329303461c9b3ab986a9975a98dada8e7f"
+      },
+      "rank": 38,
+      "text_length": 1134,
+      "original_text": "Compliance with Act\n11.—(1) In meeting its responsibilities under this Act, an\norganisation must consider what a reasonable person would\nconsider appropriate in the circumstances.\n(2) An organisation is responsible for personal data in its possession\nor under its control.\n(3) An organisation must designate one or more individuals to be\nresponsible for ensuring that the organisation complies with this Act.\n(4) An individual designated under subsection (3) may delegate to\nanother individual the responsibility conferred by that designation.\n(5) An organisation must make available to the public the business\ncontact information of at least one of the individuals designated under\nsubsection (3) or delegated under subsection (4).\n(5A) Without limiting subsection (5), an organisation is deemed to\nhave satisfied that subsection if the organisation makes available the\nbusiness contact information of any individual mentioned in\nsubsection (3) in any prescribed manner.\n[40/2020]\n(6) The designation of an individual by an organisation under\nsubsection (3) does not relieve the organisation of any of its\nobligations under this Act."
+    },
+    {
+      "question_id": "S5-08",
+      "country_code": "SG",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "26aee55a-dc11-42b5-adc2-34e28765be74",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "version_no": 1,
+        "clause_number": "24",
+        "archive_sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "document_title": "Personal Data Protection Act 2012",
+        "original_excerpt": "Protection of personal data\n24. An organisation must protect personal data in its possession or\nunder its control by making reasonable security arrangements to\nprevent —\n(a) unauthorised access, collection, use, disclosure, copying,\nmodification or disposal, or similar risks; and\n(b) the loss of any storage medium or device on which\npersonal data is stored.\n[40/2020]",
+        "source_text_sha256": "2cf5d1a0492765f9c852055d4f4ca9019b3400e7ddb2a3884ae3a41eff6cd341"
+      },
+      "rank": 6,
+      "text_length": 369,
+      "original_text": "Protection of personal data\n24. An organisation must protect personal data in its possession or\nunder its control by making reasonable security arrangements to\nprevent —\n(a) unauthorised access, collection, use, disclosure, copying,\nmodification or disposal, or similar risks; and\n(b) the loss of any storage medium or device on which\npersonal data is stored.\n[40/2020]"
+    },
+    {
+      "question_id": "S5-09",
+      "country_code": "MA",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "d3bd4a57-58f2-445d-940c-aa8d4831e71b",
+        "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+        "version_no": 1,
+        "clause_number": "2",
+        "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+        "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "original_excerpt": "Article 2\n1- La présente loi s’applique au traitement des données à caractère personnel,\nautomatisé en tout ou en partie, ainsi qu’au traitement non automatisé de\ndonnées à caractère personnel contenues ou appelées à figurer dans des fichiers\nmanuels ;\n2- La présente loi s’applique au traitement des données à caractère personnel\nrépondant à la définition du paragraphe 1 ci-dessus :\na) Lorsqu’il est effectué par une personne physique ou morale dont le\nresponsable est établi sur le territoire marocain. Le responsable d’un\ntraitement qui exerce un",
+        "source_text_sha256": "1fa7901f49a4e4f288ddbfb8dfdcad35fdcc44ed73db0bf6442d8fa79773f4e3"
+      },
+      "rank": 16,
+      "text_length": 1319,
+      "original_text": "Article 2\n1- La présente loi s’applique au traitement des données à caractère personnel,\nautomatisé en tout ou en partie, ainsi qu’au traitement non automatisé de\ndonnées à caractère personnel contenues ou appelées à figurer dans des fichiers\nmanuels ;\n2- La présente loi s’applique au traitement des données à caractère personnel\nrépondant à la définition du paragraphe 1 ci-dessus :\na) Lorsqu’il est effectué par une personne physique ou morale dont le\nresponsable est établi sur le territoire marocain. Le responsable d’un\ntraitement qui exerce une activité sur le territoire marocain dans le\ncadre d’une installation, qu’elle que soit sa forme juridique, y est\nconsidéré comme établi ;\nb) Lorsque le responsable n’est pas établi sur le territoire marocain mais\nrecourt, à des fins de traitement des données à caractère personnel, à\ndes moyens automatisés ou non, situés sur le territoire marocain, à\nl’exclusion des traitements qui ne sont utilisés qu’à des fins de transit sur\nle territoire national ou sur celui d’un Etat dont la législation est\nreconnue équivalente à celle du Maroc en matière de protection des\ndonnées à caractère personnel ;\n3- Dans le cas visé au b du paragraphe 2 ci-dessus, le responsable du traitement doit\nnotifier à la Commission nationale, l’identité d’un représentant installé au Maroc"
+    },
+    {
+      "question_id": "S5-11",
+      "country_code": "MA",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "a18e376b-7228-48d4-b282-4f7fcb92c8f7",
+        "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+        "version_no": 1,
+        "clause_number": "3",
+        "archive_sha256": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+        "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+        "original_excerpt": "Article 3\n1- Les données à caractère personnel doivent être :\na) traitées loyalement et licitement ;\nb) collectées pour des finalités déterminées explicites et légitimes, et ne pas\nêtre traitées ultérieurement de manière incompatible avec finalités ;\nc) adéquates, pertinentes et non excessives, au regard des finalités pour\nlesquelles elles sont collectées, et pour lesquelles, elles sont traitées\nultérieurement ;\nd) exactes et, si nécessaire, mises à jour. Toutes les mesures raisonnables\ndoivent être prises, pour que les données inexactes ou inc",
+        "source_text_sha256": "cfa8fc8c8424086c8014e751103171f17e443fa895638b9a06793cde979fec4f"
+      },
+      "rank": 32,
+      "text_length": 1407,
+      "original_text": "Article 3\n1- Les données à caractère personnel doivent être :\na) traitées loyalement et licitement ;\nb) collectées pour des finalités déterminées explicites et légitimes, et ne pas\nêtre traitées ultérieurement de manière incompatible avec finalités ;\nc) adéquates, pertinentes et non excessives, au regard des finalités pour\nlesquelles elles sont collectées, et pour lesquelles, elles sont traitées\nultérieurement ;\nd) exactes et, si nécessaire, mises à jour. Toutes les mesures raisonnables\ndoivent être prises, pour que les données inexactes ou incomplètes, au\nregard des finalités pour lesquelles elles, sont collectées et pour lesquelles\nelles sont traitées ultérieurement, soient effacées ou rectifiées ;\ne) conservées sous, une forme permettant l’identification des personnes\nconcernées pendant une durée n’excédant pas celle nécessaire à la\nréalisation des finalités pour lesquelles elles sont collectées et pour\nlesquelles elles sont traitées ultérieurement.\n2- Sur demande du responsable du traitement et, s’il existe un intérêt légitime, la\nCommission nationale peut autoriser la conservation de données, à caractère\npersonnel à des fins historiques, statistique, ou scientifique au-delà de la période,\ncitée au e) du paragraphe précédent ;\n3- Il incombe au responsable du traitement d’assurer le respect des dispositions des\nparagraphes qui précèdent, sous le contrôle de la Commission nationale."
+    },
+    {
+      "question_id": "S5-16",
+      "country_code": "TN",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "3f961886-5bb3-401c-be0e-a9ed6835676a",
+        "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+        "version_no": 1,
+        "clause_number": "7",
+        "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+        "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "original_excerpt": "Art. 7 : Toute opération de traitement des données à caractère personnel est soumise à une déclaration\npréalable déposée au siège de l’Instance nationale de protection des données à caractère\npersonnel contre récépissé ou notifiée par lettre recommandée avec accusé de réception ou par\ntout autre moyen laissant une trace écrite.\n La déclaration est effectuée par le responsable du traitement ou son représentant légal.\n La déclaration n’exonère pas de la responsabilité à l’égard des tiers.\n Les conditions et les procédures de la présentation de la",
+        "source_text_sha256": "acf4de012ed96687fd809aae683f88bf389325ae33bc49c86c5c967912b9ddfe"
+      },
+      "rank": 6,
+      "text_length": 758,
+      "original_text": "Art. 7 : Toute opération de traitement des données à caractère personnel est soumise à une déclaration\npréalable déposée au siège de l’Instance nationale de protection des données à caractère\npersonnel contre récépissé ou notifiée par lettre recommandée avec accusé de réception ou par\ntout autre moyen laissant une trace écrite.\n La déclaration est effectuée par le responsable du traitement ou son représentant légal.\n La déclaration n’exonère pas de la responsabilité à l’égard des tiers.\n Les conditions et les procédures de la présentation de la déclaration sont fixées par décret.\n La non opposition de l’Instance au traitement des données à caractère personnel, dans un délai\nd’un mois à compter de la présentation de la déclaration, vaut acceptation."
+    },
+    {
+      "question_id": "S5-17",
+      "country_code": "TN",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "da860a72-090f-4df3-b568-c168d1fc2bb8",
+        "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+        "version_no": 1,
+        "clause_number": "10",
+        "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+        "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "original_excerpt": "Art. 10 : La collecte des données à caractère personnel ne peut être effectuée que pour des finalités\nlicites, déterminées et explicites.",
+        "source_text_sha256": "f0df2d23973cfe99c86285bcc3e8229106fd0c0b15cd4fe7549e4f4a51cc1db8"
+      },
+      "rank": 28,
+      "text_length": 137,
+      "original_text": "Art. 10 : La collecte des données à caractère personnel ne peut être effectuée que pour des finalités\nlicites, déterminées et explicites."
+    },
+    {
+      "question_id": "S5-18",
+      "country_code": "TN",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "b77b769e-8e4f-487d-9073-f548e906c466",
+        "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+        "version_no": 1,
+        "clause_number": "11",
+        "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+        "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "original_excerpt": "Art. 11 : Les données à caractère personnel doivent être traitées loyalement, et dans la limite nécessaire\nau regard des finalités pour lesquelles elles ont été collectées. Le responsable du traitement doit\négalement s’assurer que ces données sont exactes, précises et mises à jour.",
+        "source_text_sha256": "ca86275021b8c73272cd141119678d414f7d7a9f145bea3c197c4ee359587259"
+      },
+      "rank": 75,
+      "text_length": 282,
+      "original_text": "Art. 11 : Les données à caractère personnel doivent être traitées loyalement, et dans la limite nécessaire\nau regard des finalités pour lesquelles elles ont été collectées. Le responsable du traitement doit\négalement s’assurer que ces données sont exactes, précises et mises à jour."
+    },
+    {
+      "question_id": "S5-19",
+      "country_code": "TN",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "ac0987cd-0c8d-4673-a08d-745ea822caeb",
+        "source_url": "https://www.ins.tn/sites/default/files-ftp3/files/2020-04/Loi%2063-2004%20Fr.pdf",
+        "version_no": 1,
+        "clause_number": "52",
+        "archive_sha256": "398b4b3499ff0449f86cf4a86eac84421121e1701689c5d395557111eeca5d77",
+        "document_title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+        "original_excerpt": "Art. 52 : Dans tous les cas, l’obtention de l’autorisation de l’Instance pour effectuer le transfert des\ndonnées à caractère personnel vers l’étranger est obligatoire.\n L’Instance doit statuer sur la demande d’autorisation dans un délai maximum d’un mois à\npartir de la présentation de la demande.\n Lorsque les données à caractère personnel à transférer concernent un enfant, la demande est\nprésentée au juge de la famille.\nCHAPITRE V\nDe quelques catégories particulières de traitement\nSection I - Du traitement des données à caractère personnel par ",
+        "source_text_sha256": "d6143b6900eb853ae51486f5a49282d2b4b3eb50a513e17257a5499ae94dc01b"
+      },
+      "rank": 10,
+      "text_length": 573,
+      "original_text": "Art. 52 : Dans tous les cas, l’obtention de l’autorisation de l’Instance pour effectuer le transfert des\ndonnées à caractère personnel vers l’étranger est obligatoire.\n L’Instance doit statuer sur la demande d’autorisation dans un délai maximum d’un mois à\npartir de la présentation de la demande.\n Lorsque les données à caractère personnel à transférer concernent un enfant, la demande est\nprésentée au juge de la famille.\nCHAPITRE V\nDe quelques catégories particulières de traitement\nSection I - Du traitement des données à caractère personnel par les\npersonnes publiques"
+    },
+    {
+      "question_id": "S5-22",
+      "country_code": "LB",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "4280eee6-7e8e-4370-96da-278467023b15",
+        "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+        "version_no": 1,
+        "clause_number": "٨٧",
+        "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+        "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "original_excerpt": "المادة ٨٧:\nع\nّ\nُجم\nت البيانات ذات الطابع الشخصي بأمانة ولأهداف مشروعة ومحددة وصريحة .\nيجـب أن تكـون البيانـات ملائمـة وغيـر مت جـاوزة للأهـداف المعلنـة، وأن تكـون صـحيحة وكاملـة وأن\nتبقى ميومة بالقدر اللازم .\n لا يمكن في مرحلة لاحقة معالجة هذه البيانات لأهداف لا تتوافق مـع الغايـات المعلنـة، لـم مـا يتعلـق\nالأمر بمعالجة بيانات لأهداف إحصائية أو تاريخية أو للبحث العلمي .",
+        "source_text_sha256": "8e6e1cba420319fc8116a31767406b5afc0a10fb03bd41428ed3ba2e4353a064"
+      },
+      "rank": 11,
+      "text_length": 372,
+      "original_text": "المادة ٨٧:\nع\nّ\nُجم\nت البيانات ذات الطابع الشخصي بأمانة ولأهداف مشروعة ومحددة وصريحة .\nيجـب أن تكـون البيانـات ملائمـة وغيـر مت جـاوزة للأهـداف المعلنـة، وأن تكـون صـحيحة وكاملـة وأن\nتبقى ميومة بالقدر اللازم .\n لا يمكن في مرحلة لاحقة معالجة هذه البيانات لأهداف لا تتوافق مـع الغايـات المعلنـة، لـم مـا يتعلـق\nالأمر بمعالجة بيانات لأهداف إحصائية أو تاريخية أو للبحث العلمي ."
+    },
+    {
+      "question_id": "S5-23",
+      "country_code": "LB",
+      "category": "ranked_below_five",
+      "expected": {
+        "clause_id": "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+        "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+        "version_no": 1,
+        "clause_number": "٩٠",
+        "archive_sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+        "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+        "original_excerpt": "المادة ٩٠:\n لا يكـون حفـظ البيانـات ذات الطـابع الشخصـي مشـروعاً إلا خـلال الفتـرة المبينـة فـي التصـريح عـن\nيرخ المعالجة أو رراقال في الذي ص\nّ\nبها .",
+        "source_text_sha256": "060afee21381408ddac492ca511ff910dc0a5074918ac7d7bacffc6c2d29fe8e"
+      },
+      "rank": 6,
+      "text_length": 149,
+      "original_text": "المادة ٩٠:\n لا يكـون حفـظ البيانـات ذات الطـابع الشخصـي مشـروعاً إلا خـلال الفتـرة المبينـة فـي التصـريح عـن\nيرخ المعالجة أو رراقال في الذي ص\nّ\nبها ."
+    }
+  ],
+  "unsupported": [
+    {
+      "question_id": "S5-17",
+      "country_code": "TN",
+      "conclusion": "在第7章规定的监管机构异议期限届满后，收集个人数据前，应以任何留有书面痕迹的方式告知将被收集个人数据的当事人：拟处理的数据类型、处理目的、其答复为强制或自愿、数据受益人或有权访问者的自然人或法人名称及地址、处理负责人的姓名、姓氏或社会名称及其代表、其访问权、随时撤回处理同意的权利、反对处理其个人数据的权利。",
+      "quote": "‏الفصل 31 بعد انقضاء الأجل المحدد لاعتراض الهيئة المنصوص\nعليه بالفصل 7 من هذا القانون» يجب إعلام الأشخاص الذين ستجمع\nعنهم المعطيات الشخصية مسبقا وبأي وسيلة تترك أثرا كتابيا بما يلي :\n‏- نوع المعطيات الشخصية المراد معالجتها,\n‏. أهداف معالجة المعطيات الشخصية,\n‏- الطابع الإلزامي أو الاختياري لأجوبتهم,\n‏- اسم الشخص الطبيعي أو المعنوي المستفيد من المعطيات أو\nالذي له حق النفاذ إليها ومقره.\n‏- اسم المسؤول عن المعالجة ولقبه أو تسميته الاجتماعية وممثله\n‏. حقهم في النفاذء\n‏- حقهم في الرجوع في الموافقة على المعالجة في كل وقت,\n‏- حقهم في الاعتراض على معالجة معطياتهم الشخصية,",
+      "clause_id": "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+      "verdict": "partial",
+      "reason": "引文支持告知时间、书面痕迹方式及所列告知事项，但结论称‘第7章规定的监管机构异议期限’，引文为‘الفصل 7’（通常指第7条/条款），条款层级表述不符，故非完整支持。"
+    }
+  ],
+  "note": "按批次的检索版本只读诊断，保留原始Judge理由；不改评分、不做人工法律复核。"
+}

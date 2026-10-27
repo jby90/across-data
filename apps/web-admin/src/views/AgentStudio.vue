@@ -1,7 +1,18 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { startProgressStream, type StreamState } from '@cyshuhe/shared'
 import { api } from '../api'
+import { useAuth } from '../auth'
+import {
+  boundedPosition,
+  dragPosition,
+  readPositions,
+  spacedLayout,
+  NODE_WIDTH,
+  NODE_HEIGHT,
+  type NodePosition,
+} from '../components/workflowLayout'
 
 interface McpToolSchema {
   tool_name: string
@@ -32,6 +43,8 @@ interface WorkflowNode {
   input_variables: Array<{ name: string; type: string; desc: string }>
   output_variables: Array<{ name: string; type: string; desc: string }>
   responsibility_desc: string
+  runtime_settings: Record<string, unknown>
+  configurable_fields: string[]
 }
 
 interface WorkflowEdge {
@@ -53,6 +66,8 @@ interface WorkflowConfig {
   dsl_version: string
   is_active: boolean
   readonly_locked: boolean
+  executable: boolean
+  runtime_schema_version: string | null
   nodes: WorkflowNode[]
   edges: WorkflowEdge[]
   change_note: string | null
@@ -66,6 +81,7 @@ interface WorkflowVersionSummary {
   dsl_version: string
   is_active: boolean
   readonly_locked: boolean
+  executable: boolean
   nodes_count: number
   edges_count: number
   change_note: string | null
@@ -104,6 +120,7 @@ interface TaskSummary {
 }
 
 interface StepTrace {
+  workflow_version_id: string | null
   id: string
   seq_no: number
   agent_node_id: string
@@ -190,6 +207,8 @@ interface ReportVersionItem {
 }
 
 interface TaskDetail {
+  workflow_version_id: string | null
+  workflow_version_no: number
   id: string
   conversation_code: string
   org_id: string | null
@@ -222,8 +241,17 @@ interface TaskDetail {
 
 interface BenchmarkSummary {
   total_cases: number
-  hit_cases: number
-  retrieval_hit_rate_pct: number
+  completed_cases: number
+  recall_at_5: number | null
+  retrieval_hits: number
+  retrieval_expected: number
+  quote_fidelity: number | null
+  faithful_findings: number
+  findings_total: number
+  fact_consistency: number | null
+  supported_findings: number
+  judged_findings: number
+  technical_error_cases: number
   human_review_status: string
   note: string
   cases: Array<{
@@ -231,17 +259,22 @@ interface BenchmarkSummary {
     country_code: string
     dimension_code: string
     scenario_question: string
-    required_phrases: string[]
-    matched_document_title: string
-    matched_clause_label: string
-    passed: boolean
-    evidence_snippet: string
+    retrieval_hits: number
+    retrieval_expected: number
+    faithful_findings: number
+    findings_total: number
+    judged_findings: number
+    supported_findings: number
+    analysis_error: string | null
+    judge_error: string | null
+    retrieval_error?: string | null
   }>
 }
 
 const STATUS_LABEL_MAP: Record<string, string> = {
-  running: '⚡ 实时运行中',
+  running: '实时运行中',
   collecting_facts: '💬 对话采集中',
+  awaiting_user_facts: '等待补充业务事实',
   ready_to_run: '⏳ 待启动分析',
   completed: '✅ 已出报告',
   partial_sample: '⚠️ 部分样稿',
@@ -251,6 +284,7 @@ const STATUS_LABEL_MAP: Record<string, string> = {
 const STATUS_TAG_TYPE: Record<string, 'primary' | 'success' | 'warning' | 'danger' | 'info'> = {
   running: 'primary',
   collecting_facts: 'info',
+  awaiting_user_facts: 'warning',
   ready_to_run: 'info',
   completed: 'success',
   partial_sample: 'warning',
@@ -267,9 +301,13 @@ const PHASE_LABEL_MAP: Record<string, string> = {
   compilation: '环节 5 · 八维度国别报告与合规矩阵编制',
   update_linkage: '环节 6 · 法规修订 72h 影响联动追踪',
   error: '异常终止',
+  user_fact_question: '分析中追问 · 等待业务事实',
+  user_fact_answer: '业务事实回答 · 局部续跑',
+  user_fact_exhausted: '两轮追问后保留事实缺口',
 }
 
 const loading = ref(false)
+const citationPolicyLabel = ref('引用策略加载中')
 const workflow = ref<WorkflowConfig | null>(null)
 const versions = ref<WorkflowVersionSummary[]>([])
 const selectedVersionNo = ref<number | undefined>(undefined)
@@ -278,12 +316,219 @@ const tasks = ref<TaskSummary[]>([])
 const selectedTaskId = ref<string>('')
 const selectedTaskDetail = ref<TaskDetail | null>(null)
 
+const inspectorOpen = ref(false)
 const selectedNodeId = ref<string>('node_dimension_analyst')
 const inspectorTab = ref<'config' | 'tools' | 'trace'>('config')
 const canvasScale = ref<number>(0.72)
+const auth = useAuth()
+const canvasScroll = ref<HTMLDivElement | null>(null)
+const customPositions = ref<Record<string, NodePosition>>({})
+const nodeHeights = ref<Record<string, number>>({})
+const nodeElements = new Map<string, HTMLElement>()
+let nodeObserver: ResizeObserver | undefined
+const draggingNodeId = ref('')
+let drag: {
+  id: string
+  pointerId: number
+  target: HTMLElement
+  startX: number
+  startY: number
+  scrollX: number
+  scrollY: number
+  origin: NodePosition
+  previous?: NodePosition
+  moved: boolean
+} | null = null
+let suppressClickUntil = 0
+const layoutKey = computed(() =>
+  workflow.value && auth.user
+    ? `cysh:studio-layout:v1:${auth.user.id}:${workflow.value.id}:${workflow.value.version_no}`
+    : '',
+)
+const defaultPositions = computed(() =>
+  spacedLayout(workflow.value?.nodes || [], nodeHeights.value),
+)
+function positionOf(node: WorkflowNode): NodePosition {
+  return (
+    customPositions.value[node.node_id] || defaultPositions.value[node.node_id] || { x: 60, y: 60 }
+  )
+}
+function heightOf(node: WorkflowNode) {
+  return nodeHeights.value[node.node_id] || NODE_HEIGHT
+}
+const stageSize = computed(() => ({
+  width: Math.max(
+    1000,
+    ...(workflow.value?.nodes || []).map((n) => positionOf(n).x + NODE_WIDTH + 80),
+  ),
+  height: Math.max(
+    640,
+    ...(workflow.value?.nodes || []).map((n) => positionOf(n).y + heightOf(n) + 80),
+  ),
+}))
+watch(layoutKey, () => {
+  cancelDrag()
+  try {
+    customPositions.value = readPositions(
+      localStorage.getItem(layoutKey.value),
+      workflow.value?.nodes || [],
+    )
+  } catch {
+    customPositions.value = {}
+  }
+})
+function saveLayout() {
+  if (!layoutKey.value) return
+  try {
+    localStorage.setItem(
+      layoutKey.value,
+      JSON.stringify({ version: 1, positions: customPositions.value }),
+    )
+  } catch {
+    ElMessage.warning('布局已调整，但当前浏览器无法保存，刷新后将恢复默认布局。')
+  }
+}
+function registerNode(id: string, element: unknown) {
+  if (!(element instanceof HTMLElement) || nodeElements.get(id) === element) return
+  const old = nodeElements.get(id)
+  if (old) nodeObserver?.unobserve(old)
+  nodeElements.set(id, element)
+  nodeObserver?.observe(element)
+}
+function startNodeDrag(event: PointerEvent, node: WorkflowNode) {
+  if (event.button !== 0 || !event.isPrimary || drag) return
+  const target = event.currentTarget as HTMLElement
+  drag = {
+    id: node.node_id,
+    pointerId: event.pointerId,
+    target,
+    startX: event.clientX,
+    startY: event.clientY,
+    scrollX: canvasScroll.value?.scrollLeft || 0,
+    scrollY: canvasScroll.value?.scrollTop || 0,
+    origin: { ...positionOf(node) },
+    previous: customPositions.value[node.node_id],
+    moved: false,
+  }
+  target.setPointerCapture(event.pointerId)
+  target.focus({ preventScroll: true })
+}
+function moveNodeDrag(event: PointerEvent) {
+  if (!drag || drag.pointerId !== event.pointerId) return
+  const dx = event.clientX - drag.startX + (canvasScroll.value?.scrollLeft || 0) - drag.scrollX
+  const dy = event.clientY - drag.startY + (canvasScroll.value?.scrollTop || 0) - drag.scrollY
+  if (!drag.moved && Math.hypot(dx, dy) < 4) return
+  drag.moved = true
+  draggingNodeId.value = drag.id
+  customPositions.value = {
+    ...customPositions.value,
+    [drag.id]: dragPosition(drag.origin, dx, dy, canvasScale.value),
+  }
+}
+function finishNodeDrag(event: PointerEvent) {
+  if (!drag || drag.pointerId !== event.pointerId) return
+  const active = drag
+  drag = null
+  draggingNodeId.value = ''
+  if (active.target.hasPointerCapture(active.pointerId))
+    active.target.releasePointerCapture(active.pointerId)
+  if (active.moved) {
+    suppressClickUntil = Date.now() + 350
+    saveLayout()
+  }
+}
+function cancelDrag() {
+  if (!drag) return
+  const active = drag
+  drag = null
+  draggingNodeId.value = ''
+  const positions = { ...customPositions.value }
+  if (active.previous) positions[active.id] = active.previous
+  else delete positions[active.id]
+  customPositions.value = positions
+  if (active.target.hasPointerCapture(active.pointerId))
+    active.target.releasePointerCapture(active.pointerId)
+  if (active.moved) suppressClickUntil = Date.now() + 350
+}
+function clickNode(nodeId: string) {
+  if (Date.now() < suppressClickUntil) return
+  selectNode(nodeId)
+}
+function moveNodeWithKeyboard(event: KeyboardEvent, node: WorkflowNode) {
+  if (event.key === 'Escape') {
+    cancelDrag()
+    return
+  }
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    selectNode(node.node_id)
+    return
+  }
+  const direction: Record<string, [number, number]> = {
+    ArrowLeft: [-1, 0],
+    ArrowRight: [1, 0],
+    ArrowUp: [0, -1],
+    ArrowDown: [0, 1],
+  }
+  const delta = direction[event.key]
+  if (!delta || drag) return
+  event.preventDefault()
+  const position = positionOf(node)
+  const step = event.shiftKey ? 32 : 8
+  customPositions.value = {
+    ...customPositions.value,
+    [node.node_id]: boundedPosition(position.x + delta[0] * step, position.y + delta[1] * step),
+  }
+  saveLayout()
+}
+async function fitCanvas() {
+  await nextTick()
+  const viewport = canvasScroll.value
+  if (!viewport) return
+  canvasScale.value = Math.min(
+    1,
+    Math.max(
+      0.25,
+      Math.min(
+        (viewport.clientWidth - 32) / stageSize.value.width,
+        (viewport.clientHeight - 32) / stageSize.value.height,
+      ),
+    ),
+  )
+  viewport.scrollTo({ left: 0, top: 0 })
+}
+async function resetLayout() {
+  cancelDrag()
+  customPositions.value = {}
+  saveLayout()
+  await fitCanvas()
+}
 
 // 实时轮询与对话工作流历史管理状态
 const autoPollEnabled = ref(true)
+const progressState = ref<StreamState>('idle')
+let progressStream: {close: () => void} | undefined
+let progressRefresh: ReturnType<typeof setTimeout> | undefined
+
+function connectLiveEvents() {
+  progressStream?.close()
+  clearTimeout(progressRefresh)
+  progressRefresh = undefined
+  if (!autoPollEnabled.value) return
+  progressStream = startProgressStream({
+    url: '/api/admin/agent-studio/events', token: api.token,
+    onState: state => { progressState.value = state },
+    onUnauthorized: () => { api.setToken(null); window.location.assign(import.meta.env.BASE_URL + 'login') },
+    onEvent: event => {
+      if (progressRefresh !== undefined) return
+      progressRefresh = setTimeout(() => {
+        progressRefresh = undefined
+        void pollLiveWorkflows()
+      }, 120)
+    },
+  })
+}
+watch(autoPollEnabled, connectLiveEvents)
 const autoFollowRunning = ref(true)
 const conversationHistoryVisible = ref(false)
 const historyFilterStatus = ref<string>('')
@@ -303,13 +548,15 @@ const importDslText = ref('')
 const importChangeNote = ref('导入维护更新的多智能体编排配置包')
 const importing = ref(false)
 
-// 10道独立评测集抽屉
+// 真实评测结果只读查看，打开抽屉不触发模型调用
 const benchmarkDrawerVisible = ref(false)
+const configurationPopover = ref<{ hide: () => void } | null>(null)
 const benchmarkData = ref<BenchmarkSummary | null>(null)
 const loadingBenchmarks = ref(false)
 
 const runningTasks = computed(() => tasks.value.filter((t) => t.status === 'running'))
 const collectingTasks = computed(() => tasks.value.filter((t) => t.status === 'collecting_facts'))
+const awaitingFactTasks = computed(() => tasks.value.filter((t) => t.status === 'awaiting_user_facts'))
 const filteredHistoryTasks = computed(() => {
   return tasks.value.filter((t) => {
     if (historyFilterStatus.value && t.status !== historyFilterStatus.value) return false
@@ -330,9 +577,6 @@ const filteredHistoryTasks = computed(() => {
   })
 })
 
-const NODE_WIDTH = 240
-const NODE_HEIGHT = 148
-
 const nodeMap = computed(() => {
   const m = new Map<string, WorkflowNode>()
   for (const n of workflow.value?.nodes || []) {
@@ -343,25 +587,17 @@ const nodeMap = computed(() => {
 
 const selectedNode = computed<WorkflowNode | null>(() => {
   if (!workflow.value) return null
-  return (
-    nodeMap.value.get(selectedNodeId.value) ||
-    workflow.value.nodes[0] ||
-    null
-  )
+  return nodeMap.value.get(selectedNodeId.value) || workflow.value.nodes[0] || null
 })
 
 const upstreamEdges = computed(() => {
   if (!workflow.value || !selectedNode.value) return []
-  return workflow.value.edges.filter(
-    (e) => e.target_node_id === selectedNode.value?.node_id,
-  )
+  return workflow.value.edges.filter((e) => e.target_node_id === selectedNode.value?.node_id)
 })
 
 const downstreamEdges = computed(() => {
   if (!workflow.value || !selectedNode.value) return []
-  return workflow.value.edges.filter(
-    (e) => e.source_node_id === selectedNode.value?.node_id,
-  )
+  return workflow.value.edges.filter((e) => e.source_node_id === selectedNode.value?.node_id)
 })
 
 const nodeTraceStatsMap = computed(() => {
@@ -375,7 +611,7 @@ const nodeTraceStatsMap = computed(() => {
       status: string
     }
   >()
-  for (const tr of selectedTaskDetail.value?.step_traces || []) {
+  for (const tr of versionTraces.value) {
     const prev = map.get(tr.agent_node_id) || {
       runs: 0,
       duration_ms: 0,
@@ -387,15 +623,28 @@ const nodeTraceStatsMap = computed(() => {
     prev.duration_ms += tr.duration_ms
     prev.tokens += tr.tokens_used
     if (tr.is_backtrack) prev.hasBacktrack = true
-    if (tr.status === 'backtracked') prev.status = 'backtracked'
+    prev.status = tr.status
     map.set(tr.agent_node_id, prev)
   }
   return map
 })
 
+const versionTraces = computed(() => (selectedTaskDetail.value?.step_traces || []).filter(tr =>
+  tr.workflow_version_id ? tr.workflow_version_id === workflow.value?.id : !workflow.value?.executable,
+))
+const isRollback = computed(() => (versions.value.find(v => v.is_active)?.version_no || 0) > (selectedVersionNo.value || 0))
+async function showExecutionConfig() {
+  const detail = selectedTaskDetail.value
+  if (detail?.workflow_version_id) await loadStudioData(detail.workflow_version_no)
+}
+async function showExecutableBaseline() {
+  const baseline = versions.value.find(v => v.executable)
+  if (baseline) await loadStudioData(baseline.version_no)
+}
+
 const selectedNodeTraces = computed(() => {
   if (!selectedNode.value || !selectedTaskDetail.value) return []
-  return selectedTaskDetail.value.step_traces.filter(
+  return versionTraces.value.filter(
     (t) => t.agent_node_id === selectedNode.value?.node_id,
   )
 })
@@ -407,13 +656,15 @@ const computedSvgEdges = computed(() => {
       const src = nodeMap.value.get(e.source_node_id)
       const dst = nodeMap.value.get(e.target_node_id)
       if (!src || !dst) return null
+      const sourcePosition = positionOf(src)
+      const targetPosition = positionOf(dst)
 
       if (e.edge_type === 'backtrack') {
         // 质检退回分析补证边：从 verifier 左侧或顶部连回 analyst 底部
-        const x1 = src.position_x + NODE_WIDTH / 2
-        const y1 = src.position_y
-        const x2 = dst.position_x + NODE_WIDTH / 2
-        const y2 = dst.position_y + NODE_HEIGHT
+        const x1 = sourcePosition.x + NODE_WIDTH / 2
+        const y1 = sourcePosition.y
+        const x2 = targetPosition.x + NODE_WIDTH / 2
+        const y2 = targetPosition.y + heightOf(dst)
         const path = `M ${x1} ${y1} C ${x1 - 90} ${y1 - 40}, ${x2 - 90} ${y2 + 40}, ${x2} ${y2}`
         return {
           ...e,
@@ -423,10 +674,10 @@ const computedSvgEdges = computed(() => {
         }
       }
 
-      const x1 = src.position_x + NODE_WIDTH
-      const y1 = src.position_y + NODE_HEIGHT / 2
-      const x2 = dst.position_x
-      const y2 = dst.position_y + NODE_HEIGHT / 2
+      const x1 = sourcePosition.x + NODE_WIDTH
+      const y1 = sourcePosition.y + heightOf(src) / 2
+      const x2 = targetPosition.x
+      const y2 = targetPosition.y + heightOf(dst) / 2
       const dx = Math.max(Math.abs(x2 - x1) * 0.45, 50)
       const path = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`
       return {
@@ -452,10 +703,7 @@ async function loadStudioData(versionNo?: number) {
     selectedVersionNo.value = wf.version_no
     versions.value = verList
     tasks.value = taskList
-    if (
-      wf.nodes.length > 0 &&
-      !wf.nodes.some((n) => n.node_id === selectedNodeId.value)
-    ) {
+    if (wf.nodes.length > 0 && !wf.nodes.some((n) => n.node_id === selectedNodeId.value)) {
       selectedNodeId.value = wf.nodes[0].node_id
     }
     if (!selectedTaskId.value && taskList.length > 0) {
@@ -483,10 +731,12 @@ async function loadStudioData(versionNo?: number) {
 async function loadTaskTrace(taskId: string) {
   if (!taskId) return
   try {
-    const detail = await api.get<TaskDetail>(
-      `/api/admin/agent-studio/tasks/${taskId}`,
-    )
+    const detail = await api.get<TaskDetail>(`/api/admin/agent-studio/tasks/${taskId}`)
     selectedTaskDetail.value = detail
+    if (detail.workflow_version_id && workflow.value?.id !== detail.workflow_version_id) {
+      workflow.value = await api.get<WorkflowConfig>(`/api/admin/agent-studio/workflow?version_no=${detail.workflow_version_no}`)
+      selectedVersionNo.value = workflow.value.version_no
+    }
     // 如果当前任务正在实时运行中，且开启了自动跟随，自动选中当前活跃节点
     if (detail.status === 'running' && detail.current_active_node_id && autoFollowRunning.value) {
       selectedNodeId.value = detail.current_active_node_id
@@ -520,6 +770,7 @@ async function pollLiveWorkflows() {
         curr &&
         (curr.status === 'running' ||
           curr.status === 'collecting_facts' ||
+          curr.status === 'awaiting_user_facts' ||
           curr.steps_count !== (selectedTaskDetail.value?.step_traces.length || 0) ||
           curr.status !== selectedTaskDetail.value?.status)
       ) {
@@ -578,10 +829,7 @@ async function copyCode(code: string) {
 
 async function rerunTaskWorkflow(task: TaskSummary) {
   try {
-    const detail = await api.post<TaskDetail>(
-      `/api/admin/agent-studio/tasks/${task.id}/rerun`,
-      {},
-    )
+    const detail = await api.post<TaskDetail>(`/api/admin/agent-studio/tasks/${task.id}/rerun`, {})
     selectedTaskId.value = detail.id
     selectedTaskDetail.value = detail
     await pollLiveWorkflows()
@@ -596,7 +844,11 @@ async function deleteTaskRecord(task: TaskSummary) {
     await ElMessageBox.confirm(
       `确定删除对话工作流记录「${task.conversation_code} (${task.title})」吗？`,
       '删除对话工作流记录',
-      { type: 'warning', confirmButtonText: '确认删除', cancelButtonText: '取消' },
+      {
+        type: 'warning',
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消',
+      },
     )
   } catch {
     return
@@ -634,7 +886,7 @@ async function activateSelectedVersion() {
   if (!selectedVersionNo.value) return
   try {
     const wf = await api.post<WorkflowConfig>(
-      `/api/admin/agent-studio/workflow/versions/${selectedVersionNo.value}/activate`,
+      `/api/admin/agent-studio/workflow/versions/${workflow.value?.id}/activate`,
       {},
     )
     workflow.value = wf
@@ -683,10 +935,8 @@ async function copyExportedJson() {
 }
 
 async function openImportModal() {
-  if (!importDslText.value && workflow.value) {
-    const dsl = await api.get<Record<string, unknown>>(
-      '/api/admin/agent-studio/workflow/export',
-    )
+  if (workflow.value) {
+    const dsl = await api.get<Record<string, unknown>>(`/api/admin/agent-studio/workflow/export?version_no=${workflow.value.version_no}`)
     importDslText.value = JSON.stringify(dsl, null, 2)
   }
   importDialogVisible.value = true
@@ -714,19 +964,14 @@ async function submitImportWorkflow() {
   }
   importing.value = true
   try {
-    const newWf = await api.post<WorkflowConfig>(
-      '/api/admin/agent-studio/workflow/import',
-      {
-        dsl_payload: parsed,
-        change_note: importChangeNote.value,
-        activate_immediately: true,
-      },
-    )
+    const newWf = await api.post<WorkflowConfig>('/api/admin/agent-studio/workflow/import', {
+      dsl_payload: parsed,
+      change_note: importChangeNote.value,
+      activate_immediately: false,
+    })
     importDialogVisible.value = false
     await loadStudioData(newWf.version_no)
-    ElMessage.success(
-      `配置导入成功！已生成并激活版本 v${newWf.version_no}（保持生产只读安全锁）`,
-    )
+    ElMessage.success(`配置已保存为 v${newWf.version_no}，尚未激活；确认后点击激活版本`)
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '导入配置失败')
   } finally {
@@ -735,12 +980,11 @@ async function submitImportWorkflow() {
 }
 
 async function openBenchmarksDrawer() {
+  configurationPopover.value?.hide()
   benchmarkDrawerVisible.value = true
   loadingBenchmarks.value = true
   try {
-    benchmarkData.value = await api.get<BenchmarkSummary>(
-      '/api/admin/agent-studio/benchmarks',
-    )
+    benchmarkData.value = await api.get<BenchmarkSummary>('/api/admin/agent-studio/evaluations/latest')
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '加载评测集结果失败')
   } finally {
@@ -749,15 +993,41 @@ async function openBenchmarksDrawer() {
 }
 
 function selectNode(nodeId: string) {
+  inspectorOpen.value = true
   selectedNodeId.value = nodeId
 }
 
 onMounted(() => {
+  api.get<{ label: string }>('/admin/agent-studio/citation-policy')
+    .then(v => { citationPolicyLabel.value = v.label })
+    .catch(() => { citationPolicyLabel.value = '引用策略暂不可用，请刷新' })
+  nodeObserver = new ResizeObserver((entries) => {
+    const heights = { ...nodeHeights.value }
+    let changed = false
+    for (const entry of entries) {
+      const element = entry.target as HTMLElement
+      const id = element.dataset.nodeId
+      if (id && element.offsetHeight && heights[id] !== element.offsetHeight) {
+        heights[id] = element.offsetHeight
+        changed = true
+      }
+    }
+    if (changed) nodeHeights.value = heights
+  })
+  for (const element of nodeElements.values()) nodeObserver.observe(element)
   loadStudioData()
-  pollTimer = window.setInterval(pollLiveWorkflows, 2000)
+  connectLiveEvents()
+  pollTimer = window.setInterval(() => {
+    if (progressState.value !== 'live') void pollLiveWorkflows()
+  }, 2000)
 })
 
 onUnmounted(() => {
+  progressStream?.close()
+  clearTimeout(progressRefresh)
+  cancelDrag()
+  nodeObserver?.disconnect()
+  nodeElements.clear()
   if (pollTimer !== undefined) window.clearInterval(pollTimer)
 })
 </script>
@@ -767,18 +1037,12 @@ onUnmounted(() => {
     <!-- 顶部 Dify 风格工作流导航与锁定状态栏 -->
     <div class="studio-topbar" data-testid="agent-studio-toolbar">
       <div class="topbar-left">
-        <div class="studio-badge">Dify-Style Workflow Studio</div>
+        <div class="studio-badge">工作流</div>
         <div class="workflow-title-block">
-          <h2 class="workflow-title">
-            {{ workflow?.name || '多智能体合规评估编排工作台' }}
-          </h2>
+          <h2 class="workflow-title">智能体工作台</h2>
           <div class="workflow-meta">
-            <el-tag type="danger" effect="dark" size="small" data-testid="agent-readonly-lock-badge">
-              🔒 生产只读锁定：仅开放查看工作流、连接关系与节点详情（禁止在线修改参数与代码）
-            </el-tag>
-            <el-tag type="info" size="small">
-              DSL: {{ workflow?.dsl_version }}
-            </el-tag>
+            <el-tag type="info" size="small"> DSL: {{ workflow?.dsl_version }} </el-tag>
+            <el-tag type="info" size="small" data-testid="citation-policy-readonly">{{ citationPolicyLabel }}</el-tag>
           </div>
         </div>
       </div>
@@ -788,6 +1052,7 @@ onUnmounted(() => {
           <span class="ctrl-label">配置版本:</span>
           <el-select
             v-model="selectedVersionNo"
+            aria-label="配置版本"
             size="small"
             style="width: 155px"
             @change="handleVersionChange"
@@ -800,13 +1065,14 @@ onUnmounted(() => {
             />
           </el-select>
           <el-button
-            v-if="workflow && !workflow.is_active"
+            v-if="workflow?.executable && !workflow.is_active && auth.user?.role === 'platform_admin'"
             size="small"
             type="warning"
             plain
+            data-testid="btn-activate-workflow"
             @click="activateSelectedVersion"
           >
-            设为当前激活版本
+            {{ isRollback ? '回滚到此版本' : '激活此版本' }}
           </el-button>
         </div>
 
@@ -814,6 +1080,7 @@ onUnmounted(() => {
           <span class="ctrl-label">当前跟踪对话:</span>
           <el-select
             v-model="selectedTaskId"
+            aria-label="当前跟踪对话"
             size="small"
             style="width: 310px"
             data-testid="agent-trace-task-select"
@@ -834,7 +1101,7 @@ onUnmounted(() => {
           data-testid="btn-open-conversation-history"
           @click="conversationHistoryVisible = true"
         >
-          对话工作流历史管理 ({{ tasks.length }})
+          任务历史 ({{ tasks.length }})
         </el-button>
         <el-button
           size="small"
@@ -843,34 +1110,43 @@ onUnmounted(() => {
           :disabled="!selectedTaskDetail"
           @click="openStageDeliverables()"
         >
-          展开查看各环节产出 ({{ selectedTaskDetail?.step_traces.length || 0 }} 步)
+          查看环节产出
         </el-button>
-        <el-button
-          size="small"
-          type="primary"
-          plain
-          data-testid="btn-export-workflow"
-          @click="openExportModal"
+        <el-button size="small" @click="inspectorOpen = !inspectorOpen">{{
+          inspectorOpen ? '收起节点详情' : '节点详情'
+        }}</el-button
+        ><el-popover ref="configurationPopover" trigger="click" placement="bottom-end" :width="280"
+          ><template #reference><el-button size="small">配置与评测</el-button></template>
+          <div class="secondary-actions">
+            <el-button
+              size="small"
+              type="primary"
+              plain
+              data-testid="btn-export-workflow"
+              @click="openExportModal"
+            >
+              导出工作流配置
+            </el-button>
+            <el-button
+              size="small"
+              type="success"
+              plain
+              v-if="auth.user?.role === 'platform_admin'"
+              data-testid="btn-import-workflow"
+              @click="openImportModal"
+            >
+              导入配置
+            </el-button>
+            <el-button
+              size="small"
+              type="warning"
+              data-testid="btn-open-benchmarks"
+              @click="openBenchmarksDrawer"
+            >
+              质量评测
+            </el-button>
+          </div></el-popover
         >
-          导出配置 (JSON DSL)
-        </el-button>
-        <el-button
-          size="small"
-          type="success"
-          plain
-          data-testid="btn-import-workflow"
-          @click="openImportModal"
-        >
-          导入配置
-        </el-button>
-        <el-button
-          size="small"
-          type="warning"
-          data-testid="btn-open-benchmarks"
-          @click="openBenchmarksDrawer"
-        >
-          检索命中评测 (H01-H10)
-        </el-button>
       </div>
     </div>
 
@@ -886,15 +1162,17 @@ onUnmounted(() => {
         >
           {{
             runningTasks.length > 0
-              ? `⚡ 实时运行中工作流: ${runningTasks.length} 个`
-              : '🟢 实时监控就绪 (0 个运行中)'
+              ? `实时运行中工作流: ${runningTasks.length} 个`
+              : '实时监控就绪 (0 个运行中)'
           }}
         </el-tag>
-        <el-tag size="small" type="info">
-          对话采集中: {{ collectingTasks.length }} 个
+        <el-tag size="small" type="info"> 对话采集中: {{ collectingTasks.length }} 个 </el-tag>
+        <el-tag size="small" type="warning" data-testid="awaiting-user-facts-count">
+          等待业务事实: {{ awaitingFactTasks.length }} 个
         </el-tag>
-        <el-tag size="small" type="info">
-          累计对话工作流: {{ tasks.length }} 条
+        <el-tag size="small" type="info"> 累计对话工作流: {{ tasks.length }} 条 </el-tag>
+        <el-tag size="small" type="info" data-testid="admin-progress-transport">
+          {{ progressState === 'live' ? '实时推送' : '轮询回退' }}
         </el-tag>
 
         <template v-if="runningTasks.length > 0">
@@ -908,7 +1186,8 @@ onUnmounted(() => {
               data-testid="live-running-task-pill"
               @click="trackConversationOnCanvas(rt)"
             >
-              ⚡ {{ rt.conversation_code }} · {{ rt.current_active_node_title || '执行中' }}
+              {{ rt.conversation_code }} ·
+              {{ rt.current_active_node_title || '执行中' }}
             </el-button>
           </div>
         </template>
@@ -924,10 +1203,7 @@ onUnmounted(() => {
           >
             当前对话 ID: {{ selectedTaskDetail.conversation_code }}
           </el-tag>
-          <el-tag
-            size="small"
-            :type="STATUS_TAG_TYPE[selectedTaskDetail.status] || 'info'"
-          >
+          <el-tag size="small" :type="STATUS_TAG_TYPE[selectedTaskDetail.status] || 'info'">
             {{ STATUS_LABEL_MAP[selectedTaskDetail.status] || selectedTaskDetail.status }}
           </el-tag>
           <el-tag
@@ -941,14 +1217,30 @@ onUnmounted(() => {
           </el-tag>
         </template>
         <el-switch
+          aria-label="自动同步"
           v-model="autoPollEnabled"
           size="small"
-          active-text="2s实时同步"
+          active-text="自动同步"
         />
         <el-button size="small" @click="pollLiveWorkflows">刷新</el-button>
       </div>
     </div>
 
+    <el-alert v-if="workflow && !workflow.executable" type="warning" :closable="false" show-icon>
+      <template #title>历史协议版本仅供查看，与当前执行引擎不兼容；历史参数和运行轨迹仍保留。</template>
+      <el-button size="small" @click="showExecutableBaseline">查看可执行基线</el-button>
+    </el-alert>
+    <el-alert v-if="selectedTaskDetail" type="info" :closable="false" data-testid="workflow-execution-version">
+      <template #title>
+        <template v-if="selectedTaskDetail.workflow_version_id">
+          本次任务执行版本 v{{ selectedTaskDetail.workflow_version_no }} · {{ selectedTaskDetail.workflow_version_id }}
+          <template v-if="workflow?.id !== selectedTaskDetail.workflow_version_id">（当前画布查看其他版本）</template>
+        </template>
+        <template v-else>历史任务未记录实际执行配置，不能将当前画布视为其执行版本。</template>
+      </template>
+      <el-button v-if="selectedTaskDetail.workflow_version_id && workflow?.id !== selectedTaskDetail.workflow_version_id"
+        size="small" @click="showExecutionConfig">查看任务执行配置</el-button>
+    </el-alert>
     <!-- 主体：左侧 Dify 风格节点连线画布 + 右侧只读详情与轨迹调试栏 -->
     <div class="studio-workspace">
       <!-- 左侧画布 -->
@@ -960,26 +1252,36 @@ onUnmounted(() => {
           <el-tag size="small" effect="plain" type="success">
             连接边: {{ workflow?.edges.length || 0 }} 条（含 1 条退回补证回流边）
           </el-tag>
-          <template v-if="selectedTaskDetail">
-            <el-tag size="small" type="primary">
-              对话问答: {{ selectedTaskDetail.messages.length }} 条
-            </el-tag>
-            <el-tag size="small" type="primary">
-              累计 MCP 工具调用: {{ selectedTaskDetail.mcp_calls_count }} 次
-            </el-tag>
-            <el-tag size="small" type="warning">
-              质检退回补证: {{ selectedTaskDetail.backtrack_count }} 次
-            </el-tag>
-            <el-tag size="small" type="info">
-              总耗时: {{ selectedTaskDetail.total_duration_ms }} ms | Token:
-              {{ selectedTaskDetail.total_tokens }}
-            </el-tag>
-          </template>
+          <el-popover v-if="selectedTaskDetail" trigger="click" placement="bottom" :width="320"
+            ><template #reference><el-button size="small" text>任务统计</el-button></template>
+            <div class="task-metrics-list">
+              <el-tag size="small" type="primary">
+                对话问答: {{ selectedTaskDetail.messages.length }} 条
+              </el-tag>
+              <el-tag size="small" type="primary">
+                累计 MCP 工具调用: {{ selectedTaskDetail.mcp_calls_count }} 次
+              </el-tag>
+              <el-tag size="small" type="warning">
+                质检退回补证: {{ selectedTaskDetail.backtrack_count }} 次
+              </el-tag>
+              <el-tag size="small" type="info">
+                总耗时: {{ selectedTaskDetail.total_duration_ms }} ms | Token:
+                {{ selectedTaskDetail.total_tokens }}
+              </el-tag>
+            </div></el-popover
+          >
           <div class="zoom-controls">
+            <el-button size="small" @click="resetLayout" data-testid="btn-reset-layout"
+              >恢复布局</el-button
+            >
+            <el-button size="small" @click="fitCanvas" data-testid="btn-fit-canvas"
+              >适应画布</el-button
+            >
             <el-button
               size="small"
               circle
-              @click="canvasScale = Math.max(0.75, +(canvasScale - 0.1).toFixed(2))"
+              aria-label="缩小画布"
+              @click="canvasScale = Math.max(0.25, +(canvasScale - 0.1).toFixed(2))"
             >
               -
             </el-button>
@@ -987,231 +1289,247 @@ onUnmounted(() => {
             <el-button
               size="small"
               circle
+              aria-label="放大画布"
               @click="canvasScale = Math.min(1.25, +(canvasScale + 0.1).toFixed(2))"
             >
               +
             </el-button>
-            <el-button size="small" @click="canvasScale = 1">重置</el-button>
           </div>
         </div>
 
-        <div class="canvas-scroll-area">
+        <div class="layout-hint" id="workflow-layout-hint">
+          拖动卡片自由排布 · 方向键微调，Shift 加快 · 布局仅保存在当前浏览器
+        </div>
+        <div class="canvas-scroll-area" ref="canvasScroll">
           <div
-            class="canvas-stage"
+            class="canvas-extent"
             :style="{
-              transform: `scale(${canvasScale})`,
-              transformOrigin: '0 0',
+              width: `${stageSize.width * canvasScale}px`,
+              height: `${stageSize.height * canvasScale}px`,
             }"
           >
-            <!-- SVG 连线层 -->
-            <svg class="edges-svg" width="1600" height="560">
-              <defs>
-                <marker
-                  id="arrow-forward"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6" />
-                </marker>
-                <marker
-                  id="arrow-backtrack"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c" />
-                </marker>
-                <marker
-                  id="arrow-event"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#ca8a04" />
-                </marker>
-              </defs>
+            <div
+              class="canvas-stage"
+              :style="{
+                width: `${stageSize.width}px`,
+                height: `${stageSize.height}px`,
+                transform: `scale(${canvasScale})`,
+                transformOrigin: '0 0',
+              }"
+            >
+              <!-- SVG 连线层 -->
+              <svg class="edges-svg" :width="stageSize.width" :height="stageSize.height">
+                <defs>
+                  <marker
+                    id="arrow-forward"
+                    viewBox="0 0 10 10"
+                    refX="8"
+                    refY="5"
+                    markerWidth="6"
+                    markerHeight="6"
+                    orient="auto-start-reverse"
+                  >
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6" />
+                  </marker>
+                  <marker
+                    id="arrow-backtrack"
+                    viewBox="0 0 10 10"
+                    refX="8"
+                    refY="5"
+                    markerWidth="6"
+                    markerHeight="6"
+                    orient="auto-start-reverse"
+                  >
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c" />
+                  </marker>
+                  <marker
+                    id="arrow-event"
+                    viewBox="0 0 10 10"
+                    refX="8"
+                    refY="5"
+                    markerWidth="6"
+                    markerHeight="6"
+                    orient="auto-start-reverse"
+                  >
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#ca8a04" />
+                  </marker>
+                </defs>
 
-              <g v-for="edge in computedSvgEdges" :key="edge.edge_id">
-                <path
-                  :d="edge.path"
-                  fill="none"
-                  :stroke="
-                    edge.edge_type === 'backtrack'
-                      ? '#ea580c'
-                      : edge.edge_type === 'event_trigger'
-                        ? '#ca8a04'
-                        : '#3b82f6'
-                  "
-                  :stroke-width="edge.edge_type === 'backtrack' ? 2.6 : 2.2"
-                  :stroke-dasharray="
-                    edge.edge_type === 'backtrack' ? '6,4' : undefined
-                  "
-                  :marker-end="
-                    edge.edge_type === 'backtrack'
-                      ? 'url(#arrow-backtrack)'
-                      : edge.edge_type === 'event_trigger'
-                        ? 'url(#arrow-event)'
-                        : 'url(#arrow-forward)'
-                  "
-                />
-                <g
-                  :transform="`translate(${edge.labelX}, ${edge.labelY})`"
-                >
-                  <rect
-                    x="-78"
-                    y="-11"
-                    width="156"
-                    height="20"
-                    rx="10"
-                    :fill="
-                      edge.edge_type === 'backtrack'
-                        ? '#fff7ed'
-                        : '#f8fafc'
-                    "
+                <g v-for="edge in computedSvgEdges" :key="edge.edge_id">
+                  <path
+                    :d="edge.path"
+                    fill="none"
                     :stroke="
                       edge.edge_type === 'backtrack'
-                        ? '#fdba74'
-                        : '#cbd5e1'
+                        ? '#ea580c'
+                        : edge.edge_type === 'event_trigger'
+                          ? '#ca8a04'
+                          : '#3b82f6'
+                    "
+                    :stroke-width="edge.edge_type === 'backtrack' ? 2.6 : 2.2"
+                    :stroke-dasharray="edge.edge_type === 'backtrack' ? '6,4' : undefined"
+                    :marker-end="
+                      edge.edge_type === 'backtrack'
+                        ? 'url(#arrow-backtrack)'
+                        : edge.edge_type === 'event_trigger'
+                          ? 'url(#arrow-event)'
+                          : 'url(#arrow-forward)'
                     "
                   />
-                  <text
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    font-size="11"
-                    :fill="
-                      edge.edge_type === 'backtrack'
-                        ? '#c2410c'
-                        : '#334155'
-                    "
-                    font-weight="600"
-                  >
-                    {{ edge.label }}
-                  </text>
+                  <g :transform="`translate(${edge.labelX}, ${edge.labelY})`">
+                    <rect
+                      x="-78"
+                      y="-11"
+                      width="156"
+                      height="20"
+                      rx="10"
+                      :fill="edge.edge_type === 'backtrack' ? '#fff7ed' : '#f8fafc'"
+                      :stroke="edge.edge_type === 'backtrack' ? '#fdba74' : '#cbd5e1'"
+                    />
+                    <text
+                      text-anchor="middle"
+                      dominant-baseline="middle"
+                      font-size="11"
+                      :fill="edge.edge_type === 'backtrack' ? '#c2410c' : '#334155'"
+                      font-weight="600"
+                    >
+                      {{ edge.label }}
+                    </text>
+                  </g>
                 </g>
-              </g>
-            </svg>
+              </svg>
 
-            <!-- Dify 风格节点卡片层 -->
-            <div
-              v-for="node in workflow?.nodes || []"
-              :key="node.node_id"
-              class="dify-node-card"
-              :class="{
-                active: selectedNode?.node_id === node.node_id,
-                'has-backtrack':
-                  nodeTraceStatsMap.get(node.node_id)?.hasBacktrack,
-                'is-live-running':
-                  selectedTaskDetail?.status === 'running' &&
-                  selectedTaskDetail?.current_active_node_id === node.node_id,
-                'is-collecting':
-                  selectedTaskDetail?.status === 'collecting_facts' &&
-                  selectedTaskDetail?.current_active_node_id === node.node_id,
-              }"
-              :style="{
-                left: `${node.position_x}px`,
-                top: `${node.position_y}px`,
-                width: `${NODE_WIDTH}px`,
-              }"
-              data-testid="dify-node-card"
-              :data-node-id="node.node_id"
-              @click="selectNode(node.node_id)"
-            >
-              <!-- 左侧输入端口圆点 -->
-              <span
-                v-if="node.node_type !== 'trigger'"
-                class="port-dot port-in"
-                :style="{ borderColor: node.color }"
-              />
-              <!-- 右侧输出端口圆点 -->
-              <span
-                class="port-dot port-out"
-                :style="{ borderColor: node.color }"
-              />
-
+              <!-- Dify 风格节点卡片层 -->
               <div
-                class="node-card-header"
-                :style="{ borderTop: `3px solid ${node.color}` }"
+                v-for="node in workflow?.nodes || []"
+                :key="node.node_id"
+                :ref="(el) => registerNode(node.node_id, el)"
+                class="dify-node-card"
+                :class="{
+                  active: selectedNode?.node_id === node.node_id,
+                  'is-dragging': draggingNodeId === node.node_id,
+                  'has-backtrack': nodeTraceStatsMap.get(node.node_id)?.hasBacktrack,
+                  'is-live-running':
+                    selectedTaskDetail?.workflow_version_id === workflow?.id &&
+                    selectedTaskDetail?.status === 'running' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id,
+                  'is-collecting':
+                    selectedTaskDetail?.status === 'collecting_facts' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id,
+                }"
+                :style="{
+                  left: `${positionOf(node).x}px`,
+                  top: `${positionOf(node).y}px`,
+                  width: `${NODE_WIDTH}px`,
+                  minHeight: `${NODE_HEIGHT}px`,
+                }"
+                data-testid="dify-node-card"
+                :data-node-id="node.node_id"
+                role="button"
+                tabindex="0"
+                :aria-label="`${node.title}，可拖动或使用方向键调整位置，按回车查看详情`"
+                aria-describedby="workflow-layout-hint"
+                @pointerdown="startNodeDrag($event, node)"
+                @pointermove="moveNodeDrag"
+                @pointerup="finishNodeDrag"
+                @pointercancel="cancelDrag"
+                @lostpointercapture="finishNodeDrag"
+                @keydown="moveNodeWithKeyboard($event, node)"
+                @click="clickNode(node.node_id)"
               >
+                <!-- 左侧输入端口圆点 -->
                 <span
-                  class="node-type-pill"
-                  :style="{
-                    backgroundColor: `${node.color}18`,
-                    color: node.color,
-                  }"
-                >
-                  {{ node.category_label }}
-                </span>
-                <span class="node-lock-tag" title="生产锁定只读">🔒 只读</span>
-              </div>
+                  v-if="node.node_type !== 'trigger'"
+                  class="port-dot port-in"
+                  :style="{ borderColor: node.color }"
+                />
+                <!-- 右侧输出端口圆点 -->
+                <span class="port-dot port-out" :style="{ borderColor: node.color }" />
 
-              <div class="node-card-title">{{ node.title }}</div>
-              <div class="node-card-subtitle">{{ node.subtitle }}</div>
-
-              <div class="node-card-meta">
-                <div class="meta-row">
-                  <span class="meta-key">模型:</span>
-                  <span class="meta-val">{{ node.model_name }}</span>
+                <div class="node-card-header" :style="{ borderTop: `3px solid ${node.color}` }">
+                  <span
+                    class="node-type-pill"
+                    :style="{
+                      backgroundColor: `${node.color}18`,
+                      color: node.color,
+                    }"
+                  >
+                    {{ node.category_label }}
+                  </span>
                 </div>
-                <div class="meta-row">
-                  <span class="meta-key">MCP工具:</span>
-                  <span class="meta-val">{{ node.mcp_tools.length }} 个绑定工具</span>
+
+                <div class="node-card-title">{{ node.title }}</div>
+                <div class="node-card-subtitle">{{ node.subtitle }}</div>
+
+                <div class="node-card-meta">
+                  <div class="meta-row">
+                    <span class="meta-key">模型:</span>
+                    <span class="meta-val">{{ node.model_name }}</span>
+                  </div>
+                  <div class="meta-row">
+                    <span class="meta-key">MCP工具:</span>
+                    <span class="meta-val">{{ node.mcp_tools.length }} 个绑定工具</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 实时运行中指示条 -->
-              <div
-                v-if="
-                  selectedTaskDetail?.status === 'running' &&
-                  selectedTaskDetail?.current_active_node_id === node.node_id
-                "
-                class="node-live-running-banner"
-                data-testid="node-live-running-badge"
-              >
-                ⚡ 实时运行中...
-              </div>
-              <div
-                v-else-if="
-                  selectedTaskDetail?.status === 'collecting_facts' &&
-                  selectedTaskDetail?.current_active_node_id === node.node_id
-                "
-                class="node-collecting-banner"
-              >
-                💬 对话采集中 ({{ selectedTaskDetail.sufficiency_score }}%)
-              </div>
-
-              <!-- 叠加任务运行耗时与退回状态条 -->
-              <div
-                v-if="nodeTraceStatsMap.get(node.node_id)"
-                class="node-trace-footer"
-              >
-                <el-tag
-                  size="small"
-                  :type="
-                    nodeTraceStatsMap.get(node.node_id)?.hasBacktrack
-                      ? 'warning'
-                      : 'success'
+                <!-- 实时运行中指示条 -->
+                <div
+                  v-if="
+                    selectedTaskDetail?.workflow_version_id === workflow?.id &&
+                    selectedTaskDetail?.status === 'running' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id
                   "
+                  class="node-live-running-banner"
+                  data-testid="node-live-running-badge"
                 >
-                  {{
-                    nodeTraceStatsMap.get(node.node_id)?.hasBacktrack
-                      ? `执行 ${nodeTraceStatsMap.get(node.node_id)?.runs} 次 (含补证)`
-                      : '执行通过'
-                  }}
-                </el-tag>
-                <span class="trace-ms">
-                  {{ nodeTraceStatsMap.get(node.node_id)?.duration_ms }}ms ·
-                  {{ nodeTraceStatsMap.get(node.node_id)?.tokens }} tok
-                </span>
+                  实时运行中...
+                </div>
+                <div
+                  v-else-if="
+                    selectedTaskDetail?.status === 'collecting_facts' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id
+                  "
+                  class="node-collecting-banner"
+                >
+                  💬 对话采集中 ({{ selectedTaskDetail.sufficiency_score }}%)
+                </div>
+                <div
+                  v-else-if="
+                    selectedTaskDetail?.workflow_version_id === workflow?.id &&
+                    selectedTaskDetail?.status === 'awaiting_user_facts' &&
+                    selectedTaskDetail?.current_active_node_id === node.node_id
+                  "
+                  class="node-collecting-banner"
+                  data-testid="node-awaiting-user-facts-badge"
+                >
+                  分析已暂停 · 等待业务事实
+                </div>
+
+                <!-- 叠加任务运行耗时与退回状态条 -->
+                <div v-if="nodeTraceStatsMap.get(node.node_id)" class="node-trace-footer">
+                  <el-tag
+                    size="small"
+                    :type="
+                      nodeTraceStatsMap.get(node.node_id)?.status === 'skipped' ? 'info'
+                      : nodeTraceStatsMap.get(node.node_id)?.status === 'failed' ? 'danger'
+                      : nodeTraceStatsMap.get(node.node_id)?.status === 'awaiting_user_facts' ? 'warning'
+                      : nodeTraceStatsMap.get(node.node_id)?.hasBacktrack ? 'warning' : 'success'
+                    "
+                  >
+                    {{
+                      nodeTraceStatsMap.get(node.node_id)?.hasBacktrack
+                        ? `执行 ${nodeTraceStatsMap.get(node.node_id)?.runs} 次 (含补证)`
+                        : nodeTraceStatsMap.get(node.node_id)?.status === 'skipped' ? '按配置跳过'
+                        : nodeTraceStatsMap.get(node.node_id)?.status === 'failed' ? '执行失败'
+                        : nodeTraceStatsMap.get(node.node_id)?.status === 'awaiting_user_facts' ? '等待业务事实'
+                        : '执行通过'
+                    }}
+                  </el-tag>
+                  <span class="trace-ms">
+                    {{ nodeTraceStatsMap.get(node.node_id)?.duration_ms }}ms ·
+                    {{ nodeTraceStatsMap.get(node.node_id)?.tokens }} tok
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -1220,39 +1538,22 @@ onUnmounted(() => {
 
       <!-- 右侧 Dify 风格节点检查器与运行调试栏（只读） -->
       <div
-        v-if="selectedNode"
+        v-if="selectedNode && inspectorOpen"
         class="inspector-sidebar"
         data-testid="dify-inspector-panel"
       >
         <div class="inspector-header">
           <div class="inspector-title-row">
-            <span
-              class="inspector-dot"
-              :style="{ backgroundColor: selectedNode.color }"
-            />
+            <span class="inspector-dot" :style="{ backgroundColor: selectedNode.color }" />
             <span class="inspector-node-title" data-testid="inspector-node-title">
               {{ selectedNode.title }}
             </span>
-            <el-tag size="small" type="danger" effect="plain">
-              🔒 参数与代码只读
-            </el-tag>
           </div>
           <div class="inspector-node-sub">
             节点 ID: <code>{{ selectedNode.node_id }}</code> ·
             {{ selectedNode.category_label }}
           </div>
         </div>
-
-        <el-alert
-          type="warning"
-          :closable="false"
-          show-icon
-          class="readonly-banner"
-        >
-          <template #title>
-            生产保护模式：当前仅可查看工作流连接关系、参数配置与运行轨迹，禁止直接修改模型参数或节点代码。
-          </template>
-        </el-alert>
 
         <el-tabs v-model="inspectorTab" class="inspector-tabs">
           <!-- Tab 1: 节点详情、连接关系、只读参数与代码 -->
@@ -1275,15 +1576,10 @@ onUnmounted(() => {
                   class="link-item"
                   @click="selectNode(e.source_node_id)"
                 >
-                  <el-tag
-                    size="small"
-                    :type="e.edge_type === 'backtrack' ? 'warning' : 'info'"
-                  >
+                  <el-tag size="small" :type="e.edge_type === 'backtrack' ? 'warning' : 'info'">
                     {{ e.label }}
                   </el-tag>
-                  <span class="link-node-name">
-                    ← {{ nodeMap.get(e.source_node_id)?.title }}
-                  </span>
+                  <span class="link-node-name"> ← {{ nodeMap.get(e.source_node_id)?.title }} </span>
                   <div class="link-cond">{{ e.condition_desc }}</div>
                 </div>
               </div>
@@ -1299,15 +1595,10 @@ onUnmounted(() => {
                   class="link-item"
                   @click="selectNode(e.target_node_id)"
                 >
-                  <el-tag
-                    size="small"
-                    :type="e.edge_type === 'backtrack' ? 'danger' : 'success'"
-                  >
+                  <el-tag size="small" :type="e.edge_type === 'backtrack' ? 'danger' : 'success'">
                     {{ e.label }}
                   </el-tag>
-                  <span class="link-node-name">
-                    → {{ nodeMap.get(e.target_node_id)?.title }}
-                  </span>
+                  <span class="link-node-name"> → {{ nodeMap.get(e.target_node_id)?.title }} </span>
                   <div class="link-cond">{{ e.condition_desc }}</div>
                 </div>
               </div>
@@ -1316,24 +1607,15 @@ onUnmounted(() => {
             <div class="inspector-section">
               <div class="sec-title">
                 模型与运行参数
-                <el-tag size="small" type="info">禁用调参</el-tag>
               </div>
               <div class="readonly-form-grid">
                 <div class="form-item">
                   <label>模型供应方</label>
-                  <el-input
-                    :model-value="selectedNode.model_provider"
-                    disabled
-                    size="small"
-                  />
+                  <el-input :model-value="selectedNode.model_provider" disabled size="small" />
                 </div>
                 <div class="form-item">
                   <label>绑定模型标识</label>
-                  <el-input
-                    :model-value="selectedNode.model_name"
-                    disabled
-                    size="small"
-                  />
+                  <el-input :model-value="selectedNode.model_name" disabled size="small" />
                 </div>
                 <div
                   v-for="(val, key) in selectedNode.parameters"
@@ -1353,8 +1635,7 @@ onUnmounted(() => {
 
             <div class="inspector-section">
               <div class="sec-title">
-                System Prompt 提示词模板
-                <el-tag size="small" type="info">只读锁定</el-tag>
+                {{ !workflow?.executable ? '历史配置说明（不证明实际执行）' : selectedNode.node_type === 'analyst' || selectedNode.runtime_settings?.semantic_planning === true ? '实际模型 System Prompt' : '执行说明（不发送给模型）' }}
               </div>
               <el-input
                 type="textarea"
@@ -1366,10 +1647,14 @@ onUnmounted(() => {
               />
             </div>
 
+            <div v-if="workflow?.executable" class="inspector-section">
+              <div class="sec-title">此版本实际执行参数</div>
+              <pre class="runtime-settings" data-testid="workflow-runtime-settings">{{ JSON.stringify(Object.fromEntries(Object.entries(selectedNode.runtime_settings).filter(([key]) => key !== 'system_prompt')), null, 2) }}</pre>
+              <p>可通过配置包修改：{{ selectedNode.configurable_fields.join('、') || '无可变参数' }}</p>
+            </div>
             <div class="inspector-section">
               <div class="sec-title">
                 节点执行入口与代码绑定
-                <el-tag size="small" type="danger">禁止修改代码</el-tag>
               </div>
               <div class="code-readonly-box" data-testid="readonly-code-entrypoint">
                 <code>{{ selectedNode.code_entrypoint }}</code>
@@ -1399,21 +1684,11 @@ onUnmounted(() => {
           </el-tab-pane>
 
           <!-- Tab 2: 绑定 MCP 工具清单 -->
-          <el-tab-pane
-            :label="`MCP 工具 (${selectedNode.mcp_tools.length})`"
-            name="tools"
-          >
-            <div
-              v-if="selectedNode.mcp_tools.length === 0"
-              class="empty-state-box"
-            >
+          <el-tab-pane :label="`MCP 工具 (${selectedNode.mcp_tools.length})`" name="tools">
+            <div v-if="selectedNode.mcp_tools.length === 0" class="empty-state-box">
               该节点不直接调用外部 MCP 工具。
             </div>
-            <div
-              v-for="tool in selectedNode.mcp_tools"
-              :key="tool.tool_name"
-              class="mcp-tool-card"
-            >
+            <div v-for="tool in selectedNode.mcp_tools" :key="tool.tool_name" class="mcp-tool-card">
               <div class="tool-header">
                 <span class="tool-title">{{ tool.display_name }}</span>
                 <el-tag size="small" type="primary">{{ tool.tool_name }}</el-tag>
@@ -1433,16 +1708,13 @@ onUnmounted(() => {
           </el-tab-pane>
 
           <!-- Tab 3: 最近任务运行轨迹观测与本环节产出展开 -->
-          <el-tab-pane
-            :label="`运行轨迹 (${selectedNodeTraces.length})`"
-            name="trace"
-          >
+          <el-tab-pane :label="`运行轨迹 (${selectedNodeTraces.length})`" name="trace">
             <div v-if="selectedTaskDetail" class="inspector-trace-top">
               <div>
-                <div style="font-size: 12px; font-weight: 700; color: #0f172a">
+                <div style="font-size: 13px; font-weight: 700; color: #0f172a">
                   对话 ID: {{ selectedTaskDetail.conversation_code }}
                 </div>
-                <div style="font-size: 11.5px; color: #64748b">
+                <div style="font-size: 13px; color: #64748b">
                   {{ selectedTaskDetail.title }} ·
                   {{ STATUS_LABEL_MAP[selectedTaskDetail.status] || selectedTaskDetail.status }}
                 </div>
@@ -1458,17 +1730,15 @@ onUnmounted(() => {
               </el-button>
             </div>
 
-            <div
-              v-if="selectedNodeTraces.length === 0"
-              class="empty-state-box"
-            >
+            <div v-if="selectedNodeTraces.length === 0" class="empty-state-box">
               <template
                 v-if="
-                  selectedTaskDetail?.status === 'running' &&
+                  selectedTaskDetail?.workflow_version_id === workflow?.id &&
+                    selectedTaskDetail?.status === 'running' &&
                   selectedTaskDetail?.current_active_node_id === selectedNode.node_id
                 "
               >
-                ⚡ 当前节点正在实时执行中，完成后将立即写入本环节产出与工具调用明细...
+                当前节点正在实时执行中，完成后将立即写入本环节产出与工具调用明细...
               </template>
               <template v-else>
                 当前选中任务在该节点无执行记录（或任务处于待补充事实阶段）。
@@ -1482,11 +1752,10 @@ onUnmounted(() => {
               data-testid="inspector-trace-step-card"
             >
               <div class="trace-step-head">
-                <el-tag
-                  size="small"
-                  :type="tr.is_backtrack ? 'danger' : 'success'"
-                >
-                  步骤 #{{ tr.seq_no }} · {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
+                <el-tag size="small" :type="tr.is_backtrack ? 'danger' : 'success'">
+                  步骤 #{{ tr.seq_no }} ·
+                  {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
+                  · {{ tr.workflow_version_id ? '执行配置 ' + tr.workflow_version_id.slice(0, 8) : '历史配置未记录' }}
                 </el-tag>
                 <span class="trace-metrics">
                   耗时 {{ tr.duration_ms }} ms · {{ tr.tokens_used }} tokens
@@ -1495,9 +1764,7 @@ onUnmounted(() => {
               <div class="trace-summary">{{ tr.business_summary }}</div>
 
               <div v-if="tr.is_backtrack" class="backtrack-detail-box">
-                <div>
-                  <strong>退回原因：</strong>{{ tr.backtrack_reason }}
-                </div>
+                <div><strong>退回原因：</strong>{{ tr.backtrack_reason }}</div>
                 <div style="margin-top: 4px">
                   <strong>补证结果：</strong>{{ tr.backtrack_resolution }}
                 </div>
@@ -1505,11 +1772,7 @@ onUnmounted(() => {
 
               <div v-if="tr.tool_calls.length > 0" class="trace-tools-list">
                 <div class="sub-label">调用的 MCP 工具明细：</div>
-                <div
-                  v-for="tc in tr.tool_calls"
-                  :key="tc.call_id"
-                  class="trace-tool-item"
-                >
+                <div v-for="tc in tr.tool_calls" :key="tc.call_id" class="trace-tool-item">
                   <div class="tc-top">
                     <el-tag size="small" effect="plain">
                       {{ tc.tool_name }}
@@ -1572,8 +1835,9 @@ onUnmounted(() => {
             data-testid="conv-history-status-select"
           >
             <el-option label="全部状态" value="" />
-            <el-option label="⚡ 实时运行中" value="running" />
+            <el-option label="实时运行中" value="running" />
             <el-option label="💬 对话采集中" value="collecting_facts" />
+            <el-option label="等待补充业务事实" value="awaiting_user_facts" />
             <el-option label="✅ 已出报告" value="completed" />
             <el-option label="⚠️ 部分样稿" value="partial_sample" />
             <el-option label="❌ 执行失败" value="failed" />
@@ -1611,7 +1875,12 @@ onUnmounted(() => {
             <template #default="{ row }">
               <div class="conv-code-cell">
                 <code data-testid="history-row-conv-code">{{ row.conversation_code }}</code>
-                <el-button link type="primary" size="small" @click="copyCode(row.conversation_code)">
+                <el-button
+                  link
+                  type="primary"
+                  size="small"
+                  @click="copyCode(row.conversation_code)"
+                >
                   复制
                 </el-button>
               </div>
@@ -1621,7 +1890,9 @@ onUnmounted(() => {
 
           <el-table-column label="所属企业 / 发起用户" width="180">
             <template #default="{ row }">
-              <div style="font-weight: 600">{{ row.org_name || '示范企业' }}</div>
+              <div style="font-weight: 600">
+                {{ row.org_name || '示范企业' }}
+              </div>
               <div class="cell-muted">
                 {{ row.creator_name || '企业成员' }}
                 <span v-if="row.creator_email">({{ row.creator_email }})</span>
@@ -1643,25 +1914,20 @@ onUnmounted(() => {
           <el-table-column label="工作流状态与当前环节" min-width="220">
             <template #default="{ row }">
               <div>
-                <el-tag
-                  size="small"
-                  :type="STATUS_TAG_TYPE[row.status] || 'info'"
-                >
+                <el-tag size="small" :type="STATUS_TAG_TYPE[row.status] || 'info'">
                   {{ STATUS_LABEL_MAP[row.status] || row.status }}
                 </el-tag>
                 <el-tag size="small" type="info" style="margin-left: 4px">
                   完备度 {{ row.sufficiency_score }}%
                 </el-tag>
               </div>
-              <div
-                v-if="row.current_active_node_title"
-                class="cell-active-node"
-              >
+              <div v-if="row.current_active_node_title" class="cell-active-node">
                 {{ row.current_active_node_title }}
               </div>
               <div v-else class="cell-muted">
-                已完成 {{ row.steps_count }} 个环节 · 结论 {{ row.findings_count }} 条 ·
-                报告 v{{ row.latest_report_version }}
+                已完成 {{ row.steps_count }} 个环节 · 结论 {{ row.findings_count }} 条 · 报告 v{{
+                  row.latest_report_version
+                }}
               </div>
             </template>
           </el-table-column>
@@ -1670,8 +1936,8 @@ onUnmounted(() => {
             <template #default="{ row }">
               <div>问答消息: {{ row.messages_count }} 条</div>
               <div class="cell-muted">
-                {{ row.total_duration_ms }} ms · {{ row.total_tokens }} tok ·
-                退回 {{ row.backtrack_count }} 次
+                {{ row.total_duration_ms }} ms · {{ row.total_tokens }} tok · 退回
+                {{ row.backtrack_count }} 次
               </div>
             </template>
           </el-table-column>
@@ -1703,7 +1969,7 @@ onUnmounted(() => {
                 展开各环节产出
               </el-button>
               <el-button
-                v-if="row.sufficiency_score >= 100 && row.status !== 'running'"
+                v-if="row.sufficiency_score >= 100 && !['running','awaiting_user_facts'].includes(row.status)"
                 size="small"
                 type="warning"
                 plain
@@ -1730,6 +1996,7 @@ onUnmounted(() => {
     <!-- 展开查看当前对话工作流每个环节的产出抽屉 -->
     <el-drawer
       v-model="stageDeliverablesVisible"
+      append-to-body
       :title="`对话工作流全环节产出详情 · ${selectedTaskDetail?.conversation_code || ''}`"
       size="76%"
     >
@@ -1744,9 +2011,12 @@ onUnmounted(() => {
             </el-tag>
             <span class="stage-meta-text">
               企业: {{ selectedTaskDetail.org_name }} | 发起人:
-              {{ selectedTaskDetail.creator_name || selectedTaskDetail.creator_email || '企业用户' }} |
-              国家: {{ selectedTaskDetail.country_name_zh }} ({{ selectedTaskDetail.country_code }}) |
-              车型: {{ selectedTaskDetail.vehicle_model || '待填写' }}
+              {{
+                selectedTaskDetail.creator_name || selectedTaskDetail.creator_email || '企业用户'
+              }}
+              | 国家: {{ selectedTaskDetail.country_name_zh }} ({{
+                selectedTaskDetail.country_code
+              }}) | 车型: {{ selectedTaskDetail.vehicle_model || '待填写' }}
             </span>
           </div>
           <div class="stage-drawer-actions">
@@ -1771,7 +2041,7 @@ onUnmounted(() => {
           style="margin-bottom: 12px"
         >
           <template #title>
-            ⚡ 该对话工作流正在实时运行中（当前环节：{{
+            该对话工作流正在实时运行中（当前环节：{{
               selectedTaskDetail.current_active_node_title || '执行中'
             }}），每完成一个环节将自动在此展开最新产出。
           </template>
@@ -1779,14 +2049,15 @@ onUnmounted(() => {
 
         <el-collapse v-model="expandedStageNames">
           <!-- 环节 0：用户对话问答与八维度业务事实采集产出 -->
-          <el-collapse-item
-            name="stage-chat"
-            data-testid="stage-collapse-chat"
-          >
+          <el-collapse-item name="stage-chat" data-testid="stage-collapse-chat">
             <template #title>
               <div class="stage-collapse-header">
                 <el-tag size="small" type="primary">环节 0 · 对话交互与槽位采集</el-tag>
-                <b>用户对话问答记录 ({{ selectedTaskDetail.messages.length }} 条) & 已采集业务事实 (完备度 {{ selectedTaskDetail.sufficiency_score }}%)</b>
+                <b
+                  >用户对话问答记录 ({{ selectedTaskDetail.messages.length }}
+                  条) & 已采集业务事实 (完备度
+                  {{ selectedTaskDetail.sufficiency_score }}%)</b
+                >
               </div>
             </template>
 
@@ -1844,13 +2115,18 @@ onUnmounted(() => {
               <div class="stage-collapse-header">
                 <el-tag
                   size="small"
-                  :type="tr.is_backtrack ? 'danger' : tr.status === 'passed' ? 'success' : 'warning'"
+                  :type="
+                    tr.is_backtrack ? 'danger' : tr.status === 'passed' ? 'success' : 'warning'
+                  "
                 >
-                  步骤 #{{ tr.seq_no }} · {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
+                  步骤 #{{ tr.seq_no }} ·
+                  {{ PHASE_LABEL_MAP[tr.phase] || tr.phase }}
+                  · {{ tr.workflow_version_id ? '执行配置 ' + tr.workflow_version_id.slice(0, 8) : '历史配置未记录' }}
                 </el-tag>
                 <b>{{ tr.agent_name }}</b>
                 <span class="cell-muted">
-                  （耗时 {{ tr.duration_ms }} ms · {{ tr.tokens_used }} tokens · 工具调用 {{ tr.tool_calls.length }} 次）
+                  （耗时 {{ tr.duration_ms }} ms · {{ tr.tokens_used }} tokens · 工具调用
+                  {{ tr.tool_calls.length }} 次）
                 </span>
               </div>
             </template>
@@ -1868,10 +2144,16 @@ onUnmounted(() => {
               </div>
 
               <!-- 针对 retrieval 环节：展示每个维度检索出的候选条款明细 -->
-              <template v-if="tr.phase === 'retrieval' && tr.output_snapshot.retrieved_clauses_by_dimension">
+              <template
+                v-if="tr.phase === 'retrieval' && tr.output_snapshot.retrieved_clauses_by_dimension"
+              >
                 <div class="sub-label">本环节检索命中的各维度候选法规条款产出：</div>
                 <div
-                  v-for="(clauses, dimCode) in (tr.output_snapshot.retrieved_clauses_by_dimension as Record<string, Array<Record<string, unknown>>>)"
+                  v-for="(clauses, dimCode) in tr.output_snapshot
+                    .retrieved_clauses_by_dimension as Record<
+                    string,
+                    Array<Record<string, unknown>>
+                  >"
                   :key="dimCode"
                   class="dim-output-card"
                 >
@@ -1889,11 +2171,17 @@ onUnmounted(() => {
 
               <!-- 针对 analysis / re_analysis 环节：展示每个维度的模型分析初稿产出 -->
               <template
-                v-if="(tr.phase === 'analysis' || tr.phase === 're_analysis') && tr.output_snapshot.dimension_outputs"
+                v-if="
+                  (tr.phase === 'analysis' || tr.phase === 're_analysis') &&
+                  tr.output_snapshot.dimension_outputs
+                "
               >
                 <div class="sub-label">本环节各维度模型分析产出明细：</div>
                 <div
-                  v-for="(dimOut, dimCode) in (tr.output_snapshot.dimension_outputs as Record<string, Record<string, unknown>>)"
+                  v-for="(dimOut, dimCode) in tr.output_snapshot.dimension_outputs as Record<
+                    string,
+                    Record<string, unknown>
+                  >"
                   :key="dimCode"
                   class="dim-output-card"
                 >
@@ -1910,7 +2198,7 @@ onUnmounted(() => {
                       产出结论 {{ dimOut.findings_count || 0 }} 条
                     </el-tag>
                   </div>
-                  <div v-if="dimOut.summary" style="margin: 6px 0; font-size: 12.5px">
+                  <div v-if="dimOut.summary" style="margin: 6px 0; font-size: 13px">
                     <strong>维度小结：</strong>{{ dimOut.summary }}
                   </div>
                   <div v-if="dimOut.gaps" class="cell-muted" style="margin-bottom: 6px">
@@ -1932,10 +2220,15 @@ onUnmounted(() => {
 
               <!-- 针对 verification / re_verification 环节：展示每条结论的子串与数字核验产出 -->
               <template
-                v-if="(tr.phase === 'verification' || tr.phase === 're_verification') && tr.output_snapshot.verification_items"
+                v-if="
+                  (tr.phase === 'verification' || tr.phase === 're_verification') &&
+                  tr.output_snapshot.verification_items
+                "
               >
                 <div class="sub-label">
-                  本环节程序化原文子串与数字核验明细（通过 {{ tr.output_snapshot.verified_passed_count }} 条 / 拦截 {{ tr.output_snapshot.verified_failed_count }} 条）：
+                  本环节程序化原文子串与数字核验明细（通过
+                  {{ tr.output_snapshot.verified_passed_count }} 条 / 拦截
+                  {{ tr.output_snapshot.verified_failed_count }} 条）：
                 </div>
                 <el-table
                   :data="tr.output_snapshot.verification_items as Array<Record<string, unknown>>"
@@ -1958,12 +2251,16 @@ onUnmounted(() => {
               </template>
 
               <!-- 针对 compilation 环节：展示八维度报告章节产出 -->
-              <template v-if="tr.phase === 'compilation' && tr.output_snapshot.dimensions_deliverables">
+              <template
+                v-if="tr.phase === 'compilation' && tr.output_snapshot.dimensions_deliverables"
+              >
                 <div class="sub-label">
                   本环节编制的八维度报告章节产出（版本 v{{ tr.output_snapshot.report_version }}）：
                 </div>
                 <el-table
-                  :data="tr.output_snapshot.dimensions_deliverables as Array<Record<string, unknown>>"
+                  :data="
+                    tr.output_snapshot.dimensions_deliverables as Array<Record<string, unknown>>
+                  "
                   border
                   size="small"
                 >
@@ -1971,7 +2268,10 @@ onUnmounted(() => {
                   <el-table-column prop="dimension_title" label="章节标题" width="180" />
                   <el-table-column label="状态" width="100">
                     <template #default="{ row }">
-                      <el-tag size="small" :type="row.status === 'COMPLETE' ? 'success' : 'warning'">
+                      <el-tag
+                        size="small"
+                        :type="row.status === 'COMPLETE' ? 'success' : 'warning'"
+                      >
                         {{ row.status === 'COMPLETE' ? '依据已核验' : '部分缺口' }}
                       </el-tag>
                     </template>
@@ -1984,7 +2284,9 @@ onUnmounted(() => {
 
               <!-- 工具调用与原始输入输出 JSON 快照 -->
               <div v-if="tr.tool_calls.length > 0" style="margin-top: 10px">
-                <div class="sub-label">本环节调用的 MCP 工具 / 模型记录 ({{ tr.tool_calls.length }})：</div>
+                <div class="sub-label">
+                  本环节调用的 MCP 工具 / 模型记录 ({{ tr.tool_calls.length }})：
+                </div>
                 <el-table :data="tr.tool_calls" border size="small">
                   <el-table-column prop="tool_label" label="工具/模型名称" min-width="160" />
                   <el-table-column prop="tool_name" label="方法标识" width="180" />
@@ -2015,14 +2317,8 @@ onUnmounted(() => {
       title="导出多智能体编排配置 (Dify-Compatible Workflow DSL)"
       width="720px"
     >
-      <el-alert
-        type="info"
-        :closable="false"
-        show-icon
-        style="margin-bottom: 12px"
-      >
-        导出的 JSON 配置包包含全部 7 个智能体节点的拓扑坐标、上下游连接边、MCP 工具绑定、I/O
-        Schema 与只读安全策略，可用于版本归档、长久维护与跨环境迁移。
+      <el-alert type="info" :closable="false" show-icon style="margin-bottom: 12px">
+        JSON 配置包包含工作流节点、连接关系、工具绑定与运行参数，可用于版本归档与跨环境迁移。
       </el-alert>
       <el-input
         v-model="exportedDslText"
@@ -2034,11 +2330,7 @@ onUnmounted(() => {
       <template #footer>
         <el-button @click="exportDialogVisible = false">关闭</el-button>
         <el-button @click="copyExportedJson">复制 JSON</el-button>
-        <el-button
-          type="primary"
-          data-testid="btn-download-dsl"
-          @click="downloadExportedJson"
-        >
+        <el-button type="primary" data-testid="btn-download-dsl" @click="downloadExportedJson">
           下载 .json 配置文件
         </el-button>
       </template>
@@ -2047,27 +2339,21 @@ onUnmounted(() => {
     <!-- 导入多智能体配置 JSON DSL 弹窗 -->
     <el-dialog
       v-model="importDialogVisible"
-      title="导入多智能体编排配置包（生成新版本并保持生产只读锁）"
+      title="导入多智能体编排配置包"
       width="720px"
     >
+      <el-alert type="info" :closable="false" style="margin-bottom: 16px">
+        导入后生成新版本，激活后供后续评估使用。
+      </el-alert>
       <div style="margin-bottom: 12px">
         <label style="font-weight: 600; display: block; margin-bottom: 6px">
           方式一：选择本地 .json 配置文件
         </label>
-        <input
-          type="file"
-          accept=".json,application/json"
-          @change="handleImportFileChange"
-        />
+        <input type="file" accept=".json,application/json" @change="handleImportFileChange" />
       </div>
       <div style="margin-bottom: 12px">
-        <label style="font-weight: 600; display: block; margin-bottom: 6px">
-          版本变更说明
-        </label>
-        <el-input
-          v-model="importChangeNote"
-          placeholder="填写本次导入维护说明"
-        />
+        <label style="font-weight: 600; display: block; margin-bottom: 6px"> 版本变更说明 </label>
+        <el-input v-model="importChangeNote" placeholder="填写本次导入维护说明" />
       </div>
       <div>
         <label style="font-weight: 600; display: block; margin-bottom: 6px">
@@ -2088,15 +2374,16 @@ onUnmounted(() => {
           data-testid="btn-confirm-import-workflow"
           @click="submitImportWorkflow"
         >
-          校验拓扑并导入为新版本
+          校验并保存（不激活）
         </el-button>
       </template>
     </el-dialog>
 
-    <!-- 10 道检索命中评测抽屉 -->
+    <!-- 工程来源标注集：真实检索、逐字核验、独立模型审查，人工复核单列 -->
     <el-drawer
       v-model="benchmarkDrawerVisible"
-      title="检索命中评测 (H01 - H10,自动检查,非法律准确率)"
+      append-to-body
+      title="分析质量评测 · 五国 / 八维度"
       size="65%"
     >
       <div v-loading="loadingBenchmarks">
@@ -2107,36 +2394,38 @@ onUnmounted(() => {
           <div class="benchmark-summary-cards">
             <div class="bm-card">
               <div class="bm-num">
-                {{ benchmarkData.hit_cases }} / {{ benchmarkData.total_cases }}
+                {{ benchmarkData.recall_at_5 === null ? '未评测' : `${(benchmarkData.recall_at_5 * 100).toFixed(1)}%` }}
               </div>
-              <div class="bm-label">
-                检索命中 ({{ benchmarkData.retrieval_hit_rate_pct }}%)
-              </div>
+              <div class="bm-label">Recall@5 · {{ benchmarkData.retrieval_hits }}/{{ benchmarkData.retrieval_expected }} 条期望条款</div>
+            </div>
+            <div class="bm-card">
+              <div class="bm-num">{{ benchmarkData.quote_fidelity === null ? '未评测' : `${(benchmarkData.quote_fidelity * 100).toFixed(1)}%` }}</div>
+              <div class="bm-label">引文忠实度 · {{ benchmarkData.faithful_findings }}/{{ benchmarkData.findings_total }} 条结论</div>
+            </div>
+            <div class="bm-card">
+              <div class="bm-num">{{ benchmarkData.fact_consistency === null ? '未评测' : `${(benchmarkData.fact_consistency * 100).toFixed(1)}%` }}</div>
+              <div class="bm-label">引文支持结论 · llm_judged · {{ benchmarkData.supported_findings }}/{{ benchmarkData.judged_findings }}</div>
+              <div class="bm-label">Judge覆盖 {{ benchmarkData.judged_findings }}/{{ benchmarkData.findings_total }} 条</div>
             </div>
             <div class="bm-card">
               <div class="bm-num">人工核对</div>
-              <div class="bm-label">{{ benchmarkData.human_review_status }}</div>
+              <div class="bm-label">
+                {{ benchmarkData.human_review_status }}
+              </div>
             </div>
           </div>
+          <p data-testid="evaluation-completeness">已完成 {{ benchmarkData.completed_cases }}/{{ benchmarkData.total_cases }} 题 · 当前案例记录中技术错误 {{ benchmarkData.technical_error_cases }} 题；被替代的历史尝试另存审计，不计入此处。</p>
+          <p>其中 {{ benchmarkData.cases.filter(c => c.findings_total > 0).length }} 题有分析项（含拒绝/失败尝试）；无输出不算引文通过。</p>
 
           <el-table :data="benchmarkData.cases" border stripe size="small" style="margin-top: 16px">
             <el-table-column prop="question_id" label="题号" width="65" />
             <el-table-column prop="country_code" label="国家" width="65" />
             <el-table-column prop="dimension_code" label="维度" width="65" />
             <el-table-column prop="scenario_question" label="测试问题" min-width="220" />
-            <el-table-column label="要求出现的原文词句" min-width="150">
-              <template #default="{ row }">{{ row.required_phrases.join(' + ') }}</template>
-            </el-table-column>
-            <el-table-column prop="matched_document_title" label="命中法规" min-width="160" />
-            <el-table-column prop="matched_clause_label" label="命中条款" width="100" />
-            <el-table-column label="检索命中" width="90">
-              <template #default="{ row }">
-                <el-tag :type="row.passed ? 'success' : 'danger'" size="small">
-                  {{ row.passed ? '命中' : '未命中' }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="evidence_snippet" label="命中的原文片段" min-width="220" />
+            <el-table-column label="期望条款" width="95"><template #default="{ row }">{{ row.retrieval_hits }}/{{ row.retrieval_expected }}</template></el-table-column>
+            <el-table-column label="引文通过" width="95"><template #default="{ row }">{{ row.faithful_findings }}/{{ row.findings_total }}</template></el-table-column>
+            <el-table-column label="Judge支持" width="100"><template #default="{ row }">{{ row.supported_findings }}/{{ row.judged_findings }}</template></el-table-column>
+            <el-table-column label="技术错误记录" min-width="180"><template #default="{ row }">{{ row.retrieval_error || row.analysis_error || row.judge_error || '无' }}</template></el-table-column>
           </el-table>
         </template>
       </div>
@@ -2145,6 +2434,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.runtime-settings { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; max-height: 240px; overflow: auto; }
 .agent-studio-page {
   display: flex;
   flex-direction: column;
@@ -2177,7 +2467,7 @@ onUnmounted(() => {
   background: linear-gradient(135deg, #1d4ed8, #4f46e5);
   color: #fff;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
   padding: 6px 10px;
   border-radius: 6px;
   letter-spacing: 0.3px;
@@ -2211,7 +2501,7 @@ onUnmounted(() => {
 }
 
 .ctrl-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #475569;
   font-weight: 600;
 }
@@ -2253,7 +2543,7 @@ onUnmounted(() => {
 }
 
 .zoom-text {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #334155;
   min-width: 42px;
@@ -2335,14 +2625,14 @@ onUnmounted(() => {
 }
 
 .node-type-pill {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 999px;
 }
 
 .node-lock-tag {
-  font-size: 11px;
+  font-size: 13px;
   color: #64748b;
   font-weight: 600;
 }
@@ -2355,7 +2645,7 @@ onUnmounted(() => {
 }
 
 .node-card-subtitle {
-  font-size: 11px;
+  font-size: 13px;
   color: #64748b;
   margin-bottom: 8px;
 }
@@ -2364,7 +2654,7 @@ onUnmounted(() => {
   background: #f8fafc;
   border-radius: 6px;
   padding: 6px 8px;
-  font-size: 11px;
+  font-size: 13px;
   border: 1px solid #f1f5f9;
 }
 
@@ -2393,7 +2683,7 @@ onUnmounted(() => {
 }
 
 .trace-ms {
-  font-size: 11px;
+  font-size: 13px;
   color: #475569;
   font-weight: 600;
 }
@@ -2433,7 +2723,7 @@ onUnmounted(() => {
 }
 
 .inspector-node-sub {
-  font-size: 12px;
+  font-size: 13px;
   color: #64748b;
   margin-top: 4px;
 }
@@ -2461,13 +2751,13 @@ onUnmounted(() => {
 
 .sec-desc {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 13px;
   color: #334155;
   line-height: 1.6;
 }
 
 .link-sub {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #475569;
   margin-bottom: 4px;
@@ -2487,20 +2777,20 @@ onUnmounted(() => {
 }
 
 .link-node-name {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   color: #1e293b;
   margin-left: 6px;
 }
 
 .link-cond {
-  font-size: 11.5px;
+  font-size: 13px;
   color: #64748b;
   margin-top: 3px;
 }
 
 .empty-link {
-  font-size: 12px;
+  font-size: 13px;
   color: #94a3b8;
 }
 
@@ -2512,7 +2802,7 @@ onUnmounted(() => {
 
 .form-item label {
   display: block;
-  font-size: 11.5px;
+  font-size: 13px;
   color: #475569;
   margin-bottom: 3px;
 }
@@ -2522,11 +2812,11 @@ onUnmounted(() => {
   color: #38bdf8;
   padding: 8px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .io-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #475569;
   margin-bottom: 4px;
@@ -2554,13 +2844,13 @@ onUnmounted(() => {
 }
 
 .tool-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: #475569;
   margin: 0 0 8px 0;
 }
 
 .tool-schema-row {
-  font-size: 11.5px;
+  font-size: 13px;
   color: #334155;
   display: flex;
   flex-direction: column;
@@ -2588,13 +2878,13 @@ onUnmounted(() => {
 }
 
 .trace-metrics {
-  font-size: 11.5px;
+  font-size: 13px;
   color: #475569;
   font-weight: 600;
 }
 
 .trace-summary {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #0f172a;
   line-height: 1.5;
@@ -2606,7 +2896,7 @@ onUnmounted(() => {
   background: #ffedd5;
   border-left: 3px solid #ea580c;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 13px;
   color: #9a3412;
 }
 
@@ -2615,7 +2905,7 @@ onUnmounted(() => {
 }
 
 .sub-label {
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   color: #334155;
   margin-bottom: 4px;
@@ -2627,7 +2917,7 @@ onUnmounted(() => {
   border-radius: 6px;
   padding: 6px 8px;
   margin-bottom: 6px;
-  font-size: 11.5px;
+  font-size: 13px;
 }
 
 .tc-top {
@@ -2641,7 +2931,7 @@ onUnmounted(() => {
   color: #e2e8f0;
   padding: 6px 8px;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 13px;
   overflow-x: auto;
   max-height: 140px;
 }
@@ -2667,7 +2957,7 @@ onUnmounted(() => {
 }
 
 .bm-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #475569;
   margin-top: 4px;
 }
@@ -2726,7 +3016,9 @@ onUnmounted(() => {
 
 .dify-node-card.is-live-running {
   border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.28), 0 8px 24px rgba(37, 99, 235, 0.22);
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.28),
+    0 8px 24px rgba(37, 99, 235, 0.22);
   animation: pulse-card 1.5s infinite ease-in-out;
 }
 
@@ -2738,10 +3030,14 @@ onUnmounted(() => {
 @keyframes pulse-card {
   0%,
   100% {
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22), 0 6px 18px rgba(37, 99, 235, 0.16);
+    box-shadow:
+      0 0 0 3px rgba(37, 99, 235, 0.22),
+      0 6px 18px rgba(37, 99, 235, 0.16);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.35), 0 10px 26px rgba(37, 99, 235, 0.28);
+    box-shadow:
+      0 0 0 6px rgba(37, 99, 235, 0.35),
+      0 10px 26px rgba(37, 99, 235, 0.28);
   }
 }
 
@@ -2751,7 +3047,7 @@ onUnmounted(() => {
   border-radius: 6px;
   background: linear-gradient(90deg, #2563eb, #1d4ed8);
   color: #ffffff;
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   text-align: center;
 }
@@ -2763,7 +3059,7 @@ onUnmounted(() => {
   background: #ecfeff;
   border: 1px solid #a5f3fc;
   color: #0e7490;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   text-align: center;
 }
@@ -2795,13 +3091,13 @@ onUnmounted(() => {
 }
 
 .cell-muted {
-  font-size: 11.5px;
+  font-size: 13px;
   color: #64748b;
 }
 
 .cell-active-node {
   margin-top: 4px;
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   color: #1d4ed8;
 }
@@ -2827,7 +3123,7 @@ onUnmounted(() => {
 }
 
 .stage-meta-text {
-  font-size: 12.5px;
+  font-size: 13px;
   color: #334155;
   font-weight: 600;
 }
@@ -2871,7 +3167,7 @@ onUnmounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -2894,5 +3190,246 @@ onUnmounted(() => {
   margin-bottom: 6px;
   font-size: 13px;
   color: #0f172a;
+}
+
+.agent-studio-page {
+  height: calc(100dvh - 145px);
+  min-height: 700px;
+  border-radius: 14px;
+  background: #fff;
+  border-color: var(--cy-line);
+}
+.studio-topbar {
+  padding: 20px 24px;
+  gap: 18px;
+}
+.topbar-left {
+  gap: 12px;
+}
+.workflow-title {
+  font-size: 23px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.studio-badge {
+  display: none;
+}
+.workflow-meta {
+  gap: 8px;
+}
+.topbar-actions {
+  gap: 10px;
+}
+.ctrl-label {
+  font-size: 12px;
+  color: #8493a0;
+  font-weight: 400;
+}
+.canvas-wrapper {
+  background-color: #f7f9fc;
+  background-image: radial-gradient(#dce4ed 0.8px, transparent 0.8px);
+  background-size: 22px 22px;
+}
+.canvas-floating-bar {
+  padding: 12px 16px;
+  gap: 10px;
+}
+.canvas-floating-bar .el-tag {
+  background: transparent;
+  border-color: transparent;
+  color: #8293a0;
+}
+.dify-node-card {
+  border-width: 1px;
+  padding: 16px;
+  border-color: #d9e2ed;
+  box-shadow: 0 4px 16px #273f5810;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
+}
+.dify-node-card.active {
+  border-width: 2px;
+  box-shadow: 0 5px 20px #315fe817;
+}
+.node-card-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+.node-card-subtitle {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.inspector-sidebar {
+  width: 370px;
+  max-width: 40%;
+  min-width: 300px;
+  background: #fff;
+}
+.live-monitor-bar {
+  background: #f9fbfd;
+  border-color: var(--cy-line);
+  padding: 12px 20px;
+  gap: 12px;
+}
+.live-monitor-left,
+.live-monitor-right {
+  gap: 10px;
+}
+.live-monitor-left .el-tag,
+.live-monitor-right .el-tag {
+  font-size: 12px;
+}
+.live-monitor-bar .el-tag--dark {
+  background: #edf3fa;
+  border-color: #dce5ee;
+  color: #506d89;
+}
+.live-dot {
+  display: none;
+}
+.readonly-banner {
+  background: #f4f6f9;
+  border-radius: 8px;
+}
+.history-filter-bar,
+.stage-drawer-actions {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.trace-step-card {
+  padding: 18px;
+}
+.form-item label {
+  font-size: 13px;
+}
+.node-type-pill,
+.node-lock-tag {
+  font-size: 11px;
+}
+@media (max-width: 1100px) {
+  .studio-topbar {
+    padding: 18px;
+  }
+  .topbar-actions {
+    width: 100%;
+  }
+  .inspector-sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+    box-shadow: -8px 0 32px #263e5522;
+    max-width: 90%;
+  }
+  .studio-workspace {
+    position: relative;
+  }
+  .live-monitor-left,
+  .live-monitor-right {
+    flex-wrap: wrap;
+  }
+  .task-selector .el-select {
+    width: 240px !important;
+  }
+}
+@media (max-width: 800px) {
+  .agent-studio-page {
+    height: auto;
+    min-height: 820px;
+  }
+  .studio-workspace {
+    min-height: 550px;
+  }
+  .studio-topbar {
+    padding: 16px;
+  }
+  .topbar-actions {
+    align-items: flex-start;
+  }
+  .task-selector {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .task-selector .el-select {
+    width: 100% !important;
+  }
+  .live-monitor-bar {
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+  .canvas-floating-bar {
+    gap: 4px;
+  }
+  .canvas-stage {
+    transform-origin: 0 0;
+  }
+  .inspector-sidebar {
+    min-width: 0;
+    width: 340px;
+  }
+  .zoom-controls {
+    margin-left: 0;
+  }
+}
+
+/* Node cards show the business role; implementation details remain in the inspector. */
+.node-card-subtitle,
+.node-lock-tag {
+  display: none;
+}
+.node-card-meta .meta-row:first-child {
+  display: none;
+}
+.node-card-title {
+  font-size: 18px;
+  line-height: 1.5;
+}
+.task-metrics-list {
+  display: grid;
+  gap: 10px;
+}
+.layout-hint {
+  padding: 9px 16px;
+  color: #667b8b;
+  font-size: 12px;
+  border-bottom: 1px solid #e7edf3;
+  background: #ffffffa8;
+}
+.canvas-extent {
+  position: relative;
+}
+.canvas-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.canvas-scroll-area {
+  min-height: 360px;
+}
+.dify-node-card {
+  cursor: grab;
+  touch-action: none;
+}
+.dify-node-card:hover {
+  transform: none;
+}
+.dify-node-card.is-dragging {
+  cursor: grabbing;
+  z-index: 4;
+  transition: none;
+  box-shadow: 0 10px 30px #263e552b;
+}
+.dify-node-card.active {
+  border-width: 1px;
+}
+.port-dot {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.node-trace-footer {
+  flex-wrap: wrap;
+  gap: 6px;
 }
 </style>

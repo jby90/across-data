@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import uuid
 from dataclasses import dataclass, field
@@ -13,7 +14,7 @@ from datetime import UTC, datetime
 from posixpath import basename
 from urllib.parse import unquote, urlsplit
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.ingestion.archive import ArchiveStore
@@ -42,7 +43,8 @@ from app.ingestion.parsing import (
     strip_running_headers,
     text_layer_garbled,
 )
-from app.sources.models import CrawlRun, RunStatus, SourceSite, Strategy, TermsStatus
+from app.sources.models import CrawlRun, RunStatus, SourceSite, Strategy
+from app.sources.permissions import terms_permit_crawl
 
 log = logging.getLogger(__name__)
 
@@ -96,9 +98,7 @@ _IRRELEVANT_HINTS = (
 )
 
 
-def assess_document_relevance(
-    title: str, source_url: str, document_type: str
-) -> tuple[str, str]:
+def assess_document_relevance(title: str, source_url: str, document_type: str) -> tuple[str, str]:
     """文件级相关性初判(S3 采集阶段记录,不删除文档,供 S2 过滤)。"""
     doc_type = (document_type or "").upper()
     haystack = f"{title or ''} {source_url or ''}".lower()
@@ -181,11 +181,48 @@ async def parse_version(
     language: str,
     ocr: OcrEngine | None = None,
 ) -> None:
-    """解析某个版本并写入条款。可重复调用(会先清掉该版本旧条款)。不负责 commit。"""
-    await session.execute(delete(Clause).where(Clause.version_id == version.id))
+    """解析尚未条款化的版本。已有条款不可原位重建，避免历史证据失效。"""
+    existing = await session.scalar(
+        select(Clause.id).where(Clause.version_id == version.id).limit(1)
+    )
+    if existing is not None:
+        try:
+            archive.read(version.archive_path)
+        except Exception as exc:
+            version.state = VersionState.FAILED.value
+            version.error = str(exc)
+            session.add(
+                PipelineEvent(
+                    version_id=version.id,
+                    step="parse",
+                    status="error",
+                    message="原文完整性检查失败，已有条款与引用保留: " + str(exc),
+                )
+            )
+            return
+        session.add(
+            PipelineEvent(
+                version_id=version.id,
+                step="parse",
+                status="ok",
+                message=(
+                    "preserved_existing_clauses: 已有条款保留；重新解析须建立独立解析修订并审核差异"
+                ),
+            )
+        )
+        return
     try:
         content = archive.read(version.archive_path)
         parsed = await asyncio.to_thread(parse_document, content, version.mime_type)
+        for layout in parsed.layout_events:
+            session.add(
+                PipelineEvent(
+                    version_id=version.id,
+                    step="parse_layout",
+                    status="ok",
+                    message=json.dumps(layout, ensure_ascii=False),
+                )
+            )
         version.page_count = len(parsed.pages)
         version.char_count = parsed.char_count
         version.text_source = "text_layer"
@@ -274,6 +311,7 @@ async def parse_version(
                 )
             )
         version.state = VersionState.PARSED.value
+        version.parsed_at = _now()
         version.parse_strategy = strategy
         version.error = None
         session.add(
@@ -312,6 +350,34 @@ async def parse_version(
         )
         log.warning("解析失败 version=%s: %s", version.id, e)
 
+    if version.state == VersionState.PARSED.value:
+        await session.flush()
+        try:
+            async with session.begin_nested():
+                from app.knowledge.legal_terms import rebuild_library
+
+                result = await rebuild_library(session, document_id=version.document_id)
+            session.add(
+                PipelineEvent(
+                    version_id=version.id,
+                    step="terminology",
+                    status="ok",
+                    message=f"新增来源定义 {result['definitions_added']} 条",
+                )
+            )
+        except (
+            Exception
+        ) as exc:  # A derived index failure must not discard successfully parsed sources.
+            session.add(
+                PipelineEvent(
+                    version_id=version.id,
+                    step="terminology",
+                    status="error",
+                    message=f"术语索引待重试: {type(exc).__name__}",
+                )
+            )
+            log.warning("术语索引失败 version=%s: %s", version.id, type(exc).__name__)
+
 
 async def _process_candidate(
     sf: SessionFactory,
@@ -322,6 +388,9 @@ async def _process_candidate(
     stats: Stats,
     ocr: OcrEngine | None = None,
 ) -> None:
+    from app.updates.service import note_discovery, observe_fetch
+
+    await note_discovery(sf, site, cand)
     async with sf() as s:
         doc = (
             await s.execute(
@@ -383,20 +452,39 @@ async def _process_candidate(
             return
 
         doc.last_checked_at = _now()
+        observed_at = _now()
         doc.last_error = None
         if res.not_modified or res.content is None:
+            if latest is not None:
+                body = archive.read(latest.archive_path)
+                if ArchiveStore.sha256(body) != latest.content_hash:
+                    raise ValueError("已有归档哈希不匹配，不能记录来源观察")
+                await observe_fetch(s, doc, latest, observed_at=observed_at)
             await s.commit()
             return
 
         existing = (
             await s.execute(
-                select(DocumentVersion.id).where(
+                select(DocumentVersion).where(
                     DocumentVersion.document_id == doc.id,
                     DocumentVersion.content_hash == ArchiveStore.sha256(res.content),
                 )
             )
-        ).first()
+        ).scalar_one_or_none()
         if existing is not None:  # 内容与某个已有版本完全相同,不产生新版本
+            body = archive.read(existing.archive_path)
+            if ArchiveStore.sha256(body) != existing.content_hash:
+                raise ValueError("已有归档哈希不匹配，不能记录来源观察")
+            await observe_fetch(s, doc, existing, archived_previous=latest, observed_at=observed_at)
+            s.add(
+                PipelineEvent(
+                    version_id=existing.id,
+                    step="refetch",
+                    status="ok",
+                    message=f"真实重新下载与已有归档一致，sha256={existing.content_hash}；"
+                    f"final_url={res.url}",
+                )
+            )
             await s.commit()
             return
 
@@ -429,6 +517,11 @@ async def _process_candidate(
         )
         stats.versions_new += 1
         await parse_version(s, archive, version, site.language, ocr)
+        await observe_fetch(s, doc, version, archived_previous=latest, observed_at=observed_at)
+        if version.state in (VersionState.FAILED.value, VersionState.NEEDS_OCR.value):
+            doc.last_error = version.error or f"原文尚未解析完成: {version.state}"
+            stats.errors += 1
+            stats.messages.append(f"{cand.url}: {doc.last_error}")
         await s.commit()
 
 
@@ -450,10 +543,10 @@ async def ingest_site(
         s.add(run)
         await s.flush()
         run_id = run.id
-        if site_row.terms_status != TermsStatus.APPROVED.value:
+        if not terms_permit_crawl(site_row):
             run.status = RunStatus.SKIPPED.value
             run.finished_at = _now()
-            run.message = "来源使用条款尚未确认,未执行抓取"
+            run.message = "来源使用条款尚未确认或确认范围不适用于当前环境,未执行抓取"
             await s.commit()
             return run_id
         site = SiteSnapshot(
@@ -484,9 +577,11 @@ async def ingest_site(
             message = "未发现任何原文链接,请检查站点配置或页面结构是否变化"
     except (BlockedError, FetchError) as e:
         status = RunStatus.FAILED
+        stats.errors += 1
         message = str(e)[:2000]
     except Exception as e:  # noqa: BLE001
         status = RunStatus.FAILED
+        stats.errors += 1
         message = f"{type(e).__name__}: {e}"[:2000]
         log.exception("站点采集异常 site=%s", site_id)
 

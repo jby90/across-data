@@ -1,6 +1,6 @@
 import uuid
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from app.iam.models import Role
 
@@ -38,6 +38,18 @@ class OrgOut(BaseModel):
     id: uuid.UUID
     name: str
     is_active: bool
+    llm_redaction_terms: list[str] = Field(default_factory=list)
+
+
+class RedactionTermsIn(BaseModel):
+    terms: list[str] = Field(max_length=100)
+
+    @field_validator("terms")
+    @classmethod
+    def validate_terms(cls, terms):
+        if any(not 2 <= len(v.strip()) <= 200 for v in terms):
+            raise ValueError("每个脱敏词应为 2–200 字符")
+        return list(dict.fromkeys(v.strip() for v in terms))
 
 
 class UserCreate(BaseModel):

@@ -1,0 +1,1455 @@
+{
+  "scope": "锁定开发环境及生产直接/传递依赖；不代表所有包均进入生产镜像。原生运行库见部署 SBOM。人工法务确认待完成。",
+  "dependencies": [
+    {
+      "ecosystem": "js",
+      "name": "@babel/helper-string-parser",
+      "version": "7.29.7",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@babel/helper-string-parser/v/7.29.7"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@babel/helper-string-parser",
+      "version": "8.0.6",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@babel/helper-string-parser/v/8.0.6"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@babel/helper-validator-identifier",
+      "version": "7.29.7",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@babel/helper-validator-identifier/v/7.29.7"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@babel/helper-validator-identifier",
+      "version": "8.0.6",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@babel/helper-validator-identifier/v/8.0.6"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@babel/parser",
+      "version": "7.29.9",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@babel/parser/v/7.29.9"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@babel/parser",
+      "version": "8.0.7",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@babel/parser/v/8.0.7"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@babel/types",
+      "version": "7.29.8",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@babel/types/v/7.29.8"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@babel/types",
+      "version": "8.0.6",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@babel/types/v/8.0.6"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@ctrl/tinycolor",
+      "version": "4.2.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@ctrl/tinycolor/v/4.2.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@element-plus/icons-vue",
+      "version": "2.3.2",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@element-plus/icons-vue/v/2.3.2"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@floating-ui/core",
+      "version": "1.8.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@floating-ui/core/v/1.8.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@floating-ui/dom",
+      "version": "1.8.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@floating-ui/dom/v/1.8.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@floating-ui/utils",
+      "version": "0.2.12",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@floating-ui/utils/v/0.2.12"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@fontsource/inter",
+      "version": "5.3.0",
+      "license": "OFL-1.1",
+      "source": "https://www.npmjs.com/package/@fontsource/inter/v/5.3.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@fontsource/noto-naskh-arabic",
+      "version": "5.3.0",
+      "license": "OFL-1.1",
+      "source": "https://www.npmjs.com/package/@fontsource/noto-naskh-arabic/v/5.3.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@fontsource/noto-sans-sc",
+      "version": "5.3.1",
+      "license": "OFL-1.1",
+      "source": "https://www.npmjs.com/package/@fontsource/noto-sans-sc/v/5.3.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@jridgewell/gen-mapping",
+      "version": "0.3.13",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@jridgewell/gen-mapping/v/0.3.13"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@jridgewell/remapping",
+      "version": "2.3.5",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@jridgewell/remapping/v/2.3.5"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@jridgewell/resolve-uri",
+      "version": "3.1.2",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@jridgewell/resolve-uri/v/3.1.2"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@jridgewell/sourcemap-codec",
+      "version": "1.6.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@jridgewell/sourcemap-codec/v/1.6.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@jridgewell/trace-mapping",
+      "version": "0.3.31",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@jridgewell/trace-mapping/v/0.3.31"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@oxc-project/types",
+      "version": "0.155.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@oxc-project/types/v/0.155.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@rolldown/pluginutils",
+      "version": "1.0.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@rolldown/pluginutils/v/1.0.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@sxzz/popperjs-es",
+      "version": "2.11.8",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@sxzz/popperjs-es/v/2.11.8"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@types/estree",
+      "version": "1.0.9",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@types/estree/v/1.0.9"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@types/lodash",
+      "version": "4.17.27",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@types/lodash/v/4.17.27"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@types/lodash-es",
+      "version": "4.17.12",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@types/lodash-es/v/4.17.12"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@types/web-bluetooth",
+      "version": "0.0.21",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@types/web-bluetooth/v/0.0.21"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue-macros/common",
+      "version": "3.1.4",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue-macros/common/v/3.1.4"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/compiler-core",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/compiler-core/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/compiler-dom",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/compiler-dom/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/compiler-sfc",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/compiler-sfc/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/compiler-ssr",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/compiler-ssr/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/devtools-api",
+      "version": "8.2.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/devtools-api/v/8.2.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/devtools-kit",
+      "version": "8.2.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/devtools-kit/v/8.2.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/devtools-shared",
+      "version": "8.2.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/devtools-shared/v/8.2.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/reactivity",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/reactivity/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/runtime-core",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/runtime-core/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/runtime-dom",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/runtime-dom/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/server-renderer",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/server-renderer/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vue/shared",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vue/shared/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vueuse/core",
+      "version": "15.0.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vueuse/core/v/15.0.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vueuse/metadata",
+      "version": "15.0.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vueuse/metadata/v/15.0.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "@vueuse/shared",
+      "version": "15.0.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/@vueuse/shared/v/15.0.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "acorn",
+      "version": "8.19.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/acorn/v/8.19.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "ast-kit",
+      "version": "2.2.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/ast-kit/v/2.2.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "ast-kit",
+      "version": "3.0.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/ast-kit/v/3.0.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "ast-walker-scope",
+      "version": "0.10.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/ast-walker-scope/v/0.10.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "async-validator",
+      "version": "4.2.5",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/async-validator/v/4.2.5"
+    },
+    {
+      "ecosystem": "js",
+      "name": "birpc",
+      "version": "2.9.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/birpc/v/2.9.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "chokidar",
+      "version": "5.0.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/chokidar/v/5.0.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "confbox",
+      "version": "0.1.8",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/confbox/v/0.1.8"
+    },
+    {
+      "ecosystem": "js",
+      "name": "confbox",
+      "version": "0.3.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/confbox/v/0.3.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "csstype",
+      "version": "3.2.3",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/csstype/v/3.2.3"
+    },
+    {
+      "ecosystem": "js",
+      "name": "dayjs",
+      "version": "1.11.23",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/dayjs/v/1.11.23"
+    },
+    {
+      "ecosystem": "js",
+      "name": "detect-libc",
+      "version": "2.1.2",
+      "license": "Apache-2.0",
+      "source": "https://www.npmjs.com/package/detect-libc/v/2.1.2"
+    },
+    {
+      "ecosystem": "js",
+      "name": "echarts",
+      "version": "6.1.0",
+      "license": "Apache-2.0",
+      "source": "https://www.npmjs.com/package/echarts/v/6.1.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "element-plus",
+      "version": "2.14.7",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/element-plus/v/2.14.7"
+    },
+    {
+      "ecosystem": "js",
+      "name": "entities",
+      "version": "7.0.1",
+      "license": "BSD-2-Clause",
+      "source": "https://www.npmjs.com/package/entities/v/7.0.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "estree-walker",
+      "version": "2.0.2",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/estree-walker/v/2.0.2"
+    },
+    {
+      "ecosystem": "js",
+      "name": "estree-walker",
+      "version": "3.0.3",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/estree-walker/v/3.0.3"
+    },
+    {
+      "ecosystem": "js",
+      "name": "exsolve",
+      "version": "1.1.3",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/exsolve/v/1.1.3"
+    },
+    {
+      "ecosystem": "js",
+      "name": "fdir",
+      "version": "6.5.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/fdir/v/6.5.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "hookable",
+      "version": "5.5.3",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/hookable/v/5.5.3"
+    },
+    {
+      "ecosystem": "js",
+      "name": "lightningcss",
+      "version": "1.33.0",
+      "license": "MPL-2.0",
+      "source": "https://www.npmjs.com/package/lightningcss/v/1.33.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "local-pkg",
+      "version": "1.2.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/local-pkg/v/1.2.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "lodash",
+      "version": "4.18.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/lodash/v/4.18.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "lodash-es",
+      "version": "4.18.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/lodash-es/v/4.18.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "lodash-unified",
+      "version": "1.0.3",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/lodash-unified/v/1.0.3"
+    },
+    {
+      "ecosystem": "js",
+      "name": "magic-string",
+      "version": "0.30.21",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/magic-string/v/0.30.21"
+    },
+    {
+      "ecosystem": "js",
+      "name": "magic-string",
+      "version": "1.4.3",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/magic-string/v/1.4.3"
+    },
+    {
+      "ecosystem": "js",
+      "name": "magic-string-ast",
+      "version": "1.0.3",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/magic-string-ast/v/1.0.3"
+    },
+    {
+      "ecosystem": "js",
+      "name": "memoize-one",
+      "version": "6.0.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/memoize-one/v/6.0.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "mlly",
+      "version": "1.8.2",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/mlly/v/1.8.2"
+    },
+    {
+      "ecosystem": "js",
+      "name": "muggle-string",
+      "version": "0.4.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/muggle-string/v/0.4.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "nanoid",
+      "version": "3.3.20",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/nanoid/v/3.3.20"
+    },
+    {
+      "ecosystem": "js",
+      "name": "normalize-wheel-es",
+      "version": "1.2.0",
+      "license": "BSD-3-Clause",
+      "source": "https://www.npmjs.com/package/normalize-wheel-es/v/1.2.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "nostics",
+      "version": "1.3.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/nostics/v/1.3.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "pathe",
+      "version": "2.0.3",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/pathe/v/2.0.3"
+    },
+    {
+      "ecosystem": "js",
+      "name": "perfect-debounce",
+      "version": "2.1.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/perfect-debounce/v/2.1.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "picocolors",
+      "version": "1.1.1",
+      "license": "ISC",
+      "source": "https://www.npmjs.com/package/picocolors/v/1.1.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "picomatch",
+      "version": "4.0.7",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/picomatch/v/4.0.7"
+    },
+    {
+      "ecosystem": "js",
+      "name": "pinia",
+      "version": "4.1.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/pinia/v/4.1.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "pkg-types",
+      "version": "1.3.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/pkg-types/v/1.3.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "pkg-types",
+      "version": "2.4.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/pkg-types/v/2.4.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "postcss",
+      "version": "8.5.31",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/postcss/v/8.5.31"
+    },
+    {
+      "ecosystem": "js",
+      "name": "quansync",
+      "version": "0.2.11",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/quansync/v/0.2.11"
+    },
+    {
+      "ecosystem": "js",
+      "name": "readdirp",
+      "version": "5.1.1",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/readdirp/v/5.1.1"
+    },
+    {
+      "ecosystem": "js",
+      "name": "rolldown",
+      "version": "1.2.15",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/rolldown/v/1.2.15"
+    },
+    {
+      "ecosystem": "js",
+      "name": "scule",
+      "version": "1.3.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/scule/v/1.3.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "source-map-js",
+      "version": "1.2.2",
+      "license": "BSD-3-Clause",
+      "source": "https://www.npmjs.com/package/source-map-js/v/1.2.2"
+    },
+    {
+      "ecosystem": "js",
+      "name": "tinyglobby",
+      "version": "0.2.17",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/tinyglobby/v/0.2.17"
+    },
+    {
+      "ecosystem": "js",
+      "name": "tslib",
+      "version": "2.3.0",
+      "license": "0BSD",
+      "source": "https://www.npmjs.com/package/tslib/v/2.3.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "typescript",
+      "version": "5.9.3",
+      "license": "Apache-2.0",
+      "source": "https://www.npmjs.com/package/typescript/v/5.9.3"
+    },
+    {
+      "ecosystem": "js",
+      "name": "ufo",
+      "version": "1.6.4",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/ufo/v/1.6.4"
+    },
+    {
+      "ecosystem": "js",
+      "name": "unplugin",
+      "version": "3.4.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/unplugin/v/3.4.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "unplugin-utils",
+      "version": "0.3.2",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/unplugin-utils/v/0.3.2"
+    },
+    {
+      "ecosystem": "js",
+      "name": "vite",
+      "version": "8.3.5",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/vite/v/8.3.5"
+    },
+    {
+      "ecosystem": "js",
+      "name": "vue",
+      "version": "3.5.44",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/vue/v/3.5.44"
+    },
+    {
+      "ecosystem": "js",
+      "name": "vue-component-type-helpers",
+      "version": "3.3.13",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/vue-component-type-helpers/v/3.3.13"
+    },
+    {
+      "ecosystem": "js",
+      "name": "vue-router",
+      "version": "5.4.0",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/vue-router/v/5.4.0"
+    },
+    {
+      "ecosystem": "js",
+      "name": "webpack-virtual-modules",
+      "version": "0.6.2",
+      "license": "MIT",
+      "source": "https://www.npmjs.com/package/webpack-virtual-modules/v/0.6.2"
+    },
+    {
+      "ecosystem": "js",
+      "name": "zrender",
+      "version": "6.1.0",
+      "license": "BSD-3-Clause",
+      "source": "https://www.npmjs.com/package/zrender/v/6.1.0"
+    },
+    {
+      "ecosystem": "py",
+      "name": "Mako",
+      "version": "1.4.3",
+      "license": "MIT",
+      "source": "https://pypi.org/project/Mako/1.4.3/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "MarkupSafe",
+      "version": "3.0.4",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/MarkupSafe/3.0.4/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "PyJWT",
+      "version": "2.15.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/PyJWT/2.15.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "PyYAML",
+      "version": "6.0.3",
+      "license": "MIT",
+      "source": "https://pypi.org/project/PyYAML/6.0.3/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "Pygments",
+      "version": "2.21.0",
+      "license": "BSD-2-Clause",
+      "source": "https://pypi.org/project/Pygments/2.21.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "SQLAlchemy",
+      "version": "2.1.6",
+      "license": "MIT",
+      "source": "https://pypi.org/project/SQLAlchemy/2.1.6/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "alembic",
+      "version": "1.20.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/alembic/1.20.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "annotated-doc",
+      "version": "0.0.5",
+      "license": "MIT",
+      "source": "https://pypi.org/project/annotated-doc/0.0.5/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "annotated-types",
+      "version": "0.8.0",
+      "license": "MIT",
+      "source": "https://pypi.org/project/annotated-types/0.8.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "anyio",
+      "version": "4.15.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/anyio/4.15.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "argon2-cffi",
+      "version": "25.1.0",
+      "license": "MIT",
+      "source": "https://pypi.org/project/argon2-cffi/25.1.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "argon2-cffi-bindings",
+      "version": "26.1.0",
+      "license": "MIT",
+      "source": "https://pypi.org/project/argon2-cffi-bindings/26.1.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "asyncpg",
+      "version": "0.32.0",
+      "license": "Apache-2.0",
+      "source": "https://pypi.org/project/asyncpg/0.32.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "beautifulsoup4",
+      "version": "4.15.0",
+      "license": "MIT License",
+      "source": "https://pypi.org/project/beautifulsoup4/4.15.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "brotli",
+      "version": "1.2.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/brotli/1.2.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "certifi",
+      "version": "2026.10.19",
+      "license": "MPL-2.0",
+      "source": "https://pypi.org/project/certifi/2026.10.19/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "cffi",
+      "version": "2.1.1",
+      "license": "MIT-0",
+      "source": "https://pypi.org/project/cffi/2.1.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "click",
+      "version": "8.5.0",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/click/8.5.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "colorama",
+      "version": "0.4.6",
+      "license": "BSD License",
+      "source": "https://pypi.org/project/colorama/0.4.6/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "cssselect2",
+      "version": "0.10.1",
+      "license": "BSD License",
+      "source": "https://pypi.org/project/cssselect2/0.10.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "dnspython",
+      "version": "2.9.0",
+      "license": "ISC",
+      "source": "https://pypi.org/project/dnspython/2.9.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "email-validator",
+      "version": "2.3.0",
+      "license": "Unlicense",
+      "source": "https://pypi.org/project/email-validator/2.3.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "fastapi",
+      "version": "0.159.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/fastapi/0.159.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "fasteners",
+      "version": "0.20",
+      "license": "Apache-2.0",
+      "source": "https://pypi.org/project/fasteners/0.20/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "fonttools",
+      "version": "4.67.0",
+      "license": "MIT",
+      "source": "https://pypi.org/project/fonttools/4.67.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "greenlet",
+      "version": "3.5.6",
+      "license": "MIT AND PSF-2.0",
+      "source": "https://pypi.org/project/greenlet/3.5.6/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "h11",
+      "version": "0.16.0",
+      "license": "MIT",
+      "source": "https://pypi.org/project/h11/0.16.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "httpcore",
+      "version": "1.0.9",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/httpcore/1.0.9/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "httptools",
+      "version": "0.9.0",
+      "license": "MIT",
+      "source": "https://pypi.org/project/httptools/0.9.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "httpx",
+      "version": "0.28.1",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/httpx/0.28.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "idna",
+      "version": "3.20",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/idna/3.20/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "iniconfig",
+      "version": "2.3.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/iniconfig/2.3.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "opentelemetry-api",
+      "version": "1.45.1",
+      "license": "Apache-2.0",
+      "source": "https://pypi.org/project/opentelemetry-api/1.45.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "packaging",
+      "version": "26.3",
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "source": "https://pypi.org/project/packaging/26.3/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pgserver",
+      "version": "0.1.4",
+      "license": "Apache-2.0",
+      "source": "https://pypi.org/project/pgserver/0.1.4/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pillow",
+      "version": "13.0.0",
+      "license": "MIT-CMU",
+      "source": "https://pypi.org/project/pillow/13.0.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pip-licenses",
+      "version": "5.5.5",
+      "license": "MIT",
+      "source": "https://pypi.org/project/pip-licenses/5.5.5/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "platformdirs",
+      "version": "4.13.5",
+      "license": "MIT",
+      "source": "https://pypi.org/project/platformdirs/4.13.5/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "playwright",
+      "version": "1.64.0",
+      "license": "Apache-2.0",
+      "source": "https://pypi.org/project/playwright/1.64.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pluggy",
+      "version": "1.7.0",
+      "license": "MIT License",
+      "source": "https://pypi.org/project/pluggy/1.7.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "prettytable",
+      "version": "3.18.0",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/prettytable/3.18.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "psutil",
+      "version": "7.2.2",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/psutil/7.2.2/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pycparser",
+      "version": "3.11",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/pycparser/3.11/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pydantic",
+      "version": "2.14.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/pydantic/2.14.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pydantic-settings",
+      "version": "2.16.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/pydantic-settings/2.16.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pydantic_core",
+      "version": "2.50.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/pydantic_core/2.50.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pydyf",
+      "version": "0.13.0",
+      "license": "BSD License",
+      "source": "https://pypi.org/project/pydyf/0.13.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pyee",
+      "version": "14.0.0",
+      "license": "MIT License",
+      "source": "https://pypi.org/project/pyee/14.0.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pypdfium2",
+      "version": "5.14.0",
+      "license": "BSD-3-Clause, Apache-2.0, dependency licenses",
+      "source": "https://pypi.org/project/pypdfium2/5.14.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pyphen",
+      "version": "0.18.1",
+      "license": "MPL-1.1",
+      "source": "https://pypi.org/project/pyphen/0.18.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pytesseract",
+      "version": "0.3.13",
+      "license": "Apache License 2.0",
+      "source": "https://pypi.org/project/pytesseract/0.3.13/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pytest",
+      "version": "9.1.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/pytest/9.1.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "pytest-asyncio",
+      "version": "1.4.0",
+      "license": "Apache-2.0",
+      "source": "https://pypi.org/project/pytest-asyncio/1.4.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "python-dotenv",
+      "version": "1.2.4",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/python-dotenv/1.2.4/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "ruff",
+      "version": "0.17.1",
+      "license": "MIT",
+      "source": "https://pypi.org/project/ruff/0.17.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "soupsieve",
+      "version": "3.0.4",
+      "license": "MIT",
+      "source": "https://pypi.org/project/soupsieve/3.0.4/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "starlette",
+      "version": "1.9.0",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/starlette/1.9.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "tinycss2",
+      "version": "1.5.1",
+      "license": "BSD License",
+      "source": "https://pypi.org/project/tinycss2/1.5.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "tinyhtml5",
+      "version": "2.1.0",
+      "license": "MIT License",
+      "source": "https://pypi.org/project/tinyhtml5/2.1.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "typing-inspection",
+      "version": "0.4.4",
+      "license": "MIT",
+      "source": "https://pypi.org/project/typing-inspection/0.4.4/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "license": "PSF-2.0",
+      "source": "https://pypi.org/project/typing_extensions/4.16.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "uvicorn",
+      "version": "0.54.0",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/uvicorn/0.54.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "uvloop",
+      "version": "0.23.0",
+      "license": "MIT License",
+      "source": "https://pypi.org/project/uvloop/0.23.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "watchfiles",
+      "version": "1.3.0",
+      "license": "MIT",
+      "source": "https://pypi.org/project/watchfiles/1.3.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "wcwidth",
+      "version": "0.9.3",
+      "license": "MIT License",
+      "source": "https://pypi.org/project/wcwidth/0.9.3/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "weasyprint",
+      "version": "70.0",
+      "license": "BSD License",
+      "source": "https://pypi.org/project/weasyprint/70.0/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "webencodings",
+      "version": "0.6.1",
+      "license": "BSD License",
+      "source": "https://pypi.org/project/webencodings/0.6.1/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "websockets",
+      "version": "17.3",
+      "license": "BSD-3-Clause",
+      "source": "https://pypi.org/project/websockets/17.3/"
+    },
+    {
+      "ecosystem": "py",
+      "name": "zopfli",
+      "version": "0.4.3",
+      "license": "Apache-2.0",
+      "source": "https://pypi.org/project/zopfli/0.4.3/"
+    }
+  ],
+  "font_provenance": {
+    "repository": "https://github.com/google/fonts",
+    "commit": "e7db6ca603fd4862010383ff17ffd6cc4ffac1c0",
+    "files": [
+      {
+        "family": "notosanssc",
+        "file": "notosanssc/NotoSansSC[wght].ttf",
+        "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
+        "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+        "bytes": 17772300,
+        "modified": false,
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "notosanssc",
+        "file": "notosanssc/OFL.txt",
+        "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/notosanssc/OFL.txt",
+        "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+        "bytes": 4388,
+        "modified": false,
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "notonaskharabic",
+        "file": "notonaskharabic/NotoNaskhArabic[wght].ttf",
+        "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/notonaskharabic/NotoNaskhArabic%5Bwght%5D.ttf",
+        "sha256": "67b5a525a661b607971fbd3f96a81b89d3a768e74534fca84f18ac97e6fab72f",
+        "bytes": 307592,
+        "modified": false,
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "notonaskharabic",
+        "file": "notonaskharabic/OFL.txt",
+        "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/notonaskharabic/OFL.txt",
+        "sha256": "a7a5a25eb188bf1cd96982030d53e23c33485c69b1044a562254226857ee13af",
+        "bytes": 4382,
+        "modified": false,
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "inter",
+        "file": "inter/Inter[opsz,wght].ttf",
+        "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf",
+        "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
+        "bytes": 876576,
+        "modified": false,
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "inter",
+        "file": "inter/OFL.txt",
+        "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/inter/OFL.txt",
+        "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57",
+        "bytes": 4377,
+        "modified": false,
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "notice_files": {
+    "py/alembic/LICENSE": "6e68d94a03a0e3e327ddf3e86d1ebedc14eece3922022618fc246a36296fd0cc",
+    "py/annotated-doc/LICENSE": "fff170779a6acbf65abdb405c087f1cee1786691e4a96a4034517e4a504a0cdf",
+    "py/annotated-types/LICENSE": "fe1049884b1a0d9342901e88e07f32925d24b3121d9972b6a6805fb9824b095d",
+    "py/anyio/LICENSE": "5361ac9dc58f2ef5fd2e9b09c68297c17f04950909bbc8023bdb82eacf22c2b0",
+    "py/argon2-cffi/LICENSE": "b6944d386e87ccf49d9632da083685a4b7624733e686a7fe283dd2d428341d77",
+    "py/argon2-cffi-bindings/LICENSE": "88707653d5414f2242d597302a769565107ac139817b8ca321b3928cc1346c50",
+    "py/asyncpg/LICENSE": "d9222d73fdac50992174076efa04f44f6fbcd9d56155a7c7092e98757042a6f6",
+    "py/beautifulsoup4/LICENSE": "55b4d8d4b1e5bc86d10efac91b74c87bcb77526b0f5b9edaf8b9cd2adc7397b2",
+    "py/brotli/LICENSE": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+    "py/certifi/LICENSE": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7",
+    "py/cffi/LICENSE": "5ba24ddc57067f9249add644c3afc41a5d6dc37e23433ef759d95df370b0af63",
+    "py/click/LICENSE.txt": "9a8ad106a394e853bfe21f42f4e72d592819a22805d991b5f3275029292b658d",
+    "py/colorama/LICENSE.txt": "cac35c02686e5d04a5a7140bfb3b36e73aed496656e891102e428886d7930318",
+    "py/cssselect2/LICENSE": "6fd97229a1d1b0f6a8b41e109f413426dbc0874b1e03746d66cc33282601c2c2",
+    "py/email-validator/LICENSE": "672179752e109134a3fb2bdd0780b29fdb7a03974f0f586a13aead5129562d4c",
+    "py/fastapi/LICENSE": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e",
+    "py/fasteners/LICENSE": "d2de2f566d2d0e0b509fb0ea1fa3669f49064ab1de21c57453cab3750a234e8f",
+    "py/fonttools/LICENSE": "6787208f83f659ccbc2223b2fde952ffa6f7e8aca62f1a8a2bf5bc51bb1b2383",
+    "py/fonttools/LICENSE.external": "94a83aaee0729a0f302d34acc4acecbd9d58366f262429075fe557e4a54b2e69",
+    "py/greenlet/LICENSE": "769831d6e5dfaf2c20802faccff1fafb4c2025dd8f6253dfa47fcad59d4d0979",
+    "py/greenlet/LICENSE.PSF": "e5ff3c23c110e494cd7d736c10fd96d462457bafeca310840db6527298c7d46b",
+    "py/h11/LICENSE.txt": "37db5bb85926db28a427a25867f10b1232003aea1be69ccb851138adb8e6f361",
+    "py/httpcore/LICENSE.md": "fdcb59154c74cbaba16a11242f7740bea9f23d6feb5547917d8c5f94a80392a5",
+    "py/httptools/LICENSE": "628168d68bb5a8a17e0bbefb3bd74e326e1edc20583d76f52f457c82c921867d",
+    "py/httptools/LICENSE-MIT": "79e6ba8b687cb54786207342b9b6fcee0ac10218453ed9009b84d949b2233cc0",
+    "py/httpx/LICENSE.md": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d",
+    "py/idna/LICENSE.md": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04",
+    "py/iniconfig/LICENSE": "3409fa91f7ace557894632676656e32264fe5ef7581535725dc9a23774551bd4",
+    "py/Mako/LICENSE": "8c1d171bc5d341ad9cd33d5e2c39b96a82c7bd49b3ae89a470c37e5822232054",
+    "py/MarkupSafe/LICENSE.txt": "489a8e1108509ed98a37bb983e11e0f7e1d31f0bd8f99a79c8448e7ff37d07ea",
+    "py/opentelemetry-api/LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "py/packaging/LICENSE": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48",
+    "py/packaging/LICENSE.APACHE": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+    "py/packaging/LICENSE.BSD": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5",
+    "py/pgserver/LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "py/pillow/LICENSE": "6644596ba12c005c174b7a03d86c2ffe5f3fa7ecdf37d9aa8f71f3516e57c7a2",
+    "py/pip-licenses/LICENSE": "b3cd2ad74a7c59ff409b8523dbe79984da7ba71fa25aa7872a02e4e1a4564cb0",
+    "py/platformdirs/LICENSE": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6",
+    "py/playwright/LICENSE": "7fab1461b41970ff376f1c9303a637076bfaaeb71cd12dd3a1c44aaf59a1a2b9",
+    "py/playwright/NOTICE": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
+    "py/playwright/serverRegistry.js.LICENSE": "3098a6efcbc11752cbdf6075fa65480f5470f78c8d981fab9c0796dc9a41cefe",
+    "py/playwright/utilsBundle.js.LICENSE": "1362b7f413c08083af537384162ab69a323d019fe26e0a2cd78536fafd6b9cbf",
+    "py/playwright/webp_codec.LICENSE": "995c7ee35aceb7666829b7a501ca89c0864e12b493c1174b155774ab1e03d831",
+    "py/pluggy/LICENSE": "d6b65e6c213a5d0b577911d34d6e5949b9f59d76c238c5071a2f3fc16cfb2606",
+    "py/prettytable/LICENSE": "0c8adcc204c8af6cdfdf7887dfd1f99c29901f6c1d505a78bba96efa4fb2cb05",
+    "py/psutil/LICENSE": "b89c063b3786e28e0c0a38f1931db61fed35e69dd2a2966fbecffee0f46c8d10",
+    "py/pycparser/LICENSE": "0a9e78156ae8b96caf1b4f11ac2df424b83de29736f9e757630548a6272fdf90",
+    "py/pydantic/LICENSE": "a9e186f3ca16b5eef84318e7a701721351a00cb7b8ae3a4394b67b49e3529ef3",
+    "py/pydantic_core/LICENSE": "2afdd30d54b4d62b6f488a6bcc1546e84ec5061f13f4209c03d012348783795a",
+    "py/pydantic-settings/LICENSE": "eb355a753e020346d33d83bf9769135b89fc610568ac531a01c295bcee7fd998",
+    "py/pydyf/LICENSE": "75461e438973e1ba0f93a7de9e3fe5b2f49e1ab49251d392878a9cdae8ce7e47",
+    "py/pyee/LICENSE": "1ff556ca206b107f10e1c562ae454d3292e0296c3510eb90eb7f114caee32a66",
+    "py/Pygments/LICENSE": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17",
+    "py/PyJWT/LICENSE": "797a7a20231d4c433e9f1911db1731d06b5828b98f499819a034f7c0f56f5ce5",
+    "py/pyphen/COPYING.GPL": "2233a3eecf299bc271f1a9f57f0b3198343ad4ab16571d70320133002c51496b",
+    "py/pyphen/COPYING.LGPL": "5bbcbb737e60fe9deba08ecbd00920cfcc3403ba2e534c64fdeea49d6bb87509",
+    "py/pyphen/COPYING.MPL": "ad192a67649aa23ac9681939840f4f241643a98da9cd8aec8de28c3b8c6ee854",
+    "py/pyphen/LICENSE": "4fd1c78fcec632bc872ba7b42ba04be330029cfffa411039b48a4f2262bb8240",
+    "py/pytesseract/LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "py/pytest/LICENSE": "ca836a5f9ecca3b2f350230faa20a48fb8b145653b5568d784862df864706b9b",
+    "py/pytest-asyncio/LICENSE": "a8ad31b1c3f40dca5a84119351b8fa8ddc868edd77fad8a8ebf6d8f2d16fa4ae",
+    "py/python-dotenv/LICENSE": "80619b7049f08c81683ad0e01f08f257a840652dd71ee83146d36658c7d2c2b9",
+    "py/PyYAML/LICENSE": "8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4",
+    "py/ruff/LICENSE": "2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18",
+    "py/soupsieve/LICENSE.md": "76a0acdb98c3a63681e20b6f096699ef8cad5fb35d56eef8387e0fa71d797a9a",
+    "py/SQLAlchemy/LICENSE": "e862bb5b904fb5513c3e14288d7a25a12eb0ecc7847a0a965d310e9a955e7cb9",
+    "py/starlette/LICENSE.md": "dcb95677a02240243187e964f941847d19b17821cf99e5afae684fab328c19bf",
+    "py/tinycss2/LICENSE": "6b94acee20ec9f2709333134f3ba70322535fb420af0ce8c1455d9cbe297f1d5",
+    "py/tinyhtml5/LICENSE": "16a39991619e92f18680932da2a9199fdf7d95df3ecaedc52ea06218aabafd6f",
+    "py/typing_extensions/LICENSE": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf",
+    "py/typing-inspection/LICENSE": "804b59b25f2c31bd278f9202a19ae49a3945aa2664387e2d0a128c7cacc61ec3",
+    "py/uvicorn/LICENSE.md": "efe1acf3e62fb99c288b0ec73e5a773b7268ef4320fe757ea994214e4b63c371",
+    "py/watchfiles/LICENSE": "4fd78355b67ce2677ede9fb6f63a250f377bb7e22088136a5f4699adb4bc069f",
+    "py/wcwidth/LICENSE": "70b98a95a2144eb70af8017fa8c6d95ce247e40867436e8bc649e137fe13d21a",
+    "py/weasyprint/LICENSE": "bfd14eccfa6100575460e685556b183399d4bd335904e3c9521b0116d21c54da",
+    "py/webencodings/LICENSE": "e06ef33485e7498ad592887c41fa79cc8a7fecde576c7210e11bfdddef58040e",
+    "py/websockets/LICENSE": "3d6a0c050d8bec52fabad502e45fb25bd02bcadbd70dea34d447b6a0ff4e6da8",
+    "py/zopfli/COPYING": "018b1cb87efdf7a04c2fcc13d57ed63f62149113fb207b27ea13430d64f13513",
+    "js/@babel/helper-string-parser/7.29.7/LICENSE": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
+    "js/@babel/helper-string-parser/8.0.6/LICENSE": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
+    "js/@babel/helper-validator-identifier/7.29.7/LICENSE": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
+    "js/@babel/helper-validator-identifier/8.0.6/LICENSE": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
+    "js/@babel/parser/7.29.9/LICENSE": "2e97627cb278aa7556fb9e8817368302301a595b6c7582512b8d74c57b773652",
+    "js/@babel/types/7.29.8/LICENSE": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
+    "js/@babel/parser/8.0.7/LICENSE": "2e97627cb278aa7556fb9e8817368302301a595b6c7582512b8d74c57b773652",
+    "js/@babel/types/8.0.6/LICENSE": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
+    "js/@ctrl/tinycolor/4.2.1/LICENSE": "40623170cffa92890b9a2decc5456de6bba6d4f75a7a7b7abc60cc9fdaf78b65",
+    "js/@element-plus/icons-vue/2.3.2/LICENSE": "5db4ebb3abd8353774ae148723ccc14087d6dab99473f77a7b799b55defd8dfe",
+    "js/vue/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/@floating-ui/core/1.8.0/LICENSE": "0e4c9a9b6c71019cbbea3bdc20b01223110a9035700f9c960c8fcbf78c2325ce",
+    "js/@floating-ui/utils/0.2.12/LICENSE": "0e4c9a9b6c71019cbbea3bdc20b01223110a9035700f9c960c8fcbf78c2325ce",
+    "js/@floating-ui/dom/1.8.0/LICENSE": "0e4c9a9b6c71019cbbea3bdc20b01223110a9035700f9c960c8fcbf78c2325ce",
+    "js/@fontsource/inter/5.3.0/LICENSE": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345",
+    "js/@fontsource/noto-naskh-arabic/5.3.0/LICENSE": "91053c23e8a0fe5fc9b5fdbe5ff74ceffd66f6f996c123f1a6ca4c23487c1fff",
+    "js/@fontsource/noto-sans-sc/5.3.1/LICENSE": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+    "js/@jridgewell/gen-mapping/0.3.13/LICENSE": "769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c",
+    "js/@jridgewell/sourcemap-codec/1.6.0/LICENSE": "769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c",
+    "js/@jridgewell/trace-mapping/0.3.31/LICENSE": "769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c",
+    "js/@jridgewell/remapping/2.3.5/LICENSE": "769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c",
+    "js/@jridgewell/resolve-uri/3.1.2/LICENSE": "b8778b155bfde5a28b023a558753c0fa058a52bb9de35c343c250be1bbcdedab",
+    "js/@oxc-project/types/0.155.0/LICENSE": "95ced5ecf1133fbf41d409b5555c86c344f83f3b019926057ddbc07cfdcc27b3",
+    "js/@rolldown/pluginutils/1.0.1/LICENSE": "e1919b3b98b8bf6c1b99fcc60a0ed46027c97ac947432e1278446c9606f50161",
+    "js/@sxzz/popperjs-es/2.11.8/LICENSE.md": "bf67e2c9b7974543bb18ced3a0b37f53729aaff953b442dd89a3adaf90fd93e8",
+    "js/@types/estree/1.0.9/LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+    "js/@types/lodash/4.17.27/LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+    "js/@types/lodash-es/4.17.12/LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+    "js/@types/web-bluetooth/0.0.21/LICENSE": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+    "js/vite/8.3.5/LICENSE.md": "a22152baa1aef74402443008e767e7c689a524c0909d19b0431d97f5ab066a13",
+    "js/@vue/compiler-core/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/@vue/shared/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/entities/7.0.1/LICENSE": "cb992345949ccd6e8394b2cd6c465f7b897c864f845937dbf64e8997f389e164",
+    "js/estree-walker/2.0.2/LICENSE": "8a6dcbabe7179f9c8489c08a7d874d0f1e093ae7449e03756ccf87cb9d0e296e",
+    "js/source-map-js/1.2.2/LICENSE": "6cb0631f71c7749763fd3dd1d5bee52dd1070ec17f2edc1710079ad070bd2fbd",
+    "js/@vue/compiler-dom/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/@vue/compiler-sfc/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/@vue/compiler-ssr/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/magic-string/0.30.21/LICENSE": "1cbe51b907662f6cb1492b16c359384a595180bf0e4d101603ed525e75c4e484",
+    "js/postcss/8.5.31/LICENSE": "5be1f3465bba68a626777f984878814aaf35e7ef8e9fd314d469bcf887050fb8",
+    "js/@vue/devtools-api/8.2.1/LICENSE": "d0ac09e8df2b54625ea1606dfae75d5b6af1cbc5d28a17eca1350be9c367175c",
+    "js/@vue/devtools-kit/8.2.1/LICENSE": "d0ac09e8df2b54625ea1606dfae75d5b6af1cbc5d28a17eca1350be9c367175c",
+    "js/@vue/devtools-shared/8.2.1/LICENSE": "d0ac09e8df2b54625ea1606dfae75d5b6af1cbc5d28a17eca1350be9c367175c",
+    "js/birpc/2.9.0/LICENSE": "67cd5e903c1f908edfa27c25606fa806ce629d9a8ddb7d83019d9fd1f83f7fde",
+    "js/hookable/5.5.3/LICENSE.md": "3555f8c47cbff86d199d5a5033afd5ef9560e0095927296af670a886b8b1988d",
+    "js/perfect-debounce/2.1.0/LICENSE": "46231df5a7733c3f52f11b71f3df61813007745b62b09031acfb45fb42d75082",
+    "js/muggle-string/0.4.1/LICENSE": "df52411dcd3c8f5897bbbec8c94e971519e13e75818c263e9a99a86255dd301b",
+    "js/picomatch/4.0.7/LICENSE": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9",
+    "js/@vue/reactivity/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/@vue/runtime-core/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/@vue/runtime-dom/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/csstype/3.2.3/LICENSE": "11d55bd4541c75ee7879547ac49089c489163dae49551389713c3d026cab383e",
+    "js/@vue/server-renderer/3.5.44/LICENSE": "1bb85cc9b13b81ef41c81c51866172fc345e0503c86726a6755b796590b70175",
+    "js/@vue-macros/common/3.1.4/LICENSE": "4041048344f1a45dcb5a9e0a7ea1d20e85afeaaab8735c4760caef9ee4586640",
+    "js/ast-kit/2.2.0/LICENSE": "704c496aa9642217877afb6fedc9a695902025ca63287a0ba9b471359fb915e3",
+    "js/local-pkg/1.2.1/LICENSE": "67cd5e903c1f908edfa27c25606fa806ce629d9a8ddb7d83019d9fd1f83f7fde",
+    "js/magic-string-ast/1.0.3/LICENSE": "704c496aa9642217877afb6fedc9a695902025ca63287a0ba9b471359fb915e3",
+    "js/unplugin-utils/0.3.2/LICENSE": "fdb4c7395791e3ba534b4e5f8f7926db35499273205dd3fbfa29bb2ba0b16766",
+    "js/@vueuse/core/15.0.0/LICENSE": "0f844b1160603552a01662ac2999c14e5fb4df487e65619b9ed4406e43eb3c0b",
+    "js/@vueuse/metadata/15.0.0/LICENSE": "0f844b1160603552a01662ac2999c14e5fb4df487e65619b9ed4406e43eb3c0b",
+    "js/@vueuse/shared/15.0.0/LICENSE": "0f844b1160603552a01662ac2999c14e5fb4df487e65619b9ed4406e43eb3c0b",
+    "js/acorn/8.19.0/LICENSE": "76a876cf886ff9be2a8b5e2e86514fed06223c8c9f0c1e9ee9606e93841e00b7",
+    "js/pathe/2.0.3/LICENSE": "52e92576851154bad7737e90cc72818936f43665cb0e3f7428ed8edc8cc5709b",
+    "js/ast-kit/3.0.0/LICENSE": "704c496aa9642217877afb6fedc9a695902025ca63287a0ba9b471359fb915e3",
+    "js/estree-walker/3.0.3/LICENSE": "8a6dcbabe7179f9c8489c08a7d874d0f1e093ae7449e03756ccf87cb9d0e296e",
+    "js/ast-walker-scope/0.10.0/LICENSE": "164fe042c92ff99f549517d34c3e08b75bb8046be49d53043f51bfb35d1def05",
+    "js/async-validator/4.2.5/LICENSE.md": "5d0427088e37071c4b942de990f6365d5c2d195f3e957ce925322d184784e2eb",
+    "js/chokidar/5.0.0/LICENSE": "bdfd5e0edb6089e6586c8f15e6a86fab83ffbeeda3b3b7b33734ccb8c5906965",
+    "js/readdirp/5.1.1/LICENSE": "dffec71d93f273d2af7b54c6c7e7e70b3289c632ec0d7253210ec21ac336d5ac",
+    "js/confbox/0.1.8/LICENSE": "2b2bbe4244586c068b33c4aba13f06cda14d66b076e474141d92c4a4f5910992",
+    "js/confbox/0.3.1/LICENSE": "c6e83b9be7af3b907525722dadbd781848162e4fbfcbe20324f7a237d91ee0f3",
+    "js/dayjs/1.11.23/LICENSE": "5faab7526d055651be3aab769d58897be6bd91f3d39d137f25f12dba1b31d5dc",
+    "js/detect-libc/2.1.2/LICENSE": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "js/echarts/6.1.0/LICENSE": "634293835b43a6dd2094fa39182a3d9a6b9ca43b7fdb9ac354e8037af2a3093a",
+    "js/echarts/6.1.0/NOTICE": "d491d358344f842685c1b1585970999db65fe30ecf7ef3867af8814f4016c016",
+    "js/tslib/2.3.0/LICENSE.txt": "0e8d2550baea17eb3072c4f919b36fbf9852bb49dba948549872e713863c0834",
+    "js/zrender/6.1.0/LICENSE": "a681e9d183c72b4af4856935893805eb48c08f0f5a3f260203db7444c20fb98a",
+    "js/element-plus/2.14.7/LICENSE": "0790118bb4d66681db1d63181f72ef68e632d632f6db0373ef87cf328561af27",
+    "js/lodash/4.18.1/LICENSE": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc",
+    "js/lodash-es/4.18.1/LICENSE": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc",
+    "js/memoize-one/6.0.0/LICENSE": "b1c501095de70182748cb8e8d97ac5577701a4ef3b755ba30d59fd87b24bdb0f",
+    "js/normalize-wheel-es/1.2.0/LICENSE": "658d037c5c078a24c27ab1e0f37050d407ad6628be94886a4e48f3e761f47f7d",
+    "js/vue-component-type-helpers/3.3.13/LICENSE": "ac07310d94980d9819cf2c28b3a2f63d11db283f48f02f67208b549f44860ac0",
+    "js/exsolve/1.1.3/LICENSE": "d37af134e0d0b998393188394202052e2ff6cd5d18efb2fcc81ba7b00ad77b75",
+    "js/fdir/6.5.0/LICENSE": "9a39f2aadab11a3697edd668ff2d8ad885b649737b7ab4d3bf12b34e5ada0c86",
+    "js/lightningcss/1.33.0/LICENSE": "5eba353fe5076ac3432177f8ab1cf75e3afcd0584251e37c3bfead5f447d040e",
+    "js/mlly/1.8.2/LICENSE": "46231df5a7733c3f52f11b71f3df61813007745b62b09031acfb45fb42d75082",
+    "js/pkg-types/2.4.0/LICENSE": "cb00dc7c358014d300dba2462e57d3f477299c169c7ab14d8fe5e347eca44f48",
+    "js/quansync/0.2.11/LICENSE.md": "fd8a6a9b107d6591b3efe305f0a4b2344d3c3d9e90a0420c78733c958e564714",
+    "js/magic-string/1.4.3/LICENSE": "1cbe51b907662f6cb1492b16c359384a595180bf0e4d101603ed525e75c4e484",
+    "js/pkg-types/1.3.1/LICENSE": "cb00dc7c358014d300dba2462e57d3f477299c169c7ab14d8fe5e347eca44f48",
+    "js/ufo/1.6.4/LICENSE": "46231df5a7733c3f52f11b71f3df61813007745b62b09031acfb45fb42d75082",
+    "js/nanoid/3.3.20/LICENSE": "da4db1480d9beea3483a2eda5c53b22238d0827d57da162b48f122e04d2d9987",
+    "js/nostics/1.3.0/LICENSE": "acf17aff719bfab70f6bec3a93f1ba82ce9fe27ab74f83c0f2e1efb1273fa220",
+    "js/picocolors/1.1.1/LICENSE": "6582629e2979466878f6014313dcc2f3756c9616148682227ce3063dde310750",
+    "js/pinia/4.1.0/LICENSE": "91a2845c4db44e7497b514b98634a674c737986ad0db81599307cf733bf850b2",
+    "js/typescript/5.9.3/LICENSE.txt": "a5e9f9b1575301c7a7a03508fdaa2e05a918cc17fd21c6e898096a96d6a34f61",
+    "js/rolldown/1.2.15/LICENSE": "23ecfff35a5a2e80d92142f75228912c3b1abc4b5a8337a821ff4397e2f9f734",
+    "js/scule/1.3.0/LICENSE": "46231df5a7733c3f52f11b71f3df61813007745b62b09031acfb45fb42d75082",
+    "js/tinyglobby/0.2.17/LICENSE": "22c68811e174cbbfb3813d4135918df4f540959c14d872e601d9abe83d3cde8f",
+    "js/unplugin/3.4.0/LICENSE": "2ef2cbeeb84d5e7a92d208426ef4f841b5447ae0a9e661ffb0983e8985a9f469",
+    "js/webpack-virtual-modules/0.6.2/LICENSE": "aa523c5b0d9c02231b3837555ddfab2e4d7208158c52c1cead8920f032aab6b3",
+    "js/vue-router/5.4.0/LICENSE": "91a2845c4db44e7497b514b98634a674c737986ad0db81599307cf733bf850b2",
+    "fonts/notosanssc/OFL.txt": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+    "fonts/notonaskharabic/OFL.txt": "a7a5a25eb188bf1cd96982030d53e23c33485c69b1044a562254226857ee13af",
+    "fonts/inter/OFL.txt": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+  }
+}

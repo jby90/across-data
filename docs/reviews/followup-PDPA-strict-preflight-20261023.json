@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-23T13:58:38.214276+00:00",
+  "preflight": {
+    "url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+    "target": "ok",
+    "robots": "不允许/无法确认",
+    "robots_detail": "HTTP 403,无法确认规则,保守起见不抓取"
+  },
+  "document_requested": false
+}

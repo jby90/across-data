@@ -4,6 +4,7 @@ import json
 import pytest
 
 from .conftest import bearer, login
+from .helpers import admin_task_detail
 
 TRANSFER_TEXT = (
     "An organisation must not transfer any personal data to a country or territory outside "
@@ -89,20 +90,37 @@ def _fake_llm_factory(bad_first: bool):
 
         calls["n"] += 1
         payload = json.loads(messages[1]["content"])
+        if payload.get("phase") == "verify_source_support":
+            return LlmResult(
+                {"supported": "yes", "reason": "Fixture source fully supports this rule"},
+                100,
+                50,
+                7,
+                "fake-model",
+            )
+        if payload.get("phase") == "write_from_evidence":
+            return LlmResult(
+                data={
+                    "obligation": "须确保境外接收方提供可比保护",
+                    "risk_level": "HIGH",
+                    "gap": "",
+                },
+                prompt_tokens=100,
+                completion_tokens=50,
+                duration_ms=7,
+                model="fake-model",
+            )
         findings = []
         retry = "verifier_feedback_must_fix" in payload
         for c in payload["candidate_clauses"][:1]:
-            quote = c["text"][:80]
-            if bad_first and not retry:
-                quote = "这段引用并不在条款原文里,应被程序核验拦截并退回"
+            sentence_ids = [999] if bad_first and not retry else [1]
             findings.append(
                 {
-                    "business_fact": "跨境回传",
+                    "fact_key": next(iter(payload["business_facts"])),
                     "clause_id": c["clause_id"],
                     "obligation": "须确保境外接收方提供可比保护",
                     "risk_level": "HIGH",
-                    "quote": quote,
-                    "quote_zh": "(测试译文)",
+                    "sentence_ids": sentence_ids,
                 }
             )
         return LlmResult(
@@ -121,7 +139,8 @@ async def _wait_done(client, hdr, task_id, timeout=20):
         r = await client.get(f"/api/analysis/tasks/{task_id}", headers=hdr)
         assert r.status_code == 200
         if r.json()["status"] != "running":
-            return r.json()
+            assert "step_traces" not in r.json()
+            return await admin_task_detail(client, task_id)
         await asyncio.sleep(0.1)
     raise AssertionError("分析任务超时未结束")
 
@@ -139,7 +158,7 @@ async def test_workflow_config_export_import_and_admin_only(client, seed):
 
     dsl = (await client.get("/api/admin/agent-studio/workflow/export", headers=admin)).json()
     dsl["workflow"]["graph"]["nodes"][0]["readonly_locked"] = False
-    body = {"dsl_payload": dsl, "change_note": "单测", "activate_immediately": True}
+    body = {"dsl_payload": dsl, "change_note": "单测", "activate_immediately": False}
     # 复核员可以查看,但不能导入或激活
     deny = await client.post("/api/admin/agent-studio/workflow/import", headers=reviewer, json=body)
     assert deny.status_code == 403
@@ -167,7 +186,7 @@ async def test_fact_followup_blocks_analysis_without_model(client, seed):
     assert r.status_code == 201
     d = r.json()
     assert d["status"] == "collecting_facts" and d["sufficiency_score"] == 20
-    assert d["findings"] == [] and d["step_traces"] == []
+    assert d["findings"] == [] and "step_traces" not in d
 
 
 async def test_pipeline_real_verification_backtrack_and_tenant_isolation(
@@ -196,7 +215,7 @@ async def test_pipeline_real_verification_backtrack_and_tenant_isolation(
     # 引用不是原文子串 → 真实触发退回 → 二次分析 → 二次核验
     assert "verification" in phases and "re_analysis" in phases and "re_verification" in phases
     back = next(t for t in traces if t["phase"] == "verification")
-    assert back["is_backtrack"] is True and "连续子串" in back["backtrack_reason"]
+    assert back["is_backtrack"] is True and "sentence_id" in back["backtrack_reason"]
     assert done["backtrack_count"] == 1
     # Token 来自模型返回的真实用量,而不是写死的数字
     assert done["total_tokens"] > 0 and done["total_tokens"] % 150 == 0
@@ -239,11 +258,30 @@ async def test_model_unavailable_is_reported_not_fabricated(client, seed, sessio
         json={"title": "无模型", "country_code": "SG", "facts": FACTS},
     )
     done = await _wait_done(client, hdr, created.json()["id"])
-    assert done["status"] == "partial_sample"
+    assert done["status"] == "failed"
     assert done["findings"] == []
     report = done["report_versions"][0]
+    assert report["status"] == "analysis_failed" and not report["is_partial_sample"]
     assert all(d["citations"] == [] for d in report["dimensions"])
-    assert any("模型调用失败" in (d["missing_gap_note"] or "") for d in report["dimensions"])
+    assert any(d["gap_kind"] == "analysis_error" for d in report["dimensions"])
+    for suffix in ("docx", "pdf"):
+        response = await client.get(
+            f"/api/analysis/tasks/{done['id']}/reports/1/export.{suffix}",
+            headers=hdr,
+        )
+        assert response.status_code == 409
+    edited = await client.post(
+        f"/api/analysis/tasks/{done['id']}/reports/edit",
+        headers=hdr,
+        json={"executive_summary": "仅编辑文字不能解除技术失败", "change_note": "回归验证"},
+    )
+    assert edited.status_code == 200 and edited.json()["status"] == "analysis_failed"
+    assert (
+        await client.get(
+            f"/api/analysis/tasks/{done['id']}/reports/2/export.docx",
+            headers=hdr,
+        )
+    ).status_code == 409
 
 
 async def test_retrieval_benchmark_is_honest(client, seed, session_factory):
@@ -270,9 +308,7 @@ def test_unusable_clause_text_is_filtered(text):
 def test_verify_finding_checks_substring_and_numbers():
     from app.analysis.tools import verify_finding
 
-    ok, _ = verify_finding(
-        {"quote": PENALTY_TEXT[40:140], "obligation": "最高罚款 10%"}, PENALTY_TEXT
-    )
+    ok, _ = verify_finding({"quote": PENALTY_TEXT, "obligation": "最高罚款 10%"}, PENALTY_TEXT)
     assert ok is True
     bad, issues = verify_finding(
         {"quote": PENALTY_TEXT[40:140], "obligation": "最高罚款 500 万"}, PENALTY_TEXT
@@ -337,7 +373,7 @@ async def test_chat_collects_everything_then_runs_and_reports(
     for text in FACTS.values():
         d = await _send(client, hdr, tid, text)
     assert d["status"] == "running"
-    assert "信息已经齐备" in _last_assistant(d)["content"]
+    assert "信息已齐备" in _last_assistant(d)["content"]
     # 运行中再发消息:只提示进度,不重复启动
     d = await _send(client, hdr, tid, "好了吗")
     assert "进行中" in _last_assistant(d)["content"]
@@ -420,7 +456,9 @@ async def test_conversation_id_admin_history_live_monitor_and_stage_outputs(
     conv_code = chat_res["conversation_code"]
     assert conv_code.startswith("CONV-") and len(conv_code) >= 18
     assert conv_code in chat_res["messages"][0]["content"]
-    assert chat_res["current_active_node_id"] == "node_fact_collector"
+    assert "current_active_node_id" not in chat_res
+    internal = await admin_task_detail(client, chat_res["id"])
+    assert internal["current_active_node_id"] == "node_fact_collector"
 
     # 2. 发起完整评估工作流并等待完成
     run_res = (
@@ -437,16 +475,12 @@ async def test_conversation_id_admin_history_live_monitor_and_stage_outputs(
     assert done["status"] in ("completed", "partial_sample")
 
     # 3. 管理员端可检索与筛选对话工作流历史(按 conversation_code / 状态 / 国家)
-    all_admin_tasks = (
-        await client.get("/api/admin/agent-studio/tasks", headers=admin_hdr)
-    ).json()
+    all_admin_tasks = (await client.get("/api/admin/agent-studio/tasks", headers=admin_hdr)).json()
     codes = {t["conversation_code"] for t in all_admin_tasks}
     assert conv_code in codes and run_code in codes
 
     filtered = (
-        await client.get(
-            f"/api/admin/agent-studio/tasks?keyword={run_code}", headers=admin_hdr
-        )
+        await client.get(f"/api/admin/agent-studio/tasks?keyword={run_code}", headers=admin_hdr)
     ).json()
     assert len(filtered) == 1 and filtered[0]["id"] == run_id
     assert filtered[0]["org_name"] != ""
@@ -454,15 +488,10 @@ async def test_conversation_id_admin_history_live_monitor_and_stage_outputs(
     assert filtered[0]["steps_count"] >= 6
 
     # 4. 展开查看每个环节的产出:验证各阶段 output_snapshot 包含完整结构化交付物
-    detail = (
-        await client.get(f"/api/admin/agent-studio/tasks/{run_id}", headers=admin_hdr)
-    ).json()
+    detail = (await client.get(f"/api/admin/agent-studio/tasks/{run_id}", headers=admin_hdr)).json()
     by_phase = {tr["phase"]: tr for tr in detail["step_traces"]}
     assert "fact_check_items" in by_phase["fact_check"]["output_snapshot"]
-    assert (
-        "retrieved_clauses_by_dimension"
-        in by_phase["retrieval"]["output_snapshot"]
-    )
+    assert "retrieved_clauses_by_dimension" in by_phase["retrieval"]["output_snapshot"]
     assert "dimension_outputs" in by_phase["analysis"]["output_snapshot"]
     assert "verification_items" in by_phase["verification"]["output_snapshot"]
     assert "dimension_outputs" in by_phase["re_analysis"]["output_snapshot"]
@@ -500,4 +529,3 @@ async def test_conversation_id_admin_history_live_monitor_and_stage_outputs(
         f"/api/admin/agent-studio/tasks/{chat_res['id']}", headers=admin_hdr
     )
     assert ok_del.status_code == 200 and ok_del.json()["deleted"] is True
-

@@ -41,6 +41,9 @@ class GlossaryTermOut(BaseModel):
 
 
 class ClauseTranslationOut(BaseModel):
+    is_current: bool = True
+    source_context_revision: dict | None = None
+    source_parse_revision: dict | None = None
     id: uuid.UUID
     clause_id: uuid.UUID
     document_id: uuid.UUID
@@ -54,11 +57,15 @@ class ClauseTranslationOut(BaseModel):
     engine: str
     model_name: str
     prompt_version: str
+    tokens_in: int = 0
+    tokens_out: int = 0
+    duration_ms: int = 0
     glossary_hits: list[dict]
     unmatched_terms: list[dict]
     quality_check_passed: bool
     quality_issues: list[str]
     review_status: str
+    status: str = ""
     usable_as_legal_basis: bool
     status_badge: str
     reviewer_note: str | None
@@ -129,6 +136,9 @@ class KgNodeOut(BaseModel):
 
 
 class KgEdgeOut(BaseModel):
+    evidence_version_id: uuid.UUID | None = None
+    evidence_content_hash: str | None = None
+    official_source_url: str | None = None
     id: uuid.UUID
     country_code: str
     source_node_id: uuid.UUID
@@ -143,6 +153,10 @@ class KgEdgeOut(BaseModel):
     clause_number: str | None
     document_title: str | None
     extractor_model: str
+    confidence: float = 0.85
+    judge_verdict: str = "yes"
+    judge_reason: str | None = None
+    is_structural: bool = False
     review_status: str
     usable_as_legal_basis: bool
 
@@ -188,6 +202,7 @@ class RegulationClauseItemOut(BaseModel):
     section_path: str | None
     original_text: str
     translated_text: str | None
+    translation_status: str = "not_translated"
     status_badge: str
     usable_as_legal_basis: bool
     glossary_hits: list[dict]
@@ -196,6 +211,9 @@ class RegulationClauseItemOut(BaseModel):
 
 
 class RegulationDetailOut(BaseModel):
+    version_id: uuid.UUID | None = None
+    clauses_total: int = 0
+    clause_offset: int = 0
     regulation: RegulationSummaryOut
     versions: list[dict]
     clauses: list[RegulationClauseItemOut]

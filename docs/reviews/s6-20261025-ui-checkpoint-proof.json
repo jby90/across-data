@@ -1,0 +1,101 @@
+{
+  "synthetic_fixture": true,
+  "provider_api_calls": 0,
+  "human_review": "pending_review",
+  "runs": [
+    {
+      "task_id": "fc62f6be-3ed4-4c2c-a2f2-4df1572cd28a",
+      "status": "completed",
+      "rounds": 2,
+      "workflow_version_id": "86856a24-37f9-4170-819e-cb8dfafc8387",
+      "analysis_dimensions_per_run": [
+        [
+          "D1",
+          "D2",
+          "D3",
+          "D4",
+          "D5",
+          "D6",
+          "D7",
+          "D8"
+        ],
+        [
+          "D3"
+        ],
+        [
+          "D3"
+        ]
+      ],
+      "other_seven_dimensions_unchanged": true,
+      "tokens_equal_trace_sum": true,
+      "nominal_synthetic_tokens": 780,
+      "backtrack_count": 0,
+      "report_dimensions": 8,
+      "phases": [
+        "fact_check",
+        "retrieval",
+        "analysis",
+        "user_fact_question",
+        "user_fact_answer",
+        "fact_check",
+        "retrieval",
+        "analysis",
+        "user_fact_question",
+        "user_fact_answer",
+        "fact_check",
+        "retrieval",
+        "analysis",
+        "verification",
+        "compilation",
+        "update_linkage"
+      ]
+    },
+    {
+      "task_id": "d03eceb3-ecf8-46cf-980a-df675d72f8cb",
+      "status": "completed",
+      "rounds": 2,
+      "workflow_version_id": "86856a24-37f9-4170-819e-cb8dfafc8387",
+      "analysis_dimensions_per_run": [
+        [
+          "D1",
+          "D2",
+          "D3",
+          "D4",
+          "D5",
+          "D6",
+          "D7",
+          "D8"
+        ],
+        [
+          "D3"
+        ],
+        [
+          "D3"
+        ]
+      ],
+      "other_seven_dimensions_unchanged": true,
+      "tokens_equal_trace_sum": true,
+      "nominal_synthetic_tokens": 780,
+      "backtrack_count": 0,
+      "report_dimensions": 8,
+      "phases": [
+        "fact_check",
+        "retrieval",
+        "analysis",
+        "user_fact_question",
+        "user_fact_answer",
+        "fact_check",
+        "retrieval",
+        "analysis",
+        "user_fact_question",
+        "user_fact_answer",
+        "fact_check",
+        "retrieval",
+        "analysis",
+        "verification",
+        "compilation",
+        "update_linkage"
+      ]
+    }
+  ]
+}

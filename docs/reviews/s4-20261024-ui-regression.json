@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "original_version": "v17",
+  "imported_version": "v20",
+  "checks": [
+    "import inactive",
+    "explicit activation",
+    "rollback"
+  ],
+  "model_calls": 0,
+  "approvals": 0
+}

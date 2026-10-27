@@ -1,0 +1,16 @@
+{
+  "documents": [
+    {
+      "document_id": "513b4485-5a04-48e0-9f44-acf689d975c2",
+      "version_id": "e0005706-04fd-4746-89d3-28e7d3960d68",
+      "review_status": "pending_review",
+      "legal_status": "unknown",
+      "source_url": "https://nhrclb.org/archives/8228"
+    }
+  ],
+  "identity_observations": 4,
+  "source_overwrites": 0,
+  "new_human_approvals": 0,
+  "model_calls": 0,
+  "scheduled_crawlers_enabled": 0
+}

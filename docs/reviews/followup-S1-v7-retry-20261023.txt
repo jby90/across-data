@@ -1,0 +1,2 @@
+{"completed": 4, "total": 4, "passed": 0}
+{"targets": 4, "standalone_passed": 0, "context_passed": 0, "failed": 4, "tokens_in": 6602, "tokens_out": 7327, "duration_seconds": 22.163, "human_approved": 0, "started_at": "2026-10-23T14:54:42.045768+00:00", "completed_at": "2026-10-23T14:55:04.208914+00:00"}

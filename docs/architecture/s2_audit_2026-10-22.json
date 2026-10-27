@@ -1,0 +1,475 @@
+{
+  "generated_at": "2026-10-23T02:15:35.274301+00:00",
+  "base_url": "http://127.0.0.1:8000",
+  "sites": {
+    "total_sites": 20,
+    "by_country": {
+      "EG": {
+        "total_sites": 5,
+        "enabled_sites": 5,
+        "terms_status": {
+          "approved": 5
+        },
+        "last_status": {
+          "failed": 2,
+          "partial": 2,
+          "success": 1
+        }
+      },
+      "LB": {
+        "total_sites": 2,
+        "enabled_sites": 2,
+        "terms_status": {
+          "approved": 2
+        },
+        "last_status": {
+          "success": 2
+        }
+      },
+      "MA": {
+        "total_sites": 4,
+        "enabled_sites": 4,
+        "terms_status": {
+          "approved": 4
+        },
+        "last_status": {
+          "partial": 3,
+          "success": 1
+        }
+      },
+      "SG": {
+        "total_sites": 5,
+        "enabled_sites": 5,
+        "terms_status": {
+          "approved": 5
+        },
+        "last_status": {
+          "partial": 4,
+          "success": 1
+        }
+      },
+      "TN": {
+        "total_sites": 4,
+        "enabled_sites": 4,
+        "terms_status": {
+          "approved": 4
+        },
+        "last_status": {
+          "failed": 1,
+          "success": 3
+        }
+      }
+    }
+  },
+  "documents": {
+    "total_documents": 80,
+    "total_versions": 80,
+    "total_clauses": 2607,
+    "by_country": {
+      "EG": {
+        "documents_count": 3,
+        "versions_count": 3,
+        "clauses_count": 100,
+        "ocr_versions_count": 1,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "out_of_scope": 1,
+          "relevant": 2
+        }
+      },
+      "LB": {
+        "documents_count": 2,
+        "versions_count": 2,
+        "clauses_count": 329,
+        "ocr_versions_count": 0,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "out_of_scope": 1,
+          "relevant": 1
+        }
+      },
+      "MA": {
+        "documents_count": 4,
+        "versions_count": 4,
+        "clauses_count": 215,
+        "ocr_versions_count": 2,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "out_of_scope": 2,
+          "relevant": 2
+        }
+      },
+      "SG": {
+        "documents_count": 68,
+        "versions_count": 68,
+        "clauses_count": 1813,
+        "ocr_versions_count": 0,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "out_of_scope": 40,
+          "relevant": 28
+        }
+      },
+      "TN": {
+        "documents_count": 3,
+        "versions_count": 3,
+        "clauses_count": 150,
+        "ocr_versions_count": 1,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "out_of_scope": 1,
+          "relevant": 2
+        }
+      }
+    }
+  },
+  "translations": {
+    "total_translations": 887,
+    "engine": {
+      "llm": 887
+    },
+    "model_name": {
+      "deepseek-flash": 887
+    },
+    "review_status": {
+      "machine_translated": 880,
+      "translation_failed": 7
+    },
+    "cjk_ratio_ge_30pct_count": 881,
+    "cjk_ratio_ge_30pct_rate": 0.9932,
+    "identical_to_original_count": 0,
+    "by_country": {
+      "SG": {
+        "total": 647,
+        "engine": {
+          "llm": 647
+        },
+        "model_name": {
+          "deepseek-flash": 647
+        },
+        "review_status": {
+          "machine_translated": 641,
+          "translation_failed": 6
+        },
+        "cjk_ratio_ge_30pct_count": 641,
+        "cjk_ratio_ge_30pct_rate": 0.9907,
+        "identical_to_original_count": 0
+      },
+      "EG": {
+        "total": 53,
+        "engine": {
+          "llm": 53
+        },
+        "model_name": {
+          "deepseek-flash": 53
+        },
+        "review_status": {
+          "machine_translated": 53
+        },
+        "cjk_ratio_ge_30pct_count": 53,
+        "cjk_ratio_ge_30pct_rate": 1.0,
+        "identical_to_original_count": 0
+      },
+      "TN": {
+        "total": 69,
+        "engine": {
+          "llm": 69
+        },
+        "model_name": {
+          "deepseek-flash": 69
+        },
+        "review_status": {
+          "machine_translated": 69
+        },
+        "cjk_ratio_ge_30pct_count": 69,
+        "cjk_ratio_ge_30pct_rate": 1.0,
+        "identical_to_original_count": 0
+      },
+      "MA": {
+        "total": 81,
+        "engine": {
+          "llm": 81
+        },
+        "model_name": {
+          "deepseek-flash": 81
+        },
+        "review_status": {
+          "machine_translated": 80,
+          "translation_failed": 1
+        },
+        "cjk_ratio_ge_30pct_count": 81,
+        "cjk_ratio_ge_30pct_rate": 1.0,
+        "identical_to_original_count": 0
+      },
+      "LB": {
+        "total": 37,
+        "engine": {
+          "llm": 37
+        },
+        "model_name": {
+          "deepseek-flash": 37
+        },
+        "review_status": {
+          "machine_translated": 37
+        },
+        "cjk_ratio_ge_30pct_count": 37,
+        "cjk_ratio_ge_30pct_rate": 1.0,
+        "identical_to_original_count": 0
+      }
+    }
+  },
+  "knowledge_graph": {
+    "total_nodes": 168,
+    "total_edges": 205,
+    "structural_edges": 70,
+    "semantic_edges": 135,
+    "semantic_unjudged": 0,
+    "low_confidence": 0,
+    "quote_mismatch": 0,
+    "superseded_edges_count": 1444,
+    "sg_edges_count": 95,
+    "review_status": {
+      "approved": 70,
+      "pending_review": 135
+    },
+    "extractor_model": {
+      "deepseek-flash": 135,
+      "structural-metadata-v2": 70
+    },
+    "by_country": {
+      "SG": {
+        "nodes_count": 63,
+        "edges_count": 95,
+        "structural_edges": 56,
+        "semantic_edges": 39,
+        "semantic_unjudged": 0,
+        "low_confidence": 0,
+        "quote_mismatch": 0,
+        "superseded_edges_count": 1238,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 4,
+          "INSTRUMENT": 28,
+          "DATA_CATEGORY": 2,
+          "OBLIGATION": 27,
+          "PENALTY": 1
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 28,
+          "AMENDS": 4,
+          "REPEALS": 1,
+          "GOVERNS": 0,
+          "PROHIBITS": 8,
+          "REQUIRES": 18,
+          "EXEMPTS": 2,
+          "SUPERVISES": 28,
+          "PENALIZES": 1,
+          "APPLIES_TO_SCENARIO": 2,
+          "RESTRICTS_CROSS_BORDER": 2,
+          "REQUIRES_ADMISSION": 1
+        },
+        "review_status": {
+          "approved": 56,
+          "pending_review": 39
+        },
+        "extractor_model": {
+          "deepseek-flash": 39,
+          "structural-metadata-v2": 56
+        },
+        "total_clauses_count": 1813,
+        "linked_clauses_count": 56,
+        "unlinked_clauses_count": 1757,
+        "quote_mismatch_edges_count": 0
+      },
+      "EG": {
+        "nodes_count": 30,
+        "edges_count": 31,
+        "structural_edges": 4,
+        "semantic_edges": 27,
+        "semantic_unjudged": 0,
+        "low_confidence": 0,
+        "quote_mismatch": 0,
+        "superseded_edges_count": 45,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 2,
+          "INSTRUMENT": 2,
+          "DATA_CATEGORY": 3,
+          "OBLIGATION": 21,
+          "PENALTY": 1
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 2,
+          "AMENDS": 0,
+          "REPEALS": 0,
+          "GOVERNS": 4,
+          "PROHIBITS": 2,
+          "REQUIRES": 16,
+          "EXEMPTS": 1,
+          "SUPERVISES": 2,
+          "PENALIZES": 1,
+          "APPLIES_TO_SCENARIO": 0,
+          "RESTRICTS_CROSS_BORDER": 2,
+          "REQUIRES_ADMISSION": 1
+        },
+        "review_status": {
+          "approved": 4,
+          "pending_review": 27
+        },
+        "extractor_model": {
+          "deepseek-flash": 27,
+          "structural-metadata-v2": 4
+        },
+        "total_clauses_count": 100,
+        "linked_clauses_count": 14,
+        "unlinked_clauses_count": 86,
+        "quote_mismatch_edges_count": 0
+      },
+      "TN": {
+        "nodes_count": 29,
+        "edges_count": 31,
+        "structural_edges": 4,
+        "semantic_edges": 27,
+        "semantic_unjudged": 0,
+        "low_confidence": 0,
+        "quote_mismatch": 0,
+        "superseded_edges_count": 77,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 2,
+          "INSTRUMENT": 2,
+          "DATA_CATEGORY": 6,
+          "OBLIGATION": 17,
+          "PENALTY": 1
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 2,
+          "AMENDS": 0,
+          "REPEALS": 0,
+          "GOVERNS": 4,
+          "PROHIBITS": 2,
+          "REQUIRES": 6,
+          "EXEMPTS": 1,
+          "SUPERVISES": 2,
+          "PENALIZES": 1,
+          "APPLIES_TO_SCENARIO": 2,
+          "RESTRICTS_CROSS_BORDER": 4,
+          "REQUIRES_ADMISSION": 7
+        },
+        "review_status": {
+          "approved": 4,
+          "pending_review": 27
+        },
+        "extractor_model": {
+          "deepseek-flash": 27,
+          "structural-metadata-v2": 4
+        },
+        "total_clauses_count": 150,
+        "linked_clauses_count": 14,
+        "unlinked_clauses_count": 136,
+        "quote_mismatch_edges_count": 0
+      },
+      "MA": {
+        "nodes_count": 32,
+        "edges_count": 36,
+        "structural_edges": 4,
+        "semantic_edges": 32,
+        "semantic_unjudged": 0,
+        "low_confidence": 0,
+        "quote_mismatch": 0,
+        "superseded_edges_count": 64,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 1,
+          "INSTRUMENT": 2,
+          "DATA_CATEGORY": 8,
+          "OBLIGATION": 18,
+          "PENALTY": 2
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 2,
+          "AMENDS": 0,
+          "REPEALS": 0,
+          "GOVERNS": 10,
+          "PROHIBITS": 0,
+          "REQUIRES": 9,
+          "EXEMPTS": 2,
+          "SUPERVISES": 2,
+          "PENALIZES": 2,
+          "APPLIES_TO_SCENARIO": 2,
+          "RESTRICTS_CROSS_BORDER": 1,
+          "REQUIRES_ADMISSION": 6
+        },
+        "review_status": {
+          "approved": 4,
+          "pending_review": 32
+        },
+        "extractor_model": {
+          "deepseek-flash": 32,
+          "structural-metadata-v2": 4
+        },
+        "total_clauses_count": 215,
+        "linked_clauses_count": 17,
+        "unlinked_clauses_count": 198,
+        "quote_mismatch_edges_count": 0
+      },
+      "LB": {
+        "nodes_count": 14,
+        "edges_count": 12,
+        "structural_edges": 2,
+        "semantic_edges": 10,
+        "semantic_unjudged": 0,
+        "low_confidence": 0,
+        "quote_mismatch": 0,
+        "superseded_edges_count": 20,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 1,
+          "INSTRUMENT": 1,
+          "DATA_CATEGORY": 2,
+          "OBLIGATION": 7,
+          "PENALTY": 2
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 1,
+          "AMENDS": 0,
+          "REPEALS": 0,
+          "GOVERNS": 1,
+          "PROHIBITS": 0,
+          "REQUIRES": 2,
+          "EXEMPTS": 0,
+          "SUPERVISES": 1,
+          "PENALIZES": 2,
+          "APPLIES_TO_SCENARIO": 2,
+          "RESTRICTS_CROSS_BORDER": 0,
+          "REQUIRES_ADMISSION": 3
+        },
+        "review_status": {
+          "approved": 2,
+          "pending_review": 10
+        },
+        "extractor_model": {
+          "deepseek-flash": 10,
+          "structural-metadata-v2": 2
+        },
+        "total_clauses_count": 329,
+        "linked_clauses_count": 9,
+        "unlinked_clauses_count": 320,
+        "quote_mismatch_edges_count": 0
+      }
+    }
+  },
+  "analysis_tasks": {
+    "total_tasks": 1,
+    "finished_tasks_count": 1,
+    "status_distribution": {
+      "completed": 1
+    },
+    "backtrack_count_distribution": {
+      "1": 1
+    },
+    "partial_sample_count": 0,
+    "partial_sample_rate_all": 0.0,
+    "partial_sample_rate_finished": 0.0
+  }
+}

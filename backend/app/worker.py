@@ -30,6 +30,11 @@ async def main(once: bool) -> None:
     ocr = OcrEngine(settings.tesseract_cmd, settings.tessdata_dir, settings.ocr_dpi)
     log.info("OCR %s", "可用" if ocr.available else "不可用(扫描件只标记,不识别)")
     sf = get_sessionmaker()
+    if settings.env == "prod":
+        from app.core.db import get_engine
+        from app.core.rls import validate_runtime_role
+
+        await validate_runtime_role(get_engine())
     sys_proxies = urllib.request.getproxies()
     proxy_url = (
         os.environ.get("HTTPS_PROXY")
@@ -59,13 +64,26 @@ async def main(once: bool) -> None:
                 fallback_client=direct_client if proxy_url else None,
             )
 
-        while True:
-            runs = await run_due_once(sf, make_fetcher, archive, ocr=ocr)
-            if runs:
-                log.info("本轮执行了 %d 个站点", runs)
-            if once:
-                return
-            await asyncio.sleep(settings.worker_poll_seconds)
+        from app.updates.service import monitor_loop, monitor_once
+
+        monitor = (
+            None
+            if once
+            else asyncio.create_task(monitor_loop(sf, interval=settings.worker_poll_seconds))
+        )
+        try:
+            while True:
+                runs = await run_due_once(sf, make_fetcher, archive, ocr=ocr)
+                if runs:
+                    log.info("本轮执行了 %d 个站点", runs)
+                if once:
+                    await monitor_once(sf)
+                    return
+                await asyncio.sleep(settings.worker_poll_seconds)
+        finally:
+            if monitor:
+                monitor.cancel()
+                await asyncio.gather(monitor, return_exceptions=True)
 
 
 if __name__ == "__main__":
@@ -74,6 +92,9 @@ if __name__ == "__main__":
     parser.add_argument("--once", action="store_true")
     args = parser.parse_args()
     try:
-        asyncio.run(main(args.once))
+        from app.core.rls import system_scope
+
+        with system_scope("scheduled ingestion and update notifications"):
+            asyncio.run(main(args.once))
     except KeyboardInterrupt:
         pass

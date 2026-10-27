@@ -1,0 +1,33 @@
+{
+  "note": "只读派生：统计此前遗漏的依据生成阶段错误，不改历史审计payload或原报告；其他指标不变。",
+  "batches": [
+    {
+      "file": "s5-quality-20261024-provider-error-v24.json",
+      "reported_technical_error_cases": 32,
+      "derived_technical_error_cases": 32,
+      "evidence_gap_findings": 0,
+      "generation_error_findings": 0
+    },
+    {
+      "file": "s5-quality-20261024-v25.json",
+      "reported_technical_error_cases": 1,
+      "derived_technical_error_cases": 16,
+      "evidence_gap_findings": 10,
+      "generation_error_findings": 20
+    },
+    {
+      "file": "s5-quality-20261024-v26.json",
+      "reported_technical_error_cases": 3,
+      "derived_technical_error_cases": 4,
+      "evidence_gap_findings": 6,
+      "generation_error_findings": 1
+    },
+    {
+      "file": "s5-quality-20261024-v27.json",
+      "reported_technical_error_cases": 4,
+      "derived_technical_error_cases": 4,
+      "evidence_gap_findings": 6,
+      "generation_error_findings": 1
+    }
+  ]
+}

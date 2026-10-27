@@ -1,0 +1,138 @@
+{
+  "same_suite": true,
+  "same_judge_prompt": true,
+  "judge_sha256": "01793fddab716693d4b5eb7e5f1272768f93edc5cc5a857435d9f0539a6bc6f3",
+  "before": {
+    "completed_cases": 32,
+    "total_cases": 32,
+    "recall_at_5": 0.375,
+    "retrieval_hits": 12,
+    "retrieval_expected": 32,
+    "quote_fidelity": 1.0,
+    "faithful_findings": 71,
+    "findings_total": 71,
+    "fact_consistency": 0.6619718309859155,
+    "supported_findings": 47,
+    "judged_findings": 71,
+    "judge_coverage": 1.0,
+    "llm_judged": true,
+    "human_review_count": 0,
+    "human_review_status": "0/32 未经人工复核",
+    "total_tokens": 218796,
+    "technical_error_cases": 0,
+    "note": "工程来源标注集，非人工金标准。事实一致性为独立模型对结论是否获引文支持的判断（llm_judged），不代表法律准确率。未生成/未判定项不计为通过，另列覆盖率。",
+    "batch_id": "d70b92c6-9da2-4d47-8011-d532e475ad16",
+    "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+    "workflow_version_id": "60e7825c-8514-4213-a19a-af9c8df89315",
+    "elapsed_seconds": 202.15899899999204,
+    "questions_with_analysis_items": 29,
+    "questions_with_supported_attempt": 26,
+    "questions_with_supported_final_finding": 26
+  },
+  "after": {
+    "completed_cases": 32,
+    "total_cases": 32,
+    "recall_at_5": 0.53125,
+    "retrieval_hits": 17,
+    "retrieval_expected": 32,
+    "quote_fidelity": 0.9,
+    "faithful_findings": 45,
+    "findings_total": 50,
+    "fact_consistency": 0.8666666666666667,
+    "supported_findings": 39,
+    "judged_findings": 45,
+    "judge_coverage": 0.9,
+    "llm_judged": true,
+    "human_review_count": 0,
+    "human_review_status": "0/32 未经人工复核",
+    "total_tokens": 338301,
+    "technical_error_cases": 0,
+    "local_reselection_cases": 4,
+    "note": "工程来源标注集，非人工金标准。事实一致性为独立模型对结论是否获引文支持的判断（llm_judged），不代表法律准确率。未生成/未判定项不计为通过，另列覆盖率。",
+    "batch_id": "0e4f68fc-d47d-49eb-ba81-b902a0995e8b",
+    "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+    "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+    "elapsed_seconds": 216.38246200000867,
+    "questions_with_analysis_items": 28,
+    "questions_with_supported_attempt": 26,
+    "questions_with_supported_final_finding": 25
+  },
+  "per_country": [
+    {
+      "country": "EG",
+      "before": {
+        "retrieval_hits": 1,
+        "questions": 6,
+        "supported": 5,
+        "judged": 9
+      },
+      "after": {
+        "retrieval_hits": 6,
+        "questions": 6,
+        "supported": 4,
+        "judged": 5
+      }
+    },
+    {
+      "country": "LB",
+      "before": {
+        "retrieval_hits": 1,
+        "questions": 6,
+        "supported": 8,
+        "judged": 10
+      },
+      "after": {
+        "retrieval_hits": 4,
+        "questions": 6,
+        "supported": 7,
+        "judged": 9
+      }
+    },
+    {
+      "country": "MA",
+      "before": {
+        "retrieval_hits": 4,
+        "questions": 6,
+        "supported": 10,
+        "judged": 15
+      },
+      "after": {
+        "retrieval_hits": 4,
+        "questions": 6,
+        "supported": 8,
+        "judged": 8
+      }
+    },
+    {
+      "country": "SG",
+      "before": {
+        "retrieval_hits": 3,
+        "questions": 8,
+        "supported": 16,
+        "judged": 23
+      },
+      "after": {
+        "retrieval_hits": 1,
+        "questions": 8,
+        "supported": 14,
+        "judged": 14
+      }
+    },
+    {
+      "country": "TN",
+      "before": {
+        "retrieval_hits": 3,
+        "questions": 6,
+        "supported": 8,
+        "judged": 14
+      },
+      "after": {
+        "retrieval_hits": 2,
+        "questions": 6,
+        "supported": 6,
+        "judged": 9
+      }
+    }
+  ],
+  "note": "全部尝试（含局部重选前）计入新批次分母；失败、拒绝与未判断不当作通过。LLM Judge不是人工法律验收。"
+}

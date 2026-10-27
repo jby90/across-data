@@ -1,0 +1,88 @@
+{
+  "attempts": [
+    {
+      "attempt_file": "discovery.json",
+      "records": [
+        {
+          "requested_url": "https://pdpc.gov.eg/home",
+          "error_type": "BlockedError",
+          "error": "域名解析到内网地址被拦截: pdpc.gov.eg -> 198.18.0.242"
+        },
+        {
+          "requested_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "error_type": "BlockedError",
+          "error": "域名解析到内网地址被拦截: www.bdl.gov.lb -> 198.18.0.243"
+        },
+        {
+          "requested_url": "https://nhrclb.org/archives/8228",
+          "error_type": "BlockedError",
+          "error": "域名解析到内网地址被拦截: nhrclb.org -> 198.18.0.244"
+        }
+      ],
+      "robots": {}
+    },
+    {
+      "attempt_file": "discovery-public.json",
+      "records": [
+        {
+          "requested_url": "https://pdpc.gov.eg/home",
+          "error_type": "BlockedError",
+          "error": "robots.txt 不允许抓取或无法确认: https://pdpc.gov.eg/home"
+        },
+        {
+          "requested_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "final_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+          "mime": "application/pdf",
+          "status": 200,
+          "sha256": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "archive_path": "7c/7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+          "bytes": 282843
+        },
+        {
+          "requested_url": "https://nhrclb.org/archives/8228",
+          "final_url": "https://nhrclb.org/archives/8228",
+          "mime": "text/html",
+          "status": 200,
+          "sha256": "91bf1bb73082307b9bb657d05b694fb608b5edd3f61e7a5ddfd6cfd82ac777c3",
+          "archive_path": "91/91bf1bb73082307b9bb657d05b694fb608b5edd3f61e7a5ddfd6cfd82ac777c3",
+          "bytes": 514991
+        }
+      ],
+      "robots": {
+        "https://pdpc.gov.eg": "网络错误(ConnectError),无法确认规则,不抓取",
+        "https://www.bdl.gov.lb": "HTTP 200,已读取规则",
+        "https://nhrclb.org": "HTTP 200,已读取规则"
+      },
+      "local_fake_dns_adapter": [
+        "198.18.0.0/15"
+      ],
+      "literal_private_hosts_still_blocked": true
+    },
+    {
+      "attempt_file": "discovery-originals.json",
+      "records": [
+        {
+          "requested_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+          "error_type": "BlockedError",
+          "error": "robots.txt 不允许抓取或无法确认: https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf"
+        },
+        {
+          "requested_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+          "error_type": "BlockedError",
+          "error": "robots.txt 不允许抓取或无法确认: https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf"
+        },
+        {
+          "requested_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Acts%20Supplement/25.pdf",
+          "error_type": "BlockedError",
+          "error": "robots.txt 不允许抓取或无法确认: https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Acts%20Supplement/25.pdf"
+        }
+      ],
+      "robots": {
+        "https://mcit.gov.eg": "HTTP 500,无法确认规则,保守起见不抓取",
+        "https://assets.egazette.gov.sg": "HTTP 403,无法确认规则,保守起见不抓取"
+      }
+    }
+  ],
+  "model_calls": 0,
+  "note": "Only robots-permitted downloads archived; no bypass, no legal approvals."
+}

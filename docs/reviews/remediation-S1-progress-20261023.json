@@ -1,0 +1,607 @@
+{
+  "summary": {
+    "total_latest_clauses": 2607,
+    "current": 905,
+    "qualified_unique_clauses": 855,
+    "invalid_current": 50,
+    "by_country": {
+      "MA": {
+        "clauses": 215,
+        "qualified": 78
+      },
+      "EG": {
+        "clauses": 100,
+        "qualified": 68
+      },
+      "TN": {
+        "clauses": 150,
+        "qualified": 69
+      },
+      "LB": {
+        "clauses": 329,
+        "qualified": 36
+      },
+      "SG": {
+        "clauses": 1813,
+        "qualified": 604
+      }
+    },
+    "known_tokens_in": 642409,
+    "known_tokens_out": 1274075,
+    "human_approved": 0
+  },
+  "invalid_current": [
+    {
+      "translation_id": "ab3b681f-a6ce-4257-bfcd-4e8e36cd3e70",
+      "clause_id": "01124562-5dfa-47ca-9938-56111f3cc2aa",
+      "issues": [
+        "译文缺失原文数字或比例: 20"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "0f1daf9a-b360-4716-8348-2b510e077f47",
+      "clause_id": "770e9826-2ca1-4915-9976-ecd143dba336",
+      "issues": [
+        "译文缺失原文数字或比例: 100"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "86db97b1-89b9-4a2d-981c-cb9677e9ba38",
+      "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+      "issues": [
+        "译文缺失原文数字或比例: 5"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "74883eed-2f45-42e4-a32e-f85d2fc6e824",
+      "clause_id": "2b92a867-5ccb-47be-ae49-84f510613158",
+      "issues": [
+        "译文缺失原文数字或比例: 17"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "c1815e8d-eaf3-4cb9-8df7-40fe4ec44298",
+      "clause_id": "17cae1d3-bc78-4211-834b-439b4dc677fd",
+      "issues": [
+        "译文缺失原文数字或比例: 1"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "0ea4b3c9-a537-4e63-a456-933cbb3e099e",
+      "clause_id": "b2f86f59-e58c-46be-a638-b2847d11de94",
+      "issues": [
+        "CJK 字符占比未达标: 10.6% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "c487fb94-99c4-4fdf-873e-919ad806081a",
+      "clause_id": "7973c897-f859-4d63-a0d3-496488241b24",
+      "issues": [
+        "CJK 字符占比未达标: 27.3% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "9f3e45ae-b1d5-44f8-851b-690eed22564f",
+      "clause_id": "7b78a1e5-c45d-4482-8291-1b40caf0039a",
+      "issues": [
+        "译文金额或币种不一致: MAD 2019"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "cebec611-442d-4a1d-a540-1d1070d611ee",
+      "clause_id": "45980fba-a5d0-4cf7-b7d2-6b399129fbc8",
+      "issues": [
+        "CJK 字符占比未达标: 23.4% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "9c2e9f6c-7288-4ed5-9784-f76e49b868cc",
+      "clause_id": "62b6fc8e-dfab-43f3-a98f-ef59942c7be1",
+      "issues": [
+        "CJK 字符占比未达标: 27.3% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "cc75e624-7e15-4471-a820-56271389255b",
+      "clause_id": "a7284cdb-479f-4d3d-a757-56399ab17f12",
+      "issues": [
+        "CJK 字符占比未达标: 18.8% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "cb75ed7c-1809-4cc2-9f3a-e017b7ff74b7",
+      "clause_id": "d97cc5bd-2bae-4d33-9ee6-bad15b3e5b50",
+      "issues": [
+        "CJK 字符占比未达标: 23.9% < 30.0%"
+      ],
+      "status": "translation_failed"
+    },
+    {
+      "translation_id": "374b0103-d59a-46ab-9d83-b48f37337a7c",
+      "clause_id": "3c4c5490-9fd7-4365-806a-bc1f0c68fff9",
+      "issues": [
+        "译文日期不一致: 2020-11-02"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "3ce26fe7-67ca-4e09-868f-3ea64cc1381f",
+      "clause_id": "8ccf531d-b7c8-4863-b558-03f9373bcdeb",
+      "issues": [
+        "译文缺失原文数字或比例: 3"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "10ff0465-db5b-4384-9b89-731cc73fb166",
+      "clause_id": "16c4a65a-3709-44d7-bc3b-3aafb7fdcebc",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 5000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "1c0d81f3-6f51-4d56-937d-75f7b1c4e6a6",
+      "clause_id": "44f225f5-448d-472f-a391-9572f2012023",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 5000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "b5925993-5e2f-494a-afe1-3a8bbf294cef",
+      "clause_id": "2d061ab3-1990-4735-aa9a-59e3af2a8f46",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 2000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "f9c05c8f-4562-4220-a55c-ab3eff00931f",
+      "clause_id": "201231f8-5fa6-45d1-a508-087dd4bf8877",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1000",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "761920e2-355b-427d-aab1-b145ec2559aa",
+      "clause_id": "c2a2e588-a181-430e-8baf-4240df081ede",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "d1d3a2f9-496a-4b4b-8db1-ece6dc66c6d2",
+      "clause_id": "46d85eb5-a09f-4f47-86e9-dbc49f3f80d7",
+      "issues": [
+        "译文缺失原文数字或比例: 3"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "e0835e36-3e43-4528-bd09-e07218df3141",
+      "clause_id": "d2fcefae-bc49-4d24-9cb5-03173270a25e",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "f3e46481-970f-40df-96cc-175789f6cf1d",
+      "clause_id": "3d3a753f-a3bf-4cc5-9127-70aa8261fe0f",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 50",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 50000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "0011d65d-7e49-40cc-8eeb-4b29bdd5fdc6",
+      "clause_id": "3214922b-a62e-4f0a-8667-fe84f1f1a7ce",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10000",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 5000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "0ce5e64f-d475-48c4-9ffd-30aa13d48f72",
+      "clause_id": "d5cffc24-edad-47bc-905f-3aa26a6467c1",
+      "issues": [
+        "译文缺失原文数字或比例: 10",
+        "译文缺失原文数字或比例: 20",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 20",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 200000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "0d08f13a-5ccc-4cd8-814f-61e994936876",
+      "clause_id": "443931e8-1988-4b80-b354-c1480cd696e9",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1600",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 250",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 30",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 800"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "03f12c02-fea9-488c-a079-bc5ce5bc98e2",
+      "clause_id": "c5eff2fa-67f6-42f9-bc6a-e46ea69ac600",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1000",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 2000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "8ea9470d-a90b-4e48-a357-182418eb0d14",
+      "clause_id": "5efd5205-68fe-458a-b3b2-582b8a103461",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 2000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "dfb6f534-5e22-4885-97e7-4404be04111f",
+      "clause_id": "8057c5b0-3243-44c6-ad2a-3dbf15edccc8",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1.5"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "7916836b-9122-4591-95ea-a34cb49a9298",
+      "clause_id": "2c4d0032-fe0b-420e-b810-7fd8988b9364",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 2000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "fbf3db65-534e-4e2e-ab11-f84d9140d41e",
+      "clause_id": "f2eb4e0c-cad9-46ea-8153-78ca02220c5d",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 2000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "7e8eb7fa-c35e-4a9d-b748-871e54d0fda3",
+      "clause_id": "f18d1043-b26c-4a66-83ad-6933d537feef",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1600",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 250",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 30",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 800"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "9d01ab6a-1b77-4c44-8426-605092dda87a",
+      "clause_id": "d87bc6e8-adf5-4d92-b25a-b0610e1c4d84",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 25.68"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "f334ff5a-5762-4494-8766-c31c69520810",
+      "clause_id": "3f4153a3-1be5-4a27-be2b-53048c5154a3",
+      "issues": [
+        "译文日期不一致: 2021-09-27"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "166cbb47-ad32-4690-8a0c-697e6b688d4a",
+      "clause_id": "5fceb016-2474-4089-85aa-5da5db5db501",
+      "issues": [
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 1",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 10",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 20",
+        "译文金额或币种不一致: DOLLAR_UNSPECIFIED 200000"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "39593891-0bb3-4932-a5c1-eb86e2acd535",
+      "clause_id": "3a7325a8-08df-405c-a875-4f5b3ac7c837",
+      "issues": [
+        "译文金额或币种不一致: MAD 2"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "de974e13-bbc6-431b-a61c-96ab38144886",
+      "clause_id": "d5bec008-6580-4abb-a4e8-3c3ac1e67822",
+      "issues": [
+        "译文金额或币种不一致: MAD 2024"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "2dafa7e0-ff51-43e3-9455-af0088b0a0df",
+      "clause_id": "70a58d26-b412-434f-9aa3-db7ba4e137d5",
+      "issues": [
+        "译文金额或币种不一致: MAD 2026"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "296e5119-f57a-4eec-8b8c-faba115b0bd1",
+      "clause_id": "04ac5904-be83-4980-afb6-6f7e208a7a84",
+      "issues": [
+        "译文金额或币种不一致: MAD 2021"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "26c326f8-0cc3-4269-b4e9-8dd0adeddc30",
+      "clause_id": "0f7487bd-0c22-482c-8043-c8dc40caa517",
+      "issues": [
+        "译文金额或币种不一致: MAD 2021"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "a0e22a90-3747-458a-ba25-6d7e2306a110",
+      "clause_id": "4f0acc07-baee-4d35-b13a-56c7faf6fe94",
+      "issues": [
+        "译文金额或币种不一致: MAD 2021"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "e46858f5-6b0f-4f37-9ef3-c97b74b0486c",
+      "clause_id": "fdb4993b-c130-4cd0-b2cf-ca0cd32d178e",
+      "issues": [
+        "译文金额或币种不一致: MAD 2026"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "c5fcf29b-503a-4980-a521-1c0b415d657e",
+      "clause_id": "83b4c705-1123-48a2-8f48-5bd3c4a28042",
+      "issues": [
+        "译文金额或币种不一致: MAD 2025"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "20aa90c5-d8f2-4c57-bc81-765794cdf966",
+      "clause_id": "c2e147ff-c3ca-4a94-8241-1935b3b39d0c",
+      "issues": [
+        "译文金额或币种不一致: MAD 2024"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "585e5585-bd54-4eb5-b3f3-344ab22dba0b",
+      "clause_id": "0447e029-cde6-4f34-8a50-218ee91b757b",
+      "issues": [
+        "译文金额或币种不一致: MAD 2021"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "d608602d-e5cb-481e-bb46-971c99a358a2",
+      "clause_id": "3f24e32a-c255-4095-a7a9-a69203c8d8ff",
+      "issues": [
+        "译文金额或币种不一致: MAD 2020"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "97e5c494-4335-4e1f-9c7a-cd03edbb26c5",
+      "clause_id": "1d11c121-72f8-482b-91a2-7ed391587973",
+      "issues": [
+        "译文金额或币种不一致: MAD 2018"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "d36bc525-5023-46ee-b1c2-bb53efd554a2",
+      "clause_id": "0920a681-92bf-4055-8ca3-b5090ca6536f",
+      "issues": [
+        "译文金额或币种不一致: MAD 2019"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "366be969-b860-438e-9bb0-4a359cea5723",
+      "clause_id": "251b2cd2-9dde-48c0-ac8d-6555627eea11",
+      "issues": [
+        "译文日期不一致: 2026-10-14"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "624974d5-9fa6-4a51-bbed-66840fd0ef1d",
+      "clause_id": "ee6120bf-62c5-4ef3-a1e6-5808844c3e37",
+      "issues": [
+        "译文日期不一致: 2009-02-18"
+      ],
+      "status": "machine_translated"
+    },
+    {
+      "translation_id": "2a6699c6-1293-438c-ade1-31d217610b58",
+      "clause_id": "6c4c3538-17eb-4741-81ae-515c2933afc2",
+      "issues": [
+        "译文缺失原文数字或比例: 6",
+        "译文缺失原文数字或比例: 7",
+        "译文缺失原文数字或比例: 8"
+      ],
+      "status": "machine_translated"
+    }
+  ],
+  "human_samples": [
+    {
+      "country_code": "SG",
+      "translation_id": "29654e99-3711-4b97-96e4-f6805c4fc9f8",
+      "clause_id": "f484c10f-0baf-4da8-ae64-3596e7031391",
+      "clause_number": "0.1",
+      "source_url": "https://www.pdpc.gov.sg/-/media/files/pdpc/pdf-files/advisory-guidelines/ag-on-key-concepts/advisory-guidelines-on-key-concepts-in-the-pdpa-17-may-2022.pdf",
+      "document_title": "Advisory Guidelines on Key Concepts in the PDPA",
+      "version_id": "d5b853df-1027-45a6-ae86-223ccc2822f2",
+      "content_hash": "c012a1e0f6c1c0f0f0bc8f39d0d3725f485fed129c2e773781cac529362d9d7c",
+      "original": "Derived personal data.....................................................................................19\nPersonal data of deceased individuals............................................................19\nControl, not ownership, of personal data ........................................................20\nOrganisations .................................................................................................22\nExcluded organisations...................................................................................22\nIndividuals acting in a personal or domestic capacity .....................................23\nIndividuals acting as employees .....................................................................23\nPublic agencies...............................................................................................24\nData intermediaries.........................................................................................24\nObligations of data intermediaries...................................................................24\nConsiderations for organisations using data intermediaries............................25\nDetermination of who the data intermediary is................................................27\n“Agents” who may be data intermediaries.......................................................30",
+      "translated": "衍生个人数据 19\n已故个人的个人数据 19\n对个人数据的控制而非所有权 20\n组织 22\n被排除的组织 22\n以个人或家庭身份行事的个人 23\n以雇员身份行事的个人 23\n公共机构 24\n数据中介机构 24\n数据中介机构的义务 24\n使用数据中介机构的组织之考量事项 25\n数据中介机构身份的确定 27\n可能作为数据中介机构的“代理人” 30",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "SG",
+      "translation_id": "58b4daee-58cc-4b98-8a9f-867ade282021",
+      "clause_id": "ea7028d2-e2c0-4f1d-b825-1742fd81013e",
+      "clause_number": "23",
+      "source_url": "https://assets.egazette.gov.sg/2020/Legislative%20Supplements/Acts%20Supplement/41.pdf",
+      "document_title": "Personal Data Protection (Amendment) Act 2020",
+      "version_id": "d69a2833-b323-471b-aca2-fe2fd57ead16",
+      "content_hash": "b66b0deb0bf7dd02899e45dce6ba3137fc341e4e086edaed980a9ac0b42177e8",
+      "original": "New Parts IXC and IXD\n23. The principal Act is amended by inserting, immediately before\nPart X, the following Parts:\n“PART IXC\n25 ENFORCEMENT\nAlternative dispute resolution\n48G.—(1) If the Commission is of the opinion that any\ncomplaint by an individual (called in this section the\ncomplainant) against an organisation may more appropriately\n30 be resolved by mediation, the Commission may, without the\nconsent of the complainant and the organisation, refer the matter\nto mediation under a dispute resolution scheme.\n(2) Subject to subsection (1), the Commission may, with or\nwithout the consent of the complainant and the organisation,\ndirect the complainant or the organisation or both to attempt to\nresolve the complaint of the complainant in the way directed by\nthe Commission.\n(3) For the purposes of subsection (1), the Commission may\nestablish or approve one or more dispute resolution schemes for\nthe resolution of complaints by individuals against\norganisations.\n(4) The Commission may, with the approval of the Minister,\nmake regulations under section 65 to provide for matters relating\nto the operation by an operator of a dispute resolution scheme,\nincluding —\n(a) the standards or requirements of the services provided\nunder the dispute resolution scheme;\n(b) the fees that the operator may charge for the services\nprovided under the dispute resolution scheme;",
+      "translated": "新第IXC部分和第IXD部分\n23. 主法经插入以下部分而修订，插入位置紧接第X部分之前：\n“第IXC部分\n25 执行\n替代争议解决\n48G.—(1) 如果委员会认为个人（在本条中称为投诉人）对组织提出的任何投诉可更适当地 30 通过调解解决，委员会可在未经投诉人和组织同意的情况下，根据争议解决计划将该事项提交调解。\n(2) 在符合第(1)款的前提下，委员会可在经或未经投诉人和组织同意的情况下，指示投诉人或组织或二者尝试按委员会指示的方式解决投诉人的投诉。\n(3) 为第(1)款之目的，委员会可设立或批准一项或多项争议解决计划，以解决个人对组织提出的投诉。\n(4) 委员会可经部长批准，根据第65条制定条例，就争议解决计划运营者运营该计划的相关事项作出规定，包括——\n(a) 该争议解决计划下提供的服务的标准或要求；\n(b) 运营者可就该争议解决计划下提供的服务收取的费用；",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "EG",
+      "translation_id": "43b187d8-c41a-40b3-a213-e3b9df6494fa",
+      "clause_id": "8f98c70b-b25d-4ccc-86ed-2bec4660be36",
+      "clause_number": ")£0(",
+      "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+      "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+      "content_hash": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+      "original": "مادة )£0( :\nيعاقب بغرامة لا تة\n‎WE‏ أحكام التراخيص أو التصاريح",
+      "translated": "第（£0）条：\n处以不……的罚款；WE 违反许可证或批准的规定。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "EG",
+      "translation_id": "f84a18c7-61df-4315-8a78-3ebcfe5c013c",
+      "clause_id": "30a1c729-9f96-4921-b2f9-ad9a2a86b015",
+      "clause_number": "‎)١0(‏.1",
+      "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+      "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "version_id": "51c2e2a1-d664-4ae9-a866-131eda977f47",
+      "content_hash": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+      "original": "التحقق من شروط حركة ‎SRM MLL‏ “#راتخاذ القرارات) ‎ba‏ 46\nتنظيم المؤقرات وورش العمل والدوراتا\nالوعى والتثقيف للأفراد والجهات حول حقوقهم فيما\nتقديم جميع أنواع الخبرة:والاأسجشارات\nوعلى الأخص لجهات التحقيق والجهات القضائية .\nإبرام الاتفاقيات ومذكرات التفاهم والتنسيق والتعاون وتبادل الخبرات مع الجهات\n‎S Alan‏ وفقًا للقواعد والإجراءات المقررة فى هذا الشأن .\nالخاصة بتحديث ‎Ok Lol‏ الحماية بما يتوافق مع أنيشتطة القطاعات\nوتحديد المعاملة المالية لأعضائه قرار من رء\nولجلس الآدارة أن يشكل من بين أعضا\nببعض المهام « وللمجلس أن يفوض رئيس مح زة أو ‎FS) gh ped J‏\n: (YY) ‏مادة‎\n‎gee S 15,1‏ السلطة المهيمنة غلى شكوئة.ومباشرة الختصاصاته. ‎aly‏ أن\n‎pat: ١ 3 9‏ قرارات لتحقيق أغراض المركز والقانون ‎easy‏ العتفيذية\n‏البيانات\n‎a‏ البيانا\n‏مادة ‎(YY)‏ :\n‎a‏\n‏يكون للمركز رئيس تنفيذى\nالوزراء ‎ty‏ على اقتراح الوزير ا :\nويكون مستكولا أضاع مجلس الإدارة 4\n‎١‏ -الإشراف على تنفيذ قرارات مجلس ‎SY‏\nY) VWs Re V0 ‏فى‎ (a) (Se VA ‏العو‎ = dye II Syl\nHii ‏وصور العسلل‎ SON DLT GET plane LEC tiie BE tad ‏ب‎\nالمشار إليها ‎oe‏\n‏مادة (0؟):\nالامتثال للقانون من قبل المتحكمين والمعالجين +\nالبينانات والمعلؤسات با من ‎ald‏ أن يكفل ‎Ras‏\n‏والمساعدة فى التحقيق فى الانتهاكات والجرائم ذات الصلة وتتبع مرتكبيها .\n( الفصل العاشر )\n@ التراخيص والتصاريح والاعتمادات\nإلا:أنواع التراخيص والتصاريح والاعتمادات\nلد 6\nيدر المركز | ‎i aa‏\n‎iJ \\‏ 3 |\n#تبم ألا\nNei\n‎Sisl ls‏ و2\n‏انواعها\n‏وضع\n‏ع امم\n0\n‏م ~ يه\n‏لأجراء\n‏وتحدد اللائحة التنفيذية لهذا د",
+      "translated": "核查SRM MLL运动条件“#决策）ba 46\n组织会议、研讨会和课程\n提高个人和机构对其权利的认识和教育，关于\n提供所有类型的经验和咨询：\n特别是调查机关和司法机关。\n与机构缔结协议、谅解备忘录、协调、合作和交换经验\nS Alan 根据此事项规定的规则和程序。\n与更新Ok Lol保护相关的，符合部门活动\n确定其成员的财务待遇，由……决定\n董事会有权从其成员中组建\n某些任务，董事会有权授权主席……或FS) gh ped J\n第(YY)条：\ngee S 15,1 对……的主导权并直接行使其职权。aly 认为\npat: 1 3 9 决定以实现中心宗旨和法律 easy 执行\n数据\na 数据\n第(YY)条：\na\n中心设执行主席\n部长会议 ty 根据部长提议：\n并负责董事会……4\n1 -监督执行董事会决定 SY\nY) VWs Re V0 在(a) (Se VA 的…… = dye II Syl\nHii 和……图片 SON DLT GET plane LEC tiie BE tad 以\n所提及的 oe\n第(0？)条：\n控制者和处理者遵守法律 +\n数据和信息，ald 应确保 Ras\n并协助调查相关违法和犯罪行为并追踪犯罪人。\n（第十章）\n@ 许可、批准和认证\n除：许可、批准和认证的类型\n有6\n中心…… i aa\niJ \\ 3 |\n#……不\nNei\nSisl ls 和2\n其类型\n制定\n一般\n0\nم ~ يه\n程序\n本条例实施细则确定此……",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "TN",
+      "translation_id": "4bb92be9-3d82-434a-b820-18408ad464af",
+      "clause_id": "891b9258-47f4-4948-9d23-570ea9f0e7d1",
+      "clause_number": "7.1",
+      "source_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+      "version_id": "ef435dee-6930-496b-8d22-23b4819a7999",
+      "content_hash": "7b12a8ddddba535f4afb61ab95f9f9be411fdecc31cda1e9242145853edf2735",
+      "original": "الشخصية باستعمال الحيلة أو العنف أو التهديد.\nالفصل 89 يعاقب بالسجن مدة عام وبخطية قدرها خمسة آلاف\nدينار كل من تعمد إحالة المعطيات الشخصية لغاية تحقيق منفعة لنفسه\nأو لغيره أو لإلحاق مضرة بالمعني بالأمر.\nالفصل 90 يعاقب بالسجن مدة عام وبخطية قدرها خمسة آلاف\nدينار كل من :\nالمنصوص عليه بالفصل 7 أو الحصول على الترخيص المنصوص عليه\nبالفصلين 15 و69 من هذا القانون أو يستمر في معالجة المعطيات بعد\nمنع المعالجة أى سحب الترخيصء.\n. ينشر المعطيات الشخصية المتعلقة بالصحة رغم تحجير الهيئة\nالمنصوص عليه بالفقرة الثانية من الفصل 65 من هذا القانون»\n. يقوم بنقل المعطيات الشخصية إلى الخارج دون ترخيص ‎Bag‏\nعدد 61\nالرائد الرسمي للجمهورية التونسية -- 30 جويلية 2004\n. يحيل المعطيات الشخصية دون موافقة المعني بالأمر أو موافقة\nالهيئتة في الصور المنصوص ‎Yale‏ بهذا القانون.\nدينار المسؤول عن المعالجة أو المناول الذي يواصل معالجة المعطيات\nالشخصية رغم اعتراض المعني بالأمر وفق أحكام الفصل 42 من هذا\nالقانون.\nالفصل 92 يعاقب بالسجن مدة ثمانية أشهر وبخطية قدرها ثلاثة\nآلاف دينار المسؤول عن المعالجة أو المناول الذي يعمد إلى الحد من\nحق النفاذ أو الحرمان منه في غير الصور المنصوص عليها بالفصل 35\nمن هذا القانون.\nالفصل 93 يعاقب بالسجن مدة ثلاثة أشهر وبخطية قدرها ثلاثة\nآلاف دينار كل من يتعمد بمناسبة معالجة المعطيات الشخصية نشرها\nبطريقة تسىء لصاحبها أو لحياته الخاصة.\nويكون العقاب بالسجن مدة شهر وبخطية قدرها ألف دينار إذا تم\nالنشر دون قصد الإضرار.\nويمكن للمعني بالأمر أن يطلب من المحكمة أن تأذن بنشر مضمون",
+      "translated": "通过诡计、暴力或威胁使用个人数据。\n\n第89条 处1年监禁和5,000第纳尔罚金，凡故意转交个人数据以为自己或他人谋取利益，或对数据主体造成损害的。\n\n第90条 处1年监禁和5,000第纳尔罚金，对下列人员：\n本法第7条规定的，或取得本法第15条和第69条规定的许可，或在禁止处理或撤销许可后继续处理数据的；\n尽管本法第65条第二款规定的机构禁止，仍发布与健康有关的个人数据的；\n未经许可将个人数据传输到国外的；\n在本法规定的情形下，未经数据主体同意或机构同意转交个人数据的；\n第纳尔。处理控制者或分包处理者，尽管数据主体依照本法第42条规定提出反对，仍继续处理个人数据的。\n\n第61号 突尼斯共和国官方公报 -- 2004年7月30日\n\n第92条 处8个月监禁和3,000第纳尔罚金，处理控制者或分包处理者在本法第35条规定情形之外，故意限制或剥夺查阅权的。\n\n第93条 处3个月监禁和3,000第纳尔罚金，凡在处理个人数据时故意以损害数据主体或其私生活的方式发布该数据的。\n如果发布无意造成损害，处1个月监禁和1,000第纳尔罚金。\n数据主体可请求法院准许发布其内容。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "TN",
+      "translation_id": "5f420867-ad63-433a-8a8a-08a977a87786",
+      "clause_id": "ad38ccf2-a3b1-46ce-9fa6-0aa11e101751",
+      "clause_number": "2.1",
+      "source_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+      "version_id": "ef435dee-6930-496b-8d22-23b4819a7999",
+      "content_hash": "7b12a8ddddba535f4afb61ab95f9f9be411fdecc31cda1e9242145853edf2735",
+      "original": "‏الفصل 25 2 يمكن للهيئة أن تقرر إحالة المعطيات الشخصية فى\nحالة التوقف عن النشاط للأسباب المذكورة بالفصل المتقدم وذلك في\nالصورتين الآتيتين :\n‏أولا : إذا ‎ai,‏ أن تلك المعطيات صالحة ‎GY‏ تستخدم في أغراض\n‏ثانيا : إذا اقترح من تولى الإعلام إحالة كل المعطيات الشخصية أو\nبعضها إلى شخص طبيعي أو معنوي يحدد هويته بدقة. وفي هذه الحالة\nيمكن للهيئة أن تقرر الموافقة على إحالة المعطيات الشخصية إلى\nالشخص المقترح. ولا تتم الإحالة فعليا إلا بعد الحصول على موافقة\nالمعني ‎oi pols‏ وليه ‎of‏ ورثته المتلقاة بأي وسيلة تترك أثرا كتابيا.\n‏وفي صورة عدم حصول هذه الموافقة خلال ثلاثة أشهر من طلبهاء\nيجب إعدام المعطيات الشخصية.\n‏الفصل 26 في حالة توقف نشاط المسؤول عن المعالجة أو\nالمناول للأسباب المذكورة بالفصل 24 من هذا القانونء يمكن للمعني\nبالأمر ‎si‏ ورثته أو كل شخص له مصلحة أو النيابة العمومية أن يطلبوا\nفى كل وقت من ‎Gal diag‏ التدابير الملائمة ‎ast‏ المعطيات\nالشخصية وحمايتها أو إعدامها.\n‏صفحة 2086\n‏الرائد الرسمي للجمهورية التونسية -- 30 جويلية 2004\n‏وعلى الهيئة أن تصدر قرارها في أجل عشرة أيام بداية من تاريخ\n‏تعهدها.\n‏في حقوق المعني بالأمر\nالفرع الأول\nفى الموافقة\n‏الفصل 27 فيما عدا الصور المنصوص عليها بهذا القانون أو\nبالقوانين الجاري بها ‎heal‏ لا يمكن معالجة المعطيات الشخصية إلا\nبالموافقة الصريحة والكتابية للمعني بالأمر. وإذا كان قاصرا ‎ol‏ محجورا\nعليه أو غير قادر على الإمضاءء تخضع الموافقة إلى القواعد القانونية\nالعامة.\n‏وللمعني بالأمر أو وليه الرجوع في الموافقة في كل وقت.",
+      "translated": "第25条 2 委员会可以决定在前条所述原因导致停止活动的情况下，在以下两种情形中移交个人数据：\n第一：如果该等数据适合用于目的；\n第二：如果负责告知的人提议将全部或部分个人数据移交给其身份被准确确定的自然人或法人。在此情形下，委员会可以决定同意将个人数据移交给所提议的人。只有在获得数据主体、其监护人或其继承人以任何留下书面痕迹的方式作出的同意后，才实际进行移交。\n如果未在提出请求后三个月内获得该同意，必须销毁个人数据。\n第26条 如果处理负责人或分包处理者因本法第24条所述原因停止活动，数据主体或其继承人、任何有利害关系的人或检察机关可以随时要求委员会采取适当措施保护个人数据、保护或销毁之。\n第2086页\n突尼斯共和国官方公报——2004年7月30日\n委员会应自受理之日起十天之内作出决定。\n数据主体的权利\n第一目\n同意\n第27条 除本法或现行法律规定的情形外，未经数据主体明确书面同意，不得处理个人数据。如果数据主体是未成年人、被禁治产人或无能力签名者，同意适用一般法律规则。\n数据主体或其监护人可随时撤回同意。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "MA",
+      "translation_id": "6d864e48-aa38-4067-9713-6d11e1aed23b",
+      "clause_id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+      "clause_number": "premier.2",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+      "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+      "version_id": "0e3251b7-8576-481c-b5d0-07954f45e53b",
+      "content_hash": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+      "original": "6- « sous-traitant » : la personne physique ou morale, l’autorité publique, le\nservice ou tout autre organisme qui traite des données à caractère\npersonnel pour le compte du responsable du traitement ;\n7- « tiers » : la personne physique ou morale, l’autorité publique, le service ou\ntout autre organisme autre que la personne concernée, le responsable du\ntraitement, le sous-traitant et les personnes qui, placées sous l’autorité\ndirecte du responsable du traitement ou du sous-traitant, sont habilitées à\ntraiter les données ;\n8- « destinataire » : la personne physique ou morale, l’autorité publique, le\nservice ou tout autre organisme qui reçoit communication de données, qu’il\ns’agisse ou non d’un tiers. Les organismes qui sont susceptibles de recevoir\ncommunication de données dans le cadre d’une disposition légale ne sont pas\nconsidérées comme destinataires, notamment la Commission nationale de\ncontrôle de la protection des données à caractère personnel instituée à\nl’article 27 ci-après et dénommée la Commission nationale ;\n9- « consentement de la personne concernée » : toute manifestation de\nvolonté, libre, spécifique et informée, par laquelle la personne concernée\naccepte que les données à caractère personnel la concernant fassent l’objet\nd’un traitement ;\n10- « cession ou communication » : toute divulgation ou information d’une",
+      "translated": "6- “数据处理者”：代表数据控制者处理个人数据的自然人、法人、公共机关、服务部门或任何其他机构；\n7- “第三方”：除相关个人、数据控制者、数据处理者以及直接受数据控制者或数据处理者授权处理数据的个人之外的自然人、法人、公共机关、服务部门或任何其他机构；\n8- “接收方”：接收数据告知的自然人、法人、公共机关、服务部门或任何其他机构，无论其是否为第三方。在法律规定的框架内可能接收数据告知的机构，不被视为接收方，特别是下文第27条设立的、称为国家委员会的国家个人数据保护控制委员会；\n9- “相关个人的同意”：相关个人自由、具体和知情地作出的任何意愿表示，据此相关个人接受与其有关的个人数据成为处理的对象；\n10- “转让或通信”：对一项的任何披露或告知",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "MA",
+      "translation_id": "65904af7-1e56-41a8-86fe-11e3412567f6",
+      "clause_id": "42bd2004-81dc-4364-aeb7-bba24d1e8a6f",
+      "clause_number": "44",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/11/Loi-09-08-Fr.pdf",
+      "document_title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+      "version_id": "0e3251b7-8576-481c-b5d0-07954f45e53b",
+      "content_hash": "4b5e910545336cc9d66e0a4f9af648f1b10f1c9dfb97059e610751783d2ad7ed",
+      "original": "Article 44\nPar dérogation aux dispositions de l’article 43 ci-dessus, le responsable d’un\ntraitement peut transférer des données à caractère personnel vers un Etat ne\nrépondant pas aux conditions prévues à l’article ci-dessus, si la personne à laquelle se\nrapportent les données a consenti expressément à leur transfert ou :\n1- Si le transfert est nécessaire :\na) à la sauvegarde de la vie de cette personne ;\nb) à la préservation de l’intérêt public ;\nc) au respect d’obligations permettant d’assurer la constatation,\nl’exercice ou la défense d’un droit en justice ;\nd) à l’exécution d’un contrat entre le responsable du traitement et\nl’intéressé, ou de mesures précontractuelles prises à la demande de\ncelui-ci ;\ne) à la conclusion ou à l’exécution d’un contrat conclu ou à conclure, dans\nl’intérêt de la personne concernée, entre le responsable du traitement\net un tiers ;\nf) à l’exécution d’une mesure d’entraide judiciaire internationale ;\ng) à la prévention, le diagnostic ou le traitement d’affections médicales.\n2- Si le transfert s’effectue en application d’un accord bilatéral ou multilatéral\nauquel le Royaume du Maroc est partie ;\n3- Sur autorisation expresse et motivée de la Commission nationale lorsque\nle traitement garantit un niveau de protection suffisant de la vie privée\nainsi que des libertés et droits fondamentaux des personnes, notamment\nen raison des clauses contractuelles ou règles internes dont il fait l’objet.\nChapitre VI\nDu registre national de la protection des\ndonnées à caractère personnel et des limites à\nla création ou à l’usage de registres centraux\net de fichiers",
+      "translated": "第44条\n作为对上述第43条规定的例外，处理负责人可将个人数据传输至不符合上述条款规定条件的国家，如果该数据所涉个人已明确同意传输，或：\n1- 如果传输对于以下事项是必要的：\na) 保护该人的生命；\nb) 维护公共利益；\nc) 遵守旨在确保在司法程序中确认、行使或抗辩某项权利的义务；\nd) 履行处理负责人与相关方之间的合同，或应相关方请求采取的合同前措施；\ne) 为相关个人利益，缔结或履行处理负责人与第三方之间已订立或将要订立的合同；\nf) 执行国际司法协助措施；\ng) 预防、诊断或治疗医疗疾病。\n2- 如果传输是根据摩洛哥王国作为缔约方的双边或多边协定进行的；\n3- 经国家委员会明确且附理由的授权，且该处理能够保障私人生活以及个人的自由和基本权利得到充分保护水平，特别是由于该处理所适用的合同条款或内部规则。\n第六章\n关于保护的国家登记册\n个人数据以及对于创建或使用中央登记册和档案的限制",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "LB",
+      "translation_id": "b945a369-39a8-4a0c-8bee-9e33299ce6f5",
+      "clause_id": "4b797448-1ebc-4983-a6f5-75dd11a5c2eb",
+      "clause_number": "٣٣.1",
+      "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "version_id": "ee99bccb-9fc2-4afa-a223-65a43c00891e",
+      "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+      "original": "عنـدما يصـدر القبـول بالوسـيلة الإلكترونيـة فـي العقـود المدنيـة والتجاريـة، لا يعتبـر هـذا القبـول منشـئاً\nللعقـد إلا بعـد أن يؤكـد عليـه ة\nّ\nمـر ثانيـة مـن وجـه إليـه العـرض بعـد أن يكـون قـد تحقـق مـن مضـمون\nزاالت مات الفريقين .\nيعـد\nّ\nعندما تكون المساومات في العقود المدنية والتجارية قد جرت بالوسيلة الإلكترونية، فـإن العقـد لا\nمنشأً إلا في الوقت الذي يصل فيه القبول إلى العارض .\nتعتبر الرسالة الإلكترونية قد أرسلت عندما تدخل أول نظام معلوماتي خارج سيطرة المرسل .\nتعتبر الرسالة الإلكترونية قد استلمت من قبل المرسل إليه في الحالتين التاليتين :\n١ - عندما تدخل النظام المحدد للاستلام من قبله .\nّ ٢ - عنــدما يســتخرجها علــى عنــوان إلكترونــي خــاص بــه، إذا لــم\nيــتم تحديــد نظــام معلومــاتي معــين\nلاستلام الرسائل الإلكترونية .\nلـم ما يثبـت العكـس، تعتبـر الرسـالة الإلكترونيـة قـد أرسـلت مـن مقـر عمـل المرسـل وأنهـا اسـتلمت فـي\nمقر عمل المرسل إليه. إذا كان للمرسل أو للمرسل إليه أكثر م من قر عمل، يعـول علـى مقـر العمـل\nالــذي لــه أوثــق علاقــة بالمعاملــة المعنيــة، وفــي حــال عــدم وجــود هكــذا معاملــة، يؤخــذ بمقــر العمــل\nالرئيسي. لم إذا يكن للمرسل أو للمرسل إليه مقر عمل، يؤخذ بمحل إقامته القانوني أو الواقعي .\nيمكن الاتفاق بين رسل\nُ\nالم رسل\nُ\nوالم إليه على قواعد خاصة ت رعى إرسال الرسائل او ستلامها .",
+      "translated": "在民事和商事合同中，当承诺以电子方式作出时，该承诺只有在受要约人在核实双方义务内容后再次予以确认，才视为合同成立。\n\n在民事和商事合同中，当磋商已通过电子方式进行时，合同仅在承诺到达要约人时方成立。\n\n电子消息在进入发件人控制之外的第一个信息系统时，视为已发送。\n\n电子消息在下列两种情况下视为已由收件人收到：\n1 - 当其进入收件人指定的接收系统时。\n2 - 当其被提取至其专属电子地址时，如果未指定特定信息系统用于接收电子消息。\n\n除非证明相反，电子消息视为从发件人营业地发送，并在收件人营业地收到。如果发件人或收件人有一个以上营业地，以与相关交易有最密切联系之营业地为准；如无此种交易，则以主要营业地为准。如果发件人或收件人没有营业地，则以其法定或实际住所为准。\n\n发件人与收件人可约定管辖电子消息发送或接收的特别规则。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    },
+    {
+      "country_code": "LB",
+      "translation_id": "585ed871-3643-4c67-92df-bbb411f15fd7",
+      "clause_id": "0c45954e-f4d8-4401-a52d-cbac2c0cebbc",
+      "clause_number": "٢٢",
+      "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "version_id": "ee99bccb-9fc2-4afa-a223-65a43c00891e",
+      "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+      "original": "المادة ٢٢:\nيأخذ المجلس بالاعتبار من أجل إصدار شهادة اعتماد أو تجديدها المعايير التالية :\n-١ الب نى التحتية والتدابير التقنية لحماية الكتابة الإلكترونية لإ او ءراج ات التنظيمية والموارد البشرية\nالتــي يضــعها مقــدم خــدمات المصــادقة قيــد التطبيــق، والتــي يجــب أن تكــون مطابقــة للمعــايير\nالدولية .\n٢ - انتظــام عمليــات التــدقيق ومــداها للتحقــق مــن مطابقــة خــدمات مقــدم خــدمات المصــا دقة علــى\nالإعلانات والسياسات الصادرة عنه .\n٣ - توافر الضمانات المالية ولةزالم نشاط مقدم الخدمات .\n٤ - وجود عقد تأمين يضمن التبعات المالية لمسؤوليته المدنية .\n٥ - ضمانات الحياد والاستقلال هةزاوالن لدى مقدم خدمات المصادقة.\n٦ - الاعتماد أو التقييم جرى\nُ\n قاً لنوعية وسائل الحماية والتـي يجـب رات أن عـي المعـايير الدوليـة الم ساب\n من قبل هيئة مختصة، إذا كان مقدم خدمات المصادقة مقيماً في الخارج .\nتؤخـذ فـي الاعتبـار المعـايير الـواردة أعـلاه لتقـدير مـدى موثوقيـة وسـائل الحمايـة التـي يقـدمها مقـدم\nخدمات المصادقة غير المعتمد .",
+      "translated": "第22条：\n委员会为颁发或续展认证证书，应考虑下列标准：\n1 - 保护电子书写、组织程序和人力资源的基础设施与技术措施，这些由认证服务提供者正在实施，且必须符合国际标准。\n2 - 审计程序的规范性和范围，以核实认证服务提供者的服务是否符合其发布的声明和政策。\n3 - 认证服务提供者活动所需的财务担保的可用性。\n4 - 存在保险合同，以保障其民事责任的财务后果。\n5 - 认证服务提供者应具备的公正性和独立性保障。\n6 - 如果认证服务提供者居住在境外，由主管机构根据保护手段的质量进行认证或评估，且这些手段必须符合国际标准。\n上述标准在评估未获认证的认证服务提供者所提供的保护手段的可靠程度时应予以考虑。",
+      "reviewer": null,
+      "decision": "pending_human_review",
+      "comments": null
+    }
+  ]
+}

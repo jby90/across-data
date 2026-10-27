@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "proposal_id": "9686c5d2-f085-4c9e-9830-25bb906d667a",
+      "audit_id": "aec80d78-cdb1-4c16-a3c3-858aacf980d4",
+      "page_number": 16,
+      "content_kind": "fee_schedule_and_signature",
+      "review_status": "pending_review",
+      "active": false
+    },
+    {
+      "clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+      "proposal_id": "b8ffdebf-c53f-4c15-859a-11cc079977d6",
+      "audit_id": "0b9357cd-e4ea-44e8-8c38-ccea125ebccd",
+      "page_number": 40,
+      "content_kind": "bibliography_ltr_reading_order",
+      "review_status": "pending_review",
+      "active": false
+    }
+  ],
+  "human_approved": 0,
+  "source_overwrites": 0
+}

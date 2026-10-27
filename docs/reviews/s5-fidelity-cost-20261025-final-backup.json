@@ -1,0 +1,9 @@
+{
+  "database": "remediation_s5_fidelity_20261025",
+  "backup_path": "C:/Users/Jin/.cyshuhe-dev/backups/20261025-S5-fidelity-final",
+  "database_sha256": "f3cc0d24da06b1a6a901630af03da93963e21de36a91a688792ac33347b25bf4",
+  "catalog_valid": true,
+  "tables": 21,
+  "archives": 80,
+  "restore_drill_performed": false
+}

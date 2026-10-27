@@ -1,0 +1,25 @@
+{
+  "task_id": "99e117fa-b2ca-45b2-ab50-387989638bb6",
+  "status": "failed",
+  "failed_dimensions": [
+    {
+      "gap_kind": "analysis_error",
+      "dimension_code": "D2",
+      "dimension_title": "汽车核心数据定义与分类",
+      "status": "ANALYSIS_ERROR",
+      "risk_level": "PENDING_VERIFICATION",
+      "content_markdown": "本维度暂无经核验的依据,结论待核查。",
+      "key_recommendations": [],
+      "citations": [],
+      "missing_gap_note": "缺少可直接界定或分类“汽车核心数据”的完整依据；现有引文仅为数据记录分项列举或一般个人数据义务，未包含定义、分类标准或类别范围。"
+    }
+  ],
+  "analysis_details": [
+    {
+      "phase": "analysis",
+      "dimension": "D2",
+      "error": null,
+      "gap": "缺少可直接界定或分类“汽车核心数据”的完整依据；现有引文仅为数据记录分项列举或一般个人数据义务，未包含定义、分类标准或类别范围。"
+    }
+  ]
+}

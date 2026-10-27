@@ -1,0 +1,86 @@
+{
+  "protected_tables": {
+    "documents": {
+      "original_count": 80,
+      "copy_count": 80,
+      "appended_count": 0,
+      "original_sha256": "e05d134d25f584183b9994a83f94cde2dfc6437181f0e2aeb36aa94bb4076cf7",
+      "matched_original_sha256": "e05d134d25f584183b9994a83f94cde2dfc6437181f0e2aeb36aa94bb4076cf7",
+      "audited_machine_retirements": [],
+      "mismatched_original_ids": [],
+      "equal": true
+    },
+    "document_versions": {
+      "original_count": 80,
+      "copy_count": 80,
+      "appended_count": 0,
+      "original_sha256": "25507d17c3db38ad4d2a64553d6021b9502ca5a2e0daa245ea4974eedd3e56cd",
+      "matched_original_sha256": "25507d17c3db38ad4d2a64553d6021b9502ca5a2e0daa245ea4974eedd3e56cd",
+      "audited_machine_retirements": [],
+      "mismatched_original_ids": [],
+      "equal": true
+    },
+    "clauses": {
+      "original_count": 2607,
+      "copy_count": 2607,
+      "appended_count": 0,
+      "original_sha256": "7d41173be17960b2282f9f726407d8819c79ebb5256e93dbfe53a1272c49bc33",
+      "matched_original_sha256": "7d41173be17960b2282f9f726407d8819c79ebb5256e93dbfe53a1272c49bc33",
+      "audited_machine_retirements": [],
+      "mismatched_original_ids": [],
+      "equal": true
+    },
+    "source_sites": {
+      "original_count": 20,
+      "copy_count": 20,
+      "appended_count": 0,
+      "original_sha256": "b1c5e838b0cf8de333d5d6ca782e70640eb89d2c10c56768da5e7904b0e0ae9d",
+      "matched_original_sha256": "b1c5e838b0cf8de333d5d6ca782e70640eb89d2c10c56768da5e7904b0e0ae9d",
+      "audited_machine_retirements": [],
+      "mismatched_original_ids": [],
+      "equal": true
+    },
+    "kg_edges": {
+      "original_count": 2217,
+      "copy_count": 2217,
+      "appended_count": 0,
+      "original_sha256": "b579fec76b412f3563e2554a5d3e9f52c0feac2900a31b6a6ad846a4701157b0",
+      "matched_original_sha256": "b579fec76b412f3563e2554a5d3e9f52c0feac2900a31b6a6ad846a4701157b0",
+      "audited_machine_retirements": [],
+      "mismatched_original_ids": [],
+      "equal": true
+    },
+    "kg_nodes": {
+      "original_count": 101,
+      "copy_count": 101,
+      "appended_count": 0,
+      "original_sha256": "ff036acadbad8621af58373dee34fd4a3f71e28891614fd3ea4a23fcd320505f",
+      "matched_original_sha256": "ff036acadbad8621af58373dee34fd4a3f71e28891614fd3ea4a23fcd320505f",
+      "audited_machine_retirements": [],
+      "mismatched_original_ids": [],
+      "equal": true
+    },
+    "glossary_terms": {
+      "original_count": 14,
+      "copy_count": 14,
+      "appended_count": 0,
+      "original_sha256": "9481e7785c8bfae6e320b009f75ad884f43f68642ff552940f3a3db66863837e",
+      "matched_original_sha256": "9481e7785c8bfae6e320b009f75ad884f43f68642ff552940f3a3db66863837e",
+      "audited_machine_retirements": [],
+      "mismatched_original_ids": [],
+      "equal": true
+    },
+    "clause_translations": {
+      "original_count": 1,
+      "copy_count": 1,
+      "appended_count": 0,
+      "original_sha256": "70a3214f0e160589c4be5a41f352ebbeb65d251e01167d8f62139005d5dc3be9",
+      "matched_original_sha256": "70a3214f0e160589c4be5a41f352ebbeb65d251e01167d8f62139005d5dc3be9",
+      "audited_machine_retirements": [],
+      "mismatched_original_ids": [],
+      "equal": true
+    }
+  },
+  "archive_versions_verified": 80,
+  "all_protected_fields_equal": true
+}

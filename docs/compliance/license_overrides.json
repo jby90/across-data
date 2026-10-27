@@ -3,5 +3,10 @@
     "license": "Apache-2.0",
     "approved_by": "待法务/负责人确认",
     "note": "PyPI 元数据未标注许可证;已读取包内 LICENSE 文件确认为 Apache-2.0(2026-10-22)。仅测试使用,不进入生产镜像。"
+  },
+  "py:pyphen": {
+    "license": "MPL-1.1",
+    "approved_by": "待法务/负责人确认",
+    "note": "上游 Pyphen 0.18.1 包内 LICENSE 明确 GPL-2.0+/LGPL-2.1+/MPL-1.1 三选一，本发行选择 MPL-1.1；未修改 Python 源码并保留 LICENSE/COPYING。生产镜像剔除全部未使用的字典（各自许可另行约束），报告 CSS 禁止自动连字符。工程核对不等于法务审批。"
   }
 }

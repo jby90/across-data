@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+<fontconfig>
+  <!-- No system-font include: export only the three registered OFL families. -->
+  <dir prefix="relative">inter</dir>
+  <dir prefix="relative">notosanssc</dir>
+  <dir prefix="relative">notonaskharabic</dir>
+  <cachedir prefix="xdg">fontconfig</cachedir>
+</fontconfig>

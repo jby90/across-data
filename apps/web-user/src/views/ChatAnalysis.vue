@@ -1,12 +1,31 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
+import { startProgressStream, type StreamState } from '@cyshuhe/shared'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
-import KgForceGraph, {
-  type FgCategory,
-  type FgEdge,
-  type FgNode,
-} from '../components/KgForceGraph.vue'
+import { useAuth } from '../auth'
+import { conversationStamp, conversationSignal, elapsedLabel, receiveExport } from '../chatFeedback'
+import LegalText from '../components/LegalText.vue'
+import type { LegalTerm } from '@cyshuhe/shared/src/legalText'
+function readableMessage(text: string) {
+  return text.replace(/信息已经齐备[\s\S]*下面会实时显示每个智能体的进度。/, '信息已齐备，正在查找适用法规并生成合规报告。')
+    .replace('然后由多个智能体对照目标国现行法规,', '再对照目标国法规，')
+    .replace('所有回答只用于本次评估。', '')
+}
+function readableContent(text: string) {
+  return text.replace('依据与合规义务（程序子串/数字核验通过；人工复核状态逐条标注）', '依据与合规义务')
+    .replaceAll('；待核对（原文/译文尚未全部人工复核）', '')
+    .replaceAll('；引用材料已复核（分析结论仍为机器草稿）', '')
+}
+function businessSummary(text: string) {
+  return /多智能体|程序核验|tokens|MCP/.test(text)
+    ? `本报告根据您的业务场景，对照适用法规形成八个维度的分析与建议。各章节可查看依据、修订内容并单独导出。` : text
+}
+const route = useRoute()
+const router = useRouter()
+const auth = useAuth()
+let openRequest = 0
 
 interface ChatMessage {
   id: string
@@ -32,21 +51,11 @@ interface Finding {
   verification_status: string
 }
 
-interface StepTrace {
-  id: string
-  seq_no: number
-  agent_name: string
-  status: string
-  business_summary: string
-  is_backtrack: boolean
-  backtrack_reason: string | null
-  backtrack_resolution: string | null
-  tool_calls: Array<{ call_id: string; tool_label: string; result_summary: string; duration_ms: number }>
-  tokens_used: number
-  duration_ms: number
-}
 
 interface Citation {
+  source_review_status?: string
+  translation_review_status?: string
+  language?: string
   citation_tag: string
   clause_id: string | null
   document_title: string
@@ -56,6 +65,7 @@ interface Citation {
 }
 
 interface Dimension {
+  findings?: Finding[]
   dimension_code: string
   dimension_title: string
   status: string
@@ -74,6 +84,10 @@ interface StaleImpact {
 }
 
 interface ReportVersion {
+  regulatory_updates?: Array<{ id: string; change_id: string; dimension_code: string; document_title: string; summary: string; state: string }>
+  citation_policy: string
+  citation_review_summary: { approved: number; pending: number; total: number; occurrences: number }
+  source_integrity_alerts?: string[]
   version_no: number
   status: string
   is_partial_sample: boolean
@@ -84,6 +98,7 @@ interface ReportVersion {
 }
 
 interface TaskSummary {
+  messages_count: number
   id: string
   conversation_code: string
   title: string
@@ -93,6 +108,15 @@ interface TaskSummary {
 }
 
 interface TaskDetail {
+  failure_summary?: {
+    title: string
+    summary: string
+    issues: Array<{ label: string; dimension_codes: string[] }>
+    next_action: string
+    retained_citations: number
+    report_version: number | null
+  } | null
+  activity?: {label: string; state: string; started_at: string} | null
   id: string
   conversation_code: string
   current_active_node_id: string | null
@@ -103,26 +127,18 @@ interface TaskDetail {
   status: string
   messages: ChatMessage[]
   findings: Finding[]
-  step_traces: StepTrace[]
+  progress: Array<{label: string; state: string}>
   report_versions: ReportVersion[]
-  total_tokens: number
-  total_duration_ms: number
-  mcp_calls_count: number
-  backtrack_count: number
+  pending_user_facts: Array<{ id: string; fact_key: string; dimension_codes: string[] }>
+  fact_followup_rounds: number
 }
 
-interface MiniKgNode {
-  id: string
-  node_type: string
-  name_zh: string
-}
-interface MiniKgEdge {
-  source_node_id: string
-  target_node_id: string
-  relation_type: string
-  review_status: string
-}
 interface CitationCard {
+  clause_id: string
+  section_path?: string | null
+  source_review_status?: string
+  translation_review_status?: string
+  source_integrity_alerts?: string[]
   document_title: string
   clause_number: string
   version_no: number
@@ -130,7 +146,8 @@ interface CitationCard {
   original_text: string
   translated_text: string
   review_status: string
-  mini_graph: { nodes: MiniKgNode[]; edges: MiniKgEdge[] }
+  terms: LegalTerm[]
+  related_requirements: Array<{id: string; title: string; topic_label: string; quote: string}>
 }
 interface DiffPayload {
   from_version: number
@@ -156,29 +173,8 @@ const STATUS_LABEL: Record<string, string> = {
   ready_to_run: '待启动',
   partial_sample: '部分样稿',
   running: '分析中',
+  awaiting_user_facts: '等待补充业务事实',
   failed: '分析失败',
-}
-const FG_CATEGORIES: FgCategory[] = [
-  { type: 'COUNTRY', name: '国家/地区', color: '#1d4ed8' },
-  { type: 'REGULATOR', name: '监管机构', color: '#0f766e' },
-  { type: 'INSTRUMENT', name: '法规文件', color: '#7c3aed' },
-  { type: 'OBLIGATION', name: '合规义务', color: '#b45309' },
-  { type: 'DATA_CATEGORY', name: '数据类型', color: '#0369a1' },
-  { type: 'PENALTY', name: '违规罚则', color: '#be123c' },
-]
-const RELATION_LABEL: Record<string, string> = {
-  PUBLISHES: '发布',
-  AMENDS: '修订',
-  REPEALS: '废止',
-  GOVERNS: '约束',
-  PROHIBITS: '禁止',
-  REQUIRES: '强制要求',
-  EXEMPTS: '豁免',
-  SUPERVISES: '监管',
-  PENALIZES: '处罚',
-  APPLIES_TO_SCENARIO: '适用场景',
-  RESTRICTS_CROSS_BORDER: '数据出境限制',
-  REQUIRES_ADMISSION: '准入要求',
 }
 // 这两类问题直接点选即发送;事实类问题的示例只填入输入框,由用户按实际情况修改后再发送
 const CHOICE_SLOTS = new Set(['country_code', 'scenario_type'])
@@ -186,7 +182,21 @@ const CHOICE_SLOTS = new Set(['country_code', 'scenario_type'])
 const tasks = ref<TaskSummary[]>([])
 const detail = ref<TaskDetail | null>(null)
 const input = ref('')
-const sending = ref(false)
+const pendingSends = reactive(new Map<string, number>())
+const sending = computed(() => !!detail.value && pendingSends.has(detail.value.id))
+const clockNow = ref(Date.now())
+const seen = ref<Record<string, string>>({})
+const followStream = ref(true)
+const exportJob = ref<{taskId: string; label: string; started: number; phase: 'preparing' | 'receiving'; received: number; total: number | null} | null>(null)
+const currentExport = computed(() => exportJob.value?.taskId === detail.value?.id ? exportJob.value : null)
+const sendElapsed = computed(() => elapsedLabel(pendingSends.get(detail.value?.id || '') || clockNow.value, clockNow.value))
+const activityElapsed = computed(() => detail.value?.activity?.started_at
+  ? elapsedLabel(Date.parse(detail.value.activity.started_at), clockNow.value) : '')
+const exportElapsed = computed(() => elapsedLabel(exportJob.value?.started || clockNow.value, clockNow.value))
+let mounted = true
+let lastSidebarRefresh = 0
+let polling = false
+let listRequest = 0
 const streamEl = ref<HTMLDivElement | null>(null)
 const inputEl = ref<{ focus: () => void } | null>(null)
 
@@ -209,28 +219,34 @@ const diffVisible = ref(false)
 const diffData = ref<DiffPayload | null>(null)
 
 const status = computed(() => detail.value?.status ?? '')
+const progressState = ref<StreamState>('idle')
+let progressStream: {close: () => void} | undefined
+let progressRefresh: ReturnType<typeof setTimeout> | undefined
 const lastAssistant = computed(() => {
   const list = detail.value?.messages.filter((m) => m.role === 'assistant') ?? []
   return list[list.length - 1]
 })
 const showChips = computed(
   () =>
-    status.value === 'collecting_facts' &&
+    ['collecting_facts', 'awaiting_user_facts'].includes(status.value) &&
     !!lastAssistant.value &&
     lastAssistant.value.options.length > 0 &&
     detail.value?.messages[detail.value.messages.length - 1]?.role === 'assistant',
 )
 const hasReport = computed(
-  () => (detail.value?.report_versions.length ?? 0) > 0 && status.value !== 'running',
+  () => (detail.value?.report_versions.length ?? 0) > 0 &&
+    !['running', 'awaiting_user_facts'].includes(status.value),
 )
 const report = computed<ReportVersion | null>(() => {
   const list = detail.value?.report_versions ?? []
   return list.find((r) => r.version_no === reportVersionNo.value) ?? list[0] ?? null
 })
+const versionFindings = computed(() => report.value?.dimensions.flatMap(d => d.findings || []) || [])
 const inputPlaceholder = computed(() => {
-  if (status.value === 'running') return '多智能体分析进行中,请稍候…'
+  if (status.value === 'running') return '正在分析您的业务场景，请稍候…'
+  if (status.value === 'awaiting_user_facts') return '请回答分析中的业务追问；不确定可以如实说明'
   if (status.value === 'completed' || status.value === 'partial_sample')
-    return '报告已生成。可在上方导出,或点击左侧「新对话」评估新的场景'
+    return '报告已生成。可在上方导出,或点击左侧「新建评估」评估新的场景'
   const slot = lastAssistant.value?.slot
   if (slot === 'country_code') return '输入或点选目标国家…'
   if (slot === 'vehicle_model') return '输入车型或车队名称…'
@@ -238,65 +254,95 @@ const inputPlaceholder = computed(() => {
 })
 const inputDisabled = computed(() => sending.value || status.value === 'running')
 
-const citationNodes = computed<FgNode[]>(() => {
-  const mg = card.value?.mini_graph
-  if (!mg) return []
-  const deg = new Map<string, number>()
-  for (const e of mg.edges) {
-    deg.set(e.source_node_id, (deg.get(e.source_node_id) || 0) + 1)
-    deg.set(e.target_node_id, (deg.get(e.target_node_id) || 0) + 1)
-  }
-  return mg.nodes.map((n) => ({
-    id: n.id,
-    name: n.name_zh,
-    type: n.node_type,
-    degree: deg.get(n.id) || 1,
-  }))
-})
-const citationEdges = computed<FgEdge[]>(() =>
-  (card.value?.mini_graph.edges ?? []).map((e) => ({
-    source: e.source_node_id,
-    target: e.target_node_id,
-    label: RELATION_LABEL[e.relation_type] || e.relation_type,
-    approved: e.review_status === 'approved',
-  })),
-)
-
-function scrollBottom() {
+function scrollBottom(force = false) {
   nextTick(() => {
     const el = streamEl.value
-    if (el) el.scrollTop = el.scrollHeight
+    if (!el || (!force && !followStream.value)) return
+    const summary = el.querySelector<HTMLElement>('[data-testid="report-card"]')
+    if (hasReport.value && summary) {
+      el.scrollTop += summary.getBoundingClientRect().top - el.getBoundingClientRect().top - 20
+    } else {
+      el.scrollTop = el.scrollHeight
+    }
   })
 }
 
+function trackScroll() {
+  const el = streamEl.value
+  if (el) followStream.value = el.scrollHeight - el.scrollTop - el.clientHeight < 100
+}
+function seenKey() { return `cyshuhe.chat-seen.v1.${auth.user?.id || 'session'}` }
+function markSeen(task: TaskSummary) {
+  seen.value[task.id] = conversationStamp(task)
+  try { localStorage.setItem(seenKey(), JSON.stringify(seen.value)) } catch { /* Storage can be disabled. */ }
+}
+function isUnread(task: TaskSummary) {
+  return seen.value[task.id] !== conversationStamp(task) && task.id !== detail.value?.id
+}
+
 function apply(d: TaskDetail) {
+  const previousLatest = detail.value?.report_versions[0]?.version_no
+  const followLatest = detail.value?.id !== d.id || reportVersionNo.value === previousLatest
   detail.value = d
-  if (d.report_versions.length > 0 && !d.report_versions.some((r) => r.version_no === reportVersionNo.value)) {
+  const summary: TaskSummary = {
+    id: d.id, conversation_code: d.conversation_code, title: d.title, status: d.status,
+    country_code: d.country_code, messages_count: d.messages.length,
+    latest_report_version: d.report_versions[0]?.version_no || 0,
+  }
+  const index = tasks.value.findIndex(t => t.id === d.id)
+  if (index >= 0) tasks.value[index] = summary
+  else tasks.value.push(summary)
+  if (document.visibilityState === 'visible') markSeen(summary)
+  if (
+    d.report_versions.length > 0 &&
+    (followLatest || !d.report_versions.some((r) => r.version_no === reportVersionNo.value))
+  ) {
     reportVersionNo.value = d.report_versions[0].version_no
   }
 }
 
 async function refreshTasks() {
-  tasks.value = await api.get<TaskSummary[]>('/api/analysis/tasks')
+  const request = ++listRequest
+  const next = await api.get<TaskSummary[]>('/api/analysis/tasks')
+  if (!mounted || request !== listRequest) return
+  const previous = new Map(tasks.value.map(t => [t.id, t]))
+  tasks.value = next
+  lastSidebarRefresh = Date.now()
+  for (const task of next) {
+    const old = previous.get(task.id)
+    if (old && task.id !== detail.value?.id && conversationStamp(old) !== conversationStamp(task)) {
+      if (task.status === 'awaiting_user_facts') ElMessage.info(`${task.title}：有新的业务追问`)
+      else if (task.latest_report_version > old.latest_report_version) ElMessage.success(`${task.title}：报告已生成`)
+    }
+  }
 }
 
 async function openTask(id: string) {
+  const request = ++openRequest
   try {
-    apply(await api.get<TaskDetail>(`/api/analysis/tasks/${id}`))
+    const next = await api.get<TaskDetail>(`/api/analysis/tasks/${id}`)
+    if (request !== openRequest) return
+    apply(next)
+    if (route.query.task !== id) await router.push({ query: { ...route.query, task: id } })
     openChapters.value = []
     openExtras.value = []
-    scrollBottom()
+    followStream.value = true
+    scrollBottom(true)
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '加载对话失败')
   }
 }
 
 async function newChat() {
+  const request = ++openRequest
   try {
     const d = await api.post<TaskDetail>('/api/analysis/chats', {})
+    if (request !== openRequest) return
     apply(d)
+    await router.push({ query: { ...route.query, task: d.id } })
     await refreshTasks()
-    scrollBottom()
+    followStream.value = true
+    scrollBottom(true)
     inputEl.value?.focus()
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '新建对话失败')
@@ -306,7 +352,10 @@ async function newChat() {
 async function send(text?: string) {
   const content = (text ?? input.value).trim()
   if (!content || !detail.value || inputDisabled.value) return
-  sending.value = true
+  const id = detail.value.id
+  const request = openRequest
+  const questionId = status.value === 'awaiting_user_facts' ? detail.value.pending_user_facts?.[0]?.id : undefined
+  pendingSends.set(id, Date.now())
   try {
     input.value = ''
     // 先把用户的话显示出来,再等待助手回复
@@ -318,15 +367,23 @@ async function send(text?: string) {
       options: [],
       slot: null,
     })
-    scrollBottom()
-    apply(await api.post<TaskDetail>(`/api/analysis/tasks/${detail.value.id}/messages`, { content }))
-    await refreshTasks()
+    followStream.value = true
+    scrollBottom(true)
+    const next = await api.post<TaskDetail>(`/api/analysis/tasks/${id}/messages`, {
+        content,
+        question_id: questionId,
+      })
+    if (!mounted) return
+    if (detail.value?.id === id && request === openRequest) apply(next)
+    // The answer is saved and the next question is available. Refreshing the
+    // sidebar must not keep the composer locked while another request is slow.
+    void refreshTasks().catch(() => { /* A later refresh can update the sidebar. */ })
     scrollBottom()
   } catch (e: unknown) {
     ElMessage.error((e as Error).message || '发送失败')
-    if (detail.value) await openTask(detail.value.id)
+    if (mounted && detail.value?.id === id && request === openRequest) await openTask(id)
   } finally {
-    sending.value = false
+    pendingSends.delete(id)
   }
 }
 
@@ -347,20 +404,63 @@ function onEnter(ev: KeyboardEvent) {
 }
 
 let timer: number | undefined
+let clockTimer: number | undefined
 async function poll() {
-  if (detail.value?.status !== 'running') return
+  if (polling || document.visibilityState !== 'visible') return
+  polling = true
   try {
-    apply(await api.get<TaskDetail>(`/api/analysis/tasks/${detail.value.id}`))
-    await refreshTasks()
+    if (progressState.value !== 'live') await refreshProgress()
+    // A background conversation can finish while a different one is open.
+    if (Date.now() - lastSidebarRefresh > 10000) {
+      await refreshTasks()
+      const summary = tasks.value.find(t => t.id === detail.value?.id)
+      if (summary && detail.value && !sending.value &&
+          (summary.status !== detail.value.status || summary.messages_count !== detail.value.messages.length ||
+           summary.latest_report_version !== (detail.value.report_versions[0]?.version_no || 0))) {
+        const id = detail.value.id
+        const next = await api.get<TaskDetail>(`/api/analysis/tasks/${id}`)
+        if (mounted && detail.value?.id === id) apply(next)
+      }
+    }
+  } catch { /* A later refresh retries; preserve the conversation. */ }
+  finally { polling = false }
+}
+async function refreshProgress() {
+  if (detail.value?.status !== 'running') return
+  const id = detail.value.id
+  try {
+    const next = await api.get<TaskDetail>(`/api/analysis/tasks/${id}`)
+    if (!mounted || detail.value?.id !== id) return
+    apply(next)
     scrollBottom()
   } catch {
     /* 下一轮重试 */
   }
 }
 
+watch(() => [detail.value?.id, detail.value?.status], () => {
+  progressStream?.close()
+  clearTimeout(progressRefresh)
+  progressRefresh = undefined
+  progressState.value = 'idle'
+  if (!detail.value || detail.value.status !== 'running') return
+  progressStream = startProgressStream({
+    url: `/api/analysis/tasks/${detail.value.id}/events`, token: api.token,
+    onState: state => { progressState.value = state },
+    onUnauthorized: () => { api.setToken(null); window.location.assign(import.meta.env.BASE_URL + 'login') },
+    onEvent: event => {
+      if (event.type === 'connected' || progressRefresh !== undefined) return
+      progressRefresh = setTimeout(() => {
+        progressRefresh = undefined
+        void refreshProgress()
+      }, 80)
+    },
+  })
+})
+
 watch(
-  () => [detail.value?.messages.length, detail.value?.step_traces.length, detail.value?.status],
-  scrollBottom,
+  () => [detail.value?.messages.length, detail.value?.progress.length, detail.value?.status],
+  () => scrollBottom(),
 )
 
 async function openCitation(clauseId: string | null, quote = '') {
@@ -391,11 +491,14 @@ async function saveEdit() {
   if (!detail.value) return
   savingEdit.value = true
   try {
-    const rv = await api.post<ReportVersion>(`/api/analysis/tasks/${detail.value.id}/reports/edit`, {
-      change_note: editNote.value,
-      executive_summary: editSummary.value,
-      dimension_updates: { ...editDims },
-    })
+    const rv = await api.post<ReportVersion>(
+      `/api/analysis/tasks/${detail.value.id}/reports/edit`,
+      {
+        change_note: editNote.value,
+        executive_summary: editSummary.value,
+        dimension_updates: { ...editDims },
+      },
+    )
     editVisible.value = false
     await openTask(detail.value.id)
     reportVersionNo.value = rv.version_no
@@ -423,24 +526,37 @@ async function openDiff() {
   }
 }
 
-async function download(ext: 'docx' | 'pdf') {
-  if (!detail.value || !report.value) return
+async function download(ext: 'docx' | 'pdf' | 'zip', dimension?: string) {
+  if (!detail.value || !report.value || exportJob.value) return
+  if (report.value.source_integrity_alerts?.length) {
+    ElMessage.error('报告引用的原文来源异常，已停止导出，请核实来源后重新分析')
+    return
+  }
+  const id = detail.value.id
+  const country = detail.value.country_code
+  const ver = report.value.version_no
+  const label = `${dimension ? `${dimension} 章节` : '完整报告'} · ${ext.toUpperCase()} · v${ver}`
+  exportJob.value = {taskId: id, label, started: Date.now(), phase: 'preparing', received: 0, total: null}
   try {
-    const ver = report.value.version_no
-    const res = await fetch(`/api/analysis/tasks/${detail.value.id}/reports/${ver}/export.${ext}`, {
+    const res = await fetch(`/api/analysis/tasks/${id}/reports/${ver}/export.${ext}${dimension ? '?dimension=' + encodeURIComponent(dimension) : ''}`, {
       headers: { Authorization: `Bearer ${api.token()}` },
     })
-    if (!res.ok) throw new Error(`导出失败 (${res.status})`)
-    const blob = await res.blob()
+    const blob = await receiveExport(res, (received, total) => {
+      if (exportJob.value) Object.assign(exportJob.value, {phase: 'receiving', received, total})
+    })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `cyshuhe_${detail.value.country_code}_8dim_report_v${ver}.${ext}`
+    a.download = `cyshuhe_${country}_${dimension || '8dim'}_report_v${ver}.${ext}`
+    document.body.appendChild(a)
     a.click()
-    URL.revokeObjectURL(url)
-    ElMessage.success(`已导出 ${ext.toUpperCase()} 报告 (v${ver})`)
+    a.remove()
+    window.setTimeout(() => URL.revokeObjectURL(url), 30000)
+    if (mounted) ElMessage.success(`${label} 已交给浏览器下载，请查看下载列表`)
   } catch (e: unknown) {
-    ElMessage.error((e as Error).message || '导出失败')
+    if (mounted) ElMessage.error((e as Error).message || '导出失败，可重试')
+  } finally {
+    exportJob.value = null
   }
 }
 
@@ -455,10 +571,29 @@ async function copyConversationId() {
   }
 }
 
+async function refreshRegulatoryUpdates() {
+  const id = detail.value?.id
+  if (!id || detail.value?.status === 'running') return
+  try {
+    const next = await api.get<TaskDetail>(`/api/analysis/tasks/${id}`)
+    if (detail.value?.id === id) apply(next)
+  } catch { /* The notification page exposes retryable loading errors. */ }
+}
+watch(() => route.query.task, (id) => {
+  if (typeof id === 'string' && id !== detail.value?.id) void openTask(id)
+})
 onMounted(async () => {
   try {
+    const saved = JSON.parse(localStorage.getItem(seenKey()) || '{}')
+    if (saved && typeof saved === 'object' && !Array.isArray(saved)) seen.value = saved
+  } catch { /* Unavailable or old browser state does not block chat. */ }
+  clockTimer = window.setInterval(() => { clockNow.value = Date.now() }, 1000)
+  window.addEventListener('regulatory-notifications-updated', refreshRegulatoryUpdates)
+  try {
     await refreshTasks()
-    if (tasks.value.length === 0) {
+    if (typeof route.query.task === 'string') {
+      await openTask(route.query.task)
+    } else if (tasks.value.length === 0) {
       await newChat()
     } else {
       await openTask(tasks.value[tasks.value.length - 1].id)
@@ -469,7 +604,12 @@ onMounted(async () => {
   timer = window.setInterval(poll, 2000)
 })
 onUnmounted(() => {
+  mounted = false
+  window.removeEventListener('regulatory-notifications-updated', refreshRegulatoryUpdates)
+  progressStream?.close()
+  clearTimeout(progressRefresh)
   if (timer !== undefined) window.clearInterval(timer)
+  if (clockTimer !== undefined) window.clearInterval(clockTimer)
 })
 </script>
 
@@ -479,7 +619,7 @@ onUnmounted(() => {
       <div class="sessions-top">
         <strong>评估对话</strong>
         <el-button type="primary" size="small" data-testid="btn-new-chat" @click="newChat">
-          + 新对话
+          + 新建评估
         </el-button>
       </div>
       <div class="session-list">
@@ -489,26 +629,20 @@ onUnmounted(() => {
           class="session-item"
           :class="{ active: detail?.id === t.id }"
           data-testid="analysis-task-item"
+          role="button"
+          tabindex="0"
+          :aria-current="detail?.id === t.id ? 'true' : undefined"
           @click="openTask(t.id)"
+          @keydown.enter="openTask(t.id)"
+          @keydown.space.prevent="openTask(t.id)"
         >
-          <div class="s-title">{{ t.title }}</div>
+          <div class="s-title"><span class="session-dot" :class="conversationSignal(t).tone" aria-hidden="true" />{{ t.title }}</div>
           <div class="s-code" data-testid="session-conversation-code">
             {{ t.conversation_code || t.id.slice(0, 8) }}
           </div>
-          <el-tag
-            size="small"
-            :type="
-              t.status === 'completed'
-                ? 'success'
-                : t.status === 'running'
-                  ? 'primary'
-                  : t.status === 'failed'
-                    ? 'danger'
-                    : 'info'
-            "
-          >
-            {{ STATUS_LABEL[t.status] || t.status }}
-          </el-tag>
+          <div class="session-state" :class="conversationSignal(t).tone">
+            {{ conversationSignal(t).label }}<span v-if="isUnread(t)" class="unread-label">新动态</span>
+          </div>
         </div>
       </div>
     </aside>
@@ -527,7 +661,7 @@ onUnmounted(() => {
             data-testid="chat-conversation-id"
             :title="`完整对话 UUID: ${detail.id}`"
           >
-            对话 ID: {{ detail.conversation_code || detail.id }}
+            {{ detail.conversation_code || detail.id }}
           </el-tag>
           <el-button
             size="small"
@@ -536,12 +670,20 @@ onUnmounted(() => {
             data-testid="btn-copy-conversation-id"
             @click="copyConversationId"
           >
-            复制对话ID
+            复制编号
           </el-button>
         </div>
       </header>
 
-      <div ref="streamEl" class="stream" data-testid="chat-stream">
+      <div v-if="exportJob" class="export-feedback" data-testid="export-feedback" role="status" aria-live="polite">
+        <span class="activity-spinner" aria-hidden="true" />
+        <div><strong>{{ exportJob.phase === 'preparing' ? '正在生成文件' : '正在接收文件' }}</strong><span>{{ exportJob.label }} · {{ exportElapsed }}</span>
+          <small v-if="exportJob.phase === 'preparing'">{{ exportJob.label.includes('PDF') ? '正在完成分页和字体排版，完成后自动下载。' : '文件准备好后自动下载。' }}</small>
+          <small v-else>已接收 {{ Math.ceil(exportJob.received / 1024) }} KB<span v-if="exportJob.total"> / {{ Math.ceil(exportJob.total / 1024) }} KB</span></small>
+        </div>
+      </div>
+
+      <div ref="streamEl" class="stream" data-testid="chat-stream" @scroll.passive="trackScroll">
         <template v-if="detail">
           <div
             v-for="m in detail.messages"
@@ -551,10 +693,19 @@ onUnmounted(() => {
             :data-testid="`chat-msg-${m.role}`"
           >
             <div class="avatar">{{ m.role === 'assistant' ? '助' : '我' }}</div>
-            <div class="bubble">{{ m.content }}</div>
+            <div class="bubble">{{ m.role === 'assistant' ? readableMessage(m.content) : m.content }}</div>
           </div>
 
-          <div v-if="showChips" class="chips" data-testid="chat-options">
+          <div v-if="sending" class="row assistant" data-testid="chat-waiting" role="status" aria-live="polite">
+            <div class="avatar">助</div>
+            <div class="bubble waiting-bubble">
+              <div class="activity-title"><span class="activity-spinner" aria-hidden="true" />正在整理您的回答</div>
+              <p>正在更新业务信息并准备下一步。</p>
+              <small>已等待 {{ sendElapsed }}<span v-if="pendingSends.get(detail.id) && clockNow - pendingSends.get(detail.id)! > 20000"> · 仍在处理，您可以先查看其他对话</span></small>
+            </div>
+          </div>
+
+          <div v-if="showChips && !sending" class="chips" data-testid="chat-options">
             <span v-if="!CHOICE_SLOTS.has(lastAssistant?.slot ?? '')" class="chip-hint">
               以下只是示例回答,点击会填入输入框,请按您的实际情况修改后再发送:
             </span>
@@ -570,47 +721,59 @@ onUnmounted(() => {
             </el-button>
           </div>
 
-          <!-- 分析进度(实时) -->
-          <div v-if="status === 'running'" class="card progress" data-testid="progress-card">
-            <div class="card-title">
-              <span data-testid="task-running-tag">多智能体分析进行中…</span>
-              <el-tag size="small" type="primary">已完成 {{ detail.step_traces.length }} 步</el-tag>
-            </div>
-            <div
-              v-for="s in detail.step_traces"
-              :key="s.id"
-              class="step"
-              :class="{ back: s.is_backtrack }"
-            >
-              <div class="step-head">
-                <b>{{ s.agent_name }}</b>
-                <el-tag v-if="s.is_backtrack" size="small" type="danger">退回补证</el-tag>
-                <span class="muted">{{ s.duration_ms }} ms · {{ s.tokens_used }} tokens</span>
-              </div>
-              <div>{{ s.business_summary }}</div>
-              <div v-if="s.backtrack_reason" class="back-reason">退回原因:{{ s.backtrack_reason }}</div>
-            </div>
-            <div class="muted" style="margin-top: 6px">正在进行下一步,请稍候…</div>
+          <el-alert v-if="status === 'awaiting_user_facts' && !sending" type="info" :closable="false" data-testid="analysis-user-fact-pause" title="请补充业务信息" description="回答上方问题后继续生成报告。" />
+          <div v-if="status === 'running'" class="card progress" data-testid="progress-card" role="status" aria-live="polite">
+            <div class="card-title"><span class="activity-title" data-testid="task-running-tag"><span class="activity-spinner" aria-hidden="true" />{{ detail.activity?.label || '正在评估您的业务场景' }}</span><small v-if="activityElapsed">本环节 {{ activityElapsed }}</small></div>
+            <div class="progress-stages"><span v-for="(s,i) in detail.progress" :key="i" class="progress-stage" :class="s.state"><span aria-hidden="true">{{ s.state === 'complete' ? '✓' : s.state === 'failed' ? '!' : '·' }}</span> {{s.label}}</span></div>
           </div>
-
-          <div v-if="status === 'failed'" class="card">
-            <el-alert type="error" :closable="false" show-icon title="分析失败">
-              <template #default>
-                {{ detail.step_traces[detail.step_traces.length - 1]?.business_summary }}。
-                在下方输入任意内容(如「重试」)即可重新分析。
-              </template>
-            </el-alert>
-          </div>
+          <el-alert v-if="status === 'failed'" type="error" :closable="false" :title="detail.failure_summary?.title || '本次评估暂未完成'" data-testid="analysis-failure-summary">
+            <template v-if="detail.failure_summary">
+              <p>{{ detail.failure_summary.summary }}</p>
+              <ul v-if="detail.failure_summary.issues.length">
+                <li v-for="issue in detail.failure_summary.issues" :key="issue.label">{{ issue.dimension_codes.join('、') }}：{{ issue.label }}</li>
+              </ul>
+              <p>{{ detail.failure_summary.next_action }}</p>
+            </template>
+            <p v-else>可将对话编号提供给管理员定位，已填写的回答会保留。</p>
+          </el-alert>
 
           <!-- 报告卡片 -->
           <div v-if="hasReport && report" class="card report" data-testid="report-card">
             <div class="card-title">
               <span>八维度合规评估报告 v{{ report.version_no }}</span>
-              <el-tag :type="report.is_partial_sample ? 'warning' : 'success'">
-                {{ report.is_partial_sample ? '部分样稿 · 有维度缺依据' : '全部维度均有核验依据' }}
+              <el-tag
+                :type="
+                  report.status === 'analysis_failed' || report.source_integrity_alerts?.length
+                    ? 'danger'
+                    : report.is_partial_sample
+                      ? 'warning'
+                      : 'success'
+                "
+              >
+                {{
+                  report.status === 'analysis_failed'
+                    ? '暂未完成'
+                    : report.source_integrity_alerts?.length
+                      ? '来源异常 · 暂停导出'
+                      : report.is_partial_sample
+                        ? '部分维度待补充'
+                        : '报告草稿'
+                }}
               </el-tag>
             </div>
-            <p class="summary">{{ report.executive_summary }}</p>
+            <p class="summary">{{ businessSummary(report.executive_summary) }}</p>
+            <el-alert v-if="report.regulatory_updates?.length" type="warning" :closable="false"
+                :title="report.regulatory_updates.some(u => u.state === 'open') ? '引用来源已更新，请查看更新通知并重新评估。' : '已有后续报告版本，可切换查看。'"
+              data-testid="report-regulatory-update" style="margin-bottom:12px" />
+            <el-alert
+              v-for="alert in report.source_integrity_alerts"
+              :key="alert"
+              type="error"
+              :closable="false"
+              show-icon
+              :title="alert"
+              style="margin-bottom: 10px"
+            />
 
             <el-alert
               v-for="(imp, i) in report.stale_impacts"
@@ -637,14 +800,26 @@ onUnmounted(() => {
                   :value="r.version_no"
                 />
               </el-select>
-              <el-button type="primary" size="small" data-testid="btn-export-docx" @click="download('docx')">
-                导出 Word
-              </el-button>
-              <el-button type="success" size="small" data-testid="btn-export-pdf" @click="download('pdf')">
-                导出 PDF
-              </el-button>
-              <el-button size="small" data-testid="btn-edit-report" @click="openEdit">在线修订</el-button>
-              <el-button size="small" data-testid="btn-diff-report" @click="openDiff">版本对比</el-button>
+              <el-dropdown trigger="click"
+                ><el-button type="primary" size="small" :loading="!!currentExport" :disabled="!!exportJob || report.status === 'analysis_failed'">{{ currentExport ? '正在导出' : '导出报告' }}</el-button
+                ><template #dropdown
+                  ><el-dropdown-menu
+                    ><el-dropdown-item data-testid="btn-export-docx" @click="download('docx')"
+                      >Word 文档</el-dropdown-item
+                    ><el-dropdown-item data-testid="btn-export-pdf" @click="download('pdf')"
+                      >PDF 文档</el-dropdown-item
+                    ><el-dropdown-item data-testid="btn-export-zip" @click="download('zip')"
+                      >整份与八章 Word 压缩包</el-dropdown-item
+                    ></el-dropdown-menu
+                  ></template
+                ></el-dropdown
+              >
+              <el-button size="small" data-testid="btn-edit-report" @click="openEdit"
+                >在线修订</el-button
+              >
+              <el-button size="small" data-testid="btn-diff-report" @click="openDiff"
+                >版本对比</el-button
+              >
             </div>
 
             <div class="sub-title">八个维度(点开查看,引用可点击溯源)</div>
@@ -656,15 +831,20 @@ onUnmounted(() => {
                 :data-testid="`report-chapter-${d.dimension_code}`"
               >
                 <template #title>
-                  <b>{{ d.dimension_code }}</b>&nbsp;{{ d.dimension_title }}&nbsp;
+                  <b>{{ d.dimension_code }}</b
+                  >&nbsp;{{ d.dimension_title }}&nbsp;
                   <el-tag size="small" :type="d.status === 'COMPLETE' ? 'success' : 'warning'">
-                    {{ d.status === 'COMPLETE' ? '依据已核验' : '有缺口' }}
+                    {{ d.status === 'COMPLETE' ? '分析完成' : d.status === 'ANALYSIS_ERROR' ? '暂未完成' : '有缺口' }}
                   </el-tag>
                   &nbsp;
                   <el-tag size="small" :type="d.risk_level === 'HIGH' ? 'danger' : 'info'">
                     {{ RISK_LABEL[d.risk_level] || d.risk_level }}
                   </el-tag>
                 </template>
+                <div style="display:flex;gap:8px;margin:8px 0 12px">
+                  <el-button size="small" :disabled="!!exportJob || report.status === 'analysis_failed'" :data-testid="`export-${d.dimension_code}-docx`" @click="download('docx', d.dimension_code)">导出本章 Word</el-button>
+                  <el-button size="small" :disabled="!!exportJob || report.status === 'analysis_failed'" :data-testid="`export-${d.dimension_code}-pdf`" @click="download('pdf', d.dimension_code)">导出本章 PDF</el-button>
+                </div>
                 <el-alert
                   v-if="d.missing_gap_note"
                   type="warning"
@@ -673,9 +853,11 @@ onUnmounted(() => {
                   :title="d.missing_gap_note"
                   style="margin-bottom: 8px"
                 />
-                <div class="md">{{ d.content_markdown }}</div>
+                <div class="md">{{ readableContent(d.content_markdown) }}</div>
                 <ul v-if="d.key_recommendations.length" class="recs">
-                  <li v-for="(r, i) in d.key_recommendations" :key="i">{{ r }}</li>
+                  <li v-for="(r, i) in d.key_recommendations" :key="i">
+                    {{ r }}
+                  </li>
                 </ul>
                 <div class="cites">
                   <el-button
@@ -687,58 +869,54 @@ onUnmounted(() => {
                     data-testid="report-citation-badge"
                     @click="openCitation(c.clause_id, c.quote_original)"
                   >
-                    {{ c.citation_tag }} {{ c.document_title.slice(0, 22) }} · {{ c.clause_number }}
+                    {{ c.citation_tag }} {{ c.document_title.slice(0, 22) }} ·
+                    {{ c.clause_number }}
                   </el-button>
                 </div>
               </el-collapse-item>
             </el-collapse>
 
             <el-collapse v-model="openExtras" style="margin-top: 10px">
-              <el-collapse-item name="matrix" title="合规判定矩阵(业务事实 | 适用条款 | 合规义务 | 风险等级 | 判断依据)">
-                <el-table :data="detail.findings" border size="small" data-testid="compliance-findings-table">
+              <el-collapse-item
+                name="matrix"
+                title="合规判定矩阵(业务事实 | 适用条款 | 合规义务 | 风险等级 | 判断依据)"
+              >
+                <el-table
+                  :data="versionFindings"
+                  border
+                  size="small"
+                  data-testid="compliance-findings-table"
+                >
+                  <template #empty>该版本未保存判定矩阵快照，请查阅各章引用。</template>
                   <el-table-column prop="business_fact" label="业务事实" min-width="140" />
                   <el-table-column label="适用条款" min-width="170">
                     <template #default="{ row }">
-                      <el-button link type="primary" data-testid="finding-clause-link" @click="openCitation(row.clause_id, row.basis_quote)">
-                        {{ row.document_title.slice(0, 24) }} · {{ row.clause_number }}
+                      <el-button
+                        link
+                        type="primary"
+                        data-testid="finding-clause-link"
+                        @click="openCitation(row.clause_id, row.basis_quote)"
+                      >
+                        {{ row.document_title.slice(0, 24) }} ·
+                        {{ row.clause_number }}
                       </el-button>
                     </template>
                   </el-table-column>
                   <el-table-column prop="compliance_obligation" label="合规义务" min-width="200" />
                   <el-table-column label="风险" width="80">
-                    <template #default="{ row }">{{ RISK_LABEL[row.risk_level] || row.risk_level }}</template>
+                    <template #default="{ row }">{{
+                      RISK_LABEL[row.risk_level] || row.risk_level
+                    }}</template>
                   </el-table-column>
                   <el-table-column label="判断依据(原文)" min-width="200">
                     <template #default="{ row }">
                       <i>"{{ row.basis_quote }}"</i>
-                      <div class="muted">中文为机器翻译:{{ row.basis_zh }}</div>
+                      <div class="muted">中文对照：{{ row.basis_zh }}</div>
                     </template>
                   </el-table-column>
                 </el-table>
               </el-collapse-item>
-              <el-collapse-item name="process" :title="`协同过程(${detail.step_traces.length} 步 · ${detail.mcp_calls_count} 次工具调用 · ${detail.total_tokens} tokens · 退回补证 ${detail.backtrack_count} 次)`">
-                <div
-                  v-for="s in detail.step_traces"
-                  :key="s.id"
-                  class="step"
-                  :class="{ back: s.is_backtrack }"
-                  :data-testid="s.is_backtrack ? 'backtrack-step-card' : 'normal-step-card'"
-                >
-                  <div class="step-head">
-                    <b>#{{ s.seq_no }} {{ s.agent_name }}</b>
-                    <el-tag v-if="s.is_backtrack" size="small" type="danger">退回补证</el-tag>
-                    <span class="muted">{{ s.duration_ms }} ms · {{ s.tokens_used }} tokens</span>
-                  </div>
-                  <div>{{ s.business_summary }}</div>
-                  <div v-if="s.backtrack_reason" class="back-reason">
-                    退回原因:{{ s.backtrack_reason }}
-                    <div v-if="s.backtrack_resolution">补证结果:{{ s.backtrack_resolution }}</div>
-                  </div>
-                  <div v-for="c in s.tool_calls" :key="c.call_id" class="muted">
-                    · {{ c.tool_label }}({{ c.duration_ms }} ms):{{ c.result_summary }}
-                  </div>
-                </div>
-              </el-collapse-item>
+
             </el-collapse>
           </div>
         </template>
@@ -768,41 +946,54 @@ onUnmounted(() => {
       </footer>
     </section>
 
-    <el-drawer v-model="drawerVisible" title="引用溯源 · 官方原文与关联关系" size="60%">
+    <el-drawer v-model="drawerVisible" title="引用来源与术语释义" size="60%">
       <div v-loading="drawerLoading" data-testid="citation-detail-drawer">
+        <el-alert v-for="alert in card?.source_integrity_alerts" :key="alert"
+          :title="alert" type="warning" :closable="false" show-icon />
         <template v-if="card">
           <h4>
             {{ card.document_title }} · {{ card.clause_number }}
             <el-tag size="small">v{{ card.version_no }}</el-tag>
-            <el-tag size="small" :type="card.review_status === 'approved' ? 'success' : 'warning'">
-              {{ card.review_status === 'approved' ? '已复核' : '机器翻译 · 待核对' }}
+            <el-tag
+              size="small"
+              :type="
+                card.review_status === 'approved'
+                  ? 'success'
+                  : card.translated_text
+                    ? 'warning'
+                    : 'info'
+              "
+            >
+              {{
+                card.review_status === 'approved'
+                  ? '已复核'
+                  : card.translated_text
+                    ? '中文对照'
+                    : '未翻译'
+              }}
             </el-tag>
           </h4>
+          <details class="muted"><summary>资料信息</summary><p>原文：{{ card.source_review_status === 'approved' ? '已复核' : '未人工复核' }}；中文：{{ card.translation_review_status === 'approved' ? '已复核' : '机器翻译' }}</p></details>
           <div v-if="card.source_url" class="muted">
-            官方来源:<a :href="card.source_url" target="_blank" rel="noopener">{{ card.source_url }}</a>
+            官方来源:<a :href="card.source_url" target="_blank" rel="noopener">{{
+              card.source_url
+            }}</a>
           </div>
           <div class="dual">
             <div>
               <div class="col-label">官方原文</div>
-              <div class="md">{{ card.original_text }}</div>
+              <LegalText :text="card.original_text" :terms="card.terms" :clause-id="card.clause_id" :section-path="card.section_path" />
               <div v-if="anchorQuote" class="anchor">
                 报告锚定的原文片段:<mark>{{ anchorQuote }}</mark>
               </div>
             </div>
             <div>
-              <div class="col-label">术语受控中文对照</div>
-              <div class="md">{{ card.translated_text }}</div>
+              <div class="col-label">中文对照</div>
+              <LegalText :text="card.translated_text || '暂无中文对照'" :terms="card.terms" :clause-id="card.clause_id" :section-path="card.section_path" />
             </div>
           </div>
-          <div class="col-label" style="margin-top: 12px">该条款关联关系</div>
-          <KgForceGraph
-            v-if="drawerVisible && citationNodes.length > 0"
-            :nodes="citationNodes"
-            :edges="citationEdges"
-            :categories="FG_CATEGORIES"
-            height="340px"
-          />
-          <el-empty v-else description="该条款暂无图谱关联" :image-size="60" />
+          <div v-if="card.related_requirements?.length" class="col-label" style="margin-top:24px">相关合规要求</div>
+          <article v-for="r in card.related_requirements" :key="r.id" class="step"><span class="muted">{{r.topic_label}}</span><h4>{{r.title}}</h4><p>{{r.quote}}</p></article>
         </template>
       </div>
     </el-drawer>
@@ -818,7 +1009,12 @@ onUnmounted(() => {
       </div>
       <template #footer>
         <el-button @click="editVisible = false">取消</el-button>
-        <el-button type="primary" :loading="savingEdit" data-testid="btn-confirm-save-report-edit" @click="saveEdit">
+        <el-button
+          type="primary"
+          :loading="savingEdit"
+          data-testid="btn-confirm-save-report-edit"
+          @click="saveEdit"
+        >
           保存为新版本
         </el-button>
       </template>
@@ -826,9 +1022,16 @@ onUnmounted(() => {
 
     <el-dialog v-model="diffVisible" title="报告版本对比" width="780px">
       <div v-if="diffData" data-testid="report-diff-content">
-        <div v-for="x in diffData.dimension_diffs" :key="x.dimension_code" class="diff-row" :class="{ changed: x.changed }">
+        <div
+          v-for="x in diffData.dimension_diffs"
+          :key="x.dimension_code"
+          class="diff-row"
+          :class="{ changed: x.changed }"
+        >
           <b>{{ x.dimension_code }} {{ x.dimension_title }}</b>
-          <el-tag size="small" :type="x.changed ? 'warning' : 'info'">{{ x.changed ? '有修订' : '一致' }}</el-tag>
+          <el-tag size="small" :type="x.changed ? 'warning' : 'info'">{{
+            x.changed ? '有修订' : '一致'
+          }}</el-tag>
           <div v-if="x.changed" class="dual">
             <pre>{{ x.from_markdown }}</pre>
             <pre>{{ x.to_markdown }}</pre>
@@ -1084,5 +1287,236 @@ onUnmounted(() => {
   white-space: pre-wrap;
   font-size: 12px;
   margin: 0;
+}
+
+.chat-page {
+  height: calc(100dvh - 145px);
+  min-height: 650px;
+  border-color: var(--cy-line);
+  border-radius: 14px;
+  background: #f7f9fc;
+}
+.sessions {
+  width: 240px;
+  flex-shrink: 0;
+  background: #fbfcfe;
+  border-color: var(--cy-line);
+}
+.sessions-top {
+  padding: 20px 16px;
+  gap: 12px;
+}
+.session-list {
+  padding: 12px;
+}
+.session-item {
+  padding: 14px;
+  border-color: transparent;
+  background: transparent;
+  margin-bottom: 8px;
+  transition: background 0.15s;
+}
+.session-item:hover {
+  background: #f0f4fa;
+}
+.session-item.active {
+  background: #eaf0fc;
+  border-color: #d4dff6;
+}
+.s-title {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+.s-code {
+  font-size: 11px;
+  color: #98a5b2;
+}
+.chat-head {
+  padding: 18px 24px;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 76px;
+}
+.chat-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+.conv-id-bar {
+  font-size: 12px;
+}
+.stream {
+  padding: 30px 28px;
+}
+.row {
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.avatar {
+  border-radius: 11px;
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+  background: #4767a5;
+}
+.bubble {
+  font-size: 15px;
+  line-height: 1.9;
+  padding: 16px 20px;
+  border-color: #e8edf3;
+  max-width: 85%;
+}
+.row.user .bubble {
+  background: #eaf0ff;
+  border-color: #dce5f8;
+}
+.row.user .avatar {
+  background: #5c8d84;
+}
+.card {
+  padding: 22px 24px;
+  margin-left: 46px;
+  border-color: #e4eaf1;
+}
+.card-title {
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 16px;
+}
+.summary {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.composer {
+  padding: 18px 24px;
+  gap: 12px;
+}
+.composer .el-button {
+  min-height: 44px;
+}
+.composer .el-textarea__inner {
+  min-height: 48px;
+}
+.md {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.actions {
+  gap: 10px;
+  margin: 20px 0;
+}
+.sub-title {
+  font-size: 14px;
+  color: #738492;
+  margin-top: 26px;
+}
+.step {
+  font-size: 14px;
+  padding: 14px;
+}
+.muted {
+  font-size: 12px;
+}
+.recs {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.el-collapse-item {
+  margin-top: 4px;
+}
+.session-dot { display: inline-block; width: 8px; height: 8px; margin: 0 8px 1px 0; border-radius: 50%; background: #a2afbf; flex-shrink: 0; }
+.session-dot.green { background: #159b71; }
+.session-dot.amber { background: #d99a23; }
+.session-dot.blue { background: #4168e8; }
+.session-dot.red { background: #df6666; }
+.session-state { margin-top: 10px; font-size: 12px; line-height: 1.6; color: #7b899a; }
+.session-state.green { color: #168563; }
+.session-state.amber { color: #9d711a; }
+.session-state.blue { color: #4163c8; }
+.session-state.red { color: #bb4c4c; }
+.unread-label { display: inline-block; margin-left: 7px; padding: 0 5px; border-radius: 4px; background: #e8efff; color: #365bc7; font-size: 11px; }
+.activity-title { display: flex; align-items: center; gap: 10px; }
+.activity-spinner { display: inline-block; width: 15px; height: 15px; flex-shrink: 0; border: 2px solid #dce5f9; border-top-color: #5275cf; border-radius: 50%; animation: activity-spin 1s linear infinite; }
+.waiting-bubble { min-width: 230px; }
+.waiting-bubble p { margin: 7px 0; color: #78889a; font-size: 13px; }
+.waiting-bubble small, .progress small { font-size: 12px; color: #8794a4; font-weight: 400; }
+.progress-stages { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 16px; }
+.progress-stage { font-size: 13px; color: #708197; }
+.progress-stage.complete > span { color: #1c9576; }
+.progress-stage.warning, .progress-stage.waiting { color: #a17b37; }
+.progress-stage.failed { color: #b45959; }
+.export-feedback { display: flex; align-items: center; gap: 12px; margin: 12px 24px 0; padding: 12px 16px; border-radius: 10px; background: #eef3ff; color: #395ca7; font-size: 13px; }
+.export-feedback strong { margin-right: 12px; font-weight: 600; }
+.export-feedback small { display: block; margin-top: 5px; color: #71829e; font-size: 12px; }
+@keyframes activity-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .activity-spinner { animation: none; border-top-color: #5275cf; } }
+@media (max-width: 1100px) {
+  .sessions {
+    width: 205px;
+  }
+  .stream {
+    padding: 24px 18px;
+  }
+  .card {
+    margin-left: 0;
+  }
+  .conv-id-bar {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+@media (max-width: 800px) {
+  .chat-page {
+    flex-direction: column;
+    height: calc(100dvh - 115px);
+    min-height: 680px;
+  }
+  .sessions {
+    width: 100%;
+    max-height: 170px;
+    border-right: 0;
+    border-bottom: 1px solid var(--cy-line);
+  }
+  .sessions-top {
+    padding: 12px 16px;
+  }
+  .session-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    flex: 1;
+    padding: 8px 12px;
+  }
+  .session-item {
+    min-width: 200px;
+    margin-bottom: 0;
+  }
+  .s-code {
+    display: none;
+  }
+  .session-item .el-tag {
+    font-size: 11px;
+  }
+  .chat-main {
+    min-height: 0;
+  }
+  .chat-head {
+    padding: 14px 16px;
+  }
+  .stream {
+    padding: 20px 14px;
+  }
+  .bubble {
+    max-width: 90%;
+  }
+  .card {
+    padding: 18px 16px;
+  }
+  .composer {
+    padding: 12px;
+  }
+  .dual {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

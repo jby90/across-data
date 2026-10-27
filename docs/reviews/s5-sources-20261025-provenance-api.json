@@ -1,0 +1,46 @@
+{
+  "binding_resolutions": [],
+  "source_integrity_holds": [],
+  "document_id": "513b4485-5a04-48e0-9f44-acf689d975c2",
+  "title": "المعاملات الإلكترونية والبيانات ذات الطابع الشخصي نوع النص: قانون |  رقم 81 تاريخ: 10/10/2018",
+  "country_code": "LB",
+  "source_url": "https://nhrclb.org/archives/8228",
+  "language": "ar",
+  "publisher": "National Human Rights Commission, Lebanon",
+  "terms_status": "pending",
+  "terms_approval_scope": "legacy",
+  "versions": [
+    {
+      "version_id": "e0005706-04fd-4746-89d3-28e7d3960d68",
+      "version_no": 1,
+      "content_hash": "91bf1bb73082307b9bb657d05b694fb608b5edd3f61e7a5ddfd6cfd82ac777c3",
+      "fetched_at": "2026-10-25T06:49:33.675968Z",
+      "final_url": "https://nhrclb.org/archives/8228",
+      "metadata_source": null,
+      "acquisition": "registered_download",
+      "registered_download": {
+        "audit_id": "5d1f759f-01ce-4366-aea8-2d3047d547ea",
+        "source_nature": "statutory_body_republication",
+        "robots_note": "HTTP 200,已读取规则",
+        "publisher_identity_url": "https://nhrclb.org/en/what-is-nhrc",
+        "human_review": null
+      },
+      "pipeline_refetch_verified": false,
+      "integrity_ok": true,
+      "integrity_error": null,
+      "review_status": "pending_review",
+      "legal_status": "unknown",
+      "effective_date": null,
+      "ocr_required": false,
+      "official_authenticity": "pending_human_review",
+      "events": [
+        {
+          "step": "parse",
+          "status": "ok",
+          "message": "137 条,策略 numbered",
+          "created_at": "2026-10-25T06:49:33.675968Z"
+        }
+      ]
+    }
+  ]
+}

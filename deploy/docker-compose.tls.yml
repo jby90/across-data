@@ -1,0 +1,12 @@
+# Apply only after staging verification and trusted IP certificate issuance.
+services:
+  nginx:
+    ports: !override ["0.0.0.0:80:80", "0.0.0.0:443:443"]
+    volumes:
+      - ./gateway-tls.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/lib/cyshuhe/acme:/var/www/acme:ro
+volumes:
+  archive:
+    external: true
+    name: cyshuhe_archive

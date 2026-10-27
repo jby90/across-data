@@ -2,6 +2,7 @@
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { api } from '../api'
+import TerminologyLibrary from '../components/TerminologyLibrary.vue'
 
 interface GlossaryHit {
   term_id?: string
@@ -22,6 +23,8 @@ interface UnmatchedTerm {
 }
 
 interface ClauseTranslation {
+  source_context_revision?: { id: string; review_status: string; quality_check_passed: boolean } | null
+  source_parse_revision?: { id: string; review_status: string; content_kind: string; active: false } | null
   id: string
   clause_id: string
   document_id: string
@@ -35,11 +38,15 @@ interface ClauseTranslation {
   engine: string
   model_name: string
   prompt_version: string
+  tokens_in?: number
+  tokens_out?: number
+  duration_ms?: number
   glossary_hits: GlossaryHit[]
   unmatched_terms: UnmatchedTerm[]
   quality_check_passed: boolean
   quality_issues: string[]
   review_status: string
+  status?: string
   usable_as_legal_basis: boolean
   status_badge: string
   reviewer_note: string | null
@@ -74,10 +81,39 @@ interface GlossaryTerm {
 
 const activeTab = ref<'translations' | 'points' | 'glossary'>('translations')
 const countryFilter = ref('SG')
+const countryOptions=ref<Array<{country_code:string;country_name_zh:string}>>([])
 const statusFilter = ref('')
 const loading = ref(false)
 
 const translations = ref<ClauseTranslation[]>([])
+const translationPage = ref(1)
+const translationPageSize = 50
+const hasNextTranslations = ref(false)
+const historyDialog = ref(false)
+const historyResult = ref<{ history: unknown[]; proposals: unknown[] } | null>(null)
+
+async function showHistory(id: string, action?: string) {
+  const result = await api.get<{
+    history: { action: string }[]
+    proposals: { payload?: Record<string, unknown> }[]
+  }>(`/admin/knowledge/history/${id}`)
+  historyResult.value = action ? {
+    history: result.history.filter((row) => row.action === action ||
+      (action === 'source_parse_revision' && ['parsed_source_translation', 'kg_parsed_source_result'].includes(row.action))),
+    proposals: result.proposals.filter((row) => row.payload?.[action]),
+  } : result
+  historyDialog.value = true
+}
+
+function resetAndLoad() {
+  translationPage.value = 1
+  return loadAll()
+}
+
+function turnTranslationPage(delta: number) {
+  translationPage.value = Math.max(1, translationPage.value + delta)
+  return loadAll()
+}
 const reviewPoints = ref<ReviewPoint[]>([])
 const glossaryTerms = ref<GlossaryTerm[]>([])
 
@@ -116,14 +152,16 @@ async function loadAll() {
     const qTr = new URLSearchParams()
     if (countryFilter.value) qTr.set('country_code', countryFilter.value)
     if (statusFilter.value) qTr.set('review_status', statusFilter.value)
-    qTr.set('limit', '120')
+    qTr.set('limit', String(translationPageSize + 1))
+    qTr.set('offset', String((translationPage.value - 1) * translationPageSize))
 
     const [trList, rpList, glList] = await Promise.all([
       api.get<ClauseTranslation[]>(`/admin/knowledge/translations?${qTr.toString()}`),
       api.get<ReviewPoint[]>(`/admin/knowledge/review-points${qCountry}`),
       api.get<GlossaryTerm[]>(`/admin/knowledge/glossary${qCountry}`),
     ])
-    translations.value = trList
+    hasNextTranslations.value = trList.length > translationPageSize
+    translations.value = trList.slice(0, translationPageSize)
     reviewPoints.value = rpList
     glossaryTerms.value = glList
   } catch (e: unknown) {
@@ -138,10 +176,16 @@ async function runCountryExtract() {
   loading.value = true
   try {
     const res = await api.post<{
+      status: string
+      reason?: string
       nodes_total: number
       edges_total: number
       clauses_translated: number
-    }>(`/admin/knowledge/extract?country_code=${cc}&translate_sample_per_doc=6`)
+    }>(`/admin/knowledge/extract?country_code=${cc}`)
+    if (res.status !== 'completed') {
+      ElMessage.warning(`图谱未替换，保留旧结果：${res.reason || res.status}`)
+      return
+    }
     ElMessage.success(
       `${cc} 抽取与受控翻译完成：新增译文 ${res.clauses_translated} 条，图谱节点 ${res.nodes_total} 个、语义边 ${res.edges_total} 条`,
     )
@@ -188,6 +232,22 @@ async function quickApproveTranslation(row: ClauseTranslation) {
     await loadAll()
   } catch (e: unknown) {
     ElMessage.error((e as Error).message)
+  }
+}
+
+async function batchTranslateDoc(row: ClauseTranslation) {
+  loading.value = true
+  try {
+    const res = await api.post<{
+      document_id: string
+      translated_count: number
+    }>(`/admin/knowledge/documents/${row.document_id}/translate`)
+    ElMessage.success(`按文档批量翻译完成：共处理 ${res.translated_count} 条条款`)
+    await loadAll()
+  } catch (e: unknown) {
+    ElMessage.error((e as Error).message)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -253,50 +313,68 @@ async function createTerm() {
   }
 }
 
-onMounted(loadAll)
+onMounted(async()=>{try{countryOptions.value=await api.get('/admin/knowledge/countries')}catch(e){ElMessage.error((e as Error).message)}await loadAll()})
 </script>
 
 <template>
   <div>
-    <div class="bar">
+    <div class="page-heading">
       <div>
-        <h2 style="margin: 0">法律术语库 · 机器翻译 · 律所三层复核</h2>
+        <h1>翻译与复核</h1>
         <div class="sub">
-          只有标记为「已复核(可作法律依据)」的条款与关系才会被安全报告与申请表当作法律依据引用；未复核内容显式标注「机器翻译，待核对」。
+          管理中文对照、来源定义和影响结论的解读问题。自动质量检查与人工审批分别留存。
         </div>
       </div>
       <div style="display: flex; gap: 8px; align-items: center">
-        <el-select v-model="countryFilter" style="width: 140px" @change="loadAll">
-          <el-option value="SG" label="SG 新加坡" />
-          <el-option value="EG" label="EG 埃及" />
-          <el-option value="TN" label="TN 突尼斯" />
-          <el-option value="MA" label="MA 摩洛哥" />
-          <el-option value="LB" label="LB 黎巴嫩" />
+        <el-select v-model="countryFilter" style="width: 140px" @change="resetAndLoad">
+          <el-option v-for="c in countryOptions" :key="c.country_code" :value="c.country_code" :label="`${c.country_code} ${c.country_name_zh}`" />
         </el-select>
-        <el-button type="primary" :loading="loading" @click="runCountryExtract">
-          运行本国受控机翻与图谱抽取
-        </el-button>
+        <el-popover trigger="click" placement="bottom-end" :width="310"
+          ><template #reference><el-button>批量处理</el-button></template>
+          <div class="secondary-actions">
+            <p class="page-description">
+              对当前国家执行全量图谱抽取，此操作会调用模型；批量翻译单独执行。
+            </p>
+            <el-button :loading="loading" @click="runCountryExtract">运行本国图谱抽取</el-button>
+          </div></el-popover
+        >
         <el-button @click="loadAll">刷新</el-button>
       </div>
     </div>
 
+    <el-dialog v-model="historyDialog" title="历史与审批记录" width="760px" append-to-body>
+      <p>机器重试不会沿用旧审批。既有历史未补造审批记录；以下仅展示本次修复后留存的快照与提案。</p>
+      <pre style="max-height: 480px; overflow: auto; white-space: pre-wrap">{{
+        JSON.stringify(historyResult, null, 2)
+      }}</pre>
+    </el-dialog>
     <el-tabs v-model="activeTab">
       <!-- 第一页签：条款级机器翻译与复核 -->
-      <el-tab-pane label="1. 条款机翻与复核队列" name="translations">
+      <el-tab-pane label="条款翻译" name="translations">
         <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center">
-          <span>复核状态筛选：</span>
-          <el-radio-group v-model="statusFilter" size="small" @change="loadAll">
-            <el-radio-button value="">全部</el-radio-button>
-            <el-radio-button value="pending_review">待律所复核</el-radio-button>
-            <el-radio-button value="machine_translated">纯机翻待核对</el-radio-button>
-            <el-radio-button value="approved">已复核(可作法律依据)</el-radio-button>
-            <el-radio-button value="stale">法规已修订(失效待重核)</el-radio-button>
-          </el-radio-group>
+          <span class="section-description">复核状态</span
+          ><el-select
+            v-model="statusFilter"
+            placeholder="全部状态"
+            style="width: 240px"
+            aria-label="复核状态筛选"
+            @change="resetAndLoad"
+            ><el-option value="" label="全部状态" /><el-option
+              value="machine_translated"
+              label="机翻通过 · 待核对" /><el-option
+              value="pending_review"
+              label="待律所复核" /><el-option
+              value="approved"
+              label="已复核 · 可作依据" /><el-option
+              value="translation_failed"
+              label="翻译失败" /><el-option value="not_translated" label="未翻译" /><el-option
+              value="stale"
+              label="原文已更新 · 待重核"
+          /></el-select>
         </div>
 
         <el-table :data="translations" v-loading="loading" border stripe>
-          <el-table-column prop="country_code" label="国家" width="68" />
-          <el-table-column label="所属法规与条号" width="230">
+          <el-table-column label="所属法规与条号" width="210">
             <template #default="{ row }">
               <div style="font-weight: 600">{{ row.document_title }}</div>
               <div class="sub">
@@ -305,14 +383,16 @@ onMounted(loadAll)
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="官方原文" min-width="260">
+          <el-table-column label="官方原文" min-width="220">
             <template #default="{ row }">
               <div class="clause-box">{{ row.original_text }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="受术语表约束译文与悬停词典" min-width="300">
+          <el-table-column label="中文译文与术语" min-width="260">
             <template #default="{ row }">
-              <div class="clause-box">{{ row.translated_text }}</div>
+              <div class="clause-box">
+                {{ row.translated_text || '未翻译' }}
+              </div>
               <div
                 v-if="row.glossary_hits?.length || row.unmatched_terms?.length"
                 style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px"
@@ -340,7 +420,7 @@ onMounted(loadAll)
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="程序校验与法律效力状态" width="195">
+          <el-table-column label="质量与状态" width="170">
             <template #default="{ row }">
               <div>
                 <el-tag :type="row.usable_as_legal_basis ? 'success' : 'warning'" size="small">
@@ -353,32 +433,63 @@ onMounted(loadAll)
                   size="small"
                   effect="plain"
                 >
-                  {{ row.quality_check_passed ? '术语与数字校验通过' : '译后检查告警' }}
+                  {{ row.quality_check_passed ? '四项程序校验通过' : '译后检查未通过' }}
                 </el-tag>
+              </div>
+              <div class="sub" style="margin-top: 4px">
+                {{ row.engine }}/{{ row.model_name }} · {{ row.prompt_version }}
+                <span v-if="row.tokens_in || row.tokens_out">
+                  ({{ row.tokens_in }}/{{ row.tokens_out }} tok, {{ row.duration_ms }}ms)
+                </span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="复核操作" width="165" fixed="right">
-            <template #default="{ row }">
-              <el-button
-                v-if="row.review_status !== 'approved'"
-                size="small"
-                type="success"
-                link
-                @click="quickApproveTranslation(row)"
-              >
-                直接通过
-              </el-button>
-              <el-button size="small" type="primary" link @click="openTranslationReview(row)">
-                校订/复核
-              </el-button>
-            </template>
-          </el-table-column>
+          <el-table-column label="操作" width="160" fixed="right"
+            ><template #default="{ row }"
+              ><el-button size="small" type="primary" link @click="openTranslationReview(row)"
+                >校订与复核</el-button
+              ><el-dropdown trigger="click"
+                ><el-button size="small" text>更多</el-button
+                ><template #dropdown
+                  ><el-dropdown-menu
+                    ><el-dropdown-item @click="quickApproveTranslation(row)"
+                      >直接通过复核</el-dropdown-item
+                    ><el-dropdown-item @click="batchTranslateDoc(row)"
+                      >按文档批量翻译</el-dropdown-item
+                    ><el-dropdown-item @click="showHistory(row.id)"
+                      >历史与审批记录</el-dropdown-item
+                    ><el-dropdown-item v-if="row.source_context_revision" @click="showHistory(row.clause_id, 'translation_context_revision')"
+                      >原文上下文修订（待核对）</el-dropdown-item
+                    ><el-dropdown-item v-if="row.source_parse_revision" @click="showHistory(row.clause_id, 'source_parse_revision')"
+                      >原页解析修订（待核对、未启用）</el-dropdown-item
+                    ></el-dropdown-menu
+                  ></template
+                ></el-dropdown
+              ></template
+            ></el-table-column
+          >
         </el-table>
+        <div
+          style="
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+          "
+        >
+          <el-button :disabled="translationPage === 1 || loading" @click="turnTranslationPage(-1)"
+            >上一页</el-button
+          >
+          <span>第 {{ translationPage }} 页 · 每页 {{ translationPageSize }} 条</span>
+          <el-button :disabled="!hasNextTranslations || loading" @click="turnTranslationPage(1)"
+            >下一页</el-button
+          >
+        </div>
       </el-tab-pane>
 
       <!-- 第二页签：解读要点确认单 -->
-      <el-tab-pane label="2. 解读要点确认单 (仅少数关键争议项)" name="points">
+      <el-tab-pane label="解读确认" name="points">
         <div style="margin-bottom: 12px; display: flex; justify-content: space-between">
           <div class="sub">
             把法规未明确定义、官方无解释、又直接影响结论的少数关键问题汇总成一份确认单，交由合作律所一次性确认。
@@ -392,7 +503,11 @@ onMounted(loadAll)
           <el-table-column prop="point_code" label="编号" width="110" />
           <el-table-column prop="title" label="核心争议议题" width="220" />
           <el-table-column prop="question" label="待律所确认问题" min-width="240" />
-          <el-table-column prop="impact_on_conclusion" label="对车企合规结论的影响" min-width="200" />
+          <el-table-column
+            prop="impact_on_conclusion"
+            label="对车企合规结论的影响"
+            min-width="200"
+          />
           <el-table-column label="平台暂拟口径与律所复核意见" min-width="280">
             <template #default="{ row }">
               <div class="sub" style="margin-bottom: 6px">
@@ -422,10 +537,13 @@ onMounted(loadAll)
       </el-tab-pane>
 
       <!-- 第三页签：两层法律术语库 -->
-      <el-tab-pane label="3. 两层法律术语库 (通用概念 + 国家覆盖)" name="glossary">
+      <el-tab-pane label="法律术语" name="glossary">
+        <TerminologyLibrary :country="countryFilter" />
+        <h3>历史人工维护词条</h3>
         <div style="margin-bottom: 12px; display: flex; justify-content: space-between">
           <div class="sub">
-            按四级优先级管理：P1 法律自身定义条款 &gt; P2 监管指南 &gt; P3 官方多语版本 &gt; P4 国际通行概念。本国覆盖自动优先于通用概念。
+            按四级优先级管理：P1 法律自身定义条款 &gt; P2 监管指南 &gt; P3 官方多语版本 &gt; P4
+            国际通行概念。本国覆盖自动优先于通用概念。
           </div>
           <el-button type="primary" size="small" @click="newTermDialog = true">
             新增术语词条
@@ -458,7 +576,8 @@ onMounted(loadAll)
     <el-dialog v-model="editTranslationDialog" title="校订与复核法规条款译文" width="680px">
       <template v-if="currentTranslation">
         <div style="margin-bottom: 8px; font-weight: 600">
-          {{ currentTranslation.document_title }} · 条号 {{ currentTranslation.clause_number || '-' }}
+          {{ currentTranslation.document_title }} · 条号
+          {{ currentTranslation.clause_number || '-' }}
         </div>
         <div class="clause-box" style="background: #f5f7fa; padding: 10px; margin-bottom: 12px">
           {{ currentTranslation.original_text }}
@@ -484,12 +603,18 @@ onMounted(loadAll)
     </el-dialog>
 
     <!-- 导出/导入解读要点确认单弹窗 -->
-    <el-dialog v-model="exportDialog" title="《解读要点确认单》导出与律所回执批量导入" width="760px">
+    <el-dialog
+      v-model="exportDialog"
+      title="《解读要点确认单》导出与律所回执批量导入"
+      width="760px"
+    >
       <el-form label-position="top">
         <el-form-item label="Markdown 确认单 (可直接复制发给合作律所)">
           <el-input v-model="exportedMarkdown" type="textarea" :rows="7" readonly />
         </el-form-item>
-        <el-form-item label="JSON 结构化回执 (修改 status='confirmed' 与 lawyer_reply 后点击下方批量回写)">
+        <el-form-item
+          label="JSON 结构化回执 (修改 status='confirmed' 与 lawyer_reply 后点击下方批量回写)"
+        >
           <el-input v-model="exportedJson" type="textarea" :rows="8" />
         </el-form-item>
       </el-form>
@@ -553,7 +678,7 @@ onMounted(loadAll)
 }
 .sub {
   color: #606266;
-  font-size: 12px;
+  font-size: 13px;
 }
 .clause-box {
   max-height: 110px;

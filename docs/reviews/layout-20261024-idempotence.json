@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "items": [
+    {
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "bilingual_revision_id": "a03b1040-e875-4142-8ea9-6c3e72d87167",
+      "cached": true,
+      "model_calls": 0
+    },
+    {
+      "clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+      "bilingual_revision_id": "37994cf4-00dd-4e97-9125-08432f42fdd5",
+      "cached": true,
+      "model_calls": 0
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "total_current_records": 2607,
+  "identical_count": 12,
+  "identical_statuses": {
+    "translation_failed": 12
+  },
+  "identical_engines": {
+    "llm": 12
+  },
+  "record_ids": [
+    "8e8c584a-c86d-4073-a1e6-c47945412eda",
+    "713f7ec1-211d-412c-b37e-e034bc647def",
+    "e4938220-f2cf-41c0-8618-6a4eab07e14a",
+    "7550f674-7290-4af1-890c-a9b160dac2de",
+    "3f44460a-a733-4ec6-8b71-8ad1a6a7c1f4",
+    "f484a214-439f-429d-8f25-e42f9f256550",
+    "d08af23e-bcb7-4bc2-a341-bdd8586af1b2",
+    "118b0d8d-6279-4a4f-8843-c8aaa577330f",
+    "215c71fc-9696-4ed8-926c-005daadfcc6c",
+    "4c3e1917-fc1c-4bca-a9f7-d9dfc81f2dc4",
+    "63585797-d8e1-404e-a1d6-3e6cea2ab2bc",
+    "7c7874a9-c665-4e4a-953f-280c378eb29e"
+  ],
+  "manual_review": "pending",
+  "note": "Read-only audit; failed/historical values are retained. No denominator or approval status changed."
+}

@@ -1,0 +1,182 @@
+{
+  "facts": {
+    "exterior_video_and_gnss": "采集8路环视视频与GNSS；车端模糊人脸与车牌后回传",
+    "cross_border_mechanism": "传输至中国研发中心，已签数据处理协议并完成评估",
+    "consent_and_notice": "车机弹窗明示同意，车身告示，已任命本地数据保护官",
+    "retention_and_blackbox": "黑匣子留存3年；常规个人数据180天后销毁",
+    "local_admission_and_safety_operator": "已提交路测准入申请，配备安全员与保险"
+  },
+  "runs": [
+    {
+      "task_id": "a6dc8816-72ea-4943-8417-1306a45faef9",
+      "status": "completed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 1,
+      "local_grounding_failures": 3,
+      "backtrack_count": 0,
+      "tokens": 93034,
+      "elapsed_seconds": 36.48,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "99e117fa-b2ca-45b2-ab50-387989638bb6",
+      "status": "failed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 2,
+      "local_grounding_failures": 0,
+      "backtrack_count": 0,
+      "tokens": 88595,
+      "elapsed_seconds": 34.45,
+      "report_status": "analysis_failed",
+      "gap_kinds": {
+        "none": 7,
+        "analysis_error": 1
+      }
+    },
+    {
+      "task_id": "fcdae803-cdae-4fa7-9bc0-2639c948ee1f",
+      "status": "completed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 0,
+      "local_grounding_failures": 3,
+      "backtrack_count": 0,
+      "tokens": 82767,
+      "elapsed_seconds": 30.39,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "1ac70305-72bb-4fbc-8cd4-9112d7b892ad",
+      "status": "completed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 2,
+      "local_grounding_failures": 0,
+      "backtrack_count": 0,
+      "tokens": 95634,
+      "elapsed_seconds": 40.56,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "782d5957-bc41-4658-b11f-39d98d9f728d",
+      "status": "completed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 1,
+      "local_grounding_failures": 0,
+      "backtrack_count": 0,
+      "tokens": 86877,
+      "elapsed_seconds": 44.59,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "5b47eeed-177d-444f-8262-bbf41b344f1d",
+      "status": "completed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 1,
+      "local_grounding_failures": 0,
+      "backtrack_count": 0,
+      "tokens": 83652,
+      "elapsed_seconds": 30.4,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "f3545a30-b323-46ed-90f7-1725b53be64a",
+      "status": "completed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 2,
+      "local_grounding_failures": 0,
+      "backtrack_count": 0,
+      "tokens": 93893,
+      "elapsed_seconds": 34.47,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "2412ecf3-75f2-45b6-8557-a7ae453eace3",
+      "status": "completed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 1,
+      "local_grounding_failures": 1,
+      "backtrack_count": 0,
+      "tokens": 88292,
+      "elapsed_seconds": 46.62,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "af6ce905-aa79-48ce-b45d-d28ae2d83d1d",
+      "status": "completed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 0,
+      "local_grounding_failures": 1,
+      "backtrack_count": 0,
+      "tokens": 78286,
+      "elapsed_seconds": 34.49,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "558309c9-8db2-430d-8446-5355cc3d4ff4",
+      "status": "completed",
+      "workflow_version_id": "8cd60266-298d-4845-add1-e781427e4c3b",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "local_selection_retries": 1,
+      "local_grounding_failures": 0,
+      "backtrack_count": 0,
+      "tokens": 83115,
+      "elapsed_seconds": 30.45,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    }
+  ]
+}

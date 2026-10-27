@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -18,6 +20,21 @@ from app.knowledge.router import (
     user_router as knowledge_user_router,
 )
 from app.sources.router import router as sites_router
+from app.updates.router import admin_router as updates_router
+from app.updates.router import user_router as notifications_router
+
+
+@asynccontextmanager
+async def _lifespan(_app):
+    if get_settings().env == "prod":
+        from app.core.db import get_engine
+        from app.core.rls import validate_runtime_role
+
+        await validate_runtime_role(get_engine())
+    yield
+    from app.analysis.events import close_hubs
+
+    await close_hubs()
 
 
 def create_app() -> FastAPI:
@@ -25,6 +42,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="车研数合 API",
         version="0.1.0",
+        lifespan=_lifespan,
         # 生产环境不暴露交互式文档
         docs_url="/api/docs" if settings.env == "dev" else None,
         redoc_url=None,
@@ -35,8 +53,16 @@ def create_app() -> FastAPI:
         allow_origins=settings.cors_origins,
         allow_credentials=False,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
-        allow_headers=["Authorization", "Content-Type"],
+        allow_headers=["Authorization", "Content-Type", "Last-Event-ID"],
     )
+
+    @app.middleware("http")
+    async def isolate_model_egress_context(request, call_next):
+        from app.core.redaction import llm_scope
+        from app.core.rls import database_scope
+
+        with llm_scope(), database_scope():
+            return await call_next(request)
 
     @app.get("/api/health", tags=["system"])
     async def health():
@@ -49,8 +75,16 @@ def create_app() -> FastAPI:
     app.include_router(documents_router)
     app.include_router(knowledge_admin_router)
     app.include_router(knowledge_user_router)
+    from app.knowledge.term_routes import admin as term_admin
+    from app.knowledge.term_routes import user as term_user
+
+    app.include_router(term_admin)
+    app.include_router(term_user)
     app.include_router(analysis_admin_router)
     app.include_router(analysis_user_router)
+    app.include_router(notifications_router)
+    app.include_router(updates_router)
+
     return app
 
 

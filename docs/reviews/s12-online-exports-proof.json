@@ -1,0 +1,30 @@
+{
+  "online-D3.pdf": {
+    "pages": 3,
+    "bytes": 72881,
+    "sha256": "765103c81ac39c8175c908ba67c68a345d34be6afe6cdec9654cae32f09e832a",
+    "selectable_text": true,
+    "version_marker": true
+  },
+  "online-full.pdf": {
+    "pages": 19,
+    "bytes": 181549,
+    "sha256": "9ec38f3670089e0ebcb898e44e77affcf16854d915373d033973de7f31f0ed2a",
+    "selectable_text": true,
+    "version_marker": true
+  },
+  "split_zip": {
+    "files": [
+      "cyshuhe_SG_8dim_report_v1.docx",
+      "cyshuhe_SG_D1_report_v1.docx",
+      "cyshuhe_SG_D2_report_v1.docx",
+      "cyshuhe_SG_D3_report_v1.docx",
+      "cyshuhe_SG_D4_report_v1.docx",
+      "cyshuhe_SG_D5_report_v1.docx",
+      "cyshuhe_SG_D6_report_v1.docx",
+      "cyshuhe_SG_D7_report_v1.docx",
+      "cyshuhe_SG_D8_report_v1.docx"
+    ],
+    "count": 9
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "items": [
+    {
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "linguistic_units": 4,
+      "literal_fields": 17,
+      "tables": 2,
+      "bibliography_entries": 0,
+      "passed": true,
+      "original_failed_row_retained": true,
+      "review_status": "pending_review"
+    },
+    {
+      "clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+      "linguistic_units": 16,
+      "literal_fields": 36,
+      "tables": 0,
+      "bibliography_entries": 16,
+      "passed": true,
+      "original_failed_row_retained": true,
+      "review_status": "pending_review"
+    }
+  ],
+  "existing_rows_unchanged": {
+    "documents": 80,
+    "document_versions": 80,
+    "clauses": 2607,
+    "clause_translations": 3464,
+    "kg_edges": 3850,
+    "kg_nodes": 2419,
+    "glossary_terms": 14,
+    "knowledge_audit_records": 11610,
+    "knowledge_change_proposals": 470
+  },
+  "row_additions": {
+    "documents": 0,
+    "document_versions": 0,
+    "clauses": 0,
+    "clause_translations": 0,
+    "kg_edges": 0,
+    "kg_nodes": 0,
+    "glossary_terms": 0,
+    "knowledge_audit_records": 4,
+    "knowledge_change_proposals": 2
+  },
+  "archives_verified": 80,
+  "human_approved": 0,
+  "whole_clause_pass_claimed": false,
+  "before_snapshot_sha256": "9f7fe2d149e8c621e8a474fd73dd16d3d893f9ece55933871268dad15a60aa70"
+}

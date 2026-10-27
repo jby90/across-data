@@ -10,6 +10,7 @@ from datetime import UTC, datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core.config import get_settings
 from app.ingestion.archive import ArchiveStore
 from app.ingestion.fetcher import PoliteFetcher
 from app.ingestion.ocr import OcrEngine
@@ -41,6 +42,9 @@ async def claim_due_site(
                 .where(
                     SourceSite.enabled.is_(True),
                     SourceSite.terms_status == TermsStatus.APPROVED.value,
+                    (SourceSite.terms_approval_scope == "production")
+                    if get_settings().env != "dev"
+                    else True,
                     SourceSite.next_run_at.is_not(None),
                     SourceSite.next_run_at <= now,
                 )

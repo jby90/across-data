@@ -1,0 +1,139 @@
+{
+  "id": "83230a13-c97a-4f04-ab3c-4c2f5854a94d",
+  "conversation_code": "CONV-20261025-83230A13",
+  "status": "completed",
+  "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35",
+  "workflow_version_no": 48,
+  "fact_followup_rounds": 1,
+  "total_tokens": 366726,
+  "total_duration_ms": 183669,
+  "backtrack_count": 0,
+  "mcp_calls_count": 27,
+  "purpose": "Fictional go-live demonstration, not a real customer assessment or legal approval",
+  "trace_count": 13,
+  "report_version": 1,
+  "dimensions": 8,
+  "citation_review_summary": {
+    "approved": 0,
+    "pending": 23,
+    "total": 23,
+    "occurrences": 23
+  },
+  "analysis_requests": [
+    [
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5",
+      "D6",
+      "D7",
+      "D8"
+    ],
+    [
+      "D7"
+    ]
+  ],
+  "retained_dimensions": [
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "D5",
+    "D6",
+    "D8"
+  ],
+  "retained_outputs_equal": {
+    "D1": true,
+    "D2": true,
+    "D3": true,
+    "D4": true,
+    "D5": true,
+    "D6": true,
+    "D8": true
+  },
+  "all_steps_pinned_workflow": true,
+  "pending_questions": [],
+  "steps": [
+    {
+      "seq": 1,
+      "phase": "fact_check",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 2,
+      "phase": "retrieval",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 3,
+      "phase": "analysis",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 4,
+      "phase": "user_fact_question",
+      "status": "awaiting_user_facts",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 5,
+      "phase": "user_fact_answer",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 6,
+      "phase": "user_fact_answer",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 7,
+      "phase": "user_fact_answer",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 8,
+      "phase": "fact_check",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 9,
+      "phase": "retrieval",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 10,
+      "phase": "analysis",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 11,
+      "phase": "verification",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 12,
+      "phase": "compilation",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    },
+    {
+      "seq": 13,
+      "phase": "update_linkage",
+      "status": "passed",
+      "workflow_version_id": "4100e689-8724-4237-ab6f-feddd79cdd35"
+    }
+  ],
+  "manual_review": "pending",
+  "note": "Runtime duration sums recorded processing; excludes user answering and browser waiting. Tokens are known runtime usage, not provider billing."
+}

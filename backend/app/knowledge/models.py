@@ -8,17 +8,20 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     DateTime,
+    Float,
     ForeignKey,
     Integer,
     String,
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.core.rls import TenantOwnedMixin
 
 
 class NodeType(enum.StrEnum):
@@ -51,10 +54,13 @@ class RelationType(enum.StrEnum):
 
 class TranslationReviewStatus(enum.StrEnum):
     MACHINE_TRANSLATED = "machine_translated"
+    TRANSLATION_FAILED = "translation_failed"
+    NOT_TRANSLATED = "not_translated"
     PENDING_REVIEW = "pending_review"
     APPROVED = "approved"
     REJECTED = "rejected"
     STALE = "stale"
+    SUPERSEDED = "superseded"
 
 
 class GraphReviewStatus(enum.StrEnum):
@@ -62,12 +68,45 @@ class GraphReviewStatus(enum.StrEnum):
     APPROVED = "approved"
     REJECTED = "rejected"
     STALE = "stale"
+    SUPERSEDED = "superseded"
 
 
 class ReviewPointStatus(enum.StrEnum):
     OPEN = "open"
     CONFIRMED = "confirmed"
     NEEDS_DISCUSSION = "needs_discussion"
+
+
+class KnowledgeAuditRecord(TenantOwnedMixin, Base):
+    """Immutable snapshots survive target replacement/deletion; contain no credentials."""
+
+    __tablename__ = "knowledge_audit_records"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    target_type: Mapped[str] = mapped_column(String(64), index=True)
+    target_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), index=True)
+    action: Mapped[str] = mapped_column(String(64))
+    payload: Mapped[dict] = mapped_column(JSONB)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    actor_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class KnowledgeChangeProposal(Base):
+    """Changed machine output for a protected approved/rejected record; never auto-applied."""
+
+    __tablename__ = "knowledge_change_proposals"
+    __table_args__ = (
+        UniqueConstraint("target_type", "target_id", "content_hash", name="uq_knowledge_proposal"),
+    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    target_type: Mapped[str] = mapped_column(String(64), index=True)
+    target_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), index=True)
+    payload: Mapped[dict] = mapped_column(JSONB)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(
+        String(24), default="pending_review", server_default="pending_review"
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class GlossaryTerm(Base):
@@ -106,15 +145,62 @@ class GlossaryTerm(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
+class LegalTermDefinition(Base):
+    """Append-only, source-bound definitions; machine checks never confer human approval."""
+
+    __tablename__ = "legal_term_definitions"
+    __table_args__ = (UniqueConstraint("fingerprint", name="uq_legal_term_fingerprint"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    concept_code: Mapped[str] = mapped_column(String(128), index=True)
+    country_code: Mapped[str | None] = mapped_column(String(2), nullable=True, index=True)
+    language: Mapped[str] = mapped_column(String(8))
+    source_term: Mapped[str] = mapped_column(String(255))
+    target_zh: Mapped[str] = mapped_column(String(255))
+    definition_original: Mapped[str] = mapped_column(Text)
+    definition_zh: Mapped[str | None] = mapped_column(Text, nullable=True)
+    applies_to_document_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("documents.id", ondelete="RESTRICT"), nullable=True
+    )
+    source_kind: Mapped[str] = mapped_column(String(32))
+    source_url: Mapped[str] = mapped_column(String(2048))
+    source_reference: Mapped[str] = mapped_column(String(500))
+    document_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("documents.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
+    version_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("document_versions.id", ondelete="RESTRICT"), nullable=True
+    )
+    clause_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("clauses.id", ondelete="RESTRICT"), nullable=True, index=True
+    )
+    quote_start: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    quote_end: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    source_text_sha256: Mapped[str] = mapped_column(String(64))
+    fingerprint: Mapped[str] = mapped_column(String(64))
+    verification_status: Mapped[str] = mapped_column(String(32), default="source_matched")
+    registration_origin: Mapped[str] = mapped_column(
+        String(24), default="auto", server_default="auto"
+    )
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="RESTRICT"), nullable=True
+    )
+    # Separate from GlossaryTerm.review_status: never auto-approve legacy/manual records.
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
 class ClauseTranslation(Base):
     """条款级受术语约束机器翻译与译后程序检查结果。"""
 
     __tablename__ = "clause_translations"
     __table_args__ = (
-        UniqueConstraint("clause_id", name="uq_clause_translations_clause"),
         CheckConstraint(
             "review_status IN ("
-            "'machine_translated','pending_review','approved','rejected','stale'"
+            "'machine_translated','translation_failed','not_translated',"
+            "'pending_review','approved','rejected','stale','superseded'"
             ")",
             name="ck_translations_review_status",
         ),
@@ -124,10 +210,14 @@ class ClauseTranslation(Base):
     clause_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("clauses.id", ondelete="CASCADE"), index=True
     )
+    is_current: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
     translated_text: Mapped[str] = mapped_column(Text)
     engine: Mapped[str] = mapped_column(String(32))
     model_name: Mapped[str] = mapped_column(String(128))
     prompt_version: Mapped[str] = mapped_column(String(32), default="v1", server_default="v1")
+    tokens_in: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    tokens_out: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    duration_ms: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     glossary_hits: Mapped[list] = mapped_column(JSONB, default=list)
     unmatched_terms: Mapped[list] = mapped_column(JSONB, default=list)
     quality_check_passed: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
@@ -143,6 +233,10 @@ class ClauseTranslation(Base):
     reviewer_note: Mapped[str | None] = mapped_column(Text, nullable=True)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    @property
+    def status(self) -> str:
+        return self.review_status
 
 
 class ReviewPoint(Base):
@@ -197,7 +291,7 @@ class KgNode(Base):
             name="ck_kg_nodes_type",
         ),
         CheckConstraint(
-            "review_status IN ('pending_review','approved','rejected','stale')",
+            "review_status IN ('pending_review','approved','rejected','stale','superseded')",
             name="ck_kg_nodes_review_status",
         ),
     )
@@ -230,13 +324,6 @@ class KgEdge(Base):
 
     __tablename__ = "kg_edges"
     __table_args__ = (
-        UniqueConstraint(
-            "source_node_id",
-            "target_node_id",
-            "relation_type",
-            "evidence_clause_id",
-            name="uq_kg_edges_triple_clause",
-        ),
         CheckConstraint(
             "relation_type IN ("
             "'PUBLISHES','AMENDS','REPEALS','GOVERNS','PROHIBITS','REQUIRES',"
@@ -246,7 +333,7 @@ class KgEdge(Base):
             name="ck_kg_edges_relation",
         ),
         CheckConstraint(
-            "review_status IN ('pending_review','approved','rejected','stale')",
+            "review_status IN ('pending_review','approved','rejected','stale','superseded')",
             name="ck_kg_edges_review_status",
         ),
     )
@@ -265,6 +352,12 @@ class KgEdge(Base):
     )
     evidence_quote: Mapped[str] = mapped_column(Text)
     extractor_model: Mapped[str] = mapped_column(String(128))
+    confidence: Mapped[float] = mapped_column(Float, default=0.85, server_default="0.85")
+    judge_verdict: Mapped[str] = mapped_column(String(16), default="yes", server_default="yes")
+    judge_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_structural: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
     review_status: Mapped[str] = mapped_column(
         String(24), default=GraphReviewStatus.PENDING_REVIEW.value, server_default="pending_review"
     )

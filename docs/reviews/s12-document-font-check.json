@@ -1,0 +1,22 @@
+{
+  "missing_document_links": [],
+  "staged_secret_pattern_files": [],
+  "built_font_sources": [
+    {
+      "app": "web-user",
+      "font_face_urls": 452,
+      "remote_font_urls": []
+    },
+    {
+      "app": "web-admin",
+      "font_face_urls": 452,
+      "remote_font_urls": []
+    }
+  ],
+  "note": "Static built CSS font-face inspection, not browser network interception.",
+  "checked_document_names": [
+    "PRODUCT_GUIDE.md",
+    "DEPLOY.md",
+    "remediation_result.md"
+  ]
+}

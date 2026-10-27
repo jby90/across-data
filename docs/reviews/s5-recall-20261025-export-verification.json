@@ -1,0 +1,28 @@
+{
+  "task_id": "ac63f152-35da-48eb-83c3-4dab2e0df7ce",
+  "workflow_version_id": "7b77c591-6a9b-4712-be17-b8c238b4efa1",
+  "report_status": "full_draft",
+  "dimensions": 8,
+  "exports": {
+    "docx": {
+      "http_status": 200,
+      "bytes": 24590,
+      "sha256": "72233dd8d9da32cfecd90587b33d551d02be9724b9ffb2f40ff0785fddb4856e",
+      "text_characters": 53560,
+      "pending_review_notice": true
+    },
+    "pdf": {
+      "http_status": 200,
+      "bytes": 3155714,
+      "sha256": "069bdf41c92afc1b616d7b0814565b543714e56f34a54602dbb23bb341f91ab9",
+      "pages": 13,
+      "format": "raster page PDF; notice checked visually",
+      "rendered_page": "s5-recall-20261025-export-page1.png"
+    }
+  },
+  "old_failed_report_still_blocked": {
+    "docx": 409,
+    "pdf": 409
+  },
+  "human_approvals_written": 0
+}

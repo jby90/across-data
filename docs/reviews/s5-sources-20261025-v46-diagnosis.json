@@ -1,0 +1,354 @@
+{
+  "batch_id": "62620731-d335-4dd6-8614-8d8cb56ac0f6",
+  "suite_sha256": "34a8271c22a63e90e22702fad6f0b09ca61322f5484b5b787402f8e2be9b87f1",
+  "country_metrics": {
+    "SG": {
+      "hits": 8,
+      "expected": 8,
+      "supported": 20,
+      "judged": 22
+    },
+    "MA": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 12,
+      "judged": 12
+    },
+    "TN": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 17,
+      "judged": 17
+    },
+    "LB": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 12,
+      "judged": 12
+    },
+    "EG": {
+      "hits": 6,
+      "expected": 6,
+      "supported": 0,
+      "judged": 0
+    }
+  },
+  "misses": [],
+  "unsupported": [
+    {
+      "question_id": "S5-01",
+      "verdict": {
+        "index": 0,
+        "reason": "核心定义及(a)被支持；但(b)将原文“has or is likely to have access”（拥有或可能有权访问）译为“拥有或可能拥有”，遗漏/改变了“access”这一条件，未完整支持。",
+        "supported": "partial"
+      },
+      "clause_id": "fb446163-2596-40e1-94df-6ce4a77ba06c",
+      "conclusion": "“personal data”是指关于可识别的个人的数据，无论该数据是否真实——\n(a) 可从该数据识别；或\n(b) 可从该数据以及该组织拥有或可能拥有的其他信息识别；",
+      "quote": "“personal data” means data, whether true or not, about an\nindividual who can be identified —\n(a) from that data; or\n(b) from that data and other information to which the\norganisation has or is likely to have access;\n"
+    },
+    {
+      "question_id": "S5-04",
+      "verdict": {
+        "index": 0,
+        "reason": "大部分内容与引文对应，但 conclusion 将引文中的“by an organisation”写成“向组织”，改变了收集、使用或披露的主体/方向，故未完全支持。",
+        "supported": "partial"
+      },
+      "clause_id": "1793c90f-11e5-40ae-b5cf-d6e3c717cf64",
+      "conclusion": "同意之提供 14.—(1) 除符合以下情形外，个人未根据本法就某一目的向组织收集、使用或披露关于该个人的个人数据给予同意——\n(a) 已向该个人提供 section 20 所要求的信息；且\n(b) 该个人已依照本法就该目的提供其同意。\n个人数据保护\n(2) 组织不得——\n(a) 作为提供产品或服务的条件，要求个人同意收集、使用或披露关于该个人的个人数据，超出向该个人提供该产品或服务合理所需的范围；或\n(b) 通过就个人数据的收集、使用或披露提供虚假或误导性信息，或使用欺骗性或误导性做法，取得或试图取得对收集、使用或披露个人数据的同意。\n(3) 在 subsection (2) 的任何情形下给予的任何同意，就本法而言并非有效给予。\n(4) 在本法中，凡提及个人就收集、使用或披露关于该个人的个人数据而给予或被视为已给予的同意，包括由任何有效代表该个人行事的人就收集、使用或披露该等个人数据而给予或被视为已给予的同意。",
+      "quote": "Provision of consent\n14.—(1) An individual has not given consent under this Act for the\ncollection, use or disclosure of personal data about the individual by\nan organisation for a purpose unless —\n(a) the individual has been provided with the information\nrequired under section 20; and\n(b) the individual provided his or her consent for that purpose\nin accordance with this Act.\nPersonal Data Protection\n(2) An organisation must not —\n(a) as a condition of providing a product or service, require an\nindividual to consent to the collection, use or disclosure of\npersonal data about the individual beyond what is\nreasonable to provide the product or service to that\nindividual; or\n(b) obtain or attempt to obtain consent for collecting, using or\ndisclosing personal data by providing false or misleading\ninformation with respect to the collection, use or disclosure\nof the personal data, or using deceptive or misleading\npractices.\n(3) Any consent given in any of the circumstances in subsection (2)\nis not validly given for the purposes of this Act.\n(4) In this Act, references to consent given, or deemed to have been\ngiven, by an individual for the collection, use or disclosure of\npersonal data about the individual include consent given, or deemed\nto have been given, by any person validly acting on that individual’s\nbehalf for the collection, use or disclosure of such personal data."
+    }
+  ],
+  "failures_and_gaps": [
+    {
+      "question_id": "S5-01",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "fb446163-2596-40e1-94df-6ce4a77ba06c",
+          "gap": null,
+          "error": null,
+          "issues": [
+            "结论语义核验未通过：结论基本对应定义，但(b)项将原文“该组织拥有或可能拥有访问权限的其他信息”表述为“该组织拥有或可能拥有的其他信息”，遗漏了“access/访问权限”这一关键限定，改变了组织与该等其他信息之间关系的法律条件。其余主体、识别方式及“无论数据是否真实”的限定基本一致。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-04",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "1793c90f-11e5-40ae-b5cf-d6e3c717cf64",
+          "gap": null,
+          "error": null,
+          "issues": [
+            "结论语义核验未通过：结论第(1)款将原文“collection, use or disclosure of personal data about the individual by an organisation”译为“向组织收集、使用或披露……”，把“by an organisation”误作同意的接收方向，改变了组织作为收集/使用/披露行为主体的角色；其余第(1)款(a)(b)、第(2)款、第(3)款及第(4)款的主体、条件、例外和引用层级基本对应，未发现其他新增或绝对化表述。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-06",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+          "gap": null,
+          "error": null,
+          "issues": [
+            "结论语义核验未通过：结论大体对应原文，主体（委员会）、触发条件（故意或疏忽违反所列Part/条文）、对象（组织或人）、第(2)款例外及第(3)款对组织罚款上限（不超过将予规定的最高金额，且任何情况下不超过$1 million）均已保留。但第(1)款末句将原文“require, by written notice, the organisation or person ... to pay”译为“要求该组织或该人……通过书面通知支付财务处罚”，把“by written notice”从修饰“require”（委员会以书面通知要求）移到了“支付”之前，可能被读成由被要求人以书面通知方式支付，改变了通知行为的发出主体/方式。该要素的修饰关系未被完整支持，故为partial。"
+          ]
+        },
+        {
+          "clause_id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+          "gap": "source_units 第15项在“have regard to, and give such”处截断，第(6)款关于委员会确定财务处罚金额时“顾及”并“给予”的具体事项或权重残缺，无法完整、无补字地转述该关键限定，因此按覆盖合同不能形成完整units。",
+          "error": null,
+          "issues": [
+            "source_units 第15项在“have regard to, and give such”处截断，第(6)款关于委员会确定财务处罚金额时“顾及”并“给予”的具体事项或权重残缺，无法完整、无补字地转述该关键限定，因此按覆盖合同不能形成完整units。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-09",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "5f1f02f0-0d2c-4998-b849-168f2d0b528e",
+          "gap": null,
+          "error": null,
+          "issues": [
+            "结论语义核验未通过：结论对第4条“本法不适用于”的三类情形、犯罪预防与惩治领域的适用条件、相关规章须明确的事项及事先征求国家委员会意见、依据特别立法收集的数据等，基本忠实于引文。但引文开头“qui ... se substitue à lui ...”处于片段中间，先行词及替代主体均未出现；结论虽注明“他/其”指代不明，却仍以“替代‘他/其’享有和承担……”开头，未明确由谁替代，无法由该片段完整确定主体，故不能完整支持整条结论。"
+          ]
+        },
+        {
+          "clause_id": "5f1f02f0-0d2c-4998-b849-168f2d0b528e",
+          "gap": "第1单元起始于句子中间（“qui sans préjudice de sa responsabilité personnelle, se substitue à lui...”），其先行词及“lui”所指主体均未出现，无法确定由谁替代谁享有和承担权利、义务；该关键主体信息残缺，依据coverage_contract不能补字或猜测，故无法完整转述全部原文单元。",
+          "error": null,
+          "issues": [
+            "第1单元起始于句子中间（“qui sans préjudice de sa responsabilité personnelle, se substitue à lui...”），其先行词及“lui”所指主体均未出现，无法确定由谁替代谁享有和承担权利、义务；该关键主体信息残缺，依据coverage_contract不能补字或猜测，故无法完整转述全部原文单元。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-20",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "95e55007-4fef-4ac2-aa26-cf79884203ed",
+          "gap": "原文存在多处关键OCR残缺：第18条义务主体处出现“Gadd”等乱码；第19条列表项中出现“of”“Gadd”“a”“lds”“wl”“gi”及“سندهاء”等残损，导致义务主体、未经授权主体、事后核查对象及数据载体范围等关键限定无法确定。为避免补字或猜测，不能形成完整逐段转述。",
+          "error": null,
+          "issues": [
+            "原文存在多处关键OCR残缺：第18条义务主体处出现“Gadd”等乱码；第19条列表项中出现“of”“Gadd”“a”“lds”“wl”“gi”及“سندهاء”等残损，导致义务主体、未经授权主体、事后核查对象及数据载体范围等关键限定无法确定。为避免补字或猜测，不能形成完整逐段转述。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-22",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "72707b45-abb7-4f17-b3b9-429e3b3b5ef8",
+          "gap": "第2单元中“ميوّمة”一词疑似OCR受损，无法确定数据应保持的具体状态（例如是否更新或保持最新），而“بقدر اللازم”又限定该状态；这属于关键条件，不能猜测。因此无法完整、忠实地转述全部原文单元。",
+          "error": null,
+          "issues": [
+            "第2单元中“ميوّمة”一词疑似OCR受损，无法确定数据应保持的具体状态（例如是否更新或保持最新），而“بقدر اللازم”又限定该状态；这属于关键条件，不能猜测。因此无法完整、忠实地转述全部原文单元。"
+          ]
+        },
+        {
+          "clause_id": "21cff2ce-868d-416c-984f-0a4f716edfdb",
+          "gap": "所给阿拉伯文原文存在关键OCR残缺：第٣项“الطابع الإل أو ميزا الاختياري”中强制/可选性质的表述不完整；第٤项“النتائج ال قد تي تترتب”有缺字；第٨项“الاستما ترا ... راإيـ دا”损坏，尤其是收集数据所用表格须包含的内容及“明确清晰”所修饰的对象无法确定。因关键行为对象和限定残缺，无法逐段完整、忠实转述全部原文单元，不能补字或推断。",
+          "error": null,
+          "issues": [
+            "所给阿拉伯文原文存在关键OCR残缺：第٣项“الطابع الإل أو ميزا الاختياري”中强制/可选性质的表述不完整；第٤项“النتائج ال قد تي تترتب”有缺字；第٨项“الاستما ترا ... راإيـ دا”损坏，尤其是收集数据所用表格须包含的内容及“明确清晰”所修饰的对象无法确定。因关键行为对象和限定残缺，无法逐段完整、忠实转述全部原文单元，不能补字或推断。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-25",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "4492beb2-cde2-4a70-9078-947e7e1453aa",
+          "gap": "提供的原文存在OCR残缺，无法完整、忠实转述全部单元：单元1中“التصريح م ّ المقد”字样分裂且受损，单元14中“الإ ءراجـ ات”及“الأ رراسـ المحميـــة”等关键对象/措施表述不清晰。为避免补字或猜测法律行为、对象和范围，不能形成完整覆盖陈述。需核对并补全受损原文后再逐项转述。",
+          "error": null,
+          "issues": [
+            "提供的原文存在OCR残缺，无法完整、忠实转述全部单元：单元1中“التصريح م ّ المقد”字样分裂且受损，单元14中“الإ ءراجـ ات”及“الأ رراسـ المحميـــة”等关键对象/措施表述不清晰。为避免补字或猜测法律行为、对象和范围，不能形成完整覆盖陈述。需核对并补全受损原文后再逐项转述。"
+          ]
+        },
+        {
+          "clause_id": "28a2c53f-283c-4e6c-b84c-02b9c47dff98",
+          "gap": "原文第6项的处理主题（“الأ أو ءراجـ الأعضاء”）及第8项豁免程序中的“مجلس ءراوز ال”“حرااقت”等关键主体、程序表述存在OCR残缺，无法确定其完整含义；按覆盖契约不能补字或猜测，故无法逐段完整转述全部原文单元。",
+          "error": null,
+          "issues": [
+            "原文第6项的处理主题（“الأ أو ءراجـ الأعضاء”）及第8项豁免程序中的“مجلس ءراوز ال”“حرااقت”等关键主体、程序表述存在OCR残缺，无法确定其完整含义；按覆盖契约不能补字或猜测，故无法逐段完整转述全部原文单元。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-27",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "gap": "原文OCR受损：给予明确同意的主体及部分行为表述无法辨认，无法确认收集和披露个人数据所需同意的具体主体与完整例外条件，故不能形成完整规则。",
+          "error": null,
+          "issues": [
+            "原文OCR受损：给予明确同意的主体及部分行为表述无法辨认，无法确认收集和披露个人数据所需同意的具体主体与完整例外条件，故不能形成完整规则。"
+          ]
+        },
+        {
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "gap": "原文OCR多处关键内容残缺：第1单元中“个人数据”等行为对象、罚款数额范围（“十万 جنيه”与“5 مليون جنيه”之间关系）及条款编号损坏；第2单元罚金具体数额、监禁与罚金择一关系及日期数字不清；第3单元“为获取……”和损害表述残缺。关键行为、限定和数值范围无法确定，不能补字，故不生成规则。",
+          "error": null,
+          "issues": [
+            "原文OCR多处关键内容残缺：第1单元中“个人数据”等行为对象、罚款数额范围（“十万 جنيه”与“5 مليون جنيه”之间关系）及条款编号损坏；第2单元罚金具体数额、监禁与罚金择一关系及日期数字不清；第3单元“为获取……”和损害表述残缺。关键行为、限定和数值范围无法确定，不能补字，故不生成规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-28",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "c3130011-16eb-42eb-a8d1-fa87f68f80a1",
+          "gap": "所提供的阿拉伯语原文OCR严重受损，尤其是第1、4、5单元中的主体限定、保留条件、记录内容、跨境相关行为及程序描述均不完整或含义不明；无法在不猜测、不补字的情况下完整转述各单元，故不能形成有依据的规则。",
+          "error": null,
+          "issues": [
+            "所提供的阿拉伯语原文OCR严重受损，尤其是第1、4、5单元中的主体限定、保留条件、记录内容、跨境相关行为及程序描述均不完整或含义不明；无法在不猜测、不补字的情况下完整转述各单元，故不能形成有依据的规则。"
+          ]
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "gap": "所提供的原文虽提到存在多个处理者时每一处理者受“所规定的全部义务”约束，但未提供这些被引用义务的具体内容；且原文后半句关于“无合同明确约定各自义务和责任”的表述存在 OCR 缺损，条件与法律后果不完整，无法据此形成完整且有依据的规则。",
+          "error": null,
+          "issues": [
+            "所提供的原文虽提到存在多个处理者时每一处理者受“所规定的全部义务”约束，但未提供这些被引用义务的具体内容；且原文后半句关于“无合同明确约定各自义务和责任”的表述存在 OCR 缺损，条件与法律后果不完整，无法据此形成完整且有依据的规则。"
+          ]
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "gap": "所提供的两个原文单元均存在严重OCR残缺、混排与截断：单元1包含不完整短语和无法辨识的术语，无法确定其主体、条件、行为、对象及例外；单元2虽可见“自然人控制者负责适用本法规定”的片段，但前后文缺失，无法确认指代关系与完整法律含义。按覆盖约定，不能补字或猜测，故无法逐段完整转述并形成有依据的规则。",
+          "error": null,
+          "issues": [
+            "所提供的两个原文单元均存在严重OCR残缺、混排与截断：单元1包含不完整短语和无法辨识的术语，无法确定其主体、条件、行为、对象及例外；单元2虽可见“自然人控制者负责适用本法规定”的片段，但前后文缺失，无法确认指代关系与完整法律含义。按覆盖约定，不能补字或猜测，故无法逐段完整转述并形成有依据的规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-29",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "c3e2062d-8547-4eba-aa1d-99236b78754c",
+          "gap": "提供的两个原文单元均存在关键OCR残缺：第一段中的规范性动词/条件“J ge”及符号无法辨认；第二段开头以及“بتقديم للطفل يويد”等关键行为、对象和限定残缺。因此无法完整、忠实地转述儿童数据同意要求及参与活动条件，也不能补字或推断。",
+          "error": null,
+          "issues": [
+            "提供的两个原文单元均存在关键OCR残缺：第一段中的规范性动词/条件“J ge”及符号无法辨认；第二段开头以及“بتقديم للطفل يويد”等关键行为、对象和限定残缺。因此无法完整、忠实地转述儿童数据同意要求及参与活动条件，也不能补字或推断。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-30",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "4e683624-05f9-4de9-8014-3a79b41c0b35",
+          "gap": "提供的原文为阿拉伯语OCR片段，受损严重：第1单元中“استثناء من حكم”之后的适用条件及“إلى دولة لا يتوافر ذ...”处关键限定残缺，无法确定该例外所针对的跨境传输条件；第2单元仅有问号；第4至6单元含大量乱码，合同订立、履行及义务等表述的主语和条件不完整。因关键行为、限定和范围不确定，无法逐段完整转述，不能补字形成规则。",
+          "error": null,
+          "issues": [
+            "提供的原文为阿拉伯语OCR片段，受损严重：第1单元中“استثناء من حكم”之后的适用条件及“إلى دولة لا يتوافر ذ...”处关键限定残缺，无法确定该例外所针对的跨境传输条件；第2单元仅有问号；第4至6单元含大量乱码，合同订立、履行及义务等表述的主语和条件不完整。因关键行为、限定和范围不确定，无法逐段完整转述，不能补字形成规则。"
+          ]
+        },
+        {
+          "clause_id": "b76db9a0-b9b8-4c3d-bd4e-3a54b9b31690",
+          "gap": "所提供的原文OCR严重受损，关键主体、条件、许可机关及例外内容残缺，无法完整确定向境外传输个人数据是否存在限定例外，也无法形成完整合规路径规则。",
+          "error": null,
+          "issues": [
+            "所提供的原文OCR严重受损，关键主体、条件、许可机关及例外内容残缺，无法完整确定向境外传输个人数据是否存在限定例外，也无法形成完整合规路径规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-31",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "aafd139d-6463-4fdb-a958-a0404c8bce19",
+          "gap": "无法完整转述：unit1 在“إلغاء الترخيص أو ...”之后的关键对象因 OCR 残缺而不明；unit2 存在多处乱码，导致违法条件或行为不完整；unit4 缺少谓语动词，无法确定是授予、转让还是其他行为。因此不能形成第19条撤销许可情形的完整规则。",
+          "error": null,
+          "issues": [
+            "无法完整转述：unit1 在“إلغاء الترخيص أو ...”之后的关键对象因 OCR 残缺而不明；unit2 存在多处乱码，导致违法条件或行为不完整；unit4 缺少谓语动词，无法确定是授予、转让还是其他行为。因此不能形成第19条撤销许可情形的完整规则。"
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": "S5-32",
+      "analysis_error": null,
+      "judge_error": null,
+      "retrieval_error": null,
+      "attempted_gaps": [
+        {
+          "clause_id": "236c2408-328e-4bde-9469-c574eee9721f",
+          "gap": "所提供的原文存在关键OCR残损：罚款最低/最高数额范围、个人数据的核心表述、手段表述、监禁与罚金的具体范围，以及加重情节中的获益或损害目的均不完整，无法在不补字的情况下完整转述处罚规则。",
+          "error": null,
+          "issues": [
+            "所提供的原文存在关键OCR残损：罚款最低/最高数额范围、个人数据的核心表述、手段表述、监禁与罚金的具体范围，以及加重情节中的获益或损害目的均不完整，无法在不补字的情况下完整转述处罚规则。"
+          ]
+        },
+        {
+          "clause_id": "9a94c8f9-29b5-4140-bf38-67f3fad261f1",
+          "gap": "所提供的原文为阿拉伯文且OCR受损，条款编号与句子残缺，仅能辨认出涉及违法法人的实际管理者可能承担相同刑罚、以及在轻微犯罪中可与中心和解的片段；但主体、触发条件、行为对象、法律后果及例外均不完整，也无法确认该片段与未经许可处理个人数据相关，不能形成完整有依据的处罚规则。需补全该条款完整原文及与未经许可处理个人数据处罚直接相关的条款。",
+          "error": null,
+          "issues": [
+            "所提供的原文为阿拉伯文且OCR受损，条款编号与句子残缺，仅能辨认出涉及违法法人的实际管理者可能承担相同刑罚、以及在轻微犯罪中可与中心和解的片段；但主体、触发条件、行为对象、法律后果及例外均不完整，也无法确认该片段与未经许可处理个人数据相关，不能形成完整有依据的处罚规则。需补全该条款完整原文及与未经许可处理个人数据处罚直接相关的条款。"
+          ]
+        },
+        {
+          "clause_id": "3a8dff06-455f-4295-9070-8023be9f7edf",
+          "gap": "所给引文OCR受损严重（如“بقرامة ل تقل”“جد ل ##اوز”“عنيه )3( وقعث”等），无法确定处罚主体、所引第(3)项犯罪的具体内容、罚金上下限的完整表述及币种；引文仅显示因个人数据保护负责人过失导致犯罪发生时可处罚金，未完整覆盖“未经许可处理个人数据”的处罚依据，不能据此形成完整规则。",
+          "error": null,
+          "issues": [
+            "所给引文OCR受损严重（如“بقرامة ل تقل”“جد ل ##اوز”“عنيه )3( وقعث”等），无法确定处罚主体、所引第(3)项犯罪的具体内容、罚金上下限的完整表述及币种；引文仅显示因个人数据保护负责人过失导致犯罪发生时可处罚金，未完整覆盖“未经许可处理个人数据”的处罚依据，不能据此形成完整规则。"
+          ]
+        }
+      ]
+    }
+  ],
+  "retrieval_tokens": 596599,
+  "final_supported_cases": 26,
+  "human_review": "0/32，待核对；本程序只汇总工程与模型指标"
+}

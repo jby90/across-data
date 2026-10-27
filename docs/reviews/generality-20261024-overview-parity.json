@@ -1,0 +1,63 @@
+{
+  "database": "remediation_20261023",
+  "legacy_equals_current": true,
+  "countries": 5,
+  "overview": [
+    {
+      "country_code": "SG",
+      "country_name_zh": "新加坡",
+      "country_name_orig": "Republic of Singapore",
+      "documents_count": 67,
+      "clauses_count": 1723,
+      "translations_count": 1704,
+      "approved_translations_count": 0,
+      "kg_nodes_count": 918,
+      "kg_edges_count": 1231
+    },
+    {
+      "country_code": "EG",
+      "country_name_zh": "埃及",
+      "country_name_orig": "Arab Republic of Egypt",
+      "documents_count": 3,
+      "clauses_count": 100,
+      "translations_count": 99,
+      "approved_translations_count": 0,
+      "kg_nodes_count": 34,
+      "kg_edges_count": 25
+    },
+    {
+      "country_code": "TN",
+      "country_name_zh": "突尼斯",
+      "country_name_orig": "Republic of Tunisia",
+      "documents_count": 3,
+      "clauses_count": 150,
+      "translations_count": 150,
+      "approved_translations_count": 0,
+      "kg_nodes_count": 138,
+      "kg_edges_count": 166
+    },
+    {
+      "country_code": "MA",
+      "country_name_zh": "摩洛哥",
+      "country_name_orig": "Kingdom of Morocco",
+      "documents_count": 4,
+      "clauses_count": 215,
+      "translations_count": 215,
+      "approved_translations_count": 0,
+      "kg_nodes_count": 95,
+      "kg_edges_count": 118
+    },
+    {
+      "country_code": "LB",
+      "country_name_zh": "黎巴嫩",
+      "country_name_orig": "Republic of Lebanon",
+      "documents_count": 2,
+      "clauses_count": 329,
+      "translations_count": 329,
+      "approved_translations_count": 0,
+      "kg_nodes_count": 55,
+      "kg_edges_count": 48
+    }
+  ],
+  "method": "Legacy HEAD function and current batch function, same read-only transaction"
+}

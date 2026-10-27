@@ -1,0 +1,98 @@
+FFFFFFFFFFFF                                                             [100%]
+================================== FAILURES ===================================
+_ test_s1_numeric_gate_rejects_changed_values_and_units[The fine is 10 and the period is 5 days.-\u7f5a\u6b3e\u4e3a100\u5143\uff0c\u671f\u9650\u4e3a50\u5929\u3002] _
+tests\review_s1_s2_contracts.py:127: in test_s1_numeric_gate_rejects_changed_values_and_units
+    assert not passed, f"Incorrect values/units were accepted: {wrong_translation}; issues={issues}"
+E   AssertionError: Incorrect values/units were accepted: 罚款为100元，期限为50天。; issues=[]
+E   assert not True
+_ test_s1_numeric_gate_rejects_changed_values_and_units[The maximum percentage is 10%.-\u6700\u9ad8\u6bd4\u4f8b\u4e3a10\uff0c\u8ba1\u7b97\u65b9\u5f0f\u53e6\u5b9a\u3002] _
+tests\review_s1_s2_contracts.py:127: in test_s1_numeric_gate_rejects_changed_values_and_units
+    assert not passed, f"Incorrect values/units were accepted: {wrong_translation}; issues={issues}"
+E   AssertionError: Incorrect values/units were accepted: 最高比例为10，计算方式另定。; issues=[]
+E   assert not True
+_ test_s1_numeric_gate_rejects_changed_values_and_units[The fee is $500.-\u8d39\u7528\u4e3a500\u6b27\u5143\uff0c\u5e94\u6309\u89c4\u5b9a\u7f34\u7eb3\u3002] _
+tests\review_s1_s2_contracts.py:127: in test_s1_numeric_gate_rejects_changed_values_and_units
+    assert not passed, f"Incorrect values/units were accepted: {wrong_translation}; issues={issues}"
+E   AssertionError: Incorrect values/units were accepted: 费用为500欧元，应按规定缴纳。; issues=[]
+E   assert not True
+__________ test_s2_judge_outage_must_not_admit_unjudged_wrong_target __________
+tests\review_s1_s2_contracts.py:147: in test_s2_judge_outage_must_not_admit_unjudged_wrong_target
+    assert not result.admitted, result.model_dump()
+E   AssertionError: {'admitted': True, 'stage': 'passed', 'aligned_quote': 'An organisation must protect personal data.', 'confidence': 0.85, ...}
+E   assert not True
+E    +  where True = CandidateEvaluationResult(admitted=True, stage='passed', aligned_quote='An organisation must protect personal data.', ...eason='证据片段明确包含支撑 Test law -[REQUIRES]-> Delete all recordings within 30 days 的法律规范表述', review_status='pending_review').admitted
+________ test_s2_analysis_tool_must_exclude_retired_edges[superseded] _________
+tests\review_s1_s2_contracts.py:157: in test_s2_analysis_tool_must_exclude_retired_edges
+    assert results == [], f"Retired edge {edge.id} leaked into agent results: {results}"
+E   AssertionError: Retired edge e50b343d-26d9-48ef-9074-babfd43aa9e7 leaked into agent results: [{'clause_id': 'aed87239-c0ab-4757-8166-74c40343471d', 'relation': 'REQUIRES', 'source': '测试法规', 'target': '个人数据保护义务', 'review_status': 'superseded'}]
+E   assert [{'clause_id'...数据保护义务', ...}] == []
+E
+E     Left contains one more item: {'clause_id': 'aed87239-c0ab-4757-8166-74c40343471d', 'relation': 'REQUIRES', 'source': '测试法规', 'target': '个人数据保护义务', ...}
+E     Use -v to get more diff
+_________ test_s2_analysis_tool_must_exclude_retired_edges[rejected] __________
+tests\review_s1_s2_contracts.py:157: in test_s2_analysis_tool_must_exclude_retired_edges
+    assert results == [], f"Retired edge {edge.id} leaked into agent results: {results}"
+E   AssertionError: Retired edge 267e760e-851e-4faa-b811-7a095707d84b leaked into agent results: [{'clause_id': '048acc2b-c76c-47d3-a7ce-1fde2c019544', 'relation': 'REQUIRES', 'source': '测试法规', 'target': '个人数据保护义务', 'review_status': 'rejected'}]
+E   assert [{'clause_id'...数据保护义务', ...}] == []
+E
+E     Left contains one more item: {'clause_id': '048acc2b-c76c-47d3-a7ce-1fde2c019544', 'relation': 'REQUIRES', 'source': '测试法规', 'target': '个人数据保护义务', ...}
+E     Use -v to get more diff
+___________ test_s2_analysis_tool_must_exclude_retired_edges[stale] ___________
+tests\review_s1_s2_contracts.py:157: in test_s2_analysis_tool_must_exclude_retired_edges
+    assert results == [], f"Retired edge {edge.id} leaked into agent results: {results}"
+E   AssertionError: Retired edge 769e6ee4-fb25-4685-aef4-b184db77d699 leaked into agent results: [{'clause_id': '30f417f5-1e85-4517-971b-c4eacf238534', 'relation': 'REQUIRES', 'source': '测试法规', 'target': '个人数据保护义务', 'review_status': 'stale'}]
+E   assert [{'clause_id'...数据保护义务', ...}] == []
+E
+E     Left contains one more item: {'clause_id': '30f417f5-1e85-4517-971b-c4eacf238534', 'relation': 'REQUIRES', 'source': '测试法规', 'target': '个人数据保护义务', ...}
+E     Use -v to get more diff
+______ test_s2_failed_rebuild_preserves_previous_pending_semantic_graph _______
+tests\review_s1_s2_contracts.py:175: in test_s2_failed_rebuild_preserves_previous_pending_semantic_graph
+    assert edge.review_status == "pending_review", (
+E   AssertionError: Extraction returned {'nodes_total': 3, 'edges_total': 2, 'semantic_edges_added': 0, 'title_inferred_amend_edges': 0, 'superseded_legacy_edges': 0, 'superseded_unreviewed_edges': 1, 'clauses_translated': 0, 'docs_relevant': 1, 'docs_related': 0, 'docs_out_of_scope': 0}, but previous semantic edge became superseded
+E   assert 'superseded' == 'pending_review'
+E
+E     - pending_review
+E     + superseded
+___ test_s2_reextract_cannot_change_evidence_while_retaining_human_approval ___
+tests\review_s1_s2_contracts.py:200: in test_s2_reextract_cannot_change_evidence_while_retaining_human_approval
+    assert updated.evidence_quote == old_quote or updated.review_status != "approved", (
+E   AssertionError: Evidence changed while the previous human-approved status remained
+E   assert ('An organisat... of a breach.' == 'An organisat...ersonal data.'
+E
+E     - An organisation must protect personal data.
+E     + An organisation must notify the Commission of a breach. or 'approved' != 'approved')
+E    +  where 'approved' = <app.knowledge.models.KgEdge object at 0x000001BA812CFBF0>.review_status
+___ test_s1_translation_must_not_rewrite_original_clauses_or_edge_evidence ____
+tests\review_s1_s2_contracts.py:225: in test_s1_translation_must_not_rewrite_original_clauses_or_edge_evidence
+    assert all(
+E   AssertionError: {'split_count': 1, 'original_unchanged': False, 'hash_unchanged': False, 'edge_quote_unchanged': False, ...}
+E   assert False
+E    +  where False = all(<generator object test_s1_translation_must_not_rewrite_original_clauses_or_edge_evidence.<locals>.<genexpr> at 0x000001BA81425220>)
+________ test_s1_only_missing_should_cover_all_clauses_not_first_eight ________
+tests\review_s1_s2_contracts.py:259: in test_s1_only_missing_should_cover_all_clauses_not_first_eight
+    assert done == 20, f"Only {done}/20 clauses translated; batch statistics: {result}"
+E   AssertionError: Only 8/20 clauses translated; batch statistics: {'superseded': 0, 'total': 8, 'machine_translated': 8, 'translation_failed': 0, 'not_translated': 0}
+E   assert 8 == 20
+---------------------------- Captured stdout call -----------------------------
+[translate] 已作废旧译文 0 条; 待翻译条款 8 条 (concurrency=2)
+  进度 8/8 | 成功=8 失败=0 未译=0
+__ test_s2_node_eight_attributes_must_not_invent_facts_for_out_of_scope_file __
+tests\review_s1_s2_contracts.py:272: in test_s2_node_eight_attributes_must_not_invent_facts_for_out_of_scope_file
+    assert not any("PDPA" in value or "3 年" in value for value in attributes.values()), attributes
+E   AssertionError: {'applicable_industry': '汽车出海与跨行业通用（覆盖车主、驾乘人员及车联网用户个人数据）', 'data_scope': '个人数据(含车主身份、VIN关联轨迹、座舱生物识别及受托处理车联网数据)', 'cros...tention_period': '自动驾驶黑匣子(Data Recorder)数据法定至少留存 3 年 (AV Rules r9)；一般个人数据在收集目的达成且无商业/法律必要时须立即停止留存或匿名化 (PDPA s25)', ...}
+E   assert not True
+E    +  where True = any(<generator object test_s2_node_eight_attributes_must_not_invent_facts_for_out_of_scope_file.<locals>.<genexpr> at 0x000001BA814269B0>)
+=========================== short test summary info ===========================
+FAILED tests/review_s1_s2_contracts.py::test_s1_numeric_gate_rejects_changed_values_and_units[The fine is 10 and the period is 5 days.-\u7f5a\u6b3e\u4e3a100\u5143\uff0c\u671f\u9650\u4e3a50\u5929\u3002]
+FAILED tests/review_s1_s2_contracts.py::test_s1_numeric_gate_rejects_changed_values_and_units[The maximum percentage is 10%.-\u6700\u9ad8\u6bd4\u4f8b\u4e3a10\uff0c\u8ba1\u7b97\u65b9\u5f0f\u53e6\u5b9a\u3002]
+FAILED tests/review_s1_s2_contracts.py::test_s1_numeric_gate_rejects_changed_values_and_units[The fee is $500.-\u8d39\u7528\u4e3a500\u6b27\u5143\uff0c\u5e94\u6309\u89c4\u5b9a\u7f34\u7eb3\u3002]
+FAILED tests/review_s1_s2_contracts.py::test_s2_judge_outage_must_not_admit_unjudged_wrong_target
+FAILED tests/review_s1_s2_contracts.py::test_s2_analysis_tool_must_exclude_retired_edges[superseded]
+FAILED tests/review_s1_s2_contracts.py::test_s2_analysis_tool_must_exclude_retired_edges[rejected]
+FAILED tests/review_s1_s2_contracts.py::test_s2_analysis_tool_must_exclude_retired_edges[stale]
+FAILED tests/review_s1_s2_contracts.py::test_s2_failed_rebuild_preserves_previous_pending_semantic_graph
+FAILED tests/review_s1_s2_contracts.py::test_s2_reextract_cannot_change_evidence_while_retaining_human_approval
+FAILED tests/review_s1_s2_contracts.py::test_s1_translation_must_not_rewrite_original_clauses_or_edge_evidence
+FAILED tests/review_s1_s2_contracts.py::test_s1_only_missing_should_cover_all_clauses_not_first_eight
+FAILED tests/review_s1_s2_contracts.py::test_s2_node_eight_attributes_must_not_invent_facts_for_out_of_scope_file
+12 failed in 7.95s

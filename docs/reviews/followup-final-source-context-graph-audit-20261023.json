@@ -1,0 +1,668 @@
+{
+  "frozen_targets": 108,
+  "outcomes": {
+    "standalone_passed": 88,
+    "context_passed": 18,
+    "unresolved": 2
+  },
+  "source_spans_checked": 85,
+  "results": [
+    {
+      "clause_id": "074d0e23-0d0c-4a1a-a109-bdee864c1bd6",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "f7ee5067-d69b-4ec9-a7be-357f6eaf282f",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "592dd762-8ea3-4698-91fd-67ca8dd5fb04",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "6d351eaa-ccfd-48ae-b732-4e129d4660b0",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "6eeb921e-c6e1-4b2f-9edb-8395c3c7bcea",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "b71f3ebc-7cad-4da9-8046-abc4e7ef8b56",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "385c1d15-0df9-468b-8d37-09b85cfe1af8",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "be134cb3-cd98-427a-b7ca-9585a73152e8",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "3e5f14dc-3682-413a-8edf-9ca441b0ea88",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "1905268e-2613-43e5-ae42-bcee64b3e48e",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "62b6fc8e-dfab-43f3-a98f-ef59942c7be1",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "9269e471-6464-4291-92ff-3c1c7dd3082d",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "058c1386-4d5c-4933-a15b-59dbc54d45ba",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "d1a393ea-21d4-453c-826f-44c9ced168d2",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "87b7fbf3-b7e7-4e89-806d-8cceaa3f5582",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "ac7f3a7a-a73b-483f-979a-e6256e03e1fb",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "b32f6aaa-4ba4-4442-8ebb-51e64b7d62d4",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "ed8f0fe2-0245-4747-95a8-8c24fc05912c",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "fccf6741-f08e-45a9-9bd7-db34b9d6813e",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "bd87f794-e28a-4ea0-9c57-d8d843617f67"
+    },
+    {
+      "clause_id": "dd53ac6d-3691-42f5-9efa-37830a623067",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "eb42b977-9b70-44fa-856a-528b59c476b4",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "7f423ccc-e35e-4a90-8128-e9e99585d37a",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "f3f84b66-5c57-40e8-a978-688665fb624b",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "3ae47012-0ae9-4082-b9ce-6e682cb4d472"
+    },
+    {
+      "clause_id": "d97cc5bd-2bae-4d33-9ee6-bad15b3e5b50",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "86c3ecc8-e7c2-46ea-b6e6-436e0dc02320",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+      "status": "unresolved",
+      "translation_status": "translation_failed",
+      "revision_id": null
+    },
+    {
+      "clause_id": "2e5f62ea-92d8-4b0b-b3c6-f8d94da2ea5a",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "8e3a47b4-7704-4cff-90e7-f9921e157d3c"
+    },
+    {
+      "clause_id": "d14790e5-793e-471f-a4f1-e4847a957cde",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "86a4eeb5-802e-4d75-a664-ee03930ce3fc"
+    },
+    {
+      "clause_id": "a60593ed-20b5-4d80-a74c-5ab46c9e6362",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "0f41a20f-58bc-4a5a-8ebf-de0bc07b88c8"
+    },
+    {
+      "clause_id": "26bd60f4-9262-4050-8f94-5d7c41a5556c",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "6ad5e5e7-6929-4ce1-958c-9b0362b81f96"
+    },
+    {
+      "clause_id": "de59e8c3-1333-4b3c-9b1d-56ba14d19c48",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "0e7f51aa-a35c-487f-be0a-1d1d47a235ef"
+    },
+    {
+      "clause_id": "60033c36-4329-4bd6-a19d-7bfc0f2077b3",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "f4573f1f-ce88-4b74-9b07-3cd9b09fbc3f"
+    },
+    {
+      "clause_id": "882e24d5-19e1-4709-92b6-9e569ec71ff6",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "d125ecaa-4674-4409-8936-84f985db1289"
+    },
+    {
+      "clause_id": "6625e7a4-2f3d-4f46-b04a-7475f0229d79",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "083b0888-7da5-40e0-a2ab-2e04c8f2ed2f"
+    },
+    {
+      "clause_id": "cbc8bcd0-9934-4898-9c5d-73d68a37ce59",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "ea616ac4-94af-4947-8635-59ee69ca4817"
+    },
+    {
+      "clause_id": "1226dd89-1989-42d6-919a-d84e3f17aa77",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "6871aa6b-820b-4675-9327-8afe42cc1098"
+    },
+    {
+      "clause_id": "7987058e-d017-46b7-af77-1fc6fc97239e",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "33bd10df-a2bd-4552-bc02-2d8c8e9185be"
+    },
+    {
+      "clause_id": "60758b8f-ab4c-4b02-b728-804c57fa4d90",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "34cd6a8d-0149-4a8a-8871-c868ec22a856"
+    },
+    {
+      "clause_id": "bf35708a-0e6a-4e0a-944a-ea1dd354d19b",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "3fa75729-0537-4231-b9d4-3deabe31f596"
+    },
+    {
+      "clause_id": "12a105b8-0f27-45ce-9768-af1890aa8cb4",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "000268ff-5911-437d-9740-c946fae57695"
+    },
+    {
+      "clause_id": "babfe6a4-9494-4b31-960b-a9368b77e3a1",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "74fe152f-5688-4cd6-99b3-2ca9cb322c90",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "87a5ce97-8ecf-40d3-876e-118716a70269"
+    },
+    {
+      "clause_id": "8a1dd9a1-eda9-4bee-8649-867c630fff73",
+      "status": "context_passed",
+      "translation_status": "translation_failed",
+      "revision_id": "d0efec9e-45ca-4c0b-8235-779e1acdfa37"
+    },
+    {
+      "clause_id": "07f79efb-764a-4975-964b-ce030eb8ddb5",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "e00847d1-cb2d-4ff2-9285-ca87c5b488b9",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "6d1ad60b-f1a1-4520-92b5-507361626e29",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "45695122-5775-4788-99f9-869b300ee993",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "b8ec70e0-b159-4c00-a214-c450f4887b5d",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "fa41e96a-773e-42e5-a858-6cdcd718e7a6",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "a193cef9-b1d7-43d6-b85d-5421fcc40693",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "f3c9205a-1f12-42ab-808e-ddb73c1bd610",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "562332d3-cc57-40b4-8bbd-2c8a890f5c26",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "ffd53ff5-3fec-4f46-ba7d-8f98d0ceb3e9",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "39a190b1-27df-47c1-b4a9-6d191ba34269",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "ab142f74-a006-4ca2-a7a3-8aadd38b46ed",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "d0de8364-ae5f-47a4-950d-91064d67d755",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "6a57a87e-a2d6-471d-b021-f86b7a05b05a",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "221b8cb2-2dc8-4611-a2c7-f9fb5496638d",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "589e36c8-5c76-47b6-93e6-f7d8fa8baebd",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "c27ccec9-9f59-4fe8-be25-12095c08fbac",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "cdd40c54-6853-47fa-b15f-01d101ee60c2",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "4d787fbb-370a-4529-865e-168b98e2a2db",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "3214922b-a62e-4f0a-8667-fe84f1f1a7ce",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "5ca90596-6cf2-4bb6-a16d-9aaab0b53744",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "b9ac88f2-08b3-4ebc-b25d-91be7919184b",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "a352bbed-584c-4a98-9b5d-703c79756fc1",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "49c9831c-c5ee-4cce-bc98-431698bde93f",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "962aea6d-d8ae-4e6e-b45b-7eb4f6704371",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "7e5ae8f1-46f9-455f-a41e-b6b366666c7d",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "ced9dd45-5d79-4dc9-baa8-6a3080a268cd",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "0817743c-4fc6-4f49-94e2-eb027389edb8",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "7356f961-2906-4395-a4f8-4af3e6db834a",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "aefc15e3-4307-4860-bf90-327c65ddcf37",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "2a9aaf16-4f9b-4f5f-9595-d60a6717232d",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "f6aa3cbf-157a-4ea9-85a5-2a2b8cd46d9a",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "687bf468-7429-432c-8b7b-03852de82567",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "55016589-c959-4a5d-8d87-be3d3e6ed290",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "39298f52-c744-4812-9b5e-146ffeb4401b",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "2ba32a50-00c5-4f0b-a3f3-c3a2eda58690",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "ca175783-b959-496f-a4bb-35b73d1c47ec",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "13a3cf7c-8c68-4eac-8140-ff2a3e545a4e",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "da644084-5f14-486a-9c6b-0c86647e3fee",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "852a8b72-47d8-4d02-81dc-57e22c1eefeb",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "bff528b3-8f9d-4195-a12d-cfd3040a5701",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "fd8a1b46-70f7-46c0-aa1a-fbebf4822317",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "8a81e29a-859d-4872-bb3d-edbdc00c5fb1",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "2730bb26-52d9-49cd-a2fd-35b61ff313b6",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "3ebcfed8-c8b8-4fb1-b27f-42aee8b160b6",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "780397d4-2b8e-4e74-ad0e-0b40e0f02e88",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "5454cc7b-f2cb-48c9-aafd-592007b184bd",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "aca3aa6d-70c8-43af-b993-9faac5d48953",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "b2f86f59-e58c-46be-a638-b2847d11de94",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "c2ba8815-a9ea-4303-a784-b8ae7316df59",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "0ab45613-93d2-4c94-b658-c081d3ab0721",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "f0ac9199-9f7b-46a4-b761-198e4ca2e647",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "753b6f52-476e-4b0f-9a1b-d26961d917bb",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "04157f86-44a3-4362-8f9c-1b580a0447b7",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "17a6cbc4-9f94-4b35-949f-fbe91303081a",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "6eb30e61-a97c-4d16-8a5f-cecd1cfb8425",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "7973c897-f859-4d63-a0d3-496488241b24",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "4fed0752-65f5-48c9-9dc1-b1398efc3553",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+      "status": "unresolved",
+      "translation_status": "translation_failed",
+      "revision_id": null
+    },
+    {
+      "clause_id": "6c4c3538-17eb-4741-81ae-515c2933afc2",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "b1f9a38a-a59d-4458-be23-21e825c9ef69",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "b6578d76-3e4f-4189-a1ae-6c498d5969f8",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "04860d97-8327-487a-b5b7-7fc806e463ad",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "01124562-5dfa-47ca-9938-56111f3cc2aa",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    },
+    {
+      "clause_id": "f97f1c8f-50cf-4684-9768-2af977da740b",
+      "status": "standalone_passed",
+      "translation_status": "machine_translated",
+      "revision_id": null
+    }
+  ],
+  "graph": {
+    "active_edges": 1588,
+    "semantic_edges": 1406,
+    "structural_edges": 182,
+    "validation_issues": [],
+    "pending_human_review": true,
+    "acceptance_passed": false
+  },
+  "human_approvals_created": 0
+}

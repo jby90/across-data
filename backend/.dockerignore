@@ -1,0 +1,12 @@
+.venv
+__pycache__
+**/__pycache__
+.pytest_cache
+.ruff_cache
+data
+tests
+.env*
+*.log
+app/analysis/fonts/SourceHanSansCN-Medium.ttf
+app/analysis/fonts/FONT-NOTICE.json
+app/analysis/fonts/LICENSE-APACHE-2.0.txt

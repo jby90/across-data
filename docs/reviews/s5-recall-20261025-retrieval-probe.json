@@ -1,0 +1,1204 @@
+{
+  "retrieval_version": "query-bm25-topics-rrf-v3",
+  "hits": {
+    "SG": 4,
+    "MA": 2,
+    "TN": 2,
+    "LB": 1,
+    "EG": 0
+  },
+  "total": {
+    "SG": 8,
+    "MA": 6,
+    "TN": 6,
+    "LB": 6,
+    "EG": 6
+  },
+  "cases": [
+    {
+      "id": "S5-01",
+      "country": "SG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "d5d8fcfd-a190-4b4f-80b7-78829289b72e",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "3.20",
+          "heading": ""
+        },
+        {
+          "id": "cdaadda9-e82e-4dd0-be68-c86405d6f8af",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "第34页",
+          "heading": ""
+        },
+        {
+          "id": "d0c9b082-b240-45c1-bc92-13be123c4392",
+          "title": "Personal Data Protection (Amendment) Act 2020",
+          "label": "2",
+          "heading": ""
+        },
+        {
+          "id": "3b086d5c-0bf3-4160-a942-9dc8346b174a",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "2.1",
+          "heading": ""
+        },
+        {
+          "id": "f353f479-875b-4d6a-b152-87fc7826e1ba",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "3.14",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-02",
+      "country": "SG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "9fb8268d-4ad4-42a7-8682-789393bd7f30",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "15.34.1",
+          "heading": ""
+        },
+        {
+          "id": "2ef71cd7-44fd-4c27-bfea-f7a920b0fd90",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "3.2",
+          "heading": ""
+        },
+        {
+          "id": "d0c9b082-b240-45c1-bc92-13be123c4392",
+          "title": "Personal Data Protection (Amendment) Act 2020",
+          "label": "2",
+          "heading": ""
+        },
+        {
+          "id": "e86d4068-399f-45a5-adff-1f078a78fc2c",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "16.9",
+          "heading": ""
+        },
+        {
+          "id": "5161c684-9e5e-4602-97c0-d6013ecc331d",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "3.22",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-03",
+      "country": "SG",
+      "hit": true,
+      "retrieved": [
+        {
+          "id": "72f06813-813d-40bf-a1f5-c9af7d2149b7",
+          "title": "Personal Data Protection Act 2012",
+          "label": "26",
+          "heading": "Transfer of personal data outside Singapore"
+        },
+        {
+          "id": "d4d50138-4e75-4d3b-b57f-9345ce44df70",
+          "title": "Personal Data Protection Act 2012",
+          "label": "26",
+          "heading": "Transfer of personal data outside Singapore"
+        },
+        {
+          "id": "39965289-943c-470b-9121-35032927ea68",
+          "title": "The Transfer Limitation Obligation chapter 19 historical guidance",
+          "label": "19.3",
+          "heading": ""
+        },
+        {
+          "id": "70eb1a34-537d-4e1a-aef8-bece6c867908",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "19.8",
+          "heading": ""
+        },
+        {
+          "id": "0a94b26b-6210-4db3-9845-4f0a44f9ef7a",
+          "title": "The Transfer Limitation Obligation chapter 19 historical guidance",
+          "label": "19.4.2",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-04",
+      "country": "SG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "b23c9b98-a65f-41af-a749-6ff4e074e80e",
+          "title": "Personal Data Protection Act 2012",
+          "label": "46",
+          "heading": "Consent"
+        },
+        {
+          "id": "66e22222-e862-45ee-8a56-1073cd6ce6e4",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "4.93",
+          "heading": ""
+        },
+        {
+          "id": "1793c90f-11e5-40ae-b5cf-d6e3c717cf64",
+          "title": "Personal Data Protection Act 2012",
+          "label": "14",
+          "heading": "Provision of consent"
+        },
+        {
+          "id": "58e0b7d1-5d38-432c-9d18-0ff2bce96fc0",
+          "title": "Personal Data Protection Act 2012",
+          "label": "14",
+          "heading": "Provision of consent"
+        },
+        {
+          "id": "9dec1e31-dbd0-4961-a49c-15c2ed054d1e",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "4.6",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-05",
+      "country": "SG",
+      "hit": true,
+      "retrieved": [
+        {
+          "id": "4193d701-47d1-4e11-9cd4-c8b0ae944035",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "4.42",
+          "heading": ""
+        },
+        {
+          "id": "a2f2ab42-5126-44ab-b837-22b66dd6b200",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "15.41",
+          "heading": ""
+        },
+        {
+          "id": "e12c5bd9-b910-43b8-8b97-5019725af0e2",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "18.2",
+          "heading": ""
+        },
+        {
+          "id": "623a4ec2-ad56-456c-929d-311cf8e5f293",
+          "title": "Personal Data Protection Act 2012",
+          "label": "25",
+          "heading": "Retention of personal data"
+        },
+        {
+          "id": "6563286a-c737-4170-983e-81ffb0a4217f",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "18.1",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-06",
+      "country": "SG",
+      "hit": true,
+      "retrieved": [
+        {
+          "id": "e3bf778c-f7b0-4d00-93d3-ea8ee3d959de",
+          "title": "Personal Data Protection Act 2012",
+          "label": "48J",
+          "heading": "Financial penalties"
+        },
+        {
+          "id": "8efa3be1-0399-43d1-90a4-a831dcdb8a30",
+          "title": "Personal Data Protection Act 2012",
+          "label": "51",
+          "heading": "Offences and penalties"
+        },
+        {
+          "id": "87b7fbf3-b7e7-4e89-806d-8cceaa3f5582",
+          "title": "Personal Data Protection Act 2012",
+          "label": "48J.2",
+          "heading": "Financial penalties"
+        },
+        {
+          "id": "5fceb016-2474-4089-85aa-5da5db5db501",
+          "title": "Personal Data Protection Act 2012 - Personal Data Protection (Enforcement) (Amendment) Regulations 2022",
+          "label": "10A",
+          "heading": "FINANCIAL PENALTIES Maximum amount of financial penalties"
+        },
+        {
+          "id": "c2d4e442-2e68-4a02-b18f-1a5c9e7b3251",
+          "title": "Personal Data Protection Act 2012",
+          "label": "48J.1",
+          "heading": "Financial penalties"
+        }
+      ]
+    },
+    {
+      "id": "S5-07",
+      "country": "SG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+          "title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations",
+          "label": "25",
+          "heading": ""
+        },
+        {
+          "id": "6da74e33-b8fb-4042-b344-6b8e2aa7ab9e",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "21.10",
+          "heading": ""
+        },
+        {
+          "id": "6b8e9411-832d-4291-8ac8-222c484a38a0",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "3.26",
+          "heading": ""
+        },
+        {
+          "id": "4454185a-e396-4096-84f0-b4449700ea94",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "4.55",
+          "heading": ""
+        },
+        {
+          "id": "c2e198cd-ec42-4707-96f2-ae94feee51bc",
+          "title": "Personal Data Protection Act 2012",
+          "label": "4",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-08",
+      "country": "SG",
+      "hit": true,
+      "retrieved": [
+        {
+          "id": "09f8319e-2420-49d3-98a7-74326a021f50",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "4.2",
+          "heading": ""
+        },
+        {
+          "id": "ecf9b3c3-ab92-47a1-ac3f-fd5adc7e97de",
+          "title": "Application for Trial of Autonomous Motor Vehicles for Public Road Operations",
+          "label": "25",
+          "heading": ""
+        },
+        {
+          "id": "c9fb7efd-b689-4f26-9165-6b729880e0b1",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "17.1",
+          "heading": ""
+        },
+        {
+          "id": "26aee55a-dc11-42b5-adc2-34e28765be74",
+          "title": "Personal Data Protection Act 2012",
+          "label": "24",
+          "heading": "Protection of personal data"
+        },
+        {
+          "id": "5369d85b-8d3e-4c83-b035-707683b6e5d1",
+          "title": "Advisory Guidelines on Key Concepts in the PDPA",
+          "label": "20.30",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-09",
+      "country": "MA",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "premier.2",
+          "heading": ""
+        },
+        {
+          "id": "72a559c3-d36d-4fa0-9859-d667138eca4a",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "28.1",
+          "heading": ""
+        },
+        {
+          "id": "5ee86f7c-5807-4316-a864-4b65fa1c2f2c",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "29",
+          "heading": ""
+        },
+        {
+          "id": "2a674307-b329-4521-ab11-9796c659c0bd",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "53",
+          "heading": ""
+        },
+        {
+          "id": "6a8b9a0c-0fbc-4377-ab3f-fb322e4b53bc",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "2.2",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-10",
+      "country": "MA",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "6a8b9a0c-0fbc-4377-ab3f-fb322e4b53bc",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "2.2",
+          "heading": ""
+        },
+        {
+          "id": "db96d826-39f5-436a-9382-6553c6f78fb6",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "premier.3",
+          "heading": ""
+        },
+        {
+          "id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "premier.2",
+          "heading": ""
+        },
+        {
+          "id": "c423f17c-b266-4dae-b5dc-33f1647d55d1",
+          "title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+          "label": "第1页",
+          "heading": ""
+        },
+        {
+          "id": "ee6120bf-62c5-4ef3-a1e6-5808844c3e37",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "第1页",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-11",
+      "country": "MA",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "premier.2",
+          "heading": ""
+        },
+        {
+          "id": "6a8b9a0c-0fbc-4377-ab3f-fb322e4b53bc",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "2.2",
+          "heading": ""
+        },
+        {
+          "id": "2a674307-b329-4521-ab11-9796c659c0bd",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "53",
+          "heading": ""
+        },
+        {
+          "id": "db96d826-39f5-436a-9382-6553c6f78fb6",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "premier.3",
+          "heading": ""
+        },
+        {
+          "id": "5ee86f7c-5807-4316-a864-4b65fa1c2f2c",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "29",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-12",
+      "country": "MA",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "premier.2",
+          "heading": ""
+        },
+        {
+          "id": "6a8b9a0c-0fbc-4377-ab3f-fb322e4b53bc",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "2.2",
+          "heading": ""
+        },
+        {
+          "id": "2a674307-b329-4521-ab11-9796c659c0bd",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "53",
+          "heading": ""
+        },
+        {
+          "id": "5ee86f7c-5807-4316-a864-4b65fa1c2f2c",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "29",
+          "heading": ""
+        },
+        {
+          "id": "db96d826-39f5-436a-9382-6553c6f78fb6",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "premier.3",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-13",
+      "country": "MA",
+      "hit": true,
+      "retrieved": [
+        {
+          "id": "2a674307-b329-4521-ab11-9796c659c0bd",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "53",
+          "heading": ""
+        },
+        {
+          "id": "72a559c3-d36d-4fa0-9859-d667138eca4a",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "28.1",
+          "heading": ""
+        },
+        {
+          "id": "7a99eafa-d842-4cbb-9d43-1693bd09b37c",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "premier.2",
+          "heading": ""
+        },
+        {
+          "id": "71169f5b-b69e-425b-ba04-e3c805b48363",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "51",
+          "heading": ""
+        },
+        {
+          "id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "58",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-14",
+      "country": "MA",
+      "hit": true,
+      "retrieved": [
+        {
+          "id": "6a8b9a0c-0fbc-4377-ab3f-fb322e4b53bc",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "2.2",
+          "heading": ""
+        },
+        {
+          "id": "72a559c3-d36d-4fa0-9859-d667138eca4a",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "28.1",
+          "heading": ""
+        },
+        {
+          "id": "5ee86f7c-5807-4316-a864-4b65fa1c2f2c",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "29",
+          "heading": ""
+        },
+        {
+          "id": "99ddbb13-5416-4753-830d-9b6fac3fd648",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "23",
+          "heading": ""
+        },
+        {
+          "id": "6e9de1ad-519f-4c07-b838-3057bcd88fab",
+          "title": "Loi n° 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel",
+          "label": "58",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-15",
+      "country": "TN",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "75147958-7651-4987-8064-a13eddfeefc2",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "第4页",
+          "heading": ""
+        },
+        {
+          "id": "6e8d81e1-c268-4837-a0fa-aa4e89661eda",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "3.1",
+          "heading": ""
+        },
+        {
+          "id": "61514193-a67c-4ca8-aeea-443ce50a0078",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "第2页",
+          "heading": ""
+        },
+        {
+          "id": "95e55007-4fef-4ac2-aa26-cf79884203ed",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "1.2",
+          "heading": ""
+        },
+        {
+          "id": "3e7b5273-eef1-4f38-90b4-7076d614fc99",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "4.2",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-16",
+      "country": "TN",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "62f4dd0a-2883-45bd-ada8-5ed57fca595d",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "0.2",
+          "heading": ""
+        },
+        {
+          "id": "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "2.2",
+          "heading": ""
+        },
+        {
+          "id": "f14e369b-09b0-4646-b3a9-1ab66c1a0e76",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "4.3",
+          "heading": ""
+        },
+        {
+          "id": "ab11538b-7ca8-4149-ba34-26de7f02cb3b",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "第9页",
+          "heading": ""
+        },
+        {
+          "id": "f1ba9d85-6bc9-458e-b49e-7c849a3a342f",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "1.3",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-17",
+      "country": "TN",
+      "hit": true,
+      "retrieved": [
+        {
+          "id": "c2ee9e76-b13a-4999-8eaf-cf1913373a40",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "2.2",
+          "heading": ""
+        },
+        {
+          "id": "62f4dd0a-2883-45bd-ada8-5ed57fca595d",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "0.2",
+          "heading": ""
+        },
+        {
+          "id": "a324d919-cd87-4af6-b729-ba87520b6db7",
+          "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "label": "12",
+          "heading": "Le traitement des données à caractère personnel ne peut être effectué pour des finalités autres"
+        },
+        {
+          "id": "95e55007-4fef-4ac2-aa26-cf79884203ed",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "1.2",
+          "heading": ""
+        },
+        {
+          "id": "da860a72-090f-4df3-b568-c168d1fc2bb8",
+          "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "label": "10",
+          "heading": "La collecte des données à caractère personnel ne peut être effectuée que pour des finalités"
+        }
+      ]
+    },
+    {
+      "id": "S5-18",
+      "country": "TN",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "b66d3bc9-8288-4173-9f72-5948de541fe1",
+          "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "label": "64",
+          "heading": "Le traitement ne peut dépasser la durée nécessaire pour la réalisation du but pour lequel il est"
+        },
+        {
+          "id": "6e8d81e1-c268-4837-a0fa-aa4e89661eda",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "3.1",
+          "heading": ""
+        },
+        {
+          "id": "95e55007-4fef-4ac2-aa26-cf79884203ed",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "1.2",
+          "heading": ""
+        },
+        {
+          "id": "62f4dd0a-2883-45bd-ada8-5ed57fca595d",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "0.2",
+          "heading": ""
+        },
+        {
+          "id": "61514193-a67c-4ca8-aeea-443ce50a0078",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "第2页",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-19",
+      "country": "TN",
+      "hit": true,
+      "retrieved": [
+        {
+          "id": "ac0987cd-0c8d-4673-a08d-745ea822caeb",
+          "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "label": "52",
+          "heading": "Dans tous les cas, l’obtention de l’autorisation de l’Instance pour effectuer le transfert des"
+        },
+        {
+          "id": "722af3a5-847f-4676-bc8b-c361516f66e3",
+          "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "label": "51",
+          "heading": "Le transfert vers un autre pays des données personnelles faisant l’objet d’un traitement ou"
+        },
+        {
+          "id": "3e7b5273-eef1-4f38-90b4-7076d614fc99",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "4.2",
+          "heading": ""
+        },
+        {
+          "id": "95e55007-4fef-4ac2-aa26-cf79884203ed",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "1.2",
+          "heading": ""
+        },
+        {
+          "id": "573df1f7-fcb3-47f2-856a-ffd40aa7d3d7",
+          "title": "Loi organique n° 2004-63 du 27 juillet 2004 portant sur la protection des données à caractère personnel (texte français)",
+          "label": "8",
+          "heading": "Dans les cas où la présente loi exige l’obtention d’une autorisation de l’Instance pour le"
+        }
+      ]
+    },
+    {
+      "id": "S5-20",
+      "country": "TN",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "61514193-a67c-4ca8-aeea-443ce50a0078",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "第2页",
+          "heading": ""
+        },
+        {
+          "id": "3e7b5273-eef1-4f38-90b4-7076d614fc99",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "4.2",
+          "heading": ""
+        },
+        {
+          "id": "75147958-7651-4987-8064-a13eddfeefc2",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "第4页",
+          "heading": ""
+        },
+        {
+          "id": "95e55007-4fef-4ac2-aa26-cf79884203ed",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "1.2",
+          "heading": ""
+        },
+        {
+          "id": "801cdbfd-f9b1-4891-a27c-265b76d5c04f",
+          "title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+          "label": "第5页",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-21",
+      "country": "LB",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١.2",
+          "heading": ""
+        },
+        {
+          "id": "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٩٠",
+          "heading": ""
+        },
+        {
+          "id": "8659c417-c886-4acf-b033-961d1764e481",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٥",
+          "heading": ""
+        },
+        {
+          "id": "4c482eeb-4fb6-41c8-a09a-62610861c5de",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٢٦",
+          "heading": ""
+        },
+        {
+          "id": "c384082c-3d0e-40cd-b305-a93e52e93c93",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": ":١١٢",
+          "heading": "التعدي على سلامة البيانات الرقمية :"
+        }
+      ]
+    },
+    {
+      "id": "S5-22",
+      "country": "LB",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١.2",
+          "heading": ""
+        },
+        {
+          "id": "21c26ec0-76fc-4a53-9926-70657a365f9e",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١٠١",
+          "heading": ""
+        },
+        {
+          "id": "8cfea491-9d6e-412f-a503-cf2b21a6bbcb",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٩٢",
+          "heading": ""
+        },
+        {
+          "id": "21cff2ce-868d-416c-984f-0a4f716edfdb",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٨٨",
+          "heading": ""
+        },
+        {
+          "id": "af3e1ac9-3924-4042-b149-212bc82c0ac1",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٩٥",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-23",
+      "country": "LB",
+      "hit": true,
+      "retrieved": [
+        {
+          "id": "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٩٠",
+          "heading": ""
+        },
+        {
+          "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١.2",
+          "heading": ""
+        },
+        {
+          "id": "9c56439e-4e84-4c89-8b3d-43ed3b45935e",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١.1",
+          "heading": ""
+        },
+        {
+          "id": "8659c417-c886-4acf-b033-961d1764e481",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٥",
+          "heading": ""
+        },
+        {
+          "id": "df28de1e-1842-4d8b-be95-d33837364a69",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٧",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-24",
+      "country": "LB",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١.2",
+          "heading": ""
+        },
+        {
+          "id": "8659c417-c886-4acf-b033-961d1764e481",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٥",
+          "heading": ""
+        },
+        {
+          "id": "a7ee18f9-4500-4c3c-99d0-aea8ceeb1b4d",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٩٠",
+          "heading": ""
+        },
+        {
+          "id": "0b4016e0-9bca-4cad-a38f-33d003299a59",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٩٩",
+          "heading": ""
+        },
+        {
+          "id": "4280eee6-7e8e-4370-96da-278467023b15",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٨٧",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-25",
+      "country": "LB",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "bcbdaf1a-d80e-479c-8a6e-5a360803876d",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١٧",
+          "heading": ""
+        },
+        {
+          "id": "4c482eeb-4fb6-41c8-a09a-62610861c5de",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٢٦",
+          "heading": ""
+        },
+        {
+          "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١.2",
+          "heading": ""
+        },
+        {
+          "id": "851de069-4956-43df-bd59-cd3656cfee89",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١٢٠.1",
+          "heading": ""
+        },
+        {
+          "id": "6c0f4d5a-1762-4f65-a2c5-279761750925",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١٠٦",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-26",
+      "country": "LB",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "959dd9e9-969a-4371-bd24-6e1f25a0c4f3",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١.2",
+          "heading": ""
+        },
+        {
+          "id": "c384082c-3d0e-40cd-b305-a93e52e93c93",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": ":١١٢",
+          "heading": "التعدي على سلامة البيانات الرقمية :"
+        },
+        {
+          "id": "b3cf2404-4048-4628-ac26-42041e621557",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "١٠٣",
+          "heading": ""
+        },
+        {
+          "id": "34c103a5-3777-455e-899b-c02a3c6c142d",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٩٧",
+          "heading": ""
+        },
+        {
+          "id": "4492beb2-cde2-4a70-9078-947e7e1453aa",
+          "title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+          "label": "٩٦",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-27",
+      "country": "EG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "e0db79b7-bcf8-459d-94a9-8ccdd6933c99",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "9.1",
+          "heading": ""
+        },
+        {
+          "id": "561bd1c4-9ce2-4443-8433-b491e5df5df9",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "17.1",
+          "heading": ""
+        },
+        {
+          "id": "2e66a07e-1697-4128-81b4-ddccbab292bf",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第18页",
+          "heading": ""
+        },
+        {
+          "id": "6997c4da-41ba-4b32-86d7-438997f1cc0d",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "6.1",
+          "heading": ""
+        },
+        {
+          "id": "b47438a2-9ec3-4180-9955-e54470e33795",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "11.1",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-28",
+      "country": "EG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "5b3b1019-8efc-422f-8326-ca0317d16bee",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第29页",
+          "heading": ""
+        },
+        {
+          "id": "d0969f10-d8b5-4a81-80bc-7c5f47ead87a",
+          "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "label": "第1页",
+          "heading": ""
+        },
+        {
+          "id": "dc34bfa9-d8f7-4607-94e6-8b3f1d42f47b",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第14页",
+          "heading": ""
+        },
+        {
+          "id": "b47438a2-9ec3-4180-9955-e54470e33795",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "11.1",
+          "heading": ""
+        },
+        {
+          "id": "6997c4da-41ba-4b32-86d7-438997f1cc0d",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "6.1",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-29",
+      "country": "EG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "266409bc-969b-4d6b-9291-b86cdac6c42f",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "3.1",
+          "heading": ""
+        },
+        {
+          "id": "d0969f10-d8b5-4a81-80bc-7c5f47ead87a",
+          "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "label": "第1页",
+          "heading": ""
+        },
+        {
+          "id": "561bd1c4-9ce2-4443-8433-b491e5df5df9",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "17.1",
+          "heading": ""
+        },
+        {
+          "id": "6997c4da-41ba-4b32-86d7-438997f1cc0d",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "6.1",
+          "heading": ""
+        },
+        {
+          "id": "e19cd262-b2ba-4e59-a2b6-c216adecde1c",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "10.1",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-30",
+      "country": "EG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "d0969f10-d8b5-4a81-80bc-7c5f47ead87a",
+          "title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+          "label": "第1页",
+          "heading": ""
+        },
+        {
+          "id": "e0db79b7-bcf8-459d-94a9-8ccdd6933c99",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "9.1",
+          "heading": ""
+        },
+        {
+          "id": "561bd1c4-9ce2-4443-8433-b491e5df5df9",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "17.1",
+          "heading": ""
+        },
+        {
+          "id": "2e66a07e-1697-4128-81b4-ddccbab292bf",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第18页",
+          "heading": ""
+        },
+        {
+          "id": "69752482-1722-4d27-88ac-d48c0228415b",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第25页",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-31",
+      "country": "EG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "a0aa4715-be1c-475c-9674-c9843707e9df",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第15页",
+          "heading": ""
+        },
+        {
+          "id": "dc34bfa9-d8f7-4607-94e6-8b3f1d42f47b",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第14页",
+          "heading": ""
+        },
+        {
+          "id": "2e66a07e-1697-4128-81b4-ddccbab292bf",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第18页",
+          "heading": ""
+        },
+        {
+          "id": "561bd1c4-9ce2-4443-8433-b491e5df5df9",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "17.1",
+          "heading": ""
+        },
+        {
+          "id": "77458678-4dc2-406e-9902-368507541a66",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第4页",
+          "heading": ""
+        }
+      ]
+    },
+    {
+      "id": "S5-32",
+      "country": "EG",
+      "hit": false,
+      "retrieved": [
+        {
+          "id": "69752482-1722-4d27-88ac-d48c0228415b",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第25页",
+          "heading": ""
+        },
+        {
+          "id": "e19cd262-b2ba-4e59-a2b6-c216adecde1c",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "10.1",
+          "heading": ""
+        },
+        {
+          "id": "77458678-4dc2-406e-9902-368507541a66",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第4页",
+          "heading": ""
+        },
+        {
+          "id": "fa97fda7-0a6d-4e2f-8358-2ff64016d853",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第10页",
+          "heading": ""
+        },
+        {
+          "id": "9d8815d0-5207-41b5-b61d-a1012c65a486",
+          "title": "الإطار التنظيمي الخاص بتقديم خدمات انترنت الأشياء في جمهورية مصر العربية — Internet of Things (IoT) Framework",
+          "label": "第28页",
+          "heading": ""
+        }
+      ]
+    }
+  ],
+  "note": "只读检索探针，不是模型质量评测；未改冻结题库"
+}

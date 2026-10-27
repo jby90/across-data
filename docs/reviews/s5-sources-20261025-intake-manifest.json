@@ -1,0 +1,88 @@
+{
+  "new_documents": [
+    {
+      "country_code": "LB",
+      "language": "ar",
+      "source_url": "https://nhrclb.org/archives/8228",
+      "publisher": "National Human Rights Commission, Lebanon",
+      "title": "المعاملات الإلكترونية والبيانات ذات الطابع الشخصي نوع النص: قانون |  رقم 81 تاريخ: 10/10/2018",
+      "mime": "text/html",
+      "content_hash": "91bf1bb73082307b9bb657d05b694fb608b5edd3f61e7a5ddfd6cfd82ac777c3",
+      "archive_path": "91/91bf1bb73082307b9bb657d05b694fb608b5edd3f61e7a5ddfd6cfd82ac777c3",
+      "observation": {
+        "version_id": "new",
+        "content_hash": "91bf1bb73082307b9bb657d05b694fb608b5edd3f61e7a5ddfd6cfd82ac777c3",
+        "country_code": "LB",
+        "instrument_key": "law-81-2018",
+        "instrument_role": "base",
+        "source_url": "https://nhrclb.org/archives/8228",
+        "publisher": "National Human Rights Commission, Lebanon",
+        "source_nature": "statutory_body_republication",
+        "source_excerpt": "المعاملات الإلكترونية والبيانات ذات الطابع الشخصي نوع النص: قانون |  رقم 81 تاريخ: 10/10/2018",
+        "review_status": "pending_review",
+        "human_reviewed": false,
+        "usable_as_legal_basis": false
+      },
+      "acquisition": {
+        "robots_permitted": true,
+        "robots_note": "HTTP 200,已读取规则",
+        "source_nature": "statutory_body_republication",
+        "publisher_identity_url": "https://nhrclb.org/en/what-is-nhrc",
+        "one_time_research_only": true
+      }
+    }
+  ],
+  "observations": [
+    {
+      "document_id": "dd517907-47bb-43ca-892f-538fe0153c70",
+      "payload": {
+        "version_id": "26aee7c0-25af-4887-90f5-4d82b9de0fc0",
+        "content_hash": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+        "country_code": "SG",
+        "instrument_key": "pdpa-2012",
+        "instrument_role": "base",
+        "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+        "publisher": "Singapore Government Gazette",
+        "source_nature": "official_publication",
+        "source_excerpt": "THE STATUTES OF THE REPUBLIC OF SINGAPORE PERSONAL DATA PROTECTION ACT 2012 2020 REVISED EDITION This revised edition incorporates all amendments up to and including 1 December 2021 and comes into operation on 31 December 2021. Prepared and Published by THE LAW REVISION COMMISSION UNDER THE AUTHORITY OF THE REVISED EDITION OF THE LAWS ACT 1983 Personal Data Protection Act 2012 ARRANGEMENT OF SECTIONS PART 1 PRELIMINARY Section 1. Short title 2. Interpretation 3. Purpose 4. Application of Act PA",
+        "review_status": "pending_review",
+        "human_reviewed": false,
+        "usable_as_legal_basis": false
+      }
+    },
+    {
+      "document_id": "ec35c0eb-0325-49d7-bf63-aaf16e0e4f2a",
+      "payload": {
+        "version_id": "d0d016b9-ab0d-4682-bfbe-91db025a0584",
+        "content_hash": "91384bf730d79ab45debefad2b8c3ec090d12d624f0d255659550da4edc36422",
+        "country_code": "SG",
+        "instrument_key": "pdpa-2012",
+        "instrument_role": "base",
+        "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Acts%20Supplement/25.pdf",
+        "publisher": "Singapore Government Gazette",
+        "source_nature": "official_publication",
+        "source_excerpt": "First published in the Government Gazette, Electronic Edition, on 3rd December 2012 at 5:00 pm.",
+        "review_status": "pending_review",
+        "human_reviewed": false,
+        "usable_as_legal_basis": false
+      }
+    },
+    {
+      "document_id": "5a92e1af-14e7-4022-a558-6a42dbffbf4b",
+      "payload": {
+        "version_id": "ee99bccb-9fc2-4afa-a223-65a43c00891e",
+        "content_hash": "7c13a15bbbdedd928d6edde63f306324221f989deed3f849d6f6638c691c98af",
+        "country_code": "LB",
+        "instrument_key": "law-81-2018",
+        "instrument_role": "base",
+        "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+        "publisher": "Banque du Liban",
+        "source_nature": "official_publication",
+        "source_excerpt": "٥٢٩ ق/ س/ ت -٣١ -١٢ /٢٠١٨ قانون رقم ٨١ تاريخ ١٠/ ١٠/ ٢٠١٨ المعاملات الإلكترونية والبيانات ذات الطابع الشخصي مادة وحيدة : ّ - ق صـد مشـروع القـانون الـوارد بالمرسـوم رقـم ٩٣٤١ تـاريخ ١٧ تشـرين الثـاني ٢٠١٢ كمـا عدلتـه اللجان النيابية المشتركة ومجلس النواب . - ينشر هذا القانون في الجريدة الرسمية و يعمل به بعد ثلاثة أشهر من تاريخ نشره . بعبدا في ١٠ تشرين الأول ٢٠١٨ الامضاء: ميشال عون صدر عن رئيس الجمهورية رئيس مجلس الوزراء الامضاء: سعد الدين الحريري رئيس مجلس الوزراء الامضاء: سعد الدين الحريري ٥٣٠",
+        "review_status": "pending_review",
+        "human_reviewed": false,
+        "usable_as_legal_basis": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "original_failed_task": "99e117fa-b2ca-45b2-ab50-387989638bb6",
+  "original_status": "failed",
+  "same_facts": true,
+  "original_facts_sha256": "22fa19cbceaf45e2fdf4cb8da6a3e997fd3d85aaefd4c592d90c4b83498b11d6",
+  "replay_facts_sha256": "22fa19cbceaf45e2fdf4cb8da6a3e997fd3d85aaefd4c592d90c4b83498b11d6",
+  "old_task_overwritten": false
+}

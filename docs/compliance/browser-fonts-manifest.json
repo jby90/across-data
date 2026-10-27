@@ -1,0 +1,4612 @@
+[
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-cyrillic-400-normal.woff",
+    "sha256": "6e441a6c94788318fa02b6d0a633aa29eebe27b69c6567eb1e59b4edc68ed70e",
+    "bytes": 9780,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-cyrillic-400-normal.woff2",
+    "sha256": "f0bb586459ce8f09b238285040f17e3e9e9538b2c5a7aae0775194e33c36c3c3",
+    "bytes": 7712,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-cyrillic-600-normal.woff",
+    "sha256": "cc190ed1b64eb650a4ad7e97c7a668cb8b34acd9c4c7f7bf4372c0cbacd35795",
+    "bytes": 9936,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-cyrillic-600-normal.woff2",
+    "sha256": "6c2a37f82a676bcd441b735e4e2cda4edb8873a059ab9c362a84f0711f257041",
+    "bytes": 7972,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-cyrillic-ext-400-normal.woff",
+    "sha256": "5cb2f1cc0936f89a42ceae34f5a5720248dc5b8114c12b1c33a7d2ef01a9b6b9",
+    "bytes": 13336,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-cyrillic-ext-400-normal.woff2",
+    "sha256": "ef572f9187a8be018d9d9c2c6b77c1f6cb2af4199f02fc16c292ea10ab25a2cc",
+    "bytes": 10232,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-cyrillic-ext-600-normal.woff",
+    "sha256": "a5073285409443f4653c858de58c5dc0bfc2fd33e60d8747388345e7c5ab1ab3",
+    "bytes": 13464,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-cyrillic-ext-600-normal.woff2",
+    "sha256": "509fca9c59564f9a846fa69bc647f9b050fc11abf1c9f6f3da71fb2d5ed425bd",
+    "bytes": 10484,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-greek-400-normal.woff",
+    "sha256": "bdae9d28729e8c68587d5d54e216d771a40d7a6800e824586a6e2f570c2f10df",
+    "bytes": 9924,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-greek-400-normal.woff2",
+    "sha256": "c15ddd00a9927b56f5c655a41f976f79bd848a20cce91fc14227751872a1cc27",
+    "bytes": 7776,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-greek-600-normal.woff",
+    "sha256": "090b24e22fc4ddf41450d13bdec81c8a74808b9fc7edaf8df06c909b177a8992",
+    "bytes": 10032,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-greek-600-normal.woff2",
+    "sha256": "9c5a897f9d9fcfe60d90631d766ae62b4bf1edd76633fa7a4b2f8c87e036789b",
+    "bytes": 7944,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-greek-ext-400-normal.woff",
+    "sha256": "4f2b6f92ddfece8812e79774d446218aa6e0773ff8c2d31130fe2bdc23bd22d0",
+    "bytes": 7064,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-greek-ext-400-normal.woff2",
+    "sha256": "eadedd9e13c2582430a9fb1519eb86152fdabb483a6f66d90f8d8a52e977a1b7",
+    "bytes": 5264,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-greek-ext-600-normal.woff",
+    "sha256": "efc7aa9cce5c505dd8cc4c4daf00247fa805f37bcda96079239ba3358ab27dfb",
+    "bytes": 7212,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-greek-ext-600-normal.woff2",
+    "sha256": "399f94d75aa73403e40e2353e8c0cc75c38f7362a6ca263b3b02d9723157ffe5",
+    "bytes": 5432,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-latin-400-normal.woff",
+    "sha256": "e20fa0b4fd2dd26e4d14b3ac3cc922509c3a63fa5e910e90c614544aa042dd45",
+    "bytes": 30696,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-latin-400-normal.woff2",
+    "sha256": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc",
+    "bytes": 23664,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-latin-600-normal.woff",
+    "sha256": "6a9cb3a509b4eeaf12b7dda6c4aacac3e85d07f4201bf4dd716e332e692b87bd",
+    "bytes": 31260,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-latin-600-normal.woff2",
+    "sha256": "f9a06e79cd3a2a20951c0f0e28f66dd0e6d3fda73911d640a2125c8fcb78f21a",
+    "bytes": 24452,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-latin-ext-400-normal.woff",
+    "sha256": "22ae8360fbad24d2af7c6c9898a346c881774dc87f7cf94bd262c48ad58d7116",
+    "bytes": 47560,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-latin-ext-400-normal.woff2",
+    "sha256": "6744a7f509ebc6ab220a6cd4ea77e898adf014f03d88dcda5d45d8a9feefb4e9",
+    "bytes": 35000,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-latin-ext-600-normal.woff",
+    "sha256": "22ff20a6170674fb9637c2a072227be86303bb6ec52b829b9d7077405f7196a6",
+    "bytes": 48668,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-latin-ext-600-normal.woff2",
+    "sha256": "e4bdf67b0cd15ca9e184509275be95db942195d3cc2b17f6a0452f2adf75d0bf",
+    "bytes": 36260,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-vietnamese-400-normal.woff",
+    "sha256": "54aa42d325bcdfd623ecb9eac4a5e3c6420c63d7b86e9d8545fb479f653beb57",
+    "bytes": 6500,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-vietnamese-400-normal.woff2",
+    "sha256": "547ad9fdaeb0ae43487f4b8a02e47c36553c0c0cb73c8aa98f93b7b615f6b55d",
+    "bytes": 4972,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-vietnamese-600-normal.woff",
+    "sha256": "24a01e7bd947aeef91ae8f7b8edeb23fadaf5ceda34a610ce62d2bbdaea57e83",
+    "bytes": 6640,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "./files/inter-vietnamese-600-normal.woff2",
+    "sha256": "1aeb94ae9db052a4a2fe6f3046f928cff1fdbd7abdf870a9a01c13cae6faeba5",
+    "bytes": 5100,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "400.css",
+    "sha256": "a3c5db28cea5bcb68859bac8b109ee3cf1248378ce816a6be88624375e6cdd8e",
+    "bytes": 2654,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "600.css",
+    "sha256": "28c3e6cf056708cf439c53d3ed761614c20a9100dc339c6b65afade6ae6b383f",
+    "bytes": 2654,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/inter",
+    "version": "5.3.0",
+    "file": "LICENSE",
+    "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345",
+    "bytes": 4477,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-100-400-normal.woff",
+    "sha256": "0cf8062659583ae700ca5259a55bdb8e395897a10181989fa6eea5458845725a",
+    "bytes": 43884,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-100-400-normal.woff2",
+    "sha256": "597b821e126e722b3d0627dbfe2e39bdfdb3c7a8f2b6ced3473775c701551a67",
+    "bytes": 34272,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-100-600-normal.woff",
+    "sha256": "66a3de74184baddd5d2369834e872ce68ea232cb3df52f37876eb0fd9c99f2ed",
+    "bytes": 43828,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-100-600-normal.woff2",
+    "sha256": "b27e61cd77e76ed919623abd5eb5d48c45d6a79d2048b070010fbcf071989cfe",
+    "bytes": 34836,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-101-400-normal.woff",
+    "sha256": "8dfc09e9338bdafc67de742b9fa8f3ee3b292b2b181986e803cb58d72a4d4890",
+    "bytes": 39824,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-101-400-normal.woff2",
+    "sha256": "8eef1fa6b5557ee00c1451df31ff4f56833a8460494446d943a8228d4daf9f72",
+    "bytes": 31028,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-101-600-normal.woff",
+    "sha256": "11c090cc03a043c216d093b0f4d40ec50708f174e4d56ed56ecd59bb95e4fae9",
+    "bytes": 39848,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-101-600-normal.woff2",
+    "sha256": "a18149c6aed7bad64ff912ac58f9a668830f4832077f027ebcca5446dfd00cff",
+    "bytes": 31608,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-102-400-normal.woff",
+    "sha256": "1e174f6b365361d593c760e996efe3d40f856504c4e4a59b7b9c75c251dcb33a",
+    "bytes": 40996,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-102-400-normal.woff2",
+    "sha256": "357be17c54c5bec1de5b00083811b9121707382705635d1a0ef5c3427451e656",
+    "bytes": 32100,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-102-600-normal.woff",
+    "sha256": "5fb19afb7d57111b69ed4efa43c09b083957080fdb992efa3c2bd0a4962b43c6",
+    "bytes": 40948,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-102-600-normal.woff2",
+    "sha256": "7d6ab8d1d9e20f4b888d33519a5b337b9bbb97fe96aa58c4601033ea546a4e89",
+    "bytes": 32488,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-103-400-normal.woff",
+    "sha256": "3a6f7f6d948359e9c42e02d41bd0badca068f56221d0622de1f3fe8f58b5627f",
+    "bytes": 43148,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-103-400-normal.woff2",
+    "sha256": "de0d9bc6e0e5d3b337ca93b5189a2a235b0f74dcfa58c94f9d9a8e1ccdf2483a",
+    "bytes": 33840,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-103-600-normal.woff",
+    "sha256": "84db963c3cdc6a39e027f1176f6392b8c6f6a0c5c6c2d4410a7d474f2e29faa6",
+    "bytes": 43408,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-103-600-normal.woff2",
+    "sha256": "a2758e7cbf2bb4b615025d2268ebc451a90d5e8d495d02260569dd8ecd7f3650",
+    "bytes": 34332,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-104-400-normal.woff",
+    "sha256": "289921d1b1bfe161360ec05410dfebf403c322de2654b39114abe49ce645b3a0",
+    "bytes": 41344,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-104-400-normal.woff2",
+    "sha256": "ef41ce86145108505d0c6f229229791ca8771d088a4d1c5a37840031adb5f0c7",
+    "bytes": 32552,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-104-600-normal.woff",
+    "sha256": "427bad6fb26f65683dafdaf3533b07a4b0e02bc5614d59eaeba0c694af4106f2",
+    "bytes": 41340,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-104-600-normal.woff2",
+    "sha256": "7eb3621e47d0b0a83bc9bb6e56a45c61ffea42cf4b7d1a0736cc2ddec59f5c9b",
+    "bytes": 33096,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-105-400-normal.woff",
+    "sha256": "f650757bfb79bc36d01b84ff97e8a8b6c352b3fef6ffbcd484e8a6aace2571ca",
+    "bytes": 41892,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-105-400-normal.woff2",
+    "sha256": "0404d02207b7b072a32d9becab37de3420a8f31266978d756d0e1225301f6888",
+    "bytes": 32760,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-105-600-normal.woff",
+    "sha256": "014d7599359718db7585a23871dc55ef6dd39783318839d558de89096177a6b4",
+    "bytes": 41920,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-105-600-normal.woff2",
+    "sha256": "56d077a56755cabd929e52502c8a57e446de5de7db6ff763dcf534db2c0391f1",
+    "bytes": 33316,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-106-400-normal.woff",
+    "sha256": "2e6e423bc38c8cae66190a4b4b3091fe26c583b352145e9241ef572640a6335b",
+    "bytes": 42484,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-106-400-normal.woff2",
+    "sha256": "6f1efc3f7a993358a56290ea16b4e241d3618f2791733209ef332737d2b1ac5d",
+    "bytes": 33208,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-106-600-normal.woff",
+    "sha256": "bdf0756eca3ea4c82440487d0a6075ceb57469b0be40ca8b152a4a9a8fd6ec0e",
+    "bytes": 42412,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-106-600-normal.woff2",
+    "sha256": "ddc2e38f25a51a155872ff1ed37e1f4a5293983d58f26827586aa1d7391bcf38",
+    "bytes": 33720,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-107-400-normal.woff",
+    "sha256": "1eeb9777b470e2325c64026bb4e5f00285d3470c6cfa176cdbaf0c62db825a9e",
+    "bytes": 41180,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-107-400-normal.woff2",
+    "sha256": "6d4a79aff3792b5dd83aad78768e050c9e5cad336c6db1a6932b33db15a06664",
+    "bytes": 32380,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-107-600-normal.woff",
+    "sha256": "0f69f4d6fc5205e2baa4b6d3f9aded1ef13eea788f595a1bdbcda930c5acb6d3",
+    "bytes": 41248,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-107-600-normal.woff2",
+    "sha256": "26a58b6d00a29ee6e9eeccb9dd6a67516595ee62c6d42033e36bcaa91f11140c",
+    "bytes": 32936,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-108-400-normal.woff",
+    "sha256": "8d1fa94ac455bf5da55c3cc8d372dccdca69c23626450d72cd87d83624dac4ac",
+    "bytes": 43140,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-108-400-normal.woff2",
+    "sha256": "b1a0d456ebff097f0ef909ea1d0680a993ee018e0c8a319c77576abacdccc22c",
+    "bytes": 34144,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-108-600-normal.woff",
+    "sha256": "b1e7230159723274ecd0f083bd195826bd4a27c64c0260cd59f168da6ecf4999",
+    "bytes": 43092,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-108-600-normal.woff2",
+    "sha256": "3063ebc2d07a09ccdee824da1cf1f289e4943657e039a63ffe748d0b7bcb1ed2",
+    "bytes": 34632,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-109-400-normal.woff",
+    "sha256": "47e8aa20b42daae784a3f3cd98591582cf4482c71eed7f3c99f61805e99d2bda",
+    "bytes": 40820,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-109-400-normal.woff2",
+    "sha256": "7a7980f80559bb36dfff4ea64e9b03d926c98566fb7326181569ac1e8334b717",
+    "bytes": 32056,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-109-600-normal.woff",
+    "sha256": "ab4be8f10d9d39d10472b8413c151804147f7cad350cb47fbdb671848345b4b7",
+    "bytes": 40764,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-109-600-normal.woff2",
+    "sha256": "39ce0d771404a2ccc549cb40a1217106252843853a686ac62d7e868ed48410c1",
+    "bytes": 32432,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-110-400-normal.woff",
+    "sha256": "904466feda9010681b1e8692d7e488d97d23b06dc98c792bf292c862595c522b",
+    "bytes": 41156,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-110-400-normal.woff2",
+    "sha256": "e4d24ba921e93102c2b198187e4e0ed507aafd07e5cd6de032d5df7b76ee044b",
+    "bytes": 32676,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-110-600-normal.woff",
+    "sha256": "1e9af471cac248c79b5a4c716925369a34ccf19463a739af432f6c3ddebe13d7",
+    "bytes": 41108,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-110-600-normal.woff2",
+    "sha256": "91391e33a969f19900f4b85c686a26bbfe5b9ebc35b5f56b61cad1a1855586c9",
+    "bytes": 33184,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-111-400-normal.woff",
+    "sha256": "24c4c62692a9ce0f3b091fc13c49903df4a2bb6fcc265204fa2b18abf12738e9",
+    "bytes": 42400,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-111-400-normal.woff2",
+    "sha256": "f20ccaeab7d4244e651e6cac4296c2a26403108e70e8db5ac105b474670f1c28",
+    "bytes": 33164,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-111-600-normal.woff",
+    "sha256": "c4a562a5076ddba24ad2ceb134a8ecfa6682522af7e2a579ce64558d1516cb22",
+    "bytes": 42388,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-111-600-normal.woff2",
+    "sha256": "379800089f337287a06cebf24191cfb1353c9194a7a84bf284b4bd06810fae93",
+    "bytes": 33736,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-112-400-normal.woff",
+    "sha256": "eaad2115602d1463c4a4e4912ed0f224393a513d8860f7eca76cab2e91b1407c",
+    "bytes": 39000,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-112-400-normal.woff2",
+    "sha256": "6624c02437475caaf043f015208ef74c74e8fe8633d54ae1d5fc3a9ed38e7ea0",
+    "bytes": 30472,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-112-600-normal.woff",
+    "sha256": "07da98d6265928871854dcc231a5fceedbc8b35d1df18495d8ca428099d67c82",
+    "bytes": 39068,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-112-600-normal.woff2",
+    "sha256": "f6e1b69f0e4f498410fe8bc2db2a99f821e7967324f36d4523502bd84440901c",
+    "bytes": 30912,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-113-400-normal.woff",
+    "sha256": "714cd8ec6422319b48788a45bdfa47551fb6b24321efd81e82bcadc357d1725e",
+    "bytes": 39596,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-113-400-normal.woff2",
+    "sha256": "f2fd94429f722da169fb4b0a3a132ef5bf92d0b0aa3ae3426006446d50994c36",
+    "bytes": 30996,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-113-600-normal.woff",
+    "sha256": "dfa463018344d1f019899975e4a1e1583cf5061e130ec8d8675bddf5d1d49d1e",
+    "bytes": 39620,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-113-600-normal.woff2",
+    "sha256": "6a1dd202999af0957de74f08f72e645611e53a339dda1b3bb8e09a60e6717aca",
+    "bytes": 31480,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-114-400-normal.woff",
+    "sha256": "b33007d4d641d6230741bd011d3379a5a37e8856fade0331b86a923a8abc4eb4",
+    "bytes": 39172,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-114-400-normal.woff2",
+    "sha256": "d58ca6082d43993a894bcee72181b98527d3ef003099ba61146e3df4883a7be2",
+    "bytes": 30712,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-114-600-normal.woff",
+    "sha256": "74cb160fd27dfa877b4cd74c171ac7a8321a0616cdb7eda0848ced78b8011428",
+    "bytes": 38972,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-114-600-normal.woff2",
+    "sha256": "da71208905dfa23b06f67187e3731a2beb47a0ef5db07ec5f7fb1232340da9d1",
+    "bytes": 31232,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-115-400-normal.woff",
+    "sha256": "081ac6ff4ad4df9b297b372e442e459a0066e8f735608a7ae7ffa92dada8c088",
+    "bytes": 37772,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-115-400-normal.woff2",
+    "sha256": "d83b8291340e0024c8a573afe48b60ce22ed00d87619a7f3950b2193d19af6c9",
+    "bytes": 29968,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-115-600-normal.woff",
+    "sha256": "33c1080120637f69996f3f8cace1df5beaef0947bb643a54b03a5328a1dfdc41",
+    "bytes": 37728,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-115-600-normal.woff2",
+    "sha256": "e396464d2ae9962f109ca9f5b403215ea76d78e97bfb621159ccf850a722988a",
+    "bytes": 30368,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-116-400-normal.woff",
+    "sha256": "5ada3262547a8984d19729f403070aec3ecf8b272e61b94b3ede2db5589725b4",
+    "bytes": 35928,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-116-400-normal.woff2",
+    "sha256": "5744f8001a3e231990bd1fe87b080bdd4b4d0e658c84a3bcdb5555e57e32661a",
+    "bytes": 28120,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-116-600-normal.woff",
+    "sha256": "ff26760498266bfb6b1b724e497338598c7b73ae03cbab509a63a90a45ffa196",
+    "bytes": 35828,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-116-600-normal.woff2",
+    "sha256": "7aebf468449f0fc6453ccd363319a2f527f23844334c65c3c142761a47b202b2",
+    "bytes": 28416,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-117-400-normal.woff",
+    "sha256": "afc20ba1a2734705976c883a511d35fe762112533ddb8e0011c08cf33d9168cd",
+    "bytes": 35724,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-117-400-normal.woff2",
+    "sha256": "bf7c1b4b8b0d1110c761720b977d237d350130d29db48aea0bc5189f572dad3d",
+    "bytes": 27864,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-117-600-normal.woff",
+    "sha256": "1e924499a42b4cb4b09ca2baedcbe9c9ba5b320d7781279a134df58702716a5f",
+    "bytes": 35624,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-117-600-normal.woff2",
+    "sha256": "91eebe3ea4132ecc374a9dfa53f62afe86d7e6f469557c8e36da78d5269c7997",
+    "bytes": 28236,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-118-400-normal.woff",
+    "sha256": "6aaf2d93c0e61b43a859f9465abf6ce447db5f282bdfc6b7dc9387b18fc6cf29",
+    "bytes": 31932,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-118-400-normal.woff2",
+    "sha256": "b6be37866f0d950777a6ce2ab417aba11acc3c52786072b0d760da2a277cd248",
+    "bytes": 24720,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-118-600-normal.woff",
+    "sha256": "46de3b2f9ce024a468cb17002f728623e78b6ca3fd39930b620b08b79fc2e075",
+    "bytes": 31868,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-118-600-normal.woff2",
+    "sha256": "b5331b257f1b243ce14350392f342798681860e8322cc8bb93e442d62f5b32a6",
+    "bytes": 24940,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-119-400-normal.woff",
+    "sha256": "9f56e0cf28e38501343f830ca786f966298be21b1645c2cf0f05ba540584e7cc",
+    "bytes": 52712,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-119-400-normal.woff2",
+    "sha256": "190237c828b2ea0f076bd1a4a1e6bbd7365e56a5ef837042e35763585250b3ac",
+    "bytes": 41288,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-119-600-normal.woff",
+    "sha256": "594e603ba694f774b92dbb09de56d02a9b38888e580b0732d1648574fefbf830",
+    "bytes": 52464,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-119-600-normal.woff2",
+    "sha256": "7a82390fa8b2df6edc68d8eb1598ff70d5d545fc6fcc03f92ec68f6a418aa72f",
+    "bytes": 41472,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-21-400-normal.woff",
+    "sha256": "d42ccc347fa6879dbee5e51fb86dccc1123e1a3da7ca4189a8b106d4d263ed7e",
+    "bytes": 7568,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-21-400-normal.woff2",
+    "sha256": "7af32afb6e5bc5c002758143cfa3e780f300740ce2101f95995f90c51ca07e01",
+    "bytes": 6192,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-21-600-normal.woff",
+    "sha256": "0c9b545565daf426dbdeecd3a590f8ff0ac28f0c6b308bf630066ced5828a4f5",
+    "bytes": 7720,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-21-600-normal.woff2",
+    "sha256": "4108279370e1c02f50619a11697bb9c7347ea44108b3f2be5ab9c9f62700460a",
+    "bytes": 6292,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-22-400-normal.woff",
+    "sha256": "b10491a1a420084e935480a3faa4845bc62354dbf6dbfb5a548aef024d79f594",
+    "bytes": 43276,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-22-400-normal.woff2",
+    "sha256": "ffecbf6ea4b0e598abaa72dc50f0b1cbbde6de4b89f3400853e51cda18b2b03e",
+    "bytes": 34548,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-22-600-normal.woff",
+    "sha256": "72d2c1b61e3b119447cc01021228879d65dfb57fa44c39632e00e26ad0bb7050",
+    "bytes": 43548,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-22-600-normal.woff2",
+    "sha256": "f73adf79221f03f8d911c084aadbb55fa704b8083cb320dec01b289b494a31eb",
+    "bytes": 35092,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-23-400-normal.woff",
+    "sha256": "98794374a0a9f0c5bd9991a026a78fe6ce33c840c47b7368b43098872625b703",
+    "bytes": 38196,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-23-400-normal.woff2",
+    "sha256": "635735a1ff65f4117480fdd5539a9e82527525ed3415316ee1e4a112f55074e1",
+    "bytes": 30520,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-23-600-normal.woff",
+    "sha256": "02e98b4194455fd8e5e0a1067fd7f1c5b45fd633566ff7a37f934d967d9265ea",
+    "bytes": 38348,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-23-600-normal.woff2",
+    "sha256": "1b9b274e8e24eb6fdcbe99dd9ec66dcefc593203c018527e7d7350a53d74ead7",
+    "bytes": 31152,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-24-400-normal.woff",
+    "sha256": "194da064b3942a140725e476a3110d04c007114f6515ef35f3de67bfcc831b76",
+    "bytes": 42044,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-24-400-normal.woff2",
+    "sha256": "cd55851f977ad169931a3dadb030baf28b0ddca4ebed5db3dc768e36024f39ff",
+    "bytes": 33328,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-24-600-normal.woff",
+    "sha256": "cbf409714b61d15efceedb922b0ed487d8882cf11fbe1c4870531bc53d1ea0de",
+    "bytes": 41752,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-24-600-normal.woff2",
+    "sha256": "e57b707bce78c4a0c34f3d5b97126ddff1936a68683bd02cda71adb14635a0a7",
+    "bytes": 34004,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-25-400-normal.woff",
+    "sha256": "e2259c77a3cce50995017d1aefcc881080a759d90e7dddd027c012422c748612",
+    "bytes": 39596,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-25-400-normal.woff2",
+    "sha256": "81fa8ca5bacbda6e6d78cfcdcb43cb714b16efa4b5a080614fbf9c8188e23c19",
+    "bytes": 31216,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-25-600-normal.woff",
+    "sha256": "63db909216192576e46a7b00e4276faa2cb57fe9593086382d3b60636cfdf618",
+    "bytes": 39684,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-25-600-normal.woff2",
+    "sha256": "2c8065143d5ccf2d5eb46c623505ba8f7458aab108ae8a9c5641cf3b3bfa6012",
+    "bytes": 31680,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-26-400-normal.woff",
+    "sha256": "d9eff1fa9534fee71dc0b763da5ef0effd4bed71378ef11a01243f6e3c7b3b99",
+    "bytes": 35128,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-26-400-normal.woff2",
+    "sha256": "1ff769bd29425085aadb50467fcec022eb8b749019af66765b780e9a0f7cc969",
+    "bytes": 27220,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-26-600-normal.woff",
+    "sha256": "7f1491bf6a0f4316f6a63fc25292b41babe28c47be4c59f10faedb22b2ca74ad",
+    "bytes": 35272,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-26-600-normal.woff2",
+    "sha256": "5ca7726e5128eec9c5caab15e88fe5bf04929177a9204388bcc70055d8bfd106",
+    "bytes": 27672,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-27-400-normal.woff",
+    "sha256": "cfe03cea80da0167d5de034f923f3752b8c36fa670f0e7afb90bbeeff3105a66",
+    "bytes": 32544,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-27-400-normal.woff2",
+    "sha256": "d3b6a5f1526dde1ecab11dba6a654e0884142e6424326e461b8f4056227338f7",
+    "bytes": 25452,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-27-600-normal.woff",
+    "sha256": "1d1e0baa7f3b23721ed6befd88251b8993190e1d1e05a950cc18c9fda009629a",
+    "bytes": 32712,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-27-600-normal.woff2",
+    "sha256": "a609199787b87b24021a1166725b03e7957a777aa07f60c60029a2700315db1e",
+    "bytes": 25956,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-28-400-normal.woff",
+    "sha256": "6663bb3183b5b9a92a94688466e5defd6dd1d8cd9f05fa6652485b314d3d896e",
+    "bytes": 33136,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-28-400-normal.woff2",
+    "sha256": "013a27d2ea2d3330344f82447df2160c3075fe2cc21d45bd24ade319fb2cafde",
+    "bytes": 26456,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-28-600-normal.woff",
+    "sha256": "1dd88ec5f30ee41b3033e2af3696154f469ea52ac476fa684b16551987a02f00",
+    "bytes": 33376,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-28-600-normal.woff2",
+    "sha256": "12312e2cb51e12f47ef0e5b1f897490b08adb99d0324618734ea69fefd48ae90",
+    "bytes": 27076,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-29-400-normal.woff",
+    "sha256": "222480b3de1ecc4c1f479d0e5f5364762e188f345fb54b52dd06a4edc19ed881",
+    "bytes": 36000,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-29-400-normal.woff2",
+    "sha256": "9a15d9ca2b3a0e2d3a3decbd923aab1b28c08cbe04d6ddaa0fc486210180b0db",
+    "bytes": 28684,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-29-600-normal.woff",
+    "sha256": "abce6125da603554f730bea3a0d1e6b3d04cbf50e604777d6186639e4259b9d4",
+    "bytes": 36044,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-29-600-normal.woff2",
+    "sha256": "ca40e315b300181a3311a28a169f486ae2782ac17d03041b1214e4cf37deabbc",
+    "bytes": 29296,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-30-400-normal.woff",
+    "sha256": "a7307d9a7aa89444df54d4f280d2824a3c90ba7deda375210b63c0caff199dbd",
+    "bytes": 38712,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-30-400-normal.woff2",
+    "sha256": "564a1aaea728633fbe7aa09b5bb43d43dd9ee3bdac8a600f031f2a761edd5e99",
+    "bytes": 29164,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-30-600-normal.woff",
+    "sha256": "ef843864eba3083014fa1fcb801d9433dad569a53d938d3df5e6650e2b2f7076",
+    "bytes": 39320,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-30-600-normal.woff2",
+    "sha256": "36b317b794d3ea3ffcfb893661fffd356431d47240291e6fed7a25ca6ed9cb87",
+    "bytes": 29604,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-31-400-normal.woff",
+    "sha256": "0eac899953dd613165bca2436d144d8e18bf4516e72b4c13a853f89f710e37ee",
+    "bytes": 33372,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-31-400-normal.woff2",
+    "sha256": "18a82abced21f95dd62e67dab46c3612f4efe4acf4ba49bc699e0ef8a56a8e29",
+    "bytes": 25400,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-31-600-normal.woff",
+    "sha256": "7e327d8a0d3802d8174357313a1ad9c03a5f6bc087b262b2170efd24ab98fa2e",
+    "bytes": 33488,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-31-600-normal.woff2",
+    "sha256": "e54ab57f4b73a993fd3316bfac5f6fc321511f7b991c5f242fa1117bd14dd855",
+    "bytes": 25840,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-32-400-normal.woff",
+    "sha256": "94d6de6b643598856d782d84ec9cf3c70ab371fb5a3f15d757cec94dd406cc80",
+    "bytes": 34224,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-32-400-normal.woff2",
+    "sha256": "5ce8d305e655b53de2b9b59c63c848775150789c8e983db68caeab86740c2e1a",
+    "bytes": 27604,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-32-600-normal.woff",
+    "sha256": "2ba83416063bb66030f402796185c5d3eebe2d7f41a1680f082c03e8e2bed8e1",
+    "bytes": 34608,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-32-600-normal.woff2",
+    "sha256": "45ff70df80d9e430cf9bb6741bfe94bd0ea03a1a3238f543ef36756493e195ec",
+    "bytes": 28144,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-33-400-normal.woff",
+    "sha256": "e1119e50b19ddcb73f40b9e546bd7c0628838964965621368ad41dea46852ba0",
+    "bytes": 32968,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-33-400-normal.woff2",
+    "sha256": "bb8182f884d9a84289713b2d7c15115c36ee0a9be4f695596ecd6c9670b22d44",
+    "bytes": 25440,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-33-600-normal.woff",
+    "sha256": "b0bc3f9694b1708d030246fef82f7dc8b22e7f44d55eb101d2a29d4c5184ee57",
+    "bytes": 32972,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-33-600-normal.woff2",
+    "sha256": "15650a460977ef93c4eba83ca33f8d5333686a24d0c51fdfdbe2fc2d8f2fce8f",
+    "bytes": 26016,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-34-400-normal.woff",
+    "sha256": "dee3c485d98ef4c270aacdd993b7c025634c39b40d8df9a8a242757d9d9f3e33",
+    "bytes": 32800,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-34-400-normal.woff2",
+    "sha256": "0b08cfec4dfe8f751b4b2e7dd30fb52983754840891fa5c0fcf625214184d11f",
+    "bytes": 25288,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-34-600-normal.woff",
+    "sha256": "cc5fa176b50adc48d89a52d15b4bb1b10ea3d0df423a7c3a1e7378490ecd78cf",
+    "bytes": 32952,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-34-600-normal.woff2",
+    "sha256": "a560aefa2634d538686d6fbb0f23704e2932e20ebbca3935ce9a8c4c57247240",
+    "bytes": 25636,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-35-400-normal.woff",
+    "sha256": "b277a089e0bbeec4f9643a4a8191edaeb3e5b5889e0d254476cc7c6f166521af",
+    "bytes": 33384,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-35-400-normal.woff2",
+    "sha256": "65e8c613cbad5188cf0e9a9bb9efa8f0a6c1cf6d3c479dd34bf557d3da28ed7b",
+    "bytes": 26692,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-35-600-normal.woff",
+    "sha256": "81aa03001b672452dda6f767a836e248d8bc9dee865941f7cb98eab6e20669f7",
+    "bytes": 33396,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-35-600-normal.woff2",
+    "sha256": "385361ec254fddaad66a183844e6af247cfe2279eb2ee673da7be5a30febaca8",
+    "bytes": 27176,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-36-400-normal.woff",
+    "sha256": "88958bf63bd8b019108a352681412097974e04d3437b8f9065fd481ccaa7f6c4",
+    "bytes": 29772,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-36-400-normal.woff2",
+    "sha256": "b0b1daf10780e6c6e4ee7c9c63dda6e9abc979310f28ff6c55a97329927bce95",
+    "bytes": 22652,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-36-600-normal.woff",
+    "sha256": "66eac85bf48a2b0e678753c6bcaa0546f3f8737ed82efdac495a727b2a91a614",
+    "bytes": 29664,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-36-600-normal.woff2",
+    "sha256": "9a68071979e5ea83c2947b2cbed00768f6ca97bcd3b814a641a82c56f0b6937a",
+    "bytes": 22948,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-37-400-normal.woff",
+    "sha256": "fd71e747d06aac58cea2184c91473e6f90cb059ae16e07c812fcd5fd60d88752",
+    "bytes": 35944,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-37-400-normal.woff2",
+    "sha256": "9c4e7b148a74989bbd9ccb983cd34d8d37377245d1b091ca246ea9592badfcd8",
+    "bytes": 28156,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-37-600-normal.woff",
+    "sha256": "bfc0f4072092fcce45c3625f62baf12e35bb5af6f1253c1420d5e594aab471cb",
+    "bytes": 35644,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-37-600-normal.woff2",
+    "sha256": "06feda6f5be0e00e75c0cd42fa3eb845916a42234ee23427b08cac2b6eb6d542",
+    "bytes": 28644,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-38-400-normal.woff",
+    "sha256": "9e7d14503646048c85b1e94eafb650ff8e973488cf34f898214c8e99b3177700",
+    "bytes": 37824,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-38-400-normal.woff2",
+    "sha256": "f588ebfd432fb8574d7111c3115170717c3ae0785b88688251e92aa8d6a2ca23",
+    "bytes": 28944,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-38-600-normal.woff",
+    "sha256": "2c67d62195f11f77a3147cf6424a65cb2cac0c2694fc3b723fbcabaa35e1cf44",
+    "bytes": 37696,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-38-600-normal.woff2",
+    "sha256": "2cd5628e408d405aebbce8d151fba003734e1fb3536e685fc5ae4b6882b01da7",
+    "bytes": 29588,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-39-400-normal.woff",
+    "sha256": "39bcfd6b095964dec651d25894ab64654b01be4f3f825e9e03d4b47555b1d109",
+    "bytes": 35064,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-39-400-normal.woff2",
+    "sha256": "a678dc9faf6674688fe4f74866bddc4155f0091ac4058e112074a619fc08004c",
+    "bytes": 27700,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-39-600-normal.woff",
+    "sha256": "03fe8a7254f8e3a3f8ced5516e398faf6f97aa973444cb9ff810ca568afa30aa",
+    "bytes": 35000,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-39-600-normal.woff2",
+    "sha256": "19f388f4de23543eea9d06d0673fe50380d20f8d20b4ccada2d91172c7353fcb",
+    "bytes": 28140,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-4-400-normal.woff",
+    "sha256": "0995f5cabc4a006ea721b6f06b8113ba7e6f749f4a44271d37f98fa4fb9809d3",
+    "bytes": 3112,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-4-400-normal.woff2",
+    "sha256": "ed2fe4daa3dde221f92e9d6ce967101b850bdff9d17065689070dc2650040518",
+    "bytes": 2300,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-4-600-normal.woff",
+    "sha256": "113c5b2794debc605e673ff551b12ba2e5f9d51de4725bbf4104d88e4798d16a",
+    "bytes": 3116,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-4-600-normal.woff2",
+    "sha256": "acbe9775282c0725e48ad131cf1f2a8cb69508f7305e67b51ac82ab13c37023e",
+    "bytes": 2320,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-40-400-normal.woff",
+    "sha256": "db64ca94ba899aec041b8101363fb6ebf0798d8afdd07a2633a76749b92c51f7",
+    "bytes": 31872,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-40-400-normal.woff2",
+    "sha256": "d1f0c930082af4cae9a7889dd2da82b43fbb58a3b5ebfaff7b8d3e40e8d2cff0",
+    "bytes": 24704,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-40-600-normal.woff",
+    "sha256": "bad01ecd1db459373e0cfcca745e3a5ff76da85555a9ec571d3fc1cc45e5de84",
+    "bytes": 31928,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-40-600-normal.woff2",
+    "sha256": "3307eb8a786bd06d26434fa4c143a66450067e7eb165779f105b81734e7a7615",
+    "bytes": 25124,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-41-400-normal.woff",
+    "sha256": "e813bb13920031858f65a451c62f35d86e9fcd4655135baee19b5d276016d843",
+    "bytes": 25028,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-41-400-normal.woff2",
+    "sha256": "22b84cdfc5b47dcbf764478369109f9ec1a8c66d7963cf30dfc57de3abd64f42",
+    "bytes": 19412,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-41-600-normal.woff",
+    "sha256": "43b11ca245173987c44e8202f2ce46c6b7ac1d0c1e2f9c279b0621e581ab15eb",
+    "bytes": 25184,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-41-600-normal.woff2",
+    "sha256": "327829b4679874fad0cafd92e64e1b094e7f401ffdaa7ee2fb4ce7e080301906",
+    "bytes": 19772,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-42-400-normal.woff",
+    "sha256": "e8447a724c3b48b5dfaaa4744058dacd8a332d59bb1033a4186d75069ce7fb3d",
+    "bytes": 30692,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-42-400-normal.woff2",
+    "sha256": "525eef80cf1b1fe2659167daa83bb853f83b643c5828f4cafb6d60aeb554ef6d",
+    "bytes": 24460,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-42-600-normal.woff",
+    "sha256": "73311e63e0c7a82c09280aa7cfaf51ceee8eacf3270cf4ccd95c902955f306ac",
+    "bytes": 30944,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-42-600-normal.woff2",
+    "sha256": "378ff35f88ea48afab7438fef978721831239396775cf6d9595e4a585f9d8588",
+    "bytes": 24804,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-43-400-normal.woff",
+    "sha256": "e6facd0aeb61124a4cb9295c9133c72de6f553257fcfd225a828bb5c9f9bb8a8",
+    "bytes": 32124,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-43-400-normal.woff2",
+    "sha256": "4326187b4e1370d12785707338cd16ba06eb7fc3bf866a7b8cb4087f71d666bd",
+    "bytes": 24952,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-43-600-normal.woff",
+    "sha256": "c9c75c9971fdc155568b2ef9357f398846f49de6729c1c43600ecead0d7bc2b3",
+    "bytes": 32268,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-43-600-normal.woff2",
+    "sha256": "080773aa4820d83a5d8db9670028c993db87311954c0f2b87f35ff7ae91f1860",
+    "bytes": 25424,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-44-400-normal.woff",
+    "sha256": "3d4874d5474e3361261d9c5b2336d7692870be9807150552f38d692370998ac3",
+    "bytes": 36284,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-44-400-normal.woff2",
+    "sha256": "e0812601cf62c3ed71199189e20378c00dc567a12cbe05377098c2b9de903bd3",
+    "bytes": 28748,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-44-600-normal.woff",
+    "sha256": "f4526bbcce0df6ab6a7d385982d79cd3a209fbdc4db44989fc073a1e5b074822",
+    "bytes": 36344,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-44-600-normal.woff2",
+    "sha256": "d2aee9d6c8ca9f07a5ff3198d433b416eedde67e08f97e363516337d1b34f19d",
+    "bytes": 29216,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-45-400-normal.woff",
+    "sha256": "97241dcf04979195a26b8e6af79da619cbd8fe5b76111058c5021fe217fe8055",
+    "bytes": 45752,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-45-400-normal.woff2",
+    "sha256": "b7f880a03391f72ea94333e2a4506d3ff6d651de4668ad8e92ceaefbba5264de",
+    "bytes": 36840,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-45-600-normal.woff",
+    "sha256": "61522b2afd825a74b5aa4ad240a785ce7260babc629580f1b9becc8c5079c2cc",
+    "bytes": 46504,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-45-600-normal.woff2",
+    "sha256": "ee965a41509d6996b14ba3687335d09eb7200246772308aced4cb3df2251900f",
+    "bytes": 38252,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-46-400-normal.woff",
+    "sha256": "d572e9529bdc37670b8aeeebe7a3584b9332a04f477c782e95ddf553051ab7ec",
+    "bytes": 39992,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-46-400-normal.woff2",
+    "sha256": "332fc0db2f10a3fdce94edf5caf5632d94f95ce6cd3715e1ee8d032a1e4d5669",
+    "bytes": 32192,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-46-600-normal.woff",
+    "sha256": "a6453dc092b60e72707bcb160a01a63a7992914e61f838583b087ec778215f3c",
+    "bytes": 40564,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-46-600-normal.woff2",
+    "sha256": "1b5153b696d8b35ba1d9e3327641cb25a5139e5e81e9d2dbd12a85cb27a86f3b",
+    "bytes": 33404,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-47-400-normal.woff",
+    "sha256": "cc6c03cb5b4fb44360b66edcdd173582d88e487cf54a83c9c39abf1d77c4aca9",
+    "bytes": 39104,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-47-400-normal.woff2",
+    "sha256": "31087e9afdd6b4d9a3b87054e06d9e1a357c5c7622f53d06a873dcbe89cab1ed",
+    "bytes": 29776,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-47-600-normal.woff",
+    "sha256": "df2a372bb9a056bc8e43d6754e3875851b320acca6b7c8631bd375d9c3b5498c",
+    "bytes": 39312,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-47-600-normal.woff2",
+    "sha256": "38d145c3bd6c67b4c566b803a42733bcd42de2975e8cf86efd4ad54b32156aa5",
+    "bytes": 30416,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-48-400-normal.woff",
+    "sha256": "89908489e152d5018a7d9ad0eb8d53266525051834705c91c483de0d47e64ccf",
+    "bytes": 35008,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-48-400-normal.woff2",
+    "sha256": "567c513b94ef3e986099ba0abb2ce6cd148d1a7725f86e5f1ba941fc45b829cd",
+    "bytes": 26892,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-48-600-normal.woff",
+    "sha256": "d53e3091e2982b3f0aa6222330bf31beeb5e57a9834f5813c080c7f6473a3d4b",
+    "bytes": 35188,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-48-600-normal.woff2",
+    "sha256": "d6c7232ef5d55cc1e55ab156165785e3e9659a660dd36113d7dd4bc9335fb460",
+    "bytes": 27276,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-49-400-normal.woff",
+    "sha256": "e07ba05dbe1916d67f70c087369477cbfdb3129b1f5c1492ef3a965cb3660014",
+    "bytes": 35768,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-49-400-normal.woff2",
+    "sha256": "5d33063a54f945d0d985e9da540f5abe2b6ad3a968da3367b872b5cd7efc2fc4",
+    "bytes": 28084,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-49-600-normal.woff",
+    "sha256": "05eec3a88b4b9159f21129da870f9061ce8d20093d5b83220077646d27de9bf6",
+    "bytes": 35876,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-49-600-normal.woff2",
+    "sha256": "3431480f91fc2bb3ea474350b6dd97ba9a77960d284b218d81dc77be943d32d1",
+    "bytes": 28660,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-5-400-normal.woff",
+    "sha256": "88eb80392e64c550bca422601212ac06bf5d692efc568bd87e045becec6bd272",
+    "bytes": 13376,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-5-400-normal.woff2",
+    "sha256": "c875a169469fae4dfab49cb63ae1e5ceab706ea083b44a27ae89da93bb021c1d",
+    "bytes": 10904,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-5-600-normal.woff",
+    "sha256": "32f893398b3622cf77623401a6255b7bd11c731dc1b2c2eec47df8dce6874d60",
+    "bytes": 13372,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-5-600-normal.woff2",
+    "sha256": "d440540b8a29fee23482fb599349c67065f0bbdc2a5329ab24410bd80c9b975e",
+    "bytes": 10972,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-50-400-normal.woff",
+    "sha256": "3d2797a1a2e5256a8cf7f92af76b1b0f07ae7fc6923eaf2aca5de9da37f5b4d5",
+    "bytes": 32220,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-50-400-normal.woff2",
+    "sha256": "28208e128052edc267e874112fd7dd5f15f4fead0e2d93300a7421b8ffebba0a",
+    "bytes": 24788,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-50-600-normal.woff",
+    "sha256": "800540cdc587309f7c809b37b85b8ba99748368d0f983debdd7ae2c2a4975a06",
+    "bytes": 32012,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-50-600-normal.woff2",
+    "sha256": "f68b06977542699e8ddb8fafa718580315516b6dd43093878449bd72b93e87cc",
+    "bytes": 25192,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-51-400-normal.woff",
+    "sha256": "e174ece7c6f38681728713ef7e3097273c19702fc34df3c6df45a33e0fdc0541",
+    "bytes": 28556,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-51-400-normal.woff2",
+    "sha256": "566e608c80f851b7d830c2c85770790b7d6b3d4c532501a7c7d3edd99613fc3a",
+    "bytes": 22496,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-51-600-normal.woff",
+    "sha256": "47e22dac948b5ed54ce8fccf85f25dc0972335814cda6eb29cdff144d8fac054",
+    "bytes": 28420,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-51-600-normal.woff2",
+    "sha256": "e42cbe1e217e5065e2ac46e1e4e47ac1ef98edb113ad5a6fd35cd1264daf8c59",
+    "bytes": 22872,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-52-400-normal.woff",
+    "sha256": "de7e3ee47c956bbfc7be993709c79d6860b295110e77cac12f1b1477cc9e486a",
+    "bytes": 35204,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-52-400-normal.woff2",
+    "sha256": "576dd5abc648c087d61168a9df804b6f94e3c8dcca32a52d3b1596326b8cd70c",
+    "bytes": 27404,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-52-600-normal.woff",
+    "sha256": "58a741a487f53bd23f9c5513a4804d4f1c0e6ea05720b84161735d41068592c8",
+    "bytes": 35444,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-52-600-normal.woff2",
+    "sha256": "3ddbd6a633ea9172650b492c1fd15b5e1b24ed86d9e28eafb529a18f057d57de",
+    "bytes": 27876,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-53-400-normal.woff",
+    "sha256": "2908232c936a45134ad2079e8840b6666ed2aa48c137f118b22c18c813a8ff4e",
+    "bytes": 30108,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-53-400-normal.woff2",
+    "sha256": "8e8000bc63050f471435f43951bcf049974c9e771bd999c482ddd36fb9b26516",
+    "bytes": 23076,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-53-600-normal.woff",
+    "sha256": "0d33648a14cb46210f4e9d502eb5387067905313f90392dc5f576d0eb87c2820",
+    "bytes": 30100,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-53-600-normal.woff2",
+    "sha256": "edf5a55650c85cd3370c90f562a5b062a30541d0cc2101b98208cb47c2901c11",
+    "bytes": 23524,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-54-400-normal.woff",
+    "sha256": "9e137aec43d045bca2113fb81b87fa6c7af6a9ae513309f1fb5d1da7346ed498",
+    "bytes": 34956,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-54-400-normal.woff2",
+    "sha256": "153bd830dcd1700d3ddba1bf030cc7886b336fbfc9182e0991263386578ad989",
+    "bytes": 27744,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-54-600-normal.woff",
+    "sha256": "76ab2fe966322038aecad26252612e16a69589fdb8d83bc2ebfb4d450500d6b7",
+    "bytes": 34852,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-54-600-normal.woff2",
+    "sha256": "d8d2b5932c43cb47f63eb0d9a3cbd4f743273163df8673686963eaaf64549d18",
+    "bytes": 28324,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-55-400-normal.woff",
+    "sha256": "cd8beac96e6b0728da5abe25aa3cfbdbe96824b8ff70ba1e0cc9063e0eac2617",
+    "bytes": 33704,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-55-400-normal.woff2",
+    "sha256": "382d83fc17c0ff8051267bdb25518b8579149186658b4980ae0a591a46dae8c8",
+    "bytes": 25820,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-55-600-normal.woff",
+    "sha256": "3abd78140d9ea6b5a47622ab2b053ba165cbf3490030c272995fc58810e92939",
+    "bytes": 33424,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-55-600-normal.woff2",
+    "sha256": "ef2448f377dad52908b1579ef0fb233b35e8a134567ad4636ed60a131f09f88f",
+    "bytes": 26176,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-56-400-normal.woff",
+    "sha256": "a291d01a455bc99f38cb27d59b67d4d753b79f4c92bf0fad80dda1f501646e22",
+    "bytes": 37488,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-56-400-normal.woff2",
+    "sha256": "81709277ab70ec4442552c26ec484ac4fea9825608e35937d46918853718de2f",
+    "bytes": 28548,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-56-600-normal.woff",
+    "sha256": "a47ca0b8917ffa67581dfe866f81d8ab71dbbb395c269e7d0fd4fc3697e28d8f",
+    "bytes": 37468,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-56-600-normal.woff2",
+    "sha256": "22fb2169ffded19acc0202d1491e5744df31388fc9e7c9791515b979bf79cc2b",
+    "bytes": 29064,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-57-400-normal.woff",
+    "sha256": "0ddf6bf84863b27df486054cff5ce0a4fdd16db6df458141b35e5c5d78b88150",
+    "bytes": 37892,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-57-400-normal.woff2",
+    "sha256": "ad1b3a57ac21ed3f8c95b16a229bc76cced8e49a7ccb46213cdaf9f5f2456eb2",
+    "bytes": 29636,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-57-600-normal.woff",
+    "sha256": "060774ed6be84692dfd3e431807823bb957baecfa187084ae8363ce47d5e6844",
+    "bytes": 38476,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-57-600-normal.woff2",
+    "sha256": "503e198ec3028c87e7f7cca7a78e0869073981c523ae50065eb314f89a7fb31a",
+    "bytes": 30152,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-58-400-normal.woff",
+    "sha256": "3fba7e19e3d212596d6af14f96e7e4985d4d471c12df70bd52b0c8e4446328ad",
+    "bytes": 39076,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-58-400-normal.woff2",
+    "sha256": "0d53976e733bdac4cb5d82d3c81541c62e81316d5168ef9e32c13d3cb7350e88",
+    "bytes": 30384,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-58-600-normal.woff",
+    "sha256": "b40880d15241fbda0234142a0e798cf70b98387118fa5af21919f8380d5ce69f",
+    "bytes": 39216,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-58-600-normal.woff2",
+    "sha256": "89605c9184a0498a0c8ed0a6d2224261bd092854c486d4792354d52fbb21f4b3",
+    "bytes": 31224,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-59-400-normal.woff",
+    "sha256": "16896ae260f00402712507a2233724a2828b7e4a25ee4230dbfb2a4733148c9b",
+    "bytes": 32540,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-59-400-normal.woff2",
+    "sha256": "f1201d94e3bc475a5ed2ae50c1d8567612ceb726845671e3b6881dcbf58e7b11",
+    "bytes": 25128,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-59-600-normal.woff",
+    "sha256": "b773c7c80f0bd23824c6ce3cd6cc9f29d2d0adf0489864e7bc3ed3e0f5611463",
+    "bytes": 32840,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-59-600-normal.woff2",
+    "sha256": "ea866e78eddb9ef15e5032934c133e56bfe25e8dfe38d29dbba63a3dfea8feca",
+    "bytes": 25792,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-6-400-normal.woff",
+    "sha256": "5b367d42fc316a8c1963cbdbed4b35d8d1f66762a0d3082f2a8a1bc11e7bfde0",
+    "bytes": 8624,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-6-400-normal.woff2",
+    "sha256": "eb89d4458482416aa7cdc5bf2375ba2dadb558cc47743c248f1a9f59d82768aa",
+    "bytes": 6468,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-6-600-normal.woff",
+    "sha256": "6a26d909aa07aff1bde899c2854a150c03a708a92623f8133de80005090d9083",
+    "bytes": 8608,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-6-600-normal.woff2",
+    "sha256": "c2d8e0d4d76e61e57757ac5dd9ddf5cc255ccf2e66bdd6571f0dc4e401240552",
+    "bytes": 6516,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-60-400-normal.woff",
+    "sha256": "8ad3c85bbbb2ca7283f87dc772e3f3f89d55c5ebf2180ada01da4256f98a8d55",
+    "bytes": 28448,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-60-400-normal.woff2",
+    "sha256": "267b7c3abf1331eac941f589248b677b1946adcb5ce0a393dc5ae4bc50e019e2",
+    "bytes": 22240,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-60-600-normal.woff",
+    "sha256": "574b958684e81a8f29cbbf43be7cb4429d61b205b097557293b91b7e65df6794",
+    "bytes": 28460,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-60-600-normal.woff2",
+    "sha256": "6ee5c146782f3609a1558b4811a02528d51a972c6f18b48cd630b37d218d3f81",
+    "bytes": 22772,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-61-400-normal.woff",
+    "sha256": "d638245d59162daf8933393d5c6a66df40789c719533916ab6c674c45b8e9aa2",
+    "bytes": 30636,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-61-400-normal.woff2",
+    "sha256": "221fde0edcb420c15479b4f8a0f9ce44f2c18daed7e40edeac54add5dc46df6d",
+    "bytes": 24176,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-61-600-normal.woff",
+    "sha256": "9a4e534bcb3e2519b4d6f0379f57a0504e1a0a4faa960e549d784c9dbc41ad53",
+    "bytes": 30772,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-61-600-normal.woff2",
+    "sha256": "a88dac0a8cb784b11fbc213e65b692668f88c9b9a478d4ad4cb68e4fc5aaa220",
+    "bytes": 24660,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-62-400-normal.woff",
+    "sha256": "f7428e67e8964d83f71c43a7a2f46400cb7dd2f2b4f40ac80392bf0c5302576a",
+    "bytes": 39392,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-62-400-normal.woff2",
+    "sha256": "eb1ed88c9e62baa9c53869812906422ad7ff122f2c85f996d7ff60ddfe06d903",
+    "bytes": 31148,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-62-600-normal.woff",
+    "sha256": "753d1350dad06b06707f201af28f0f3ddd4687cea26a468920f8ffe16609737e",
+    "bytes": 39588,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-62-600-normal.woff2",
+    "sha256": "98430e75af57c1975818bf37382cb21d4b425e9e5fb27ec1bb382fb86aecf477",
+    "bytes": 31652,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-63-400-normal.woff",
+    "sha256": "683a27d9606b05b7da1749ca7a323b6c831e220bd0242174cb1e4e32b9841905",
+    "bytes": 33412,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-63-400-normal.woff2",
+    "sha256": "fdf4cb489da2742f81f03387b786670b060778faa7cc94e5d31449c7abedf32c",
+    "bytes": 25952,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-63-600-normal.woff",
+    "sha256": "c06624c04a4f730d9811b522eaa2b9333f2cf3ae694e43b73b8e7329b94a448e",
+    "bytes": 33500,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-63-600-normal.woff2",
+    "sha256": "d49afc9f6d0c9f08334983450086f6a62f2eb65bb459fee0909d7b19bb1d4bcc",
+    "bytes": 26272,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-64-400-normal.woff",
+    "sha256": "856ed6e995c28a89b663c97d29eee0fd0b3151a1e3e41f15573257a9dc710ead",
+    "bytes": 27768,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-64-400-normal.woff2",
+    "sha256": "6d7dab9e4d58643b61723efa00f66308298307b4f56009207d496ffe1c8f4480",
+    "bytes": 21888,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-64-600-normal.woff",
+    "sha256": "a4669269d7f96236d9cee0eea7a15e6487636d43d78dd0084943080858bcd5f8",
+    "bytes": 27856,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-64-600-normal.woff2",
+    "sha256": "e789ce8bf883e1b7d611df3a734cc9eb046127eda8c401014392c1946db1aaea",
+    "bytes": 22124,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-65-400-normal.woff",
+    "sha256": "49d0f83f2e36a918b5648e1a62be118247b22f2054ad18c995e7af9becc9904c",
+    "bytes": 28560,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-65-400-normal.woff2",
+    "sha256": "b44bb9883d57447817aaba196fafd75f67c1e2d2cbd3ec36d98690e798e94889",
+    "bytes": 22376,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-65-600-normal.woff",
+    "sha256": "6449e17dacd083d4fc91a06d5277890324543657d197286f18ff23aadd3a98d9",
+    "bytes": 28608,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-65-600-normal.woff2",
+    "sha256": "f4f6ffe8991500441c0d55ad4bb269b76df1966c08e1ba8888c165b3ba09c0e2",
+    "bytes": 22628,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-66-400-normal.woff",
+    "sha256": "364b7099186f0e379280aad4243e2c7cafb8585d09f8abacb51f17cbc48fc3e6",
+    "bytes": 35904,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-66-400-normal.woff2",
+    "sha256": "63cce03a9ad8fada17258b8bb52b871d53e50bcffb4610fe371840da7866680c",
+    "bytes": 27956,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-66-600-normal.woff",
+    "sha256": "96bb346df1ed6ab78fcadcf25bc39b685c35e179fafa0ffa080c1561f6d4abd1",
+    "bytes": 35924,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-66-600-normal.woff2",
+    "sha256": "3e3969f83a6872aadbda03053f1a67f1f693c9b5e571591e3a386f9afc309dc4",
+    "bytes": 28304,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-67-400-normal.woff",
+    "sha256": "d7bd5e1fd2e9a5ff5ccec19bfff86f410d704c3b5d82d3ff625ee7c4175509e5",
+    "bytes": 36248,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-67-400-normal.woff2",
+    "sha256": "cb12154112692c66db52f2e4fdfaa4fc113ac0b9570adaec4ee4c55cc2fbdb76",
+    "bytes": 28048,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-67-600-normal.woff",
+    "sha256": "fbcfda708c4691e29d4aa63b814ca83fd3a535f308b11182b1b8111ebf014bf5",
+    "bytes": 36040,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-67-600-normal.woff2",
+    "sha256": "988cbacb4c28a3e9ce939c23e766f24fd9e0c0d70d3e0f4759b008bf16651721",
+    "bytes": 28476,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-68-400-normal.woff",
+    "sha256": "46e04f8f650d633dbb4029062d488ce7344db4567b394148b313a91166c25fc3",
+    "bytes": 29196,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-68-400-normal.woff2",
+    "sha256": "e0044aa161cc01383067bcce0fa368638d1ed083753fdc5db0082e96ae3631d2",
+    "bytes": 22240,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-68-600-normal.woff",
+    "sha256": "9214ed7038e22d1e490268bc5926c27e6006898717c6198db2ba3f71580615ec",
+    "bytes": 29276,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-68-600-normal.woff2",
+    "sha256": "724b65e7acddedfd0433e8154303b1c2083ba7d5bfabb27e0eb53b1bce5ee3f6",
+    "bytes": 22500,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-69-400-normal.woff",
+    "sha256": "e3189f5b5c81175b2172fff435965ada22b215c14583edfd495cbcff1a3e5894",
+    "bytes": 38460,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-69-400-normal.woff2",
+    "sha256": "fdd9aae52145fe71b3a2ecda23f7f2ef8460dc817cca0419b2b7c97e90e00dd7",
+    "bytes": 29556,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-69-600-normal.woff",
+    "sha256": "2ad99b63753c03e9d37e75515491a64cd0bef50bdef4bda5ae87b2cb5bf05f2e",
+    "bytes": 38840,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-69-600-normal.woff2",
+    "sha256": "36f27cca605686df2c8b86848802fc4516392d5b40521373819f7162fe8bbc22",
+    "bytes": 30296,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-70-400-normal.woff",
+    "sha256": "0fe29c1cea5770285f9e491dc14372e198ff3aef938220c45ca7a428d99ceb04",
+    "bytes": 28536,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-70-400-normal.woff2",
+    "sha256": "57884ef84983279320e75440b40c8ffc7f94d4ae2aa904f453a594baebb4dbf3",
+    "bytes": 22440,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-70-600-normal.woff",
+    "sha256": "f0b213affabf8d8c1401afee4acf378026c20607965c05a93f4b61bb0eb44273",
+    "bytes": 28964,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-70-600-normal.woff2",
+    "sha256": "100ba7168e0e9fc2367522c20d0708fb278989c8f827a63f3ff5f53305f64621",
+    "bytes": 22972,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-71-400-normal.woff",
+    "sha256": "a2b759104cd0eb4c4a67268afffe36c6ad4a8dd647506aad9507769e0743f798",
+    "bytes": 32504,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-71-400-normal.woff2",
+    "sha256": "b01eb9c4a36dadd01aae9fd0679e108144a35c83d8b571b9ca7a5f3ddb8663e3",
+    "bytes": 25544,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-71-600-normal.woff",
+    "sha256": "c86809e3eed75b8fba1d6ce2c7da209da08eb5478b63ba992ab3fde8072c3e3f",
+    "bytes": 32376,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-71-600-normal.woff2",
+    "sha256": "75259fee25252b517f04891b99b33c0d9a849762f58ac358919c0e22b11da208",
+    "bytes": 25780,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-72-400-normal.woff",
+    "sha256": "36593b0f1e3e8fb063f7e8531adf542b06f7c6595cae53360b97c0495e517d0e",
+    "bytes": 31088,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-72-400-normal.woff2",
+    "sha256": "b7eaf718308abdb9cde6e0796981df5d66e3b6ac09ef72e0fe7cdd72226afb3b",
+    "bytes": 25012,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-72-600-normal.woff",
+    "sha256": "aa2a3bfae5ca1e3bab647da0d4899c02ca4bd7f394ae6c712c7e4844d3e7d0cd",
+    "bytes": 31348,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-72-600-normal.woff2",
+    "sha256": "501e79d7480403f77e407ca6168b25df48a00189eb87df26d88c90e3ef88290d",
+    "bytes": 25372,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-73-400-normal.woff",
+    "sha256": "66b6be4aae3ca5517a04028b812a1ff90b165a62bc767dff0fd7f2853cd0745b",
+    "bytes": 26552,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-73-400-normal.woff2",
+    "sha256": "c0e3c0dc21700173d1f63678e8a4e675736242344abe371a528fc3448173dbb7",
+    "bytes": 20844,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-73-600-normal.woff",
+    "sha256": "4e8a771f40e6bfcf07c07eae47367c5b96eb9ed37f761d35e150715b0c501e7c",
+    "bytes": 26532,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-73-600-normal.woff2",
+    "sha256": "808c2a9010cee17b4cca2f83e4f2b81ab43846841aebd799c62fc59646991ee0",
+    "bytes": 21148,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-74-400-normal.woff",
+    "sha256": "79b4721f7dc1da0d3eb383965eb825610f13446b4b07a2304c11f41d8312f04c",
+    "bytes": 39712,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-74-400-normal.woff2",
+    "sha256": "9bd05189a915eecfeca3a047920951efc34fe4ff9acf807a953cc82424da6147",
+    "bytes": 30036,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-74-600-normal.woff",
+    "sha256": "1fb0075d98d197e1088055d1bd7ef7500472208389aef612702df24ab989bfe1",
+    "bytes": 39612,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-74-600-normal.woff2",
+    "sha256": "0f6a4955a42af4b8f33f5b7c0b01564fe9c274afb9f2ed87637f87bb9f2dac33",
+    "bytes": 30716,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-75-400-normal.woff",
+    "sha256": "c8d84eeb43e5e7dff1aa171ec436c9d3528b1a903367257c2355533048aab754",
+    "bytes": 33628,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-75-400-normal.woff2",
+    "sha256": "d4bfa9e6b4acd3c4840bc74ac8846927f9b360b19523b0de39d878a1378a534e",
+    "bytes": 23668,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-75-600-normal.woff",
+    "sha256": "de8efa5da982e295326ea3d850673b6ab99ff3cb30d0a52ca099e5430c98b40f",
+    "bytes": 33572,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-75-600-normal.woff2",
+    "sha256": "bb61d597b946cae5bc1175c7abd1172b6441e9ecc70826c14d0c255c39c3fceb",
+    "bytes": 24180,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-76-400-normal.woff",
+    "sha256": "ce39c05fa929070d4a797e549ce3fac52f0549413d76fcc1d8e8d3ba01bb4dc6",
+    "bytes": 33604,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-76-400-normal.woff2",
+    "sha256": "a8d0560ff9e88417d0e079864a47c6039dae7986cbbe85415bd8a78e4e3820ae",
+    "bytes": 25788,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-76-600-normal.woff",
+    "sha256": "593b49eabf1707c8c6f45d98cfae9afdfd0260aa4186a0281c366faaa3ca367f",
+    "bytes": 33424,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-76-600-normal.woff2",
+    "sha256": "f1ffbf6eec0fd07e046730483704ee99cfedb41ff0f342925859ccc3a6feb1b7",
+    "bytes": 26244,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-77-400-normal.woff",
+    "sha256": "4c61ec91f1ddfc2ef17e2e4c9e8ad7bb2df8a59785a3ceda0bad486781ca31cb",
+    "bytes": 25632,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-77-400-normal.woff2",
+    "sha256": "e7827744951cb54a9fcae95b0ecd71618f51dd292ada890c590d5ad78782a890",
+    "bytes": 19708,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-77-600-normal.woff",
+    "sha256": "eafd3d143b233736127fe6a5ecbd6f281d0ffc43ab495daac4a7a17ad13f3a29",
+    "bytes": 25540,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-77-600-normal.woff2",
+    "sha256": "d95260536abe0af379ba7accafdabffa5d35492f7f18d7eff9bb82bafb8d4f74",
+    "bytes": 20040,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-78-400-normal.woff",
+    "sha256": "dcddf2b82870e89f7d0b9002bc4f7e473085774f1775744baaeb4ae73203284c",
+    "bytes": 33404,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-78-400-normal.woff2",
+    "sha256": "5888533210e5b7e327e9187d67d6f87333bf8921bb25d9a1960a445bcf9a767a",
+    "bytes": 26120,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-78-600-normal.woff",
+    "sha256": "5263eaa22ee0780efd9ae4e391abdd4c3839eb9ad4f5bfe67a1e44ccf6ee1575",
+    "bytes": 33608,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-78-600-normal.woff2",
+    "sha256": "b58c033d48703b3626a33702f8dac97287a3bb96c27f6fbb33fd54e2305e0648",
+    "bytes": 26572,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-79-400-normal.woff",
+    "sha256": "9973cf7ded6c9311bbefeb2fa4d5b6634eebb5dee9e5a7a1e9206f2e3f3236a2",
+    "bytes": 28528,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-79-400-normal.woff2",
+    "sha256": "a956682a0067e4f0bc614dfa53cb86ea077906784254708eed56610694a48546",
+    "bytes": 21936,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-79-600-normal.woff",
+    "sha256": "663b7832c3a1dcb8aea80eb7d1d29fd3b28fd12e115208130157a4954eac7aeb",
+    "bytes": 28624,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-79-600-normal.woff2",
+    "sha256": "12b1522803b2dfeebc3009cecc1fb75a4d1a7a580d41b8a7a732125ed2583e83",
+    "bytes": 22264,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-80-400-normal.woff",
+    "sha256": "d42fddefa7a2745d0b22e0af9c015b9897a0a9c6180f1bcb8b39d5f29b35f3f1",
+    "bytes": 22420,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-80-400-normal.woff2",
+    "sha256": "5eab3572e5dfc501ab8f17e54f1df1237f567b8eca1757ddcabdf74704a85ee8",
+    "bytes": 17304,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-80-600-normal.woff",
+    "sha256": "08c59f0ce41839b7b72babfae56c1db1dcacb4028c840de0ddf4fe055707f82a",
+    "bytes": 22480,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-80-600-normal.woff2",
+    "sha256": "28c6356569497b81e1a84dd438ee039e1d2f41e4bf75f110eaf34cc97ceecd6c",
+    "bytes": 17548,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-81-400-normal.woff",
+    "sha256": "16535a763f6f3ed3f44c090eee1df01de7ab53d580f2c29bc3c874bab4c7128b",
+    "bytes": 31964,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-81-400-normal.woff2",
+    "sha256": "e9fd7c679cda8fd773244481d4390ebee71d0523e9a723a7fa3c243128349594",
+    "bytes": 25120,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-81-600-normal.woff",
+    "sha256": "9e608f1f579c5cbf811876ad433d271d09dc03e9771b96bd2eb0489d85097953",
+    "bytes": 32040,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-81-600-normal.woff2",
+    "sha256": "27f18a466a022a5dd2a4cebe2b5adc2b4e1844c6e7256da97751de334a07502d",
+    "bytes": 25560,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-82-400-normal.woff",
+    "sha256": "98f0a45902ddee5e7c097261ef2b580bfc26449a8381da446353bf88b9a4b848",
+    "bytes": 30772,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-82-400-normal.woff2",
+    "sha256": "70a3d11131391c5df15ec99c21d3c206562575e3e4adfb3e757aa9dc631e9415",
+    "bytes": 24404,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-82-600-normal.woff",
+    "sha256": "ea60829b96f90d9ee555e23aebf2636d6965a2c0e4f43996cbb6869b271bbf5f",
+    "bytes": 30900,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-82-600-normal.woff2",
+    "sha256": "663bf78d0a856228685d6b7b17b136ad7246511a48001d39c1551baac5e59959",
+    "bytes": 24708,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-83-400-normal.woff",
+    "sha256": "dc32d229414d0ce68f7cb94c00312d0de2b17d64a86c14568b3d01a378d5f342",
+    "bytes": 30168,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-83-400-normal.woff2",
+    "sha256": "b412b8dc0f9e30e825c35445b725c3d5619f741fc01d757c35ffd258d581ef7b",
+    "bytes": 23076,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-83-600-normal.woff",
+    "sha256": "ed14038e77f9f5983a4b2acf5f9bdd21596d50f36ad64089bc097130cb2920d3",
+    "bytes": 30092,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-83-600-normal.woff2",
+    "sha256": "5cf40be75d4ea6136f28ecdeac25754ada2bb9e6502b41077c63be48a55be4aa",
+    "bytes": 23408,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-84-400-normal.woff",
+    "sha256": "0419f5bcaeced3b1847823afc891e6a5d0b650d1dcb05a5d0fef80054c39cc60",
+    "bytes": 22480,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-84-400-normal.woff2",
+    "sha256": "d1b5af0c20b10f416cbcab989c6a4ce295a25180d324a33763e70e60dd69bee0",
+    "bytes": 17540,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-84-600-normal.woff",
+    "sha256": "0de9c6e16ee8614bf9c15d81b3c0e997b3347ea226ef35bec920366fc906d476",
+    "bytes": 22500,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-84-600-normal.woff2",
+    "sha256": "9996e723e38b6fea79b3b66f3e48fceb360b22ac2149e9eeba5242ef75cb3a12",
+    "bytes": 17676,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-85-400-normal.woff",
+    "sha256": "760dd05a1d85bf85882d0678e2ada1f0eebdd59df956b05988f5c16c27059b29",
+    "bytes": 18572,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-85-400-normal.woff2",
+    "sha256": "f6bcaef8ab8e5f9f780af09b1820c8327cd1e391f2f837489e868c310e133dd0",
+    "bytes": 14600,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-85-600-normal.woff",
+    "sha256": "03c7327bba8fb57b1eab11b7c019a303191bed612a6709c5c4a88bd304cb7830",
+    "bytes": 18660,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-85-600-normal.woff2",
+    "sha256": "3761b3c43fb43b6f863d652c2311757b3c830bdd2ee7db967a92b3109632323a",
+    "bytes": 14780,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-86-400-normal.woff",
+    "sha256": "0983cc2ed40d574457fe792a0c7aa5b3285aa59a89375d1ba11195a857847300",
+    "bytes": 22292,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-86-400-normal.woff2",
+    "sha256": "ae918e4d6d8a608f411b816d2098365e0ea33bcfc3586843aae4ab0e5215f923",
+    "bytes": 17912,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-86-600-normal.woff",
+    "sha256": "9966cc35a06a826b6e661230f5447788fd7351796cd7c044409187b5c3f0774a",
+    "bytes": 22192,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-86-600-normal.woff2",
+    "sha256": "d6448a748ae95d678431712121905e23f4ca72d7e28d63dda7d39a60fa795656",
+    "bytes": 18000,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-87-400-normal.woff",
+    "sha256": "9af0c3edeff825e5f87f335ba1592f8eed9b5681fe92b2656e41c215c4bb29be",
+    "bytes": 6596,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-87-400-normal.woff2",
+    "sha256": "bfedc5f12e9b48fab4a9e33df40f8916eacc58ecc8708353f4202736214af745",
+    "bytes": 5212,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-87-600-normal.woff",
+    "sha256": "9dad74857425a70b7479106bd634f8a8a53dbe5780cac847bf7e022a9b5db3d4",
+    "bytes": 6592,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-87-600-normal.woff2",
+    "sha256": "214cb0dbfe08ede9f8bd0f26a9fa62888497d3310665e1add662adb3d966b9c8",
+    "bytes": 5224,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-88-400-normal.woff",
+    "sha256": "9b2cb004054032ea6b810b4e2e36d3237d9f8924420509aa04dcac048c249a2d",
+    "bytes": 7612,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-88-400-normal.woff2",
+    "sha256": "bcfdf8cf98bd6309f105f8355329db988ab89c9342bf7011468b7880d4d96cd8",
+    "bytes": 6240,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-88-600-normal.woff",
+    "sha256": "90858b0a8d2304c46870db73eb6c44a4dc35908853c902747bea8853de68309f",
+    "bytes": 7636,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-88-600-normal.woff2",
+    "sha256": "384e3d2206d374f3819113331873f942e829bc19fe76d9ff69b4166042771e2b",
+    "bytes": 6308,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-89-400-normal.woff",
+    "sha256": "0fa5329617ce5778bb2085d1f33cbd86484c9fd32d5c475d6533785a2a28edb5",
+    "bytes": 7908,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-89-400-normal.woff2",
+    "sha256": "6fe0b048940f7476c957e5af8bcab55110e4b25c50a1ec35339ff1bfe971dd84",
+    "bytes": 6112,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-89-600-normal.woff",
+    "sha256": "9ecdf080bd8ec7e7022b94ccb891f3bfc657a0687a6cd5bb0aacb7dfa58b8475",
+    "bytes": 8056,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-89-600-normal.woff2",
+    "sha256": "8f27244f7179b55578ae472d108730ae6ba2c1cb3817373ef9464d172a95637e",
+    "bytes": 6240,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-90-400-normal.woff",
+    "sha256": "0410da305c9d8030a8b288438795cfb18e3c27d417f2343cceb71ae5c0cf7ba8",
+    "bytes": 7084,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-90-400-normal.woff2",
+    "sha256": "29e5f26e91a5bef53dec181db1ba48b7fbc930a3a447250c480b15f2d8b80aa2",
+    "bytes": 5324,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-90-600-normal.woff",
+    "sha256": "1474875ff80d3d171b74b743708daae0c4adcfb448c27c8b0b9b76376c49a9c5",
+    "bytes": 7040,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-90-600-normal.woff2",
+    "sha256": "5348a84c49c82909ef1171dbb3de948668da1d514607a4784da68848062ab5fd",
+    "bytes": 5372,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-91-400-normal.woff",
+    "sha256": "0e5fbe820fae244047ebd3177e35c9f34a6792233821929866ebb630eb736b4b",
+    "bytes": 6408,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-91-400-normal.woff2",
+    "sha256": "2b58832ab88ec951c9844b0d5bc0409d087269f4be2644906810848d87faabad",
+    "bytes": 4704,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-91-600-normal.woff",
+    "sha256": "0ca26f7062bc26f5afed3e9a02bdcce37a86889ef3fa96146a125d7c8f4ea699",
+    "bytes": 6476,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-91-600-normal.woff2",
+    "sha256": "d3ae6832a752827ffb950c6300c194a78893bba215b0821b14743dda0848b994",
+    "bytes": 4764,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-97-400-normal.woff",
+    "sha256": "892b69b45f800e7e967b8e04062074dd0d7410dcdaa098820d9612b9e18cf26a",
+    "bytes": 2256,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-97-400-normal.woff2",
+    "sha256": "080d7bb6884be3cf146348a70fa5cd912eb0b1ce64d12a0d09c541e74722f6ce",
+    "bytes": 1412,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-97-600-normal.woff",
+    "sha256": "c1e642970a95410e7daf911281707e7a21e8d12d69f23555f13fb3a9e8ad81fd",
+    "bytes": 2272,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-97-600-normal.woff2",
+    "sha256": "6df384615f6177e9b7e77fb708671e07cf6d3cd3203ce679823b7cf2ded27de8",
+    "bytes": 1416,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-98-400-normal.woff",
+    "sha256": "16a4d1565586dbae1ae1b4e27a7f5d35b52e6e9041399d9004fca84c5fbdf39a",
+    "bytes": 2948,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-98-400-normal.woff2",
+    "sha256": "0695f65b38d373d6fe451a8104b9236a63223285438473adbfb767f36bb11b92",
+    "bytes": 2076,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-98-600-normal.woff",
+    "sha256": "90c8f2e47ccba5a653a093691e4f08dd77c07c3139fee13bf0798f69c5f7ae0f",
+    "bytes": 2952,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-98-600-normal.woff2",
+    "sha256": "18448d78936e8c2a5e7fe4258bb0f1001cb30ce0bffd7745ea97779aa2ae415b",
+    "bytes": 2144,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-99-400-normal.woff",
+    "sha256": "8ef6e5fdfb36569aae0f71a293cc6a63aff7df77dea25e52a491002065bad2a2",
+    "bytes": 7084,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-99-400-normal.woff2",
+    "sha256": "1ded3d06687b7ba7a315d4a5442431af6e69718272666abfd2b78f66fd65f327",
+    "bytes": 5204,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-99-600-normal.woff",
+    "sha256": "bb706f90b6dd4ca9f0d04387353fcfc3822dfc7a2faa8b881e71d960a2b3c8f9",
+    "bytes": 7164,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-99-600-normal.woff2",
+    "sha256": "0245679ada1ab78e46b2e0c54388237c33372f1824f1094f1677b095b909da65",
+    "bytes": 5224,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-cyrillic-400-normal.woff",
+    "sha256": "4d0ad8e0bd480c3213cf1a5d0f83d05b38c5f200a041e62a5508c207f85221b6",
+    "bytes": 6856,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-cyrillic-400-normal.woff2",
+    "sha256": "8cb87d06499a5084cd4b794e90b319c5526ab1da25db009a54f8f8ccd60ba948",
+    "bytes": 5304,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-cyrillic-600-normal.woff",
+    "sha256": "e8119ecd8dcab9e696eb927d246f7a8e82f484e16f61ba8d016db925e87465eb",
+    "bytes": 6880,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-cyrillic-600-normal.woff2",
+    "sha256": "a8bf2c86bf3a88686f045246dcca821e71a2cf01de83979c8f41211c277d8677",
+    "bytes": 5348,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-latin-400-normal.woff",
+    "sha256": "0043729f494bdddef237e03e283db83e843efb6c5f5e516720bc23856a5827db",
+    "bytes": 17396,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-latin-400-normal.woff2",
+    "sha256": "2a75408e073f2d7e03e14c24f25fb093571b73a030f2f483ae256d6975e930d0",
+    "bytes": 13304,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-latin-600-normal.woff",
+    "sha256": "dd795338aa50d9b2088dc968432bd6a3a87f807dbd374184f56c5b79bbd8a218",
+    "bytes": 17488,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-latin-600-normal.woff2",
+    "sha256": "d1fffa4c12444d2e1bc5f6534825258c3b9ba81e275abb02f4e6c05f6d03eaa6",
+    "bytes": 13272,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-latin-ext-400-normal.woff",
+    "sha256": "e5e466a64298c57d53c13189b60c594094fd19ca41adb0c8cf3c87595b884acd",
+    "bytes": 6156,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-latin-ext-400-normal.woff2",
+    "sha256": "e4210347a3d738093686d2d605c45b0dd0c7441acc3da8094cea25943c8fd40f",
+    "bytes": 4484,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-latin-ext-600-normal.woff",
+    "sha256": "d1cd1b342b303c0daed8af478309d94bd6fe1a60391cf155a7809c6358612799",
+    "bytes": 6196,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-latin-ext-600-normal.woff2",
+    "sha256": "bb4a61c28156899f1c8df4dda66cae5943370b6533995e55f7ff3b58173023e2",
+    "bytes": 4512,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-vietnamese-400-normal.woff",
+    "sha256": "ea362c4af0f63ae2b78dc3160c7401d41cf4227eadd677ac7c8f9a0dca0a2e4d",
+    "bytes": 6636,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-vietnamese-400-normal.woff2",
+    "sha256": "f07ef64be4c8a5064101c6ecc586a3b487a5ebed8164e21ff7260f4cf5790008",
+    "bytes": 4708,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-vietnamese-600-normal.woff",
+    "sha256": "053f45cf9b2e18144e64bea59c8fe815f9496718c74cf29ba8ba6d37444c9302",
+    "bytes": 6700,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "./files/noto-sans-sc-vietnamese-600-normal.woff2",
+    "sha256": "f9d4b8a28e340e6848d9a7354f2b14027272eb90078fdedf70e9ea92dd4253c2",
+    "bytes": 4792,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "400.css",
+    "sha256": "cd474dcebdf85aa5d537882894217907fcc7db2b990c4e54ef1b924521596260",
+    "bytes": 105274,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "600.css",
+    "sha256": "d3589c42ae1c4be2d148e5f4a81e5f493ca627c83fcdfa97ce77c406a12645c6",
+    "bytes": 105274,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-sans-sc",
+    "version": "5.3.1",
+    "file": "LICENSE",
+    "sha256": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+    "bytes": 4314,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-arabic-400-normal.woff",
+    "sha256": "3f3d49ef3202e3fe1ce4501bb194b9480b937fe4375da826b816b1dab0650ce2",
+    "bytes": 87400,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-arabic-400-normal.woff2",
+    "sha256": "9cc2d2e90f7b51904468558b4ed529de8a8206497c8edb5e33122bd077e0158c",
+    "bytes": 52668,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-arabic-600-normal.woff",
+    "sha256": "e546b8ba70233b1a99388c6c9de90e48fb7d70f98b3cf06c2bf5caeae5f59e51",
+    "bytes": 91228,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-arabic-600-normal.woff2",
+    "sha256": "0cefc9b889f4dc4ff1b958edae5ace24b0e9876fea79558013aa3bf840d8da91",
+    "bytes": 56648,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-latin-400-normal.woff",
+    "sha256": "34ae2acae1c7a585a59f277232e4008736fc34ee1ed81f777f156dbf18f842fa",
+    "bytes": 14392,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-latin-400-normal.woff2",
+    "sha256": "ec2056faaad2aef6250c32bd0295f9917f719769e4e6d070edcf101bf64a53bb",
+    "bytes": 11500,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-latin-600-normal.woff",
+    "sha256": "492073f288f3a02741f0913283dd91d7d0d70bd40024ff39ebeaf167b1208ae7",
+    "bytes": 15000,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-latin-600-normal.woff2",
+    "sha256": "b163c2e9a795ace7bba8633bac7b85c92ff1b54edd7fd628d1aad5fa4ea0457b",
+    "bytes": 12120,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-latin-ext-400-normal.woff",
+    "sha256": "7579b9e31c699ee589588f585ce4757fbd9e4e5898779a736895dc1dadda135e",
+    "bytes": 8184,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-latin-ext-400-normal.woff2",
+    "sha256": "38bb7eedd5cd8d03638cbddfedb2962e04f7fed0b95f9860a5a2e9daf8f672e9",
+    "bytes": 6456,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-latin-ext-600-normal.woff",
+    "sha256": "a42d56bea94f871446f967847961cb426c950f11f3595fbfb1d1ff468a9844b6",
+    "bytes": 8412,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-latin-ext-600-normal.woff2",
+    "sha256": "155b9666c736a62ce5b8f25ef56d9175350f0d8f9cc475c12a6ad6160273c797",
+    "bytes": 6628,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-math-400-normal.woff",
+    "sha256": "756314468dcfa5a8b796ca28b636c57fbeeed2a8d6608a125d8b2737175ffa67",
+    "bytes": 10420,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-math-400-normal.woff2",
+    "sha256": "b078f908b026a677aa7a4b346a3458657e4dc99a59b9a6f3d7f2bdf4247235e7",
+    "bytes": 8328,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-math-600-normal.woff",
+    "sha256": "369e1078ed55266fe5440063fde04450dc79938e93731d0017c8f3bf51648a68",
+    "bytes": 10808,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-math-600-normal.woff2",
+    "sha256": "16bdcae7ba83a8ecfc5fd9041d6e0b414b698b817cad0c7e8c2fc25cbf3b2f32",
+    "bytes": 8708,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-symbols-400-normal.woff",
+    "sha256": "5a5fd7bd4b31e679979834ea89da51613fcf4dbc6fd81fcb6f9f33921596b879",
+    "bytes": 6744,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-symbols-400-normal.woff2",
+    "sha256": "1d99fdf44976ff33b58178f72aae380c6453a35c34d5229f1a15d73e7547cb71",
+    "bytes": 5416,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-symbols-600-normal.woff",
+    "sha256": "d63925e7344c0553a7603e7a1b33db3f88739c1ed7b348e9b6787883cec660ac",
+    "bytes": 7052,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "./files/noto-naskh-arabic-symbols-600-normal.woff2",
+    "sha256": "d103202043f5aa2c603b1a047b46f634b9e93cc352833021e17f746eab022d26",
+    "bytes": 5716,
+    "license": "OFL-1.1",
+    "subset_by": "Fontsource upstream",
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "400.css",
+    "sha256": "671e963d0edc6368ebca5c23f02f89f8932e5324d373b84bbea047c9e1d473f7",
+    "bytes": 4730,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "600.css",
+    "sha256": "43e0fc57b1f56ff7c7a094b284ed8f6cb21529f02d44cfeffe6292d84bf2502e",
+    "bytes": 4730,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  },
+  {
+    "package": "@fontsource/noto-naskh-arabic",
+    "version": "5.3.0",
+    "file": "LICENSE",
+    "sha256": "91053c23e8a0fe5fc9b5fdbe5ff74ceffd66f6f996c123f1a6ca4c23487c1fff",
+    "bytes": 4380,
+    "license": "OFL-1.1",
+    "subset_by": null,
+    "locally_modified": false
+  }
+]

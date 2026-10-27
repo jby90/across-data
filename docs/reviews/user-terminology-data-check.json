@@ -1,0 +1,199 @@
+{
+  "countries": [
+    [
+      "EG",
+      3
+    ],
+    [
+      "LB",
+      3
+    ],
+    [
+      "MA",
+      4
+    ],
+    [
+      "SG",
+      68
+    ],
+    [
+      "TN",
+      3
+    ]
+  ],
+  "kinds": [
+    [
+      "OTHER",
+      null,
+      1
+    ],
+    [
+      "LAW",
+      "LAW",
+      5
+    ],
+    [
+      "GUIDANCE",
+      "HISTORICAL_GUIDANCE",
+      1
+    ],
+    [
+      "REGULATION",
+      null,
+      1
+    ],
+    [
+      "LAW",
+      "AMENDMENT",
+      4
+    ],
+    [
+      "FORM",
+      "FORM",
+      1
+    ],
+    [
+      "REGULATION",
+      "REGULATION",
+      1
+    ],
+    [
+      "GUIDANCE",
+      "REGULATOR_GUIDANCE",
+      1
+    ],
+    [
+      "GUIDANCE",
+      "GUIDANCE",
+      1
+    ],
+    [
+      "LAW",
+      "BASE",
+      2
+    ],
+    [
+      "REGULATION",
+      "COMMENCEMENT",
+      12
+    ],
+    [
+      "REGULATION",
+      "AMENDMENT",
+      26
+    ],
+    [
+      "GUIDANCE",
+      "ADMISSION_GUIDANCE",
+      1
+    ],
+    [
+      "LAW",
+      null,
+      4
+    ],
+    [
+      "REGULATION",
+      "BASE",
+      20
+    ]
+  ],
+  "index": {
+    "definitions_added": 209,
+    "source_clauses_examined": 1991,
+    "source_clauses_excluded": 81,
+    "model_calls": 0,
+    "existing_approvals_changed": 0
+  },
+  "protected_data_unchanged": true,
+  "protected_digests": {
+    "documents": [
+      81,
+      "4186480bf0261477030c47440e2399a9"
+    ],
+    "document_versions": [
+      81,
+      "f886d35a3425358fed961886251631fb"
+    ],
+    "clauses": [
+      2744,
+      "1764a3f065e8076094f47e5a6a3e8307"
+    ],
+    "clause_translations": [
+      3464,
+      "c3218e219d8408d7b59de5efe6ef45b9"
+    ],
+    "kg_nodes": [
+      2419,
+      "2017669f5f8b947e64d2e7c957f53c2c"
+    ],
+    "kg_edges": [
+      5259,
+      "1960d10675c7ef9a89bed9d38b72acaa"
+    ],
+    "glossary_terms": [
+      14,
+      "216c70e00b8d0f77675fa1e7fb65803d"
+    ],
+    "review_points": [
+      4,
+      "a98de4f3ea90625f29697f41bc02be8c"
+    ],
+    "knowledge_audit_records": [
+      15301,
+      "6805a802775e4bf0229c5fec39b8b523"
+    ]
+  },
+  "active_definitions": {
+    "SG": 238,
+    "EG": 13,
+    "TN": 12,
+    "MA": 1,
+    "LB": 13
+  },
+  "definition_concepts": {
+    "SG": 152,
+    "EG": 13,
+    "TN": 12,
+    "MA": 1,
+    "LB": 12
+  },
+  "derived_history_count": 1208,
+  "repeat_index": {
+    "definitions_added": 0,
+    "source_clauses_examined": 1991,
+    "source_clauses_excluded": 81,
+    "model_calls": 0,
+    "existing_approvals_changed": 0
+  },
+  "note": "Source/approval digests verified both in the working source clone and in a fresh 0022 -> 0023 migration plus cache import; all Chinese definitions are reading aids, not human legal approvals. Earlier failed attempts are retained in separate batch records.",
+  "chinese_definitions": {
+    "SG": 238,
+    "EG": 13,
+    "TN": 12,
+    "MA": 1,
+    "LB": 13
+  },
+  "fresh_migration_and_cache_import_preserved_data": true,
+  "rendering_usage": {
+    "model_calls": 46,
+    "request_attempts": 47,
+    "tokens": 179820
+  },
+  "final_unresolved_renderings": 0,
+  "digest_method": "md5(string_agg(md5(row_to_json(row)::text), '' ORDER BY row_digest))",
+  "baseline_database": "untouched restore of database-0022.dump",
+  "definition_rule_version": "explicit-definition-v5",
+  "boundary_repair": {
+    "changed_definitions": 8,
+    "old_records_retained": true,
+    "new_model_calls": 2,
+    "request_attempts": 2,
+    "tokens": 5459
+  },
+  "scope_repair": {
+    "retained_old_records": true,
+    "new_explicit_definitions_including_scoped_and_cross_referenced_terms": true
+  },
+  "derived_history_database": "working source clone, including retained earlier index/render attempts"
+}

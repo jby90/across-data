@@ -1,0 +1,32 @@
+{
+  "workflow_version_no": 44,
+  "new_task_id": "ebcf95ff-394c-428d-a4a5-835aeb3a8f83",
+  "exports": [
+    {
+      "task_id": "ebcf95ff-394c-428d-a4a5-835aeb3a8f83",
+      "format": "docx",
+      "status": 200,
+      "bytes": 24823,
+      "sha256": "86c0a240db75528280c0394549bec902b79986e3b97366f433e4861603ea209a",
+      "xml_valid": true
+    },
+    {
+      "task_id": "ebcf95ff-394c-428d-a4a5-835aeb3a8f83",
+      "format": "pdf",
+      "status": 200,
+      "bytes": 3353618,
+      "sha256": "a2905959538beb1e604b4472b0913b37dbbac415fab5e65c3f4cf33b5243e189",
+      "pages": 14
+    },
+    {
+      "task_id": "99e117fa-b2ca-45b2-ab50-387989638bb6",
+      "format": "docx",
+      "status": 409
+    },
+    {
+      "task_id": "99e117fa-b2ca-45b2-ab50-387989638bb6",
+      "format": "pdf",
+      "status": 409
+    }
+  ]
+}

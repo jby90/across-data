@@ -1,8 +1,9 @@
 import base64
 import uuid
 from datetime import UTC, date, datetime
+from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,11 +11,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.iam.deps import Principal, require_admin_side, require_platform_admin
-from app.ingestion.archive import ArchiveStore
+from app.ingestion.archive import ArchiveIntegrityError, ArchiveStore
 from app.ingestion.fetcher import validate_public_http_url
 from app.ingestion.models import Clause, Document, DocumentVersion, LegalStatus, PipelineEvent
 from app.ingestion.ocr import OcrEngine
 from app.ingestion.pipeline import assess_document_relevance, parse_version
+from app.ingestion.safety import holds_for_documents
+from app.ingestion.source_observations import registered_acquisition
+from app.knowledge.models import KnowledgeAuditRecord
 from app.sources.models import SourceSite
 
 router = APIRouter(prefix="/api/admin", tags=["documents"])
@@ -52,6 +56,8 @@ class DocumentOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
+    safety_hold: bool = False
+    safety_note: str | None = None
     site_id: uuid.UUID
     country_code: str
     source_url: str
@@ -65,11 +71,19 @@ class DocumentOut(BaseModel):
     instrument_kind: str | None = None
     relevance: str = "relevant"
     relevance_note: str | None = None
+    relevance_source: str = "rule"
     latest_version: VersionOut | None = None
 
 
 class DocumentDetail(DocumentOut):
     versions: list[VersionOut]
+
+
+class RelevanceOverrideIn(BaseModel):
+    """管理员/法务人工覆盖文件级相关性(覆盖后自动流程不得改写)。"""
+
+    relevance: Literal["relevant", "related", "out_of_scope"]
+    note: str | None = Field(default=None, max_length=500)
 
 
 class ClauseOut(BaseModel):
@@ -146,9 +160,12 @@ async def list_documents(
         stmt = stmt.where(Document.site_id == site_id)
     docs = (await session.execute(stmt.limit(limit).offset(offset))).scalars().all()
     versions = await _versions_by_doc(session, [d.id for d in docs])
+    holds = await holds_for_documents(session, [d.id for d in docs])
     out = []
     for d in docs:
         item = DocumentOut.model_validate(d)
+        item.safety_hold = d.id in holds
+        item.safety_note = holds.get(d.id, {}).get("reason")
         vs = versions.get(d.id)
         item.latest_version = VersionOut.model_validate(vs[0]) if vs else None
         out.append(item)
@@ -203,9 +220,7 @@ async def upload_document_version(
         ).scalar_one_or_none()
         if doc is None:
             title_val = (body.title or clean_url).strip()[:500]
-            rel_val, rel_note = assess_document_relevance(
-                title_val, clean_url, site.document_type
-            )
+            rel_val, rel_note = assess_document_relevance(title_val, clean_url, site.document_type)
             doc = Document(
                 site_id=site.id,
                 country_code=site.country_code,
@@ -309,11 +324,153 @@ async def get_document(
     )
 
 
+@router.get("/documents/{document_id}/provenance", summary="只读来源与归档完整性核验")
+async def document_provenance(
+    document_id: uuid.UUID,
+    _: Principal = Depends(require_admin_side),
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    doc = await session.get(Document, document_id)
+    if doc is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "文档不存在")
+    site = await session.get(SourceSite, doc.site_id)
+    archive = ArchiveStore(get_settings().archive_dir)
+    rows = []
+    versions = (await _versions_by_doc(session, [doc.id])).get(doc.id, [])
+    receipts = (
+        await session.scalars(
+            select(KnowledgeAuditRecord).where(
+                KnowledgeAuditRecord.target_type == "documents",
+                KnowledgeAuditRecord.target_id == doc.id,
+                KnowledgeAuditRecord.action == "official_source_acquired",
+            )
+        )
+    ).all()
+    for version in versions:
+        error = None
+        try:
+            raw = archive.read(version.archive_path)
+            integrity_ok = (
+                archive.sha256(raw) == version.content_hash and len(raw) == version.size_bytes
+            )
+            if not integrity_ok:
+                error = "归档与登记的哈希或长度不一致"
+        except (OSError, ArchiveIntegrityError) as exc:
+            integrity_ok = False
+            error = type(exc).__name__ + ": 归档不可读或完整性检查未通过"
+        events = (
+            await session.scalars(
+                select(PipelineEvent)
+                .where(PipelineEvent.version_id == version.id)
+                .order_by(PipelineEvent.created_at, PipelineEvent.id)
+            )
+        ).all()
+        steps = {event.step for event in events}
+        # A URL and a matching hash prove provenance/integrity, not legal authenticity.
+        acquisition = (
+            "manual_upload"
+            if "upload" in steps
+            else ("pipeline_fetch" if "download" in steps else "legacy_or_unrecorded")
+        )
+        registered = [
+            receipt
+            for audit in receipts
+            if integrity_ok and (receipt := registered_acquisition(audit, version, doc)) is not None
+        ]
+        receipt = registered[0] if len({r["source_nature"] for r in registered}) == 1 else None
+        if acquisition == "legacy_or_unrecorded" and receipt is not None:
+            acquisition = "registered_download"
+        rows.append(
+            {
+                "version_id": str(version.id),
+                "version_no": version.version_no,
+                "content_hash": version.content_hash,
+                "fetched_at": version.fetched_at,
+                "final_url": version.final_url,
+                "metadata_source": version.metadata_source,
+                "acquisition": acquisition,
+                "registered_download": receipt,
+                "pipeline_refetch_verified": "refetch" in steps,
+                "integrity_ok": integrity_ok,
+                "integrity_error": error,
+                "review_status": version.review_status,
+                "legal_status": version.legal_status,
+                "effective_date": version.effective_date,
+                "ocr_required": version.ocr_required,
+                "official_authenticity": "pending_human_review",
+                "events": [EventOut.model_validate(event).model_dump() for event in events],
+            }
+        )
+    from app.ingestion.bindings import binding_resolutions
+
+    return {
+        "binding_resolutions": await binding_resolutions(session, doc.id),
+        "source_integrity_holds": list((await holds_for_documents(session, [doc.id])).values()),
+        "document_id": str(doc.id),
+        "title": doc.title,
+        "country_code": doc.country_code,
+        "source_url": doc.source_url,
+        "language": doc.language,
+        "publisher": site.publisher if site else None,
+        "terms_status": site.terms_status if site else None,
+        "terms_approval_scope": site.terms_approval_scope if site else None,
+        "versions": rows,
+    }
+
+
+@router.patch(
+    "/documents/{document_id}/relevance",
+    response_model=DocumentOut,
+    summary="人工覆盖文件级相关性(核心/相关/范围外)",
+)
+async def override_document_relevance(
+    document_id: uuid.UUID,
+    body: RelevanceOverrideIn,
+    principal: Principal = Depends(require_platform_admin),
+    session: AsyncSession = Depends(get_session),
+):
+    doc = await session.get(Document, document_id)
+    if doc is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "文档不存在")
+    doc.relevance = body.relevance
+    doc.relevance_source = "manual"
+    doc.relevance_note = (body.note or "").strip() or "管理员人工覆盖相关性判定"
+    await session.commit()
+    await session.refresh(doc)
+    return DocumentOut.model_validate(doc)
+
+
 async def _version_or_404(session: AsyncSession, version_id: uuid.UUID) -> DocumentVersion:
     v = await session.get(DocumentVersion, version_id)
     if v is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "版本不存在")
     return v
+
+
+@router.get("/versions/{version_id}/original", summary="下载经完整性核验的归档原文")
+async def download_original(
+    version_id: uuid.UUID,
+    _: Principal = Depends(require_admin_side),
+    session: AsyncSession = Depends(get_session),
+):
+    version = await _version_or_404(session, version_id)
+    try:
+        archive = ArchiveStore(get_settings().archive_dir)
+        raw = archive.read(version.archive_path)
+    except (OSError, ArchiveIntegrityError):
+        raise HTTPException(409, "归档原文不存在或完整性异常，已拒绝下载") from None
+    if archive.sha256(raw) != version.content_hash or len(raw) != version.size_bytes:
+        raise HTTPException(409, "归档与登记的内容哈希或长度不一致，已拒绝下载")
+    extension = ".pdf" if version.mime_type == "application/pdf" else ".bin"
+    return Response(
+        raw,
+        media_type="application/octet-stream",
+        headers={
+            "Content-Disposition": f'attachment; filename="{version.id}{extension}"',
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "no-store",
+        },
+    )
 
 
 @router.get("/versions/{version_id}/clauses", response_model=list[ClauseOut], summary="版本条款")

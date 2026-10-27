@@ -1,0 +1,176 @@
+{
+  "facts": {
+    "exterior_video_and_gnss": "采集8路环视视频与GNSS；车端模糊人脸与车牌后回传",
+    "cross_border_mechanism": "传输至中国研发中心，已签数据处理协议并完成评估",
+    "consent_and_notice": "车机弹窗明示同意，车身告示，已任命本地数据保护官",
+    "retention_and_blackbox": "黑匣子留存3年；常规个人数据180天后销毁",
+    "local_admission_and_safety_operator": "已提交路测准入申请，配备安全员与保险"
+  },
+  "runs": [
+    {
+      "task_id": "fe0643b9-8852-47fd-8679-13cca33d4ce1",
+      "status": "failed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D7 Application for Trial of Auton 7: 结论中的数字「2」未出现在所选引文中"
+      ],
+      "backtrack_count": 1,
+      "tokens": 74273,
+      "elapsed_seconds": 99.36,
+      "report_status": "analysis_failed",
+      "gap_kinds": {
+        "analysis_error": 1,
+        "none": 7
+      }
+    },
+    {
+      "task_id": "df6d787f-530c-40e1-9c28-ec6dfec9992f",
+      "status": "completed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D1 Personal Data Protection Act 2 8: 结论中的数字「180」未出现在所选引文中;结论中的数字「3」未出现在所选引文中",
+        "D7 Application for Trial of Auton 7: 结论中的数字「2」未出现在所选引文中"
+      ],
+      "backtrack_count": 1,
+      "tokens": 71115,
+      "elapsed_seconds": 48.63,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "07e3d274-289d-4c00-8b54-93fc0da22a42",
+      "status": "failed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 78147,
+      "elapsed_seconds": 74.97,
+      "report_status": "analysis_failed",
+      "gap_kinds": {
+        "none": 7,
+        "analysis_error": 1
+      }
+    },
+    {
+      "task_id": "46941016-5c4b-464a-94be-e32269050f47",
+      "status": "completed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D8 Advisory Guidelines on Key Con 4.2: 结论中的数字「180」未出现在所选引文中;结论中的数字「3」未出现在所选引文中"
+      ],
+      "backtrack_count": 1,
+      "tokens": 71559,
+      "elapsed_seconds": 76.97,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "6ecb9e19-dc41-4344-8f38-79cf0aa04110",
+      "status": "completed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D7 Application for Trial of Auton 7: 结论中的数字「2」未出现在所选引文中;结论中的数字「60」未出现在所选引文中"
+      ],
+      "backtrack_count": 1,
+      "tokens": 81030,
+      "elapsed_seconds": 97.18,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "09e8d380-d119-4f5b-82ce-1213d6955cb0",
+      "status": "completed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 58690,
+      "elapsed_seconds": 32.35,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "a590c0e9-c0a7-4b1f-a718-fbe8e16ae890",
+      "status": "completed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 60976,
+      "elapsed_seconds": 36.38,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "734e137e-8a51-4fbe-be52-6559652adeb4",
+      "status": "completed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D8 Advisory Guidelines on Key Con 4.2: 结论中的数字「180」未出现在所选引文中;结论中的数字「3」未出现在所选引文中"
+      ],
+      "backtrack_count": 1,
+      "tokens": 75632,
+      "elapsed_seconds": 103.21,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "1a35ef85-f409-433a-b0d9-75da97ed790b",
+      "status": "completed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": false,
+      "first_problems": [],
+      "backtrack_count": 0,
+      "tokens": 61468,
+      "elapsed_seconds": 36.49,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    },
+    {
+      "task_id": "038b1d6d-d0c9-4245-8563-38dbd51f98cf",
+      "status": "completed",
+      "workflow_version_id": "1375b2e0-e321-419b-88dc-d009112ff0bd",
+      "first_evaluated": true,
+      "first_failed": true,
+      "first_problems": [
+        "D7 Application for Trial of Auton 7: 结论中的数字「2」未出现在所选引文中"
+      ],
+      "backtrack_count": 1,
+      "tokens": 64496,
+      "elapsed_seconds": 50.57,
+      "report_status": "full_draft",
+      "gap_kinds": {
+        "none": 8
+      }
+    }
+  ]
+}

@@ -112,12 +112,7 @@ async def seed(creds: dict) -> None:
             for cc in ("SG", "EG", "TN", "MA", "LB"):
                 await extract_knowledge_for_country(s, cc, translate_sample_per_doc=4)
         await ensure_workflow_config(s)
-        # 清理旧版本写死的演示分析任务(无租户、无创建人,不是任何用户真实发起的)
-        from sqlalchemy import text
-
-        await s.execute(
-            text("DELETE FROM analysis_tasks WHERE org_id IS NULL AND created_by IS NULL")
-        )
+        # Startup never deletes existing records. Cleanup requires an explicit backed-up operation.
         await s.commit()
 
 
@@ -187,6 +182,23 @@ def main() -> int:
     if r.returncode != 0:
         return r.returncode
     asyncio.run(seed(creds))
+
+    # API/worker never retain the migration owner's database identity. This
+    # development cluster is loopback-only and already uses trust authentication.
+    async def ordinary_runtime_url():
+        import hashlib
+        from sqlalchemy.ext.asyncio import create_async_engine
+        from app.core.runtime_roles import provision_runtime_role
+
+        role = "cyshuhe_local_" + hashlib.sha256(str(pg_dir.resolve()).encode()).hexdigest()[:12]
+        migration_engine = create_async_engine(url)
+        try:
+            runtime = await provision_runtime_role(migration_engine, role, local_trust_only=True)
+            return runtime.render_as_string(hide_password=False)
+        finally:
+            await migration_engine.dispose()
+
+    env["CYSH_DATABASE_URL"] = asyncio.run(ordinary_runtime_url())
 
     children = [
         subprocess.Popen(

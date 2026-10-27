@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "database": "remediation_s5_20261024",
+  "old_rows_checked": 29252,
+  "old_tables_checked": 20,
+  "source_evidence_approval_overwrites": 0,
+  "legacy_execution_ids_backfilled": 0,
+  "archives_verified": 80,
+  "old_activation_only_changes_with_snapshots": [
+    17
+  ],
+  "additions": {
+    "knowledge_audit_records": 73,
+    "analysis_step_traces": 148,
+    "clauses": 0,
+    "clause_translations": 0,
+    "document_versions": 0,
+    "crawl_runs": 0,
+    "glossary_terms": 0,
+    "documents": 0,
+    "kg_edges": 0,
+    "kg_nodes": 0,
+    "analysis_tasks": 22,
+    "agent_workflow_configs": 3,
+    "knowledge_change_proposals": 0,
+    "report_versions": 22,
+    "review_points": 0,
+    "organizations": 0,
+    "pipeline_events": 0,
+    "source_sites": 0,
+    "users": 0,
+    "analysis_messages": 0
+  },
+  "active_workflows": [
+    {
+      "version_no": 23,
+      "runtime_schema_version": "s5-source-selection-v1"
+    }
+  ]
+}

@@ -4,6 +4,7 @@
   python -m app.cli create-platform-admin --email admin@example.com --name 管理员
   python -m app.cli load-sites ../data/seed/source_sites.json   # 导入种子站点(停用、条款待确认)
   python -m app.cli preflight [--country EG] [--report 报告.md]  # 只读预检,不下载文件
+  python -m app.cli translate [--country SG] [--only-missing] [--concurrency 4]
 
 密码从环境变量 CYSH_ADMIN_PASSWORD 读取,未设置则交互输入(不回显)。
 """
@@ -24,6 +25,33 @@ from app.core.config import get_settings
 from app.core.db import get_sessionmaker
 from app.iam import service
 from app.iam.models import Role
+
+
+def _ensure_dev_env() -> None:
+    """当未显式传入 CYSH_DATABASE_URL / CYSH_JWT_SECRET 时,自动复用 ~/.cyshuhe-dev 本地开发配置。"""
+    dev_dir = Path.home() / ".cyshuhe-dev"
+    creds_path = dev_dir / "credentials.json"
+    if "CYSH_JWT_SECRET" not in os.environ and creds_path.exists():
+        try:
+            creds = json.loads(creds_path.read_text(encoding="utf-8"))
+            if creds.get("jwt_secret"):
+                os.environ["CYSH_JWT_SECRET"] = creds["jwt_secret"]
+        except Exception:
+            pass
+    if "CYSH_JWT_SECRET" not in os.environ:
+        os.environ["CYSH_JWT_SECRET"] = "dev-cli-fallback-jwt-secret-at-least-32-chars"
+
+    if "CYSH_DATABASE_URL" not in os.environ and (dev_dir / "pg").exists():
+        try:
+            import pgserver
+
+            pg = pgserver.get_server(dev_dir / "pg", cleanup_mode=None)
+            os.environ["CYSH_DATABASE_URL"] = pg.get_uri().replace(
+                "postgresql://", "postgresql+asyncpg://", 1
+            )
+        except Exception:
+            pass
+    get_settings.cache_clear()
 
 
 async def _create_platform_admin(email: str, name: str, password: str) -> None:
@@ -159,6 +187,195 @@ def _ocr_engine():
     return OcrEngine(s.tesseract_cmd, s.tessdata_dir, s.ocr_dpi)
 
 
+async def _split_oversized_clauses_for_country(
+    session, country_code: str | None = None, max_clause_chars: int = 2400
+) -> int:
+    """Compatibility entry point: translation chunks must never modify source clauses.
+
+    Chunking happens in translator.split_clause_into_chunks in memory only.
+    Historical repairs require separate reviewed parse revisions.
+    """
+    return 0
+
+
+async def batch_translate(
+    country: str | None = None,
+    only_missing: bool = True,
+    concurrency: int = 4,
+    sf=None,
+    dry_run: bool = False,
+    limit: int | None = None,
+) -> dict[str, int]:
+    """Translate every latest parsed clause; explicit limits are samples, never full coverage.
+
+    Dry runs do not write. Successful attempts commit independently, allowing safe resume.
+    All source/evidence rows and previous translation attempt contents remain untouched.
+    """
+    from sqlalchemy import func, or_, select
+
+    from app.ingestion.models import Clause, Document, DocumentVersion
+    from app.ingestion.safety import document_available
+    from app.knowledge.models import ClauseTranslation, GlossaryTerm
+    from app.knowledge.translator import (
+        set_translation_concurrency,
+        translate_clause,
+        verify_translation,
+    )
+
+    set_translation_concurrency(concurrency)
+    sf = sf or get_sessionmaker()
+    target_countries = [country.upper()] if country else ["SG", "EG", "TN", "MA", "LB"]
+    async with sf() as session:
+        latest = (
+            select(
+                DocumentVersion.document_id,
+                func.max(DocumentVersion.version_no).label("version_no"),
+            )
+            .where(DocumentVersion.state == "parsed")
+            .group_by(DocumentVersion.document_id)
+            .subquery()
+        )
+        rows = (
+            await session.execute(
+                select(Clause, Document.country_code)
+                .join(DocumentVersion, DocumentVersion.id == Clause.version_id)
+                .join(Document, Document.id == DocumentVersion.document_id)
+                .join(
+                    latest,
+                    (latest.c.document_id == Document.id)
+                    & (latest.c.version_no == DocumentVersion.version_no),
+                )
+                .where(Document.country_code.in_(target_countries))
+                .where(document_available())
+                .order_by(Document.country_code, Document.id, Clause.ordinal, Clause.id)
+            )
+        ).all()
+        current = (
+            await session.scalars(
+                select(ClauseTranslation).where(
+                    ClauseTranslation.is_current.is_(True),
+                    ClauseTranslation.review_status.in_(
+                        ("machine_translated", "pending_review", "approved")
+                    ),
+                )
+            )
+        ).all()
+        qualified = set()
+        clauses_by_id = {clause.id: clause for clause, _ in rows}
+        for tr in current:
+            clause = clauses_by_id.get(tr.clause_id)
+            if clause and (
+                tr.review_status == "approved"
+                or (
+                    tr.engine == "llm"
+                    and tr.quality_check_passed
+                    and verify_translation(
+                        clause.original_text, tr.translated_text, tr.glossary_hits or []
+                    )[0]
+                )
+            ):
+                qualified.add(tr.clause_id)
+        pending = [
+            (clause.id, cc) for clause, cc in rows if not only_missing or clause.id not in qualified
+        ]
+        total_missing = len(pending)
+        if limit is not None:
+            if limit < 1:
+                raise ValueError("limit must be positive")
+            pending = pending[:limit]
+        terms = (
+            await session.scalars(
+                select(GlossaryTerm).where(
+                    or_(
+                        GlossaryTerm.country_code.in_(target_countries),
+                        GlossaryTerm.country_code.is_(None),
+                    )
+                )
+            )
+        ).all()
+    stats = dict(
+        total_eligible=len(rows),
+        total_missing=total_missing,
+        total=len(pending),
+        skipped_qualified=len(rows) - total_missing,
+        limited=int(limit is not None),
+        machine_translated=0,
+        translation_failed=0,
+        not_translated=0,
+        errors=0,
+        dry_run=int(dry_run),
+        superseded=0,
+        tokens_in=0,
+        tokens_out=0,
+    )
+    print("[translate] " + json.dumps(stats, ensure_ascii=False), flush=True)
+    if dry_run:
+        return stats
+    sem = asyncio.Semaphore(max(1, concurrency))
+    completed = 0
+
+    async def worker(clause_id, cc):
+        nonlocal completed
+        async with sem:
+            async with sf() as session:
+                try:
+                    clause = await session.get(Clause, clause_id)
+                    if clause is None:
+                        stats["errors"] += 1
+                        return
+                    tr = await translate_clause(session, clause, cc, terms)
+                    await session.commit()
+                    stats[tr.review_status] = stats.get(tr.review_status, 0) + 1
+                    if tr.review_status != "approved":
+                        stats["tokens_in"] += tr.tokens_in
+                        stats["tokens_out"] += tr.tokens_out
+                    completed += 1
+                    if completed % 20 == 0 or completed == len(pending):
+                        print(
+                            f"[translate] {completed}/{len(pending)} "
+                            + json.dumps(stats, ensure_ascii=False),
+                            flush=True,
+                        )
+                except Exception:
+                    await session.rollback()
+                    stats["errors"] += 1
+                    # Never print request bodies, credentials, or untrusted exception payloads.
+                    print(
+                        f"[translate] clause {clause_id}: processing failed; safe to retry",
+                        flush=True,
+                    )
+
+    await asyncio.gather(*(worker(clause_id, cc) for clause_id, cc in pending))
+    return stats
+
+
+async def batch_extract_kg(
+    country: str | None = None,
+    max_clauses_per_doc: int | None = None,
+    concurrency: int = 8,
+    sf=None,
+) -> dict[str, dict[str, int]]:
+    """批量执行 S2 大模型知识图谱抽取(相关性过滤 + 条款抽取 + 类型约束 + 逐字校验 + 语义裁判)。"""
+    from app.knowledge.extractor import COUNTRY_NAMES, extract_knowledge_for_country
+
+    sf = sf or get_sessionmaker()
+    countries = [country.upper()] if country else list(COUNTRY_NAMES.keys())
+    results: dict[str, dict[str, int]] = {}
+    for cc in countries:
+        print(f"[S2-KG] 正在抽取国家 {cc} ...", flush=True)
+        async with sf() as session:
+            res = await extract_knowledge_for_country(
+                session,
+                cc,
+                translate_sample_per_doc=0,
+                max_clauses_per_doc=max_clauses_per_doc,
+                concurrency=concurrency,
+            )
+            results[cc] = res
+            print(f"[S2-KG] {cc} 完成: {json.dumps(res, ensure_ascii=False)}", flush=True)
+    return results
+
+
 async def reparse(state: str, country: str | None, sf=None) -> dict[str, int]:
     """对已有版本重新解析(例如装好 OCR 后,处理之前标为"需要 OCR"的扫描件)。"""
     from sqlalchemy import select
@@ -223,7 +440,29 @@ def main() -> int:
     f = sub.add_parser("preflight", help="只读预检站点(robots.txt 与地址)")
     f.add_argument("--country")
     f.add_argument("--report", help="把结果写成 Markdown 报告")
+    t = sub.add_parser("translate", help="批量执行真实大模型受控法律翻译(S1)")
+    t.add_argument("--country", help="指定国家代码(如 SG/EG/TN/MA/LB),不传则翻译全部五国")
+    t.add_argument(
+        "--only-missing",
+        action="store_true",
+        default=False,
+        help="仅翻译缺少合格 LLM 译文的条款",
+    )
+    t.add_argument("--dry-run", action="store_true", help="只列出全量目标/缺口，不调用模型、不写库")
+    t.add_argument("--limit", type=int, help="显式小样本上限；不传则全量")
+    t.add_argument("--concurrency", type=int, default=4, help="并发请求数(默认 4)")
+    kg = sub.add_parser("extract-kg", help="批量执行 S2 知识图谱结构化抽取与语义裁判")
+    kg.add_argument("--country", help="指定国家代码(如 SG/EG/TN/MA/LB),不传则抽取全部五国")
+    kg.add_argument(
+        "--max-clauses",
+        type=int,
+        default=None,
+        help="显式抽样时每份文档条款上限；不传则抽取全部范围内条款",
+    )
+    kg.add_argument("--concurrency", type=int, default=8, help="并发请求数(默认 8)")
     args = parser.parse_args()
+
+    _ensure_dev_env()
 
     if args.command == "create-platform-admin":
         password = os.environ.get("CYSH_ADMIN_PASSWORD") or getpass.getpass("密码(至少12位): ")
@@ -246,8 +485,31 @@ def main() -> int:
             print(f"已写入 {args.report}")
         else:
             print(report)
+    elif args.command == "translate":
+        res = asyncio.run(
+            batch_translate(
+                country=args.country,
+                only_missing=args.only_missing,
+                concurrency=args.concurrency,
+                dry_run=args.dry_run,
+                limit=args.limit,
+            )
+        )
+        print("批量翻译结果:", json.dumps(res, ensure_ascii=False))
+    elif args.command == "extract-kg":
+        res = asyncio.run(
+            batch_extract_kg(
+                country=args.country,
+                max_clauses_per_doc=args.max_clauses,
+                concurrency=args.concurrency,
+            )
+        )
+        print("批量知识图谱抽取结果:", json.dumps(res, ensure_ascii=False))
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    from app.core.rls import system_scope
+
+    with system_scope("explicit operator CLI"):
+        raise SystemExit(main())

@@ -1,0 +1,113 @@
+{"country": "EG", "attempt": 1, "event": "full_rebuild_started"}
+KG EG: 20/58 clauses completed, cached=0
+KG EG: 40/58 clauses completed, cached=0
+KG EG: 58/58 clauses completed, cached=0
+{"country": "EG", "attempt": 1, "status": "completed", "attempted_clauses": 58, "failed_clauses": 0, "cache_hits": 0, "semantic_edges_added": 19, "model_usage": {"requests": 153, "responses_with_usage": 153, "tokens_in": 108016, "tokens_out": 92426, "response_models": {"deepseek-flash": 153}, "calls_without_reported_usage": 0}, "duration_ms": 41609}
+{"country": "TN", "attempt": 1, "event": "full_rebuild_started"}
+KG TN: 20/134 clauses completed, cached=0
+KG TN: 40/134 clauses completed, cached=0
+KG TN: 60/134 clauses completed, cached=0
+KG TN: 80/134 clauses completed, cached=0
+KG TN: 100/134 clauses completed, cached=0
+KG TN: 120/134 clauses completed, cached=0
+{"country": "TN", "attempt": 1, "status": "failed", "reason": "extractor_or_judge_unavailable", "attempted_clauses": 134, "failed_clauses": 1, "cache_hits": 0, "semantic_edges_added": 0, "model_usage": {"requests": 399, "responses_with_usage": 399, "tokens_in": 239457, "tokens_out": 206042, "response_models": {"deepseek-flash": 399}, "calls_without_reported_usage": 0}, "duration_ms": 108127}
+{"country": "TN", "attempt": 2, "event": "full_rebuild_started"}
+KG TN: 134/134 clauses completed, cached=133
+{"country": "TN", "attempt": 2, "status": "completed", "attempted_clauses": 134, "failed_clauses": 0, "cache_hits": 133, "semantic_edges_added": 161, "model_usage": {"requests": 2, "responses_with_usage": 2, "tokens_in": 1419, "tokens_out": 927, "response_models": {"deepseek-flash": 2}, "calls_without_reported_usage": 0}, "duration_ms": 6711}
+{"country": "MA", "attempt": 1, "event": "full_rebuild_started"}
+KG MA: 20/96 clauses completed, cached=0
+KG MA: 40/96 clauses completed, cached=0
+KG MA: 60/96 clauses completed, cached=0
+KG MA: 80/96 clauses completed, cached=0
+{"country": "MA", "attempt": 1, "status": "failed", "reason": "extractor_or_judge_unavailable", "attempted_clauses": 96, "failed_clauses": 3, "cache_hits": 0, "semantic_edges_added": 0, "model_usage": {"requests": 253, "responses_with_usage": 253, "tokens_in": 164616, "tokens_out": 138949, "response_models": {"deepseek-flash": 253}, "calls_without_reported_usage": 0}, "duration_ms": 72888}
+{"country": "MA", "attempt": 2, "event": "full_rebuild_started"}
+{"country": "MA", "attempt": 2, "status": "failed", "reason": "extractor_or_judge_unavailable", "attempted_clauses": 96, "failed_clauses": 2, "cache_hits": 93, "semantic_edges_added": 0, "model_usage": {"requests": 8, "responses_with_usage": 8, "tokens_in": 6443, "tokens_out": 5435, "response_models": {"deepseek-flash": 8}, "calls_without_reported_usage": 0}, "duration_ms": 10906}
+{"country": "MA", "attempt": 3, "event": "full_rebuild_started"}
+{"country": "MA", "attempt": 3, "status": "failed", "reason": "extractor_or_judge_unavailable", "attempted_clauses": 96, "failed_clauses": 2, "cache_hits": 94, "semantic_edges_added": 0, "model_usage": {"requests": 4, "responses_with_usage": 4, "tokens_in": 4212, "tokens_out": 4085, "response_models": {"deepseek-flash": 4}, "calls_without_reported_usage": 0}, "duration_ms": 11526}
+{"country": "LB", "attempt": 1, "event": "full_rebuild_started"}
+KG LB: 20/131 clauses completed, cached=0
+KG LB: 40/131 clauses completed, cached=0
+KG LB: 60/131 clauses completed, cached=0
+KG LB: 80/131 clauses completed, cached=0
+KG LB: 100/131 clauses completed, cached=0
+KG LB: 120/131 clauses completed, cached=0
+KG LB: 131/131 clauses completed, cached=0
+{"country": "LB", "attempt": 1, "status": "completed", "attempted_clauses": 131, "failed_clauses": 0, "cache_hits": 0, "semantic_edges_added": 44, "model_usage": {"requests": 247, "responses_with_usage": 247, "tokens_in": 184421, "tokens_out": 144857, "response_models": {"deepseek-flash": 247}, "calls_without_reported_usage": 0}, "duration_ms": 78635}
+{"country": "SG", "attempt": 1, "event": "full_rebuild_started"}
+KG SG: 20/1435 clauses completed, cached=0
+KG SG: 40/1435 clauses completed, cached=0
+KG SG: 60/1435 clauses completed, cached=0
+KG SG: 80/1435 clauses completed, cached=0
+KG SG: 100/1435 clauses completed, cached=0
+KG SG: 120/1435 clauses completed, cached=0
+KG SG: 140/1435 clauses completed, cached=0
+KG SG: 160/1435 clauses completed, cached=0
+KG SG: 180/1435 clauses completed, cached=0
+KG SG: 200/1435 clauses completed, cached=0
+KG SG: 220/1435 clauses completed, cached=0
+KG SG: 240/1435 clauses completed, cached=0
+KG SG: 260/1435 clauses completed, cached=0
+KG SG: 280/1435 clauses completed, cached=0
+KG SG: 300/1435 clauses completed, cached=0
+KG SG: 320/1435 clauses completed, cached=0
+KG SG: 340/1435 clauses completed, cached=0
+KG SG: 360/1435 clauses completed, cached=0
+KG SG: 380/1435 clauses completed, cached=0
+KG SG: 400/1435 clauses completed, cached=0
+KG SG: 420/1435 clauses completed, cached=0
+KG SG: 440/1435 clauses completed, cached=0
+KG SG: 460/1435 clauses completed, cached=0
+KG SG: 480/1435 clauses completed, cached=0
+KG SG: 500/1435 clauses completed, cached=0
+KG SG: 520/1435 clauses completed, cached=0
+KG SG: 540/1435 clauses completed, cached=0
+KG SG: 560/1435 clauses completed, cached=0
+KG SG: 580/1435 clauses completed, cached=0
+KG SG: 600/1435 clauses completed, cached=0
+KG SG: 620/1435 clauses completed, cached=0
+KG SG: 640/1435 clauses completed, cached=0
+KG SG: 660/1435 clauses completed, cached=0
+KG SG: 680/1435 clauses completed, cached=0
+KG SG: 700/1435 clauses completed, cached=0
+KG SG: 720/1435 clauses completed, cached=0
+KG SG: 740/1435 clauses completed, cached=0
+KG SG: 760/1435 clauses completed, cached=0
+KG SG: 780/1435 clauses completed, cached=0
+KG SG: 800/1435 clauses completed, cached=0
+KG SG: 820/1435 clauses completed, cached=0
+KG SG: 840/1435 clauses completed, cached=0
+KG SG: 860/1435 clauses completed, cached=0
+KG SG: 880/1435 clauses completed, cached=0
+KG SG: 900/1435 clauses completed, cached=0
+KG SG: 920/1435 clauses completed, cached=0
+KG SG: 940/1435 clauses completed, cached=0
+KG SG: 960/1435 clauses completed, cached=0
+KG SG: 980/1435 clauses completed, cached=0
+KG SG: 1000/1435 clauses completed, cached=0
+KG SG: 1020/1435 clauses completed, cached=0
+KG SG: 1040/1435 clauses completed, cached=0
+KG SG: 1060/1435 clauses completed, cached=0
+KG SG: 1080/1435 clauses completed, cached=0
+KG SG: 1100/1435 clauses completed, cached=0
+KG SG: 1120/1435 clauses completed, cached=0
+KG SG: 1140/1435 clauses completed, cached=0
+KG SG: 1160/1435 clauses completed, cached=0
+KG SG: 1180/1435 clauses completed, cached=0
+KG SG: 1200/1435 clauses completed, cached=0
+KG SG: 1220/1435 clauses completed, cached=0
+KG SG: 1240/1435 clauses completed, cached=0
+KG SG: 1260/1435 clauses completed, cached=0
+KG SG: 1280/1435 clauses completed, cached=0
+KG SG: 1300/1435 clauses completed, cached=0
+KG SG: 1320/1435 clauses completed, cached=0
+KG SG: 1340/1435 clauses completed, cached=0
+KG SG: 1360/1435 clauses completed, cached=0
+KG SG: 1380/1435 clauses completed, cached=0
+KG SG: 1400/1435 clauses completed, cached=0
+KG SG: 1420/1435 clauses completed, cached=0
+{"country": "SG", "attempt": 1, "status": "failed", "reason": "extractor_or_judge_unavailable", "attempted_clauses": 1435, "failed_clauses": 4, "cache_hits": 0, "semantic_edges_added": 0, "model_usage": {"requests": 3626, "responses_with_usage": 3626, "tokens_in": 2185423, "tokens_out": 1749510, "response_models": {"deepseek-flash": 3626}, "calls_without_reported_usage": 0}, "duration_ms": 759046}
+{"country": "SG", "attempt": 2, "event": "full_rebuild_started"}
+{"country": "SG", "attempt": 2, "status": "failed", "reason": "extractor_or_judge_unavailable", "attempted_clauses": 1435, "failed_clauses": 1, "cache_hits": 1431, "semantic_edges_added": 0, "model_usage": {"requests": 10, "responses_with_usage": 10, "tokens_in": 7583, "tokens_out": 9005, "response_models": {"deepseek-flash": 10}, "calls_without_reported_usage": 0}, "duration_ms": 18825}
+{"country": "SG", "attempt": 3, "event": "full_rebuild_started"}
+{"country": "SG", "attempt": 3, "status": "failed", "reason": "extractor_or_judge_unavailable", "attempted_clauses": 1435, "failed_clauses": 1, "cache_hits": 1434, "semantic_edges_added": 0, "model_usage": {"requests": 2, "responses_with_usage": 2, "tokens_in": 2548, "tokens_out": 3102, "response_models": {"deepseek-flash": 2}, "calls_without_reported_usage": 0}, "duration_ms": 14931}
+{"started_at": "2026-10-23T14:35:52.151746+00:00", "completed_at": "2026-10-23T14:54:36.914588+00:00", "duration_seconds": 1124.763, "all_countries_completed": false, "no_sampling": true, "new_edges": 224, "new_nodes": 231, "all_new_edges_pending": false, "all_new_nodes_pending": false, "human_approved": 0, "latest_by_country": {"EG": {"country": "EG", "attempt": 1, "recorded_at": "2026-10-23T14:36:33.920372+00:00", "status": "completed", "cache_hits": 0, "sampled": false, "attempted_clauses": 58, "failed_clauses": 0, "nodes_total": 34, "edges_total": 25, "semantic_edges_added": 19, "title_inferred_amend_edges": 0, "superseded_legacy_edges": 0, "superseded_unreviewed_edges": 39, "clauses_translated": 0, "docs_relevant": 2, "docs_related": 0, "docs_out_of_scope": 1, "docs_safety_held": 0, "duration_ms": 41609, "extraction_thinking": "disabled", "model_usage": {"requests": 153, "responses_with_usage": 153, "tokens_in": 108016, "tokens_out": 92426, "response_models": {"deepseek-flash": 153}, "calls_without_reported_usage": 0}, "batch_id": "1c3347a5-2a4c-4c82-a975-5b3065bcc32a"}, "TN": {"country": "TN", "attempt": 2, "recorded_at": "2026-10-23T14:38:28.905437+00:00", "status": "completed", "cache_hits": 133, "sampled": false, "attempted_clauses": 134, "failed_clauses": 0, "nodes_total": 138, "edges_total": 166, "semantic_edges_added": 161, "title_inferred_amend_edges": 0, "superseded_legacy_edges": 0, "superseded_unreviewed_edges": 79, "clauses_translated": 0, "docs_relevant": 2, "docs_related": 0, "docs_out_of_scope": 1, "docs_safety_held": 0, "duration_ms": 6711, "extraction_thinking": "disabled", "model_usage": {"requests": 2, "responses_with_usage": 2, "tokens_in": 1419, "tokens_out": 927, "response_models": {"deepseek-flash": 2}, "calls_without_reported_usage": 0}, "batch_id": "88d82e57-427f-4c93-a2f6-d57b0dba7f2b"}, "MA": {"country": "MA", "attempt": 3, "recorded_at": "2026-10-23T14:40:04.321913+00:00", "status": "failed", "reason": "extractor_or_judge_unavailable", "failures": [{"clause_id": "fb6b36d3-34b9-4970-b5e3-40f63b3b10b4", "step": "extraction", "reason": "model_unavailable_or_invalid_schema"}, {"clause_id": "e5533a5b-551e-4650-b8e0-809eeaf2d77b", "step": "extraction", "reason": "model_unavailable_or_invalid_schema"}], "cache_hits": 94, "attempted_clauses": 96, "failed_clauses": 2, "previous_graph_preserved": true, "semantic_edges_added": 0, "duration_ms": 11526, "extraction_thinking": "disabled", "model_usage": {"requests": 4, "responses_with_usage": 4, "tokens_in": 4212, "tokens_out": 4085, "response_models": {"deepseek-flash": 4}, "calls_without_reported_usage": 0}, "batch_id": "8207ccbe-20a5-4009-9642-f894f646e05e"}, "LB": {"country": "LB", "attempt": 1, "recorded_at": "2026-10-23T14:41:23.140279+00:00", "status": "completed", "cache_hits": 0, "sampled": false, "attempted_clauses": 131, "failed_clauses": 0, "nodes_total": 55, "edges_total": 48, "semantic_edges_added": 44, "title_inferred_amend_edges": 0, "superseded_legacy_edges": 0, "superseded_unreviewed_edges": 8, "clauses_translated": 0, "docs_relevant": 1, "docs_related": 0, "docs_out_of_scope": 1, "docs_safety_held": 0, "duration_ms": 78635, "extraction_thinking": "disabled", "model_usage": {"requests": 247, "responses_with_usage": 247, "tokens_in": 184421, "tokens_out": 144857, "response_models": {"deepseek-flash": 247}, "calls_without_reported_usage": 0}, "batch_id": "bd0e00e6-00a9-48b5-a0c4-1356a9fb19cb"}, "SG": {"country": "SG", "attempt": 3, "recorded_at": "2026-10-23T14:54:36.888462+00:00", "status": "failed", "reason": "extractor_or_judge_unavailable", "failures": [{"clause_id": "c4368a59-512b-4282-b60b-2ae3a0498360", "step": "extraction", "reason": "model_unavailable_or_invalid_schema"}], "cache_hits": 1434, "attempted_clauses": 1435, "failed_clauses": 1, "previous_graph_preserved": true, "semantic_edges_added": 0, "duration_ms": 14931, "extraction_thinking": "disabled", "model_usage": {"requests": 2, "responses_with_usage": 2, "tokens_in": 2548, "tokens_out": 3102, "response_models": {"deepseek-flash": 2}, "calls_without_reported_usage": 0}, "batch_id": "b9259131-ead4-4cca-a0df-86fe6203558c"}}, "tokens_in": 2904138, "tokens_out": 2354338}

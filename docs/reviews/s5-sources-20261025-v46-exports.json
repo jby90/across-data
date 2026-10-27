@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "4691f108-d449-435c-bd28-f0aac3f79401",
+    "format": "docx",
+    "status": 200,
+    "bytes": 25721,
+    "sha256": "b6ab4715d1af8f1e5f01bf4592238fcfc65a1995134d64574c740032166a4fb7",
+    "xml_valid": true
+  },
+  {
+    "task_id": "4691f108-d449-435c-bd28-f0aac3f79401",
+    "format": "pdf",
+    "status": 200,
+    "bytes": 3282982,
+    "sha256": "4ecce71684a9c52189ec09e504a663dbf4f6b6cbb51c4944b7448cf955220178",
+    "pages": 14
+  },
+  {
+    "task_id": "99e117fa-b2ca-45b2-ab50-387989638bb6",
+    "format": "docx",
+    "status": 409
+  },
+  {
+    "task_id": "99e117fa-b2ca-45b2-ab50-387989638bb6",
+    "format": "pdf",
+    "status": 409
+  }
+]

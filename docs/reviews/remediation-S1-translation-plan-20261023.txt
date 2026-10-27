@@ -1,0 +1,2 @@
+[translate] {"total_eligible": 2607, "total_missing": 1772, "total": 1772, "skipped_qualified": 835, "limited": 0, "machine_translated": 0, "translation_failed": 0, "not_translated": 0, "errors": 0, "dry_run": 1, "superseded": 0}
+批量翻译结果: {"total_eligible": 2607, "total_missing": 1772, "total": 1772, "skipped_qualified": 835, "limited": 0, "machine_translated": 0, "translation_failed": 0, "not_translated": 0, "errors": 0, "dry_run": 1, "superseded": 0}

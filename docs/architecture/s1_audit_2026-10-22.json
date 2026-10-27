@@ -1,0 +1,428 @@
+{
+  "generated_at": "2026-10-22T16:31:41.951130+00:00",
+  "base_url": "http://127.0.0.1:8000",
+  "sites": {
+    "total_sites": 20,
+    "by_country": {
+      "EG": {
+        "total_sites": 5,
+        "enabled_sites": 5,
+        "terms_status": {
+          "approved": 5
+        },
+        "last_status": {
+          "failed": 2,
+          "partial": 2,
+          "success": 1
+        }
+      },
+      "LB": {
+        "total_sites": 2,
+        "enabled_sites": 2,
+        "terms_status": {
+          "approved": 2
+        },
+        "last_status": {
+          "success": 2
+        }
+      },
+      "MA": {
+        "total_sites": 4,
+        "enabled_sites": 4,
+        "terms_status": {
+          "approved": 4
+        },
+        "last_status": {
+          "partial": 3,
+          "success": 1
+        }
+      },
+      "SG": {
+        "total_sites": 5,
+        "enabled_sites": 5,
+        "terms_status": {
+          "approved": 5
+        },
+        "last_status": {
+          "partial": 4,
+          "success": 1
+        }
+      },
+      "TN": {
+        "total_sites": 4,
+        "enabled_sites": 4,
+        "terms_status": {
+          "approved": 4
+        },
+        "last_status": {
+          "failed": 1,
+          "success": 3
+        }
+      }
+    }
+  },
+  "documents": {
+    "total_documents": 80,
+    "total_versions": 80,
+    "total_clauses": 2607,
+    "by_country": {
+      "EG": {
+        "documents_count": 3,
+        "versions_count": 3,
+        "clauses_count": 100,
+        "ocr_versions_count": 1,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "relevant": 3
+        }
+      },
+      "LB": {
+        "documents_count": 2,
+        "versions_count": 2,
+        "clauses_count": 329,
+        "ocr_versions_count": 0,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "relevant": 2
+        }
+      },
+      "MA": {
+        "documents_count": 4,
+        "versions_count": 4,
+        "clauses_count": 215,
+        "ocr_versions_count": 2,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "irrelevant": 1,
+          "relevant": 3
+        }
+      },
+      "SG": {
+        "documents_count": 68,
+        "versions_count": 68,
+        "clauses_count": 1813,
+        "ocr_versions_count": 0,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "relevant": 68
+        }
+      },
+      "TN": {
+        "documents_count": 3,
+        "versions_count": 3,
+        "clauses_count": 150,
+        "ocr_versions_count": 1,
+        "missing_latest_version_count": 0,
+        "relevance": {
+          "relevant": 3
+        }
+      }
+    }
+  },
+  "translations": {
+    "total_translations": 872,
+    "engine": {
+      "llm": 872
+    },
+    "model_name": {
+      "deepseek-flash": 872
+    },
+    "review_status": {
+      "machine_translated": 866,
+      "translation_failed": 6
+    },
+    "cjk_ratio_ge_30pct_count": 866,
+    "cjk_ratio_ge_30pct_rate": 0.9931,
+    "identical_to_original_count": 0,
+    "by_country": {
+      "SG": {
+        "total": 647,
+        "engine": {
+          "llm": 647
+        },
+        "model_name": {
+          "deepseek-flash": 647
+        },
+        "review_status": {
+          "machine_translated": 641,
+          "translation_failed": 6
+        },
+        "cjk_ratio_ge_30pct_count": 641,
+        "cjk_ratio_ge_30pct_rate": 0.9907,
+        "identical_to_original_count": 0
+      },
+      "EG": {
+        "total": 53,
+        "engine": {
+          "llm": 53
+        },
+        "model_name": {
+          "deepseek-flash": 53
+        },
+        "review_status": {
+          "machine_translated": 53
+        },
+        "cjk_ratio_ge_30pct_count": 53,
+        "cjk_ratio_ge_30pct_rate": 1.0,
+        "identical_to_original_count": 0
+      },
+      "TN": {
+        "total": 69,
+        "engine": {
+          "llm": 69
+        },
+        "model_name": {
+          "deepseek-flash": 69
+        },
+        "review_status": {
+          "machine_translated": 69
+        },
+        "cjk_ratio_ge_30pct_count": 69,
+        "cjk_ratio_ge_30pct_rate": 1.0,
+        "identical_to_original_count": 0
+      },
+      "MA": {
+        "total": 66,
+        "engine": {
+          "llm": 66
+        },
+        "model_name": {
+          "deepseek-flash": 66
+        },
+        "review_status": {
+          "machine_translated": 66
+        },
+        "cjk_ratio_ge_30pct_count": 66,
+        "cjk_ratio_ge_30pct_rate": 1.0,
+        "identical_to_original_count": 0
+      },
+      "LB": {
+        "total": 37,
+        "engine": {
+          "llm": 37
+        },
+        "model_name": {
+          "deepseek-flash": 37
+        },
+        "review_status": {
+          "machine_translated": 37
+        },
+        "cjk_ratio_ge_30pct_count": 37,
+        "cjk_ratio_ge_30pct_rate": 1.0,
+        "identical_to_original_count": 0
+      }
+    }
+  },
+  "knowledge_graph": {
+    "total_nodes": 115,
+    "total_edges": 1442,
+    "sg_edges_count": 1236,
+    "review_status": {
+      "approved": 146,
+      "pending_review": 1296
+    },
+    "extractor_model": {
+      "kg-rule-extractor-v1": 1442
+    },
+    "by_country": {
+      "SG": {
+        "nodes_count": 80,
+        "edges_count": 1236,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 3,
+          "INSTRUMENT": 66,
+          "DATA_CATEGORY": 4,
+          "OBLIGATION": 5,
+          "PENALTY": 1
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 66,
+          "AMENDS": 233,
+          "REPEALS": 20,
+          "GOVERNS": 153,
+          "PROHIBITS": 103,
+          "REQUIRES": 159,
+          "EXEMPTS": 18,
+          "SUPERVISES": 66,
+          "PENALIZES": 147,
+          "APPLIES_TO_SCENARIO": 127,
+          "RESTRICTS_CROSS_BORDER": 41,
+          "REQUIRES_ADMISSION": 103
+        },
+        "review_status": {
+          "approved": 132,
+          "pending_review": 1104
+        },
+        "extractor_model": {
+          "kg-rule-extractor-v1": 1236
+        },
+        "total_clauses_count": 1813,
+        "linked_clauses_count": 512,
+        "unlinked_clauses_count": 1301,
+        "quote_mismatch_edges_count": 0
+      },
+      "EG": {
+        "nodes_count": 8,
+        "edges_count": 45,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 1,
+          "INSTRUMENT": 1,
+          "DATA_CATEGORY": 2,
+          "OBLIGATION": 3,
+          "PENALTY": 0
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 1,
+          "AMENDS": 0,
+          "REPEALS": 0,
+          "GOVERNS": 17,
+          "PROHIBITS": 1,
+          "REQUIRES": 17,
+          "EXEMPTS": 0,
+          "SUPERVISES": 1,
+          "PENALIZES": 0,
+          "APPLIES_TO_SCENARIO": 1,
+          "RESTRICTS_CROSS_BORDER": 6,
+          "REQUIRES_ADMISSION": 1
+        },
+        "review_status": {
+          "approved": 2,
+          "pending_review": 43
+        },
+        "extractor_model": {
+          "kg-rule-extractor-v1": 45
+        },
+        "total_clauses_count": 100,
+        "linked_clauses_count": 15,
+        "unlinked_clauses_count": 85,
+        "quote_mismatch_edges_count": 0
+      },
+      "TN": {
+        "nodes_count": 10,
+        "edges_count": 77,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 2,
+          "INSTRUMENT": 2,
+          "DATA_CATEGORY": 2,
+          "OBLIGATION": 3,
+          "PENALTY": 0
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 2,
+          "AMENDS": 0,
+          "REPEALS": 0,
+          "GOVERNS": 34,
+          "PROHIBITS": 0,
+          "REQUIRES": 22,
+          "EXEMPTS": 12,
+          "SUPERVISES": 2,
+          "PENALIZES": 0,
+          "APPLIES_TO_SCENARIO": 0,
+          "RESTRICTS_CROSS_BORDER": 5,
+          "REQUIRES_ADMISSION": 0
+        },
+        "review_status": {
+          "approved": 4,
+          "pending_review": 73
+        },
+        "extractor_model": {
+          "kg-rule-extractor-v1": 77
+        },
+        "total_clauses_count": 150,
+        "linked_clauses_count": 33,
+        "unlinked_clauses_count": 117,
+        "quote_mismatch_edges_count": 0
+      },
+      "MA": {
+        "nodes_count": 11,
+        "edges_count": 64,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 1,
+          "INSTRUMENT": 3,
+          "DATA_CATEGORY": 2,
+          "OBLIGATION": 3,
+          "PENALTY": 1
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 3,
+          "AMENDS": 0,
+          "REPEALS": 0,
+          "GOVERNS": 21,
+          "PROHIBITS": 0,
+          "REQUIRES": 17,
+          "EXEMPTS": 4,
+          "SUPERVISES": 3,
+          "PENALIZES": 9,
+          "APPLIES_TO_SCENARIO": 0,
+          "RESTRICTS_CROSS_BORDER": 7,
+          "REQUIRES_ADMISSION": 0
+        },
+        "review_status": {
+          "approved": 6,
+          "pending_review": 58
+        },
+        "extractor_model": {
+          "kg-rule-extractor-v1": 64
+        },
+        "total_clauses_count": 215,
+        "linked_clauses_count": 30,
+        "unlinked_clauses_count": 185,
+        "quote_mismatch_edges_count": 0
+      },
+      "LB": {
+        "nodes_count": 6,
+        "edges_count": 20,
+        "node_counts_by_type": {
+          "COUNTRY": 1,
+          "REGULATOR": 1,
+          "INSTRUMENT": 1,
+          "DATA_CATEGORY": 1,
+          "OBLIGATION": 2,
+          "PENALTY": 0
+        },
+        "edge_counts_by_relation": {
+          "PUBLISHES": 1,
+          "AMENDS": 0,
+          "REPEALS": 0,
+          "GOVERNS": 7,
+          "PROHIBITS": 0,
+          "REQUIRES": 7,
+          "EXEMPTS": 0,
+          "SUPERVISES": 1,
+          "PENALIZES": 0,
+          "APPLIES_TO_SCENARIO": 0,
+          "RESTRICTS_CROSS_BORDER": 4,
+          "REQUIRES_ADMISSION": 0
+        },
+        "review_status": {
+          "approved": 2,
+          "pending_review": 18
+        },
+        "extractor_model": {
+          "kg-rule-extractor-v1": 20
+        },
+        "total_clauses_count": 329,
+        "linked_clauses_count": 8,
+        "unlinked_clauses_count": 321,
+        "quote_mismatch_edges_count": 0
+      }
+    }
+  },
+  "analysis_tasks": {
+    "total_tasks": 1,
+    "finished_tasks_count": 1,
+    "status_distribution": {
+      "completed": 1
+    },
+    "backtrack_count_distribution": {
+      "1": 1
+    },
+    "partial_sample_count": 0,
+    "partial_sample_rate_all": 0.0,
+    "partial_sample_rate_finished": 0.0
+  }
+}

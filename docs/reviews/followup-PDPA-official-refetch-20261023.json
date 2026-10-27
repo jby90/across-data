@@ -1,0 +1,16 @@
+{
+  "url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+  "preflight": {
+    "url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+    "target": "ok",
+    "robots": "允许",
+    "robots_detail": "HTTP 403,无 robots.txt,视为允许"
+  },
+  "final_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Revised%20Acts/21rs8338.pdf",
+  "status": 200,
+  "sha256": "65398d9136ecdbf96ecbb78f95a4e1573cb67b4ecd68502c900eb2b311acb817",
+  "size_bytes": 396898,
+  "pages": 125,
+  "first_page": "THE STATUTES OF THE REPUBLIC OF SINGAPORE\nPERSONAL DATA PROTECTION\nACT 2012\n2020 REVISED EDITION\nThis revised edition incorporates all amendments up to and\nincluding 1 December 2021 and comes into operation on 31 December 2021.\nPrepared and Published by\nTHE LAW REVISION COMMISSION\nUNDER THE AUTHORITY OF\nTHE REVISED EDITION OF THE LAWS ACT 1983",
+  "matches_existing_archive": true
+}

@@ -1,0 +1,91 @@
+{
+  "database": "remediation_s6_migration_20261025",
+  "revision": "0017",
+  "tables": {
+    "knowledge_audit_records": {
+      "rows": 15260,
+      "old_columns_unchanged": true
+    },
+    "analysis_step_traces": {
+      "rows": 654,
+      "old_columns_unchanged": true
+    },
+    "clauses": {
+      "rows": 2744,
+      "old_columns_unchanged": true
+    },
+    "clause_translations": {
+      "rows": 3464,
+      "old_columns_unchanged": true
+    },
+    "document_versions": {
+      "rows": 81,
+      "old_columns_unchanged": true
+    },
+    "crawl_runs": {
+      "rows": 58,
+      "old_columns_unchanged": true
+    },
+    "glossary_terms": {
+      "rows": 14,
+      "old_columns_unchanged": true
+    },
+    "documents": {
+      "rows": 81,
+      "old_columns_unchanged": true
+    },
+    "kg_edges": {
+      "rows": 5259,
+      "old_columns_unchanged": true
+    },
+    "kg_nodes": {
+      "rows": 2419,
+      "old_columns_unchanged": true
+    },
+    "analysis_tasks": {
+      "rows": 98,
+      "old_columns_unchanged": true
+    },
+    "agent_workflow_configs": {
+      "rows": 46,
+      "old_columns_unchanged": true
+    },
+    "knowledge_change_proposals": {
+      "rows": 473,
+      "old_columns_unchanged": true
+    },
+    "report_versions": {
+      "rows": 99,
+      "old_columns_unchanged": true
+    },
+    "review_points": {
+      "rows": 4,
+      "old_columns_unchanged": true
+    },
+    "organizations": {
+      "rows": 1,
+      "old_columns_unchanged": true
+    },
+    "pipeline_events": {
+      "rows": 202,
+      "old_columns_unchanged": true
+    },
+    "source_sites": {
+      "rows": 21,
+      "old_columns_unchanged": true
+    },
+    "users": {
+      "rows": 4,
+      "old_columns_unchanged": true
+    },
+    "analysis_messages": {
+      "rows": 25,
+      "old_columns_unchanged": true
+    }
+  },
+  "old_rows_unchanged": 31007,
+  "existing_tasks_with_empty_defaults": 98,
+  "active_workflow_ids": [
+    "7dff5fe7-1396-4000-b982-8f32eeb0d054"
+  ]
+}

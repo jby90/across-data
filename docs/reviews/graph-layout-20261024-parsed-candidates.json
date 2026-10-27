@@ -1,0 +1,526 @@
+{
+  "items": [
+    {
+      "id": "9fc69a7d-67fd-4e5b-9176-c79b1ff6f830",
+      "cached": false,
+      "payload": {
+        "contract": "typed-page-graph-v1",
+        "cache_key": "2dee8f4c0c9d833f5f8147410085d82ab0d1bcf7b82517d716b8ce5802efe4a7",
+        "source_revision_id": "f1e5faf7-01c3-4e37-b407-5154d298371d",
+        "source_hash": "290a5668b7109795e86886d9c343af890dd39113da6b524a6e6b466358e9b746",
+        "parent_clause_id": "41ed474f-6426-49ea-9f61-d9d614bf74e5",
+        "version_id": "439ea359-9915-4bef-b8e6-234e29ba16d2",
+        "pdf_content_hash": "e88076a37faf78473dcef5f67cf7ee7d34bd9960c38dcaf8d3a92e2f80785c06",
+        "page_number": 40,
+        "country_code": "EG",
+        "document_title": "埃及内阁信息与决策支持中心 IDSC",
+        "blocks": [
+          {
+            "block_number": 0,
+            "kind": "page_identifier",
+            "source_span": {
+              "start": 0,
+              "end": 3
+            },
+            "source_text": "33\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 1,
+            "kind": "reference",
+            "source_span": {
+              "start": 3,
+              "end": 232
+            },
+            "source_text": "14 -  The General Data Protection Regulation, (GDPR), REGULATION (EU) 2016/679, 27 April 2016 - EU –\nretrieved from https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2016.119.01.0001.01.\nENG&toc=OJ:L:2016:119:TOC\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 2,
+            "kind": "reference",
+            "source_span": {
+              "start": 232,
+              "end": 470
+            },
+            "source_text": "15 -  The Electronic Identification and Authentication Services (eIDAS) Regulation, REGULATION (EU) No\n910/2014, 23 July 2014, EU – retrieved from https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:O\nJ.L_.2014.257.01.0073.01.ENG\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 3,
+            "kind": "reference",
+            "source_span": {
+              "start": 470,
+              "end": 609
+            },
+            "source_text": "16 -  The Crypto-assets Regulation, 31 May 2023, EU – retrieved from https://eur-lex.europa.eu/legal-content/\nEN/ALL/?uri=CELEX:32023R1114\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 4,
+            "kind": "reference",
+            "source_span": {
+              "start": 609,
+              "end": 794
+            },
+            "source_text": "17 -  The digital operational resilience for the financial sector regulation, 14 December 2022, EU – retrieved from\nhttps://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2554\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 5,
+            "kind": "reference",
+            "source_span": {
+              "start": 794,
+              "end": 1140
+            },
+            "source_text": "18 -  The Payment Services Directive 2, (PSD2), published in 25 November 2015, entered into force on 12 January\n2016, - EU – retrieved from https://eur-lex.europa.eu/legal-content/en/TXT/?uri=CELEX%3A32015L2366\n(2015 version(,\n13 November 2007 (2007 version) https://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2007:319:0\n001:0036:en:PDF\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 6,
+            "kind": "reference",
+            "source_span": {
+              "start": 1140,
+              "end": 1337
+            },
+            "source_text": "19 -  The markets in Financial Instruments Directive 2 (MiFID II), 15 MAY 2014, last updated 28 -3- 2024, EU –\nretrieved from https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A32014L0065\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 7,
+            "kind": "reference",
+            "source_span": {
+              "start": 1337,
+              "end": 1611
+            },
+            "source_text": "20 - The Anti-Money Laundering Directive (AMLD), 20 May 2015, EU – retrieved from https://eur-lex.europa.eu/\nlegal-content/EN/TXT/?uri=CELEX%3A32015L0849, last amended, 30 May 2018, EU – retrieved from https://\neur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32018L0843\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 8,
+            "kind": "reference",
+            "source_span": {
+              "start": 1611,
+              "end": 1803
+            },
+            "source_text": "21 -  NIS Directive, 6 July 2016, EU – retrieved from https://eur-lex.europa.eu/eli/dir/2016/1148/oj, Updated 14\nDecember 2022, EU – retrieved from https://eur-lex.europa.eu/eli/dir/2022/2555\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 9,
+            "kind": "reference",
+            "source_span": {
+              "start": 1803,
+              "end": 1962
+            },
+            "source_text": "22 -  The Consumer Financial Services Action Plan, 23 March 2017, EU – retrieved from https://eur-lex.europa.eu/\nlegal-content/EN/TXT/?uri=CELEX%3A52017DC0139\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 10,
+            "kind": "reference",
+            "source_span": {
+              "start": 1962,
+              "end": 2113
+            },
+            "source_text": "23 -  The Capital Markets Union Action Plan, 8 June 2017, EU – retrieved from https://eur-lex.europa.eu/legal-\ncontent/EN/TXT/?uri=CELEX%3A52017DC0292\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 11,
+            "kind": "reference",
+            "source_span": {
+              "start": 2113,
+              "end": 2248
+            },
+            "source_text": "24 - The FinTech Action plan, 8 March 2018, EU – retrieved from https://eur-lex.europa.eu/legal-content/EN/\nTXT/?uri=CELEX:52018DC0109\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 12,
+            "kind": "reference",
+            "source_span": {
+              "start": 2248,
+              "end": 2406
+            },
+            "source_text": "25 -  The Digital Single Market Strategy for Europe, 6 May 2015, EU – retrieved from https://eur-lex.europa.eu/\nlegal-content/EN/TXT/?uri=celex%3A52015DC0192\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 13,
+            "kind": "reference",
+            "source_span": {
+              "start": 2406,
+              "end": 2552
+            },
+            "source_text": "26 -  The Cybersecurity Strategy, 13 September 2017, EU – retrieved from https://eur-lex.europa.eu/legal-\ncontent/en/ALL/?uri=CELEX%3A52017JC0450\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 14,
+            "kind": "reference",
+            "source_span": {
+              "start": 2552,
+              "end": 2709
+            },
+            "source_text": "27 -  The Digital Finance Strategy for the EU, 24 September 2020, EU – retrieved from https://eur-lex.europa.eu/\nlegal-content/EN/TXT/?uri=CELEX:52020DC0591\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 15,
+            "kind": "reference",
+            "source_span": {
+              "start": 2709,
+              "end": 2881
+            },
+            "source_text": "28 -  Strategy on supervisory data in EU financial services, 15 December 2021, EU – retrieved from https://eur-lex.\neuropa.eu/legal-content/EN/TXT/?uri=CELEX%3A52021DC0798\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 16,
+            "kind": "reference",
+            "source_span": {
+              "start": 2881,
+              "end": 3138
+            },
+            "source_text": "29 -  Fintech laws and regulations 2023 – GLOBAL LEGAL INSIGHTS – RETREIVED FROM https://www.\ngloballegalinsights.com/practice-areas/fintech-laws-and-regulations/egypt/#:~:text=The%20New%20\nBanking%20Law%20prohibits,out%20by%20digital%20lending%20providers.",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          }
+        ],
+        "status": "completed",
+        "review_status": "pending_review",
+        "active": false,
+        "usable_as_legal_basis": false,
+        "human_reviewed": false,
+        "extractor_prompt": "kg-extract-v4",
+        "judge_prompt": "kg-judge-v2"
+      }
+    },
+    {
+      "id": "3dd13104-2717-429f-8d3a-24c99469b718",
+      "cached": false,
+      "payload": {
+        "contract": "typed-page-graph-v1",
+        "cache_key": "a01e54b54ce06577777d73cadede1413270918ff9be50b7de9082b4f9a9ff434",
+        "source_revision_id": "dbfe127f-fc5f-4b33-aaec-a60d03627a71",
+        "source_hash": "e8819e55b305eca590b6935284f671ab6714ac85f519321efa526f448e526775",
+        "parent_clause_id": "f0fd255b-0f1f-4ce5-80bc-da26ae8f56cd",
+        "version_id": "21c34f19-bee3-46f4-8a78-f89dd2a7eb65",
+        "pdf_content_hash": "ac1b9cd1914d7c00df391323f3d0952e0381974dab951e7782b4f4b895b8f75f",
+        "page_number": 16,
+        "country_code": "SG",
+        "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+        "blocks": [
+          {
+            "block_number": 0,
+            "kind": "page_identifier",
+            "source_span": {
+              "start": 0,
+              "end": 14
+            },
+            "source_text": "S 709/2013 16\n",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          },
+          {
+            "block_number": 1,
+            "kind": "table",
+            "source_span": {
+              "start": 14,
+              "end": 282
+            },
+            "source_text": "SECOND SCHEDULE\nRegulation  10(3)\nADVANCE PAYMENT OF APPLICATION FEE\nFirst column Second column\nNumber of Singapore telephone  Amount\nnumbers pre-paid at any one time\n1. 5,000 $100\n2. 10,000 $150\n3. 25,000 $350\n4. 100,000 $1,200\n5. 250,000 $2,700\n6. 1,000,000 $10,000\n",
+            "relations": [
+              {
+                "relation": {
+                  "type": "REQUIRES",
+                  "source": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+                  "target": "申请费预缴义务",
+                  "evidence_quote": "ADVANCE PAYMENT OF APPLICATION FEE",
+                  "confidence": 0.9
+                },
+                "evaluation": {
+                  "admitted": false,
+                  "stage": "semantic_judge",
+                  "aligned_quote": "ADVANCE PAYMENT OF APPLICATION FEE",
+                  "confidence": 0.0,
+                  "judge_verdict": "no",
+                  "judge_reason": "证据片段缺乏支撑 REQUIRES 关系的核心法律谓词或规范语义",
+                  "judge_model": null,
+                  "review_status": "rejected"
+                },
+                "source_type": "INSTRUMENT",
+                "source_name": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+                "target_type": "OBLIGATION",
+                "target_name": "申请费预缴义务",
+                "quote_span": {
+                  "start": 34,
+                  "end": 68
+                }
+              },
+              {
+                "relation": {
+                  "type": "PENALIZES",
+                  "source": "申请费预缴义务",
+                  "target": "按号码数量分级的预缴申请费金额",
+                  "evidence_quote": "Number of Singapore telephone  numbers pre-paid at any one time",
+                  "confidence": 0.85
+                },
+                "evaluation": {
+                  "admitted": false,
+                  "stage": "fee_is_not_penalty",
+                  "aligned_quote": null,
+                  "confidence": 0.0,
+                  "judge_verdict": "no",
+                  "judge_reason": "fee schedule amounts do not establish penalties",
+                  "judge_model": null,
+                  "review_status": "pending_review"
+                },
+                "source_type": "OBLIGATION",
+                "source_name": "申请费预缴义务",
+                "target_type": "PENALTY",
+                "target_name": "按号码数量分级的预缴申请费金额",
+                "quote_span": {
+                  "start": -1,
+                  "end": -1
+                }
+              }
+            ],
+            "review_status": "pending_review",
+            "status": "completed",
+            "extraction_payload": {
+              "entities": [
+                {
+                  "type": "INSTRUMENT",
+                  "name_zh": "个人数据保护（禁止来电登记册）条例2013",
+                  "name_orig": "Personal Data Protection (Do Not Call Registry) Regulations 2013",
+                  "definition": "新加坡依《2012年个人数据保护法》制定的关于禁止来电登记册的附属条例，本附表规定申请费预缴标准。"
+                },
+                {
+                  "type": "OBLIGATION",
+                  "name_zh": "申请费预缴义务",
+                  "name_orig": "ADVANCE PAYMENT OF APPLICATION FEE",
+                  "definition": "依条例第10(3)条，申请人须按预缴的新加坡电话号码数量对应金额预先缴纳申请费。"
+                },
+                {
+                  "type": "PENALTY",
+                  "name_zh": "按号码数量分级的预缴申请费金额",
+                  "name_orig": "Number of Singapore telephone numbers pre-paid at any one time / Amount",
+                  "definition": "附表规定的费用标准：5,000个号码100新元、10,000个150新元、25,000个350新元、100,000个1,200新元、250,000个2,700新元、1,000,000个10,000新元。"
+                }
+              ],
+              "relations": [
+                {
+                  "type": "REQUIRES",
+                  "source": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+                  "target": "申请费预缴义务",
+                  "evidence_quote": "ADVANCE PAYMENT OF APPLICATION FEE",
+                  "confidence": 0.9
+                },
+                {
+                  "type": "PENALIZES",
+                  "source": "申请费预缴义务",
+                  "target": "按号码数量分级的预缴申请费金额",
+                  "evidence_quote": "Number of Singapore telephone  numbers pre-paid at any one time",
+                  "confidence": 0.85
+                }
+              ]
+            },
+            "extractor_model": "deepseek-flash"
+          },
+          {
+            "block_number": 2,
+            "kind": "table",
+            "source_span": {
+              "start": 282,
+              "end": 650
+            },
+            "source_text": "THIRD SCHEDULE\nRegulation  14(1)\nFEES PAYABLE IN RESPECT OF\nTERMINATED SINGAPORE TELEPHONE NUMBERS\nFirst column Second column\nNumber of terminated Singapore  Fee\ntelephone numbers submitted in a report\n(per month)\n1. 1 – 20 $100\n2. 21 – 100 $500\n3. 101 – 500 $1,000\n4. 501 – 1,000 $1,500\n5. 1,001 – 10,000 $2,000\n6. 10,001 – 100,000 $2,900\n7. 100,001 and above $3,200\n",
+            "relations": [
+              {
+                "relation": {
+                  "type": "REQUIRES",
+                  "source": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+                  "target": "就终止使用的新加坡电话号码提交报告并缴费义务",
+                  "evidence_quote": "FEES PAYABLE IN RESPECT OF\nTERMINATED SINGAPORE TELEPHONE NUMBERS",
+                  "confidence": 0.9
+                },
+                "evaluation": {
+                  "admitted": false,
+                  "stage": "semantic_judge",
+                  "aligned_quote": "FEES PAYABLE IN RESPECT OF\nTERMINATED SINGAPORE TELEPHONE NUMBERS",
+                  "confidence": 0.0,
+                  "judge_verdict": "no",
+                  "judge_reason": "证据片段缺乏支撑 REQUIRES 关系的核心法律谓词或规范语义",
+                  "judge_model": null,
+                  "review_status": "rejected"
+                },
+                "source_type": "INSTRUMENT",
+                "source_name": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+                "target_type": "OBLIGATION",
+                "target_name": "就终止使用的新加坡电话号码提交报告并缴费义务",
+                "quote_span": {
+                  "start": 33,
+                  "end": 98
+                }
+              },
+              {
+                "relation": {
+                  "type": "PENALIZES",
+                  "source": "就终止使用的新加坡电话号码提交报告并缴费义务",
+                  "target": "终止号码报告分档费用（1–20个100新元至100,001个以上3,200新元）",
+                  "evidence_quote": "Number of terminated Singapore  Fee\ntelephone numbers submitted in a report\n(per month)\n1. 1 – 20 $100\n2. 21 – 100 $500\n3. 101 – 500 $1,000\n4. 501 – 1,000 $1,500\n5. 1,001 – 10,000 $2,000\n6. 10,001 – 100,000 $2,900\n7. 100,001 and above $3,200",
+                  "confidence": 0.85
+                },
+                "evaluation": {
+                  "admitted": false,
+                  "stage": "fee_is_not_penalty",
+                  "aligned_quote": null,
+                  "confidence": 0.0,
+                  "judge_verdict": "no",
+                  "judge_reason": "fee schedule amounts do not establish penalties",
+                  "judge_model": null,
+                  "review_status": "pending_review"
+                },
+                "source_type": "OBLIGATION",
+                "source_name": "就终止使用的新加坡电话号码提交报告并缴费义务",
+                "target_type": "PENALTY",
+                "target_name": "终止号码报告分档费用（1–20个100新元至100,001个以上3,200新元）",
+                "quote_span": {
+                  "start": -1,
+                  "end": -1
+                }
+              }
+            ],
+            "review_status": "pending_review",
+            "status": "completed",
+            "extraction_payload": {
+              "entities": [
+                {
+                  "type": "INSTRUMENT",
+                  "name_zh": "个人数据保护（禁止来电登记册）条例2013",
+                  "name_orig": "Personal Data Protection (Do Not Call Registry) Regulations 2013",
+                  "definition": "新加坡依据《2012年个人数据保护法》制定的禁止来电登记册相关条例，其第三附表规定就终止使用的新加坡电话号码提交报告时应缴付的费用。"
+                },
+                {
+                  "type": "OBLIGATION",
+                  "name_zh": "就终止使用的新加坡电话号码提交报告并缴费义务",
+                  "name_orig": "Fees payable in respect of terminated Singapore telephone numbers submitted in a report",
+                  "definition": "依条例第14(1)条及第三附表，按每月报告中所提交的终止使用新加坡电话号码数量，向主管机关缴付对应档位费用的义务。"
+                },
+                {
+                  "type": "PENALTY",
+                  "name_zh": "终止号码报告分档费用（1–20个100新元至100,001个以上3,200新元）",
+                  "name_orig": "Fee: 1 – 20 $100; 21 – 100 $500; 101 – 500 $1,000; 501 – 1,000 $1,500; 1,001 – 10,000 $2,000; 10,001 – 100,000 $2,900; 100,001 and above $3,200",
+                  "definition": "第三附表规定的按终止使用电话号码数量分档收取的报告费用标准，属金钱性负担。"
+                }
+              ],
+              "relations": [
+                {
+                  "type": "REQUIRES",
+                  "source": "Personal Data Protection Act 2012 - Personal Data Protection (Do Not Call Registry) Regulations 2013",
+                  "target": "就终止使用的新加坡电话号码提交报告并缴费义务",
+                  "evidence_quote": "FEES PAYABLE IN RESPECT OF\nTERMINATED SINGAPORE TELEPHONE NUMBERS",
+                  "confidence": 0.9
+                },
+                {
+                  "type": "PENALIZES",
+                  "source": "就终止使用的新加坡电话号码提交报告并缴费义务",
+                  "target": "终止号码报告分档费用（1–20个100新元至100,001个以上3,200新元）",
+                  "evidence_quote": "Number of terminated Singapore  Fee\ntelephone numbers submitted in a report\n(per month)\n1. 1 – 20 $100\n2. 21 – 100 $500\n3. 101 – 500 $1,000\n4. 501 – 1,000 $1,500\n5. 1,001 – 10,000 $2,000\n6. 10,001 – 100,000 $2,900\n7. 100,001 and above $3,200",
+                  "confidence": 0.85
+                }
+              ]
+            },
+            "extractor_model": "deepseek-flash"
+          },
+          {
+            "block_number": 3,
+            "kind": "signature",
+            "source_span": {
+              "start": 650,
+              "end": 826
+            },
+            "source_text": "Made this 21st day of November 2013.\nAUBECK KAM\nPermanent Secretary,\nMinistry of Communications\nand Information,\nSingapore.\n[Y03.002.001.EV30/13; AG/LLRD/SL/227A/2012/5 Vol. 1]",
+            "relations": [],
+            "review_status": "pending_review",
+            "status": "excluded_non_normative",
+            "reason": "reference/signature/page identifiers are not legal duties"
+          }
+        ],
+        "status": "completed",
+        "review_status": "pending_review",
+        "active": false,
+        "usable_as_legal_basis": false,
+        "human_reviewed": false,
+        "extractor_prompt": "kg-extract-v4",
+        "judge_prompt": "kg-judge-v2"
+      }
+    }
+  ],
+  "usage": {
+    "requests": 2,
+    "responses_with_usage": 2,
+    "tokens_in": 2023,
+    "tokens_out": 1063,
+    "response_models": {
+      "deepseek-flash": 2
+    }
+  },
+  "duration_seconds": 6.411,
+  "human_approvals": 0,
+  "active_edges_added": 0,
+  "all_completed": true
+}

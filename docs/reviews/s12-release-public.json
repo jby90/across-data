@@ -1,0 +1,24 @@
+{
+  "release_tag": "9097be3",
+  "application_source_commit": "9097be3",
+  "tls_enabled": true,
+  "public_user_url": "https://47.116.46.81/",
+  "public_admin_url": "https://47.116.46.81/admin/",
+  "images": {
+    "api": {
+      "ref": "cyshuhe-api:9097be3",
+      "id": "sha256:af5707483331de9167c29c0f063356ae5fc70b0c077f93150480150beb3347c5"
+    },
+    "web-user": {
+      "ref": "cyshuhe-web-user:9097be3",
+      "id": "sha256:bd2a5ae86a8fe81a14f9f48d979267dcf075d883126c9923914f6eacb51d8c28"
+    },
+    "web-admin": {
+      "ref": "cyshuhe-web-admin:9097be3",
+      "id": "sha256:568d5125001f7a28f9ff2ae32de44881f47822bfa47cf1888e7900cab495c3dc"
+    }
+  },
+  "migration": "0022",
+  "manual_review": "pending",
+  "note": "Application image source fixed; documentation and operator refinements may have a later commit."
+}

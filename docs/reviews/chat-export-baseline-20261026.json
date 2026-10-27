@@ -1,0 +1,29 @@
+[
+  {
+    "format": "pdf",
+    "dimension": "full",
+    "status": 200,
+    "wait_headers_seconds": 9.073,
+    "body_transfer_seconds": 0.132,
+    "total_seconds": 9.205,
+    "bytes": 218647
+  },
+  {
+    "format": "pdf",
+    "dimension": "D4",
+    "status": 200,
+    "wait_headers_seconds": 4.061,
+    "body_transfer_seconds": 0.044,
+    "total_seconds": 4.106,
+    "bytes": 86141
+  },
+  {
+    "format": "docx",
+    "dimension": "full",
+    "status": 200,
+    "wait_headers_seconds": 0.089,
+    "body_transfer_seconds": 0.006,
+    "total_seconds": 0.095,
+    "bytes": 26360
+  }
+]

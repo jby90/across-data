@@ -1,0 +1,102 @@
+{
+  "agent_workflow_configs": {
+    "count": 46,
+    "digest": "784463364e7236f1d5e84b537fb14d83",
+    "matches": true
+  },
+  "analysis_messages": {
+    "count": 25,
+    "digest": "a138cf8519bbffd49f2c3355963470e7",
+    "matches": true
+  },
+  "analysis_step_traces": {
+    "count": 654,
+    "digest": "e669245b29b4751d10978bcba30cd1c9",
+    "matches": true
+  },
+  "analysis_tasks": {
+    "count": 98,
+    "digest": "8f27a6a6a17a1f7e69780506e2539130",
+    "matches": true
+  },
+  "clause_translations": {
+    "count": 3464,
+    "digest": "b361c7f962b99793fa51dee00037d1bc",
+    "matches": true
+  },
+  "clauses": {
+    "count": 2744,
+    "digest": "c7c74499bdb658bc99278c9e5912f4c1",
+    "matches": true
+  },
+  "crawl_runs": {
+    "count": 58,
+    "digest": "b5e2294c7a2df50db19313d4327ce84f",
+    "matches": true
+  },
+  "document_versions": {
+    "count": 81,
+    "digest": "3431e436b12ffe27c42b5e94e67c0434",
+    "matches": true
+  },
+  "documents": {
+    "count": 81,
+    "digest": "f29bf24ef925eceb7617a4667365073a",
+    "matches": true
+  },
+  "glossary_terms": {
+    "count": 14,
+    "digest": "e3a8bb3a3f1b5f657680db90fb54031b",
+    "matches": true
+  },
+  "kg_edges": {
+    "count": 5259,
+    "digest": "0b4d95cfd736d49bd0252c16fa6d1e80",
+    "matches": true
+  },
+  "kg_nodes": {
+    "count": 2419,
+    "digest": "2e90892df4bb3e83a80de30ed3c634c9",
+    "matches": true
+  },
+  "knowledge_audit_records": {
+    "count": 15260,
+    "digest": "5533f68383443c116d5cf723550225e6",
+    "matches": true
+  },
+  "knowledge_change_proposals": {
+    "count": 473,
+    "digest": "fd3adf792686292b29e4c5ab0bd1557e",
+    "matches": true
+  },
+  "organizations": {
+    "count": 1,
+    "digest": "03be1159eafea4523442151db945cd09",
+    "matches": true
+  },
+  "pipeline_events": {
+    "count": 202,
+    "digest": "5546ac2f287769980680c9ca3f83aadd",
+    "matches": true
+  },
+  "report_versions": {
+    "count": 99,
+    "digest": "f6a42b5d2c279426c8de0cf935383866",
+    "matches": true
+  },
+  "review_points": {
+    "count": 4,
+    "digest": "78f3f1e831c7243b283b6a8067cc2ec6",
+    "matches": true
+  },
+  "source_sites": {
+    "count": 21,
+    "digest": "bfd1a3f6f784a95905c190b078d7e871",
+    "matches": true
+  },
+  "users": {
+    "count": 4,
+    "digest": "475ac68e53c0d681c74321db47f5b451",
+    "matches": true
+  }
+}

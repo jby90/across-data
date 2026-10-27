@@ -1,0 +1,9 @@
+{
+  "model_calls": 1,
+  "request_attempts": 1,
+  "tokens": 890,
+  "accepted": 1,
+  "failed": [],
+  "skipped_cached": 208,
+  "remaining_not_called": 0
+}

@@ -1,0 +1,16 @@
+{
+  "proposal_id": "1dc6e97a-e1db-4c4a-972e-a14073c8084b",
+  "source_and_approvals_unchanged": true,
+  "evidence": {
+    "safety_hold": true,
+    "reason": "原文绑定异常：PDPA 条目实际绑定了 LTA 自动驾驶申请表；已保留原文及审批，待重新取得正确官方文件并人工核实。",
+    "document_id": "24d1b591-0369-41a4-b47f-3c9ca870b153",
+    "version_id": "0080a599-7d5b-42e1-a1e5-38e8927a8833",
+    "source_url": "https://sso.agc.gov.sg/Act/PDPA2012/",
+    "content_hash": "da6e324753dd171a50827692fcb733ea02dc22e2a3953034544c1aca4f6f5e52",
+    "actual_pages": 44,
+    "first_page_evidence": "14 Jan 2025 Page 1 of 44\nApplication for Trial of Autonomous Motor Vehicles (AVs)\nfor Public Road Operations\nBefore you start\nThis document contains the instructions and application forms for the trial of AVs on public\nroads. For the trial of AVs on public paths and private premises, please contact us at\nAutonomous_Vehicle@lta.gov.sg.\nTable of Contents\nInstructions to Applicants.......................................................................................................... 2\nForm AV01:",
+    "requested_resolution": "reacquire_and_review_new_revision"
+  },
+  "report_impacts": []
+}

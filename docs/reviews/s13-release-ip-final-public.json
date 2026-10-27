@@ -1,0 +1,44 @@
+{
+  "release_tag": "c0ec889-ip",
+  "application_source_commit": "c0ec889",
+  "tls_enabled": true,
+  "public_user_url": "https://47.116.46.81/",
+  "public_admin_url": "https://47.116.46.81/admin/",
+  "images": {
+    "api": {
+      "ref": "cyshuhe-api:c0ec889-ip",
+      "id": "sha256:fb130f934d8046f30ded0f6c2488a50ba8e20970a957d2532db3135ce20e5dae"
+    },
+    "web-user": {
+      "ref": "cyshuhe-web-user:c0ec889-ip",
+      "id": "sha256:5af575be313d3eb07e8bedb672db8abec214d6e9f58f79144f3eea5d6b2445c0"
+    },
+    "web-admin": {
+      "ref": "cyshuhe-web-admin:c0ec889-ip",
+      "id": "sha256:8639d59e35a7ee09747d9916cb3622b2b02e1fd761f8b488dd45d44217b48599"
+    }
+  },
+  "migration": "0022",
+  "manual_review": "pending",
+  "note": "Admin rebuilt with VITE_APP_BASE=/admin/. Failed base=/ artifact retained, not running. API/user image content unchanged and not restarted. Unified aliases match running IDs; docs may have later commit.",
+  "component_source_commits": {
+    "api": "f8d510e",
+    "web-user": "f8d510e",
+    "web-admin": "c0ec889"
+  },
+  "running_images": {
+    "api": {
+      "ref": "cyshuhe-api:f8d510e",
+      "id": "sha256:fb130f934d8046f30ded0f6c2488a50ba8e20970a957d2532db3135ce20e5dae"
+    },
+    "web-user": {
+      "ref": "cyshuhe-web-user:f8d510e",
+      "id": "sha256:5af575be313d3eb07e8bedb672db8abec214d6e9f58f79144f3eea5d6b2445c0"
+    },
+    "web-admin": {
+      "ref": "cyshuhe-web-admin:c0ec889-ip",
+      "id": "sha256:8639d59e35a7ee09747d9916cb3622b2b02e1fd761f8b488dd45d44217b48599"
+    }
+  },
+  "admin_build_base": "/admin/"
+}

@@ -1,0 +1,27 @@
+{
+  "engine": {
+    "repository": "https://github.com/tesseract-ocr/tessdata_best",
+    "ref": "main",
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/main/ara.traineddata",
+    "bytes": 12603724,
+    "sha256": "ab9d157d8e38ca00e7e39c7d5363a5239e053f5b0dbdb3167dde9d8124335896",
+    "license": "Apache-2.0",
+    "commit_lookup": "GitHub API rate limited; content SHA256 pinned locally",
+    "model_calls": 0
+  },
+  "source_pdf_sha256": "9b809f6d15e3ff0ccc83d152093d82f3e59620f9dd371d6d8a81b0824f5047fe",
+  "pages": 31,
+  "dpi": 300,
+  "modes": [
+    3,
+    6
+  ],
+  "elapsed_seconds": 52.0,
+  "model_calls": 0,
+  "active": false,
+  "human_reviewed": false,
+  "exact_agreement_pages": 0,
+  "proposal_file_sha256": "ad1c70dd8e5935805ac7ae8f656ee74eb74566769570f7c4a4da4841f86acf3a",
+  "raw_proposal_location": "C:\\Users\\Jin\\.cyshuhe-dev\\remediation_s5_sources_20261025\\ocr-probe\\full-best\\proposal.json",
+  "note": "Word boxes and raw outputs retained privately and in the pending audit proposal; no text activated."
+}

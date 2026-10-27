@@ -254,6 +254,12 @@ def run_audit(base_url: str, admin_email: str, admin_password: str) -> dict[str,
         graph_by_country: dict[str, dict[str, Any]] = {}
         overall_edges = 0
         overall_nodes = 0
+        overall_structural = 0
+        overall_semantic = 0
+        overall_unjudged = 0
+        overall_low_conf = 0
+        overall_quote_mismatch = 0
+        overall_superseded = 0
         overall_edge_review: Counter[str] = Counter()
         overall_extractors: Counter[str] = Counter()
 
@@ -270,14 +276,37 @@ def run_audit(base_url: str, admin_email: str, admin_password: str) -> dict[str,
             qs = gr.get("quality_summary") or {}
             rev_c = Counter(e.get("review_status") or "unknown" for e in edges)
             ext_c = Counter(e.get("extractor_model") or "unknown" for e in edges)
+            struct_cnt = int(
+                qs.get("structural_edges", sum(1 for e in edges if e.get("is_structural")))
+            )
+            sem_cnt = int(
+                qs.get("semantic_edges", sum(1 for e in edges if not e.get("is_structural")))
+            )
+            unjudged_cnt = int(qs.get("semantic_unjudged", 0))
+            low_conf_cnt = int(qs.get("low_confidence", 0))
+            qm_cnt = int(qs.get("quote_mismatch", qs.get("quote_mismatch_edges_count", 0)))
+            sup_cnt = int(qs.get("superseded_edges_count", 0))
+
             overall_edges += len(edges)
             overall_nodes += len(nodes)
+            overall_structural += struct_cnt
+            overall_semantic += sem_cnt
+            overall_unjudged += unjudged_cnt
+            overall_low_conf += low_conf_cnt
+            overall_quote_mismatch += qm_cnt
+            overall_superseded += sup_cnt
             overall_edge_review.update(rev_c)
             overall_extractors.update(ext_c)
 
             graph_by_country[cc] = {
                 "nodes_count": len(nodes),
                 "edges_count": len(edges),
+                "structural_edges": struct_cnt,
+                "semantic_edges": sem_cnt,
+                "semantic_unjudged": unjudged_cnt,
+                "low_confidence": low_conf_cnt,
+                "quote_mismatch": qm_cnt,
+                "superseded_edges_count": sup_cnt,
                 "node_counts_by_type": gr.get("node_counts_by_type") or {},
                 "edge_counts_by_relation": gr.get("edge_counts_by_relation") or {},
                 "review_status": dict(sorted(rev_c.items())),
@@ -285,12 +314,18 @@ def run_audit(base_url: str, admin_email: str, admin_password: str) -> dict[str,
                 "total_clauses_count": qs.get("total_clauses_count", 0),
                 "linked_clauses_count": qs.get("linked_clauses_count", 0),
                 "unlinked_clauses_count": qs.get("unlinked_clauses_count", 0),
-                "quote_mismatch_edges_count": qs.get("quote_mismatch_edges_count", 0),
+                "quote_mismatch_edges_count": qm_cnt,
             }
 
         graph_summary = {
             "total_nodes": overall_nodes,
             "total_edges": overall_edges,
+            "structural_edges": overall_structural,
+            "semantic_edges": overall_semantic,
+            "semantic_unjudged": overall_unjudged,
+            "low_confidence": overall_low_conf,
+            "quote_mismatch": overall_quote_mismatch,
+            "superseded_edges_count": overall_superseded,
             "sg_edges_count": graph_by_country.get("SG", {}).get("edges_count", 0),
             "review_status": dict(sorted(overall_edge_review.items())),
             "extractor_model": dict(sorted(overall_extractors.items())),
@@ -389,18 +424,28 @@ def print_human_report(report: dict[str, Any]) -> None:
 
     kg = report["knowledge_graph"]
     print(
-        f"\n[4] 知识图谱统计 (五国总节点 {kg['total_nodes']} 个, 五国总边 {kg['total_edges']} 条, "
-        f"其中 SG 边 {kg['sg_edges_count']} 条):"
+        f"\n[4] 知识图谱统计 (五国总节点 {kg['total_nodes']} 个, "
+        f"五国活跃总边 {kg['total_edges']} 条: "
+        f"结构边 {kg.get('structural_edges', 0)} 条 + 语义边 {kg.get('semantic_edges', 0)} 条 | "
+        f"已作废旧规则边 superseded={kg.get('superseded_edges_count', 0)} 条):"
     )
     print(f"  - 抽取器分布 (extractor_model): {kg['extractor_model']}")
     print(f"  - 复核状态 (review_status): {kg['review_status']}")
+    print(
+        f"  - 质量核验: quote_mismatch={kg.get('quote_mismatch', 0)} | "
+        f"semantic_unjudged={kg.get('semantic_unjudged', 0)} | "
+        f"low_confidence={kg.get('low_confidence', 0)}"
+    )
     for cc, c_kg in kg["by_country"].items():
         unlinked = c_kg["unlinked_clauses_count"]
         tot_cl = c_kg["total_clauses_count"]
+        sup_cnt = c_kg.get("superseded_edges_count", 0)
         print(
             f"    * {cc}: 节点 {c_kg['nodes_count']} ({c_kg['node_counts_by_type']}) | "
-            f"边 {c_kg['edges_count']} | 未挂图谱条款 {unlinked}/{tot_cl} | "
-            f"review={c_kg['review_status']}"
+            f"边 {c_kg['edges_count']} (结构 {c_kg.get('structural_edges', 0)} / "
+            f"语义 {c_kg.get('semantic_edges', 0)}, superseded={sup_cnt}) | "
+            f"quote_mismatch={c_kg.get('quote_mismatch', 0)} | "
+            f"未挂图谱条款 {unlinked}/{tot_cl} | review={c_kg['review_status']}"
         )
 
     tk = report["analysis_tasks"]

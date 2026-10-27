@@ -1,0 +1,375 @@
+{
+  "generated_at": "2026-10-23T07:34:02.901221+00:00",
+  "countries": {
+    "SG": {
+      "latest_clause_count": 1813,
+      "in_scope_latest_clause_count": 1525,
+      "active_translation_rows": 647,
+      "unique_translated_latest_clause_count": 647,
+      "qualified_latest_clause_count": 641,
+      "qualified_in_scope_latest_clause_count": 518,
+      "tokens_in_recorded": 447536,
+      "tokens_out_recorded": 869888,
+      "semantic_edge_review_status": {
+        "pending_review": 249
+      },
+      "structural_edge_review_status": {
+        "pending_review": 24,
+        "approved": 136
+      },
+      "semantic_judge_reason_matches_rule_fallback": 0,
+      "out_of_scope_courts_node_attributes": [
+        {
+          "name": "Courts (Civil and Criminal Justice) Reform Act 2021 - Courts (Civil and Criminal Justice) Reform Act 2021 (Commencement) (No. 3) Notification 2022",
+          "attributes": {
+            "scope": "out_of_scope",
+            "scope_note": "司法诉讼程序改革法及其生效通知，与智能网联汽车数据、个人数据保护、跨境传输或自动驾驶准入无关",
+            "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/535.pdf",
+            "version_no": 1,
+            "legal_status": "unknown",
+            "scope_source": "rule",
+            "document_type": "REGULATION",
+            "evidence_clause_ids": [
+              "3126abd4-d20d-48bd-993a-087e009f9b27"
+            ],
+            "applicable_industry": "汽车出海与跨行业通用（覆盖车主、驾乘人员及车联网用户个人数据）",
+            "data_scope": "个人数据(含车主身份、VIN关联轨迹、座舱生物识别及受托处理车联网数据)",
+            "cross_border_condition": "须满足 PDPA 第 26 条同等保护标准 (Comparable Protection)：签署具法律约束力的跨境合同/BCR/认证，并履行出境告知同意；自动驾驶测试数据需遵守 LTA 路测许可附加条件",
+            "retention_period": "自动驾驶黑匣子(Data Recorder)数据法定至少留存 3 年 (AV Rules r9)；一般个人数据在收集目的达成且无商业/法律必要时须立即停止留存或匿名化 (PDPA s25)",
+            "authorization_requirement": "收集/使用/披露及出境前须履行目的告知并取得有效同意 (PDPA s13-20)，受托处理须签书面合约",
+            "penalty_amount": "PDPC 行政罚款最高 100 万新元或新加坡年营业额 10%（以较高者为准，PDPA s48J）；违反自动驾驶路测规定可处最高 1 万新元罚款或监禁及吊销路测许可",
+            "violation_level": "高风险（行政高额罚款 / 强制停止数据传输令 / 吊销自动驾驶路测准入许可）",
+            "admission_checklist": "1. LTA 自动驾驶车辆道路测试申请表 (Application for Trial of Autonomous Motor Vehicles)；2. 车辆安全技术评估与测试区域方案；3. 安全员(Safety Operator)培训资质证明；4. 车载数据记录器(黑匣子)技术规范与 3 年留存承诺；5. 第三方责任保险证明；6. 跨境数据传输保护协议 (DPA/TIA)"
+          }
+        },
+        {
+          "name": "Courts (Civil and Criminal Justice) Reform Act 2021 - Courts (Civil and Criminal Justice) Reform Act 2021 (Commencement) (No. 4) Notification 2022",
+          "attributes": {
+            "scope": "out_of_scope",
+            "scope_note": "司法诉讼程序改革法及其生效通知，与智能网联汽车数据、个人数据保护、跨境传输或自动驾驶准入无关",
+            "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/750.pdf",
+            "version_no": 1,
+            "legal_status": "unknown",
+            "scope_source": "rule",
+            "document_type": "REGULATION",
+            "evidence_clause_ids": [
+              "9341eb85-b2c5-47e1-b4c4-7ddddfe89af3"
+            ],
+            "applicable_industry": "汽车出海与跨行业通用（覆盖车主、驾乘人员及车联网用户个人数据）",
+            "data_scope": "个人数据(含车主身份、VIN关联轨迹、座舱生物识别及受托处理车联网数据)",
+            "cross_border_condition": "须满足 PDPA 第 26 条同等保护标准 (Comparable Protection)：签署具法律约束力的跨境合同/BCR/认证，并履行出境告知同意；自动驾驶测试数据需遵守 LTA 路测许可附加条件",
+            "retention_period": "自动驾驶黑匣子(Data Recorder)数据法定至少留存 3 年 (AV Rules r9)；一般个人数据在收集目的达成且无商业/法律必要时须立即停止留存或匿名化 (PDPA s25)",
+            "authorization_requirement": "收集/使用/披露及出境前须履行目的告知并取得有效同意 (PDPA s13-20)，受托处理须签书面合约",
+            "penalty_amount": "PDPC 行政罚款最高 100 万新元或新加坡年营业额 10%（以较高者为准，PDPA s48J）；违反自动驾驶路测规定可处最高 1 万新元罚款或监禁及吊销路测许可",
+            "violation_level": "高风险（行政高额罚款 / 强制停止数据传输令 / 吊销自动驾驶路测准入许可）",
+            "admission_checklist": "1. LTA 自动驾驶车辆道路测试申请表 (Application for Trial of Autonomous Motor Vehicles)；2. 车辆安全技术评估与测试区域方案；3. 安全员(Safety Operator)培训资质证明；4. 车载数据记录器(黑匣子)技术规范与 3 年留存承诺；5. 第三方责任保险证明；6. 跨境数据传输保护协议 (DPA/TIA)"
+          }
+        },
+        {
+          "name": "Courts (Civil and Criminal Justice) Reform Act 2021 - Courts (Civil and Criminal Justice) Reform Act 2021 (Commencement) Notification 2022",
+          "attributes": {
+            "scope": "out_of_scope",
+            "scope_note": "司法诉讼程序改革法及其生效通知，与智能网联汽车数据、个人数据保护、跨境传输或自动驾驶准入无关",
+            "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/250.pdf",
+            "version_no": 1,
+            "legal_status": "unknown",
+            "scope_source": "rule",
+            "document_type": "REGULATION",
+            "evidence_clause_ids": [
+              "6c9f8394-7609-4b0a-a01c-b7bb9aa1e954"
+            ],
+            "applicable_industry": "汽车出海与跨行业通用（覆盖车主、驾乘人员及车联网用户个人数据）",
+            "data_scope": "个人数据(含车主身份、VIN关联轨迹、座舱生物识别及受托处理车联网数据)",
+            "cross_border_condition": "须满足 PDPA 第 26 条同等保护标准 (Comparable Protection)：签署具法律约束力的跨境合同/BCR/认证，并履行出境告知同意；自动驾驶测试数据需遵守 LTA 路测许可附加条件",
+            "retention_period": "自动驾驶黑匣子(Data Recorder)数据法定至少留存 3 年 (AV Rules r9)；一般个人数据在收集目的达成且无商业/法律必要时须立即停止留存或匿名化 (PDPA s25)",
+            "authorization_requirement": "收集/使用/披露及出境前须履行目的告知并取得有效同意 (PDPA s13-20)，受托处理须签书面合约",
+            "penalty_amount": "PDPC 行政罚款最高 100 万新元或新加坡年营业额 10%（以较高者为准，PDPA s48J）；违反自动驾驶路测规定可处最高 1 万新元罚款或监禁及吊销路测许可",
+            "violation_level": "高风险（行政高额罚款 / 强制停止数据传输令 / 吊销自动驾驶路测准入许可）",
+            "admission_checklist": "1. LTA 自动驾驶车辆道路测试申请表 (Application for Trial of Autonomous Motor Vehicles)；2. 车辆安全技术评估与测试区域方案；3. 安全员(Safety Operator)培训资质证明；4. 车载数据记录器(黑匣子)技术规范与 3 年留存承诺；5. 第三方责任保险证明；6. 跨境数据传输保护协议 (DPA/TIA)"
+          }
+        },
+        {
+          "name": "Courts (Civil and Criminal Justice) Reform Act 2021 - Courts (Civil and Criminal Justice) Reform Act 2021 (Commencement) (No. 2) Notification 2022",
+          "attributes": {
+            "scope": "out_of_scope",
+            "scope_note": "司法诉讼程序改革法及其生效通知，与智能网联汽车数据、个人数据保护、跨境传输或自动驾驶准入无关",
+            "source_url": "https://assets.egazette.gov.sg/2022/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/509.pdf",
+            "version_no": 1,
+            "legal_status": "unknown",
+            "scope_source": "rule",
+            "document_type": "REGULATION",
+            "evidence_clause_ids": [
+              "357e0538-48fb-4ac7-bfd6-9152aceca082"
+            ],
+            "applicable_industry": "汽车出海与跨行业通用（覆盖车主、驾乘人员及车联网用户个人数据）",
+            "data_scope": "个人数据(含车主身份、VIN关联轨迹、座舱生物识别及受托处理车联网数据)",
+            "cross_border_condition": "须满足 PDPA 第 26 条同等保护标准 (Comparable Protection)：签署具法律约束力的跨境合同/BCR/认证，并履行出境告知同意；自动驾驶测试数据需遵守 LTA 路测许可附加条件",
+            "retention_period": "自动驾驶黑匣子(Data Recorder)数据法定至少留存 3 年 (AV Rules r9)；一般个人数据在收集目的达成且无商业/法律必要时须立即停止留存或匿名化 (PDPA s25)",
+            "authorization_requirement": "收集/使用/披露及出境前须履行目的告知并取得有效同意 (PDPA s13-20)，受托处理须签书面合约",
+            "penalty_amount": "PDPC 行政罚款最高 100 万新元或新加坡年营业额 10%（以较高者为准，PDPA s48J）；违反自动驾驶路测规定可处最高 1 万新元罚款或监禁及吊销路测许可",
+            "violation_level": "高风险（行政高额罚款 / 强制停止数据传输令 / 吊销自动驾驶路测准入许可）",
+            "admission_checklist": "1. LTA 自动驾驶车辆道路测试申请表 (Application for Trial of Autonomous Motor Vehicles)；2. 车辆安全技术评估与测试区域方案；3. 安全员(Safety Operator)培训资质证明；4. 车载数据记录器(黑匣子)技术规范与 3 年留存承诺；5. 第三方责任保险证明；6. 跨境数据传输保护协议 (DPA/TIA)"
+          }
+        },
+        {
+          "name": "Courts (Civil and Criminal Justice) Reform Act 2021 - Courts (Civil and Criminal Justice) Reform Act 2021 (Commencement) Notification 2024",
+          "attributes": {
+            "scope": "out_of_scope",
+            "scope_note": "司法诉讼程序改革法及其生效通知，与智能网联汽车数据、个人数据保护、跨境传输或自动驾驶准入无关",
+            "source_url": "https://assets.egazette.gov.sg/2024/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/735.pdf",
+            "version_no": 1,
+            "legal_status": "unknown",
+            "scope_source": "rule",
+            "document_type": "REGULATION",
+            "evidence_clause_ids": [
+              "f53bee7b-01da-4272-b2c7-cfd3b976ff00"
+            ],
+            "applicable_industry": "汽车出海与跨行业通用（覆盖车主、驾乘人员及车联网用户个人数据）",
+            "data_scope": "个人数据(含车主身份、VIN关联轨迹、座舱生物识别及受托处理车联网数据)",
+            "cross_border_condition": "须满足 PDPA 第 26 条同等保护标准 (Comparable Protection)：签署具法律约束力的跨境合同/BCR/认证，并履行出境告知同意；自动驾驶测试数据需遵守 LTA 路测许可附加条件",
+            "retention_period": "自动驾驶黑匣子(Data Recorder)数据法定至少留存 3 年 (AV Rules r9)；一般个人数据在收集目的达成且无商业/法律必要时须立即停止留存或匿名化 (PDPA s25)",
+            "authorization_requirement": "收集/使用/披露及出境前须履行目的告知并取得有效同意 (PDPA s13-20)，受托处理须签书面合约",
+            "penalty_amount": "PDPC 行政罚款最高 100 万新元或新加坡年营业额 10%（以较高者为准，PDPA s48J）；违反自动驾驶路测规定可处最高 1 万新元罚款或监禁及吊销路测许可",
+            "violation_level": "高风险（行政高额罚款 / 强制停止数据传输令 / 吊销自动驾驶路测准入许可）",
+            "admission_checklist": "1. LTA 自动驾驶车辆道路测试申请表 (Application for Trial of Autonomous Motor Vehicles)；2. 车辆安全技术评估与测试区域方案；3. 安全员(Safety Operator)培训资质证明；4. 车载数据记录器(黑匣子)技术规范与 3 年留存承诺；5. 第三方责任保险证明；6. 跨境数据传输保护协议 (DPA/TIA)"
+          }
+        },
+        {
+          "name": "Courts (Civil and Criminal Justice) Reform Act 2021",
+          "attributes": {
+            "scope": "out_of_scope",
+            "scope_note": "司法诉讼程序改革法及其生效通知，与智能网联汽车数据、个人数据保护、跨境传输或自动驾驶准入无关",
+            "source_url": "https://assets.egazette.gov.sg/2021/Legislative%20Supplements/Acts%20Supplement/24.pdf",
+            "version_no": 1,
+            "legal_status": "unknown",
+            "scope_source": "rule",
+            "document_type": "LAW",
+            "evidence_clause_ids": [
+              "ae971bb6-6177-4bd6-8592-42f79bc5ab66"
+            ],
+            "applicable_industry": "汽车出海与跨行业通用（覆盖车主、驾乘人员及车联网用户个人数据）",
+            "data_scope": "个人数据(含车主身份、VIN关联轨迹、座舱生物识别及受托处理车联网数据)",
+            "cross_border_condition": "须满足 PDPA 第 26 条同等保护标准 (Comparable Protection)：签署具法律约束力的跨境合同/BCR/认证，并履行出境告知同意；自动驾驶测试数据需遵守 LTA 路测许可附加条件",
+            "retention_period": "自动驾驶黑匣子(Data Recorder)数据法定至少留存 3 年 (AV Rules r9)；一般个人数据在收集目的达成且无商业/法律必要时须立即停止留存或匿名化 (PDPA s25)",
+            "authorization_requirement": "收集/使用/披露及出境前须履行目的告知并取得有效同意 (PDPA s13-20)，受托处理须签书面合约",
+            "penalty_amount": "PDPC 行政罚款最高 100 万新元或新加坡年营业额 10%（以较高者为准，PDPA s48J）；违反自动驾驶路测规定可处最高 1 万新元罚款或监禁及吊销路测许可",
+            "violation_level": "高风险（行政高额罚款 / 强制停止数据传输令 / 吊销自动驾驶路测准入许可）",
+            "admission_checklist": "1. LTA 自动驾驶车辆道路测试申请表 (Application for Trial of Autonomous Motor Vehicles)；2. 车辆安全技术评估与测试区域方案；3. 安全员(Safety Operator)培训资质证明；4. 车载数据记录器(黑匣子)技术规范与 3 年留存承诺；5. 第三方责任保险证明；6. 跨境数据传输保护协议 (DPA/TIA)"
+          }
+        }
+      ]
+    },
+    "EG": {
+      "latest_clause_count": 100,
+      "in_scope_latest_clause_count": 58,
+      "active_translation_rows": 53,
+      "unique_translated_latest_clause_count": 53,
+      "qualified_latest_clause_count": 53,
+      "qualified_in_scope_latest_clause_count": 38,
+      "tokens_in_recorded": 41921,
+      "tokens_out_recorded": 115929,
+      "semantic_edge_review_status": {
+        "pending_review": 39
+      },
+      "structural_edge_review_status": {
+        "approved": 6
+      },
+      "semantic_judge_reason_matches_rule_fallback": 0,
+      "out_of_scope_courts_node_attributes": []
+    },
+    "TN": {
+      "latest_clause_count": 150,
+      "in_scope_latest_clause_count": 134,
+      "active_translation_rows": 69,
+      "unique_translated_latest_clause_count": 69,
+      "qualified_latest_clause_count": 69,
+      "qualified_in_scope_latest_clause_count": 54,
+      "tokens_in_recorded": 47571,
+      "tokens_out_recorded": 87282,
+      "semantic_edge_review_status": {
+        "pending_review": 79
+      },
+      "structural_edge_review_status": {
+        "approved": 6
+      },
+      "semantic_judge_reason_matches_rule_fallback": 0,
+      "out_of_scope_courts_node_attributes": []
+    },
+    "MA": {
+      "latest_clause_count": 215,
+      "in_scope_latest_clause_count": 96,
+      "active_translation_rows": 81,
+      "unique_translated_latest_clause_count": 81,
+      "qualified_latest_clause_count": 80,
+      "qualified_in_scope_latest_clause_count": 49,
+      "tokens_in_recorded": 62601,
+      "tokens_out_recorded": 104805,
+      "semantic_edge_review_status": {
+        "pending_review": 53
+      },
+      "structural_edge_review_status": {
+        "approved": 8
+      },
+      "semantic_judge_reason_matches_rule_fallback": 0,
+      "out_of_scope_courts_node_attributes": []
+    },
+    "LB": {
+      "latest_clause_count": 329,
+      "in_scope_latest_clause_count": 131,
+      "active_translation_rows": 37,
+      "unique_translated_latest_clause_count": 37,
+      "qualified_latest_clause_count": 37,
+      "qualified_in_scope_latest_clause_count": 22,
+      "tokens_in_recorded": 23349,
+      "tokens_out_recorded": 51525,
+      "semantic_edge_review_status": {
+        "pending_review": 8
+      },
+      "structural_edge_review_status": {
+        "approved": 4
+      },
+      "semantic_judge_reason_matches_rule_fallback": 0,
+      "out_of_scope_courts_node_attributes": []
+    }
+  },
+  "gold_count": 60,
+  "gold_positive_count": 36,
+  "gold_negative_count": 24,
+  "gold_available_fields": [
+    "clause_original_text",
+    "country_code",
+    "document_title",
+    "error_category",
+    "evidence_quote",
+    "expected_valid",
+    "id",
+    "rationale",
+    "relation_type",
+    "source_name",
+    "source_type",
+    "target_name",
+    "target_type"
+  ],
+  "translation_samples": [
+    {
+      "country": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/700.pdf",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Appointment of Administration Body) Notification 2012",
+      "document_relevance": "related",
+      "clause_id": "cc5c416a-917c-4551-8dd5-965382405e4e",
+      "clause_number": "2",
+      "original": "2. Appointment of Administration Body\nIn exercise of the powers conferred by section 9(1) of the Personal\nData Protection Act 2012, the Minister for Communications and\nInformation hereby makes the following Notification:\nCitation and commencement\n1. This Notification may be cited as the Personal Data Protection\n(Appointment of Administration Body) Notification 2012 and shall\ncome into operation on 2nd January 2013.\nAppointment of Administration Body\n2. The Minister appoints the Info-communications Development\nAuthority of Singapore established under the Info-communications\nDevelopment Authority of Singapore Act (Cap. 137A) to be the\nAdministration Body for the purposes of the Act.\nMade this 14th day of December 2012.\nAUBECK KAM\nPermanent Secretary,\nMinistry of Communications and Information,\nSingapore.\n[Y03.002.001 Vol. 28; AG/LLRD/SL/227A/2012/1 Vol. 1]",
+      "translation": "2. 管理机构的任命\n通信与信息部长根据《2012年个人数据保护法》第9(1)条赋予的权力，特此作出以下通知：\n引称与生效\n1. 本通知可引称为《2012年个人数据保护（管理机构任命）通知》，并应于2013年1月2日生效。\n管理机构的任命\n2. 部长任命根据《新加坡资讯通信发展管理局法》（第137A章）设立的新加坡资讯通信发展管理局为本法之目的的管理机构。\n于2012年12月14日制定。\nAUBECK KAM\n新加坡通信与信息部常任秘书。\n[Y03.002.001 第28卷；AG/LLRD/SL/227A/2012/1 第1卷]",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    },
+    {
+      "country": "SG",
+      "source_url": "https://assets.egazette.gov.sg/2012/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/700.pdf",
+      "document_title": "Personal Data Protection Act 2012 - Personal Data Protection (Appointment of Administration Body) Notification 2012",
+      "document_relevance": "related",
+      "clause_id": "6a5bb920-bc24-4b82-ae3b-cc67aed55086",
+      "clause_number": "1",
+      "original": "ARRANGEMENT OF PARAGRAPHS\nParagraph\n1. Citation and commencement",
+      "translation": "段落编排\n段\n1. 引称及生效",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    },
+    {
+      "country": "EG",
+      "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+      "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "document_relevance": "relevant",
+      "clause_id": "30a1c729-9f96-4921-b2f9-ad9a2a86b015",
+      "clause_number": "‎)١0(‏.1",
+      "original": "التحقق من شروط حركة ‎SRM MLL‏ “#راتخاذ القرارات) ‎ba‏ 46\nتنظيم المؤقرات وورش العمل والدوراتا\nالوعى والتثقيف للأفراد والجهات حول حقوقهم فيما\nتقديم جميع أنواع الخبرة:والاأسجشارات\nوعلى الأخص لجهات التحقيق والجهات القضائية .\nإبرام الاتفاقيات ومذكرات التفاهم والتنسيق والتعاون وتبادل الخبرات مع الجهات\n‎S Alan‏ وفقًا للقواعد والإجراءات المقررة فى هذا الشأن .\nالخاصة بتحديث ‎Ok Lol‏ الحماية بما يتوافق مع أنيشتطة القطاعات\nوتحديد المعاملة المالية لأعضائه قرار من رء\nولجلس الآدارة أن يشكل من بين أعضا\nببعض المهام « وللمجلس أن يفوض رئيس مح زة أو ‎FS) gh ped J‏\n: (YY) ‏مادة‎\n‎gee S 15,1‏ السلطة المهيمنة غلى شكوئة.ومباشرة الختصاصاته. ‎aly‏ أن\n‎pat: ١ 3 9‏ قرارات لتحقيق أغراض المركز والقانون ‎easy‏ العتفيذية\n‏البيانات\n‎a‏ البيانا\n‏مادة ‎(YY)‏ :\n‎a‏\n‏يكون للمركز رئيس تنفيذى\nالوزراء ‎ty‏ على اقتراح الوزير ا :\nويكون مستكولا أضاع مجلس الإدارة 4\n‎١‏ -الإشراف على تنفيذ قرارات مجلس ‎SY‏\nY) VWs Re V0 ‏فى‎ (a) (Se VA ‏العو‎ = dye II Syl\nHii ‏وصور العسلل‎ SON DLT GET plane LEC tiie BE tad ‏ب‎\nالمشار إليها ‎oe‏\n‏مادة (0؟):\nالامتثال للقانون من قبل المتحكمين والمعالجين +\nالبينانات والمعلؤسات با من ‎ald‏ أن يكفل ‎Ras‏\n‏والمساعدة فى التحقيق فى الانتهاكات والجرائم ذات الصلة وتتبع مرتكبيها .\n( الفصل العاشر )\n@ التراخيص والتصاريح والاعتمادات\nإلا:أنواع التراخيص والتصاريح والاعتمادات\nلد 6\nيدر المركز | ‎i aa‏\n‎iJ \\‏ 3 |\n#تبم ألا\nNei\n‎Sisl ls‏ و2\n‏انواعها\n‏وضع\n‏ع امم\n0\n‏م ~ يه\n‏لأجراء\n‏وتحدد اللائحة التنفيذية لهذا د",
+      "translation": "核查 SRM MLL 运动条件“决策” 46。\n组织会议、研讨会和课程；提高个人和机构对其权利的认识和教育，涉及提供各类专业知识和咨询，特别是对调查机关和司法机关。\n与有关机构依照此方面规定的规则和程序缔结协议、谅解备忘录、协调、合作和交流经验。\n涉及更新 Ok Lol 保护以符合各部门活动，并确定其成员的财务待遇，由……决定；董事会有权从其成员中组成……承担某些任务；董事会有权授权主席……或 FS。\n第（YY）条：\n15,1 主导权力……并行使职权……作出 1 3 9 决定以实现中心宗旨和法律……执行……数据。\n数据。\n第（YY）条：\n中心设执行主任，根据部长提议由部长……，并……董事会 4。\n1 -监督执行董事会决定 SY。\n……在……的……\n……和……的……\n所指的……\n第（0？）条：\n控制者和处理者遵守法律，……数据……信息……确保 Ras\n并协助调查相关违规和犯罪并追查实施者。\n（第十章）\n许可、许可证和认证\n许可、许可证和认证的类型\n有 6\n中心……\n3\n……\n……\n……\n其类型\n制定\n……\n0\n……\n程序\n本条例实施细则规定本……",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    },
+    {
+      "country": "EG",
+      "source_url": "https://mcit.gov.eg/Upcont/Documents/Reports%20and%20Documents_1232021000_Law_No_151_2020_Personal_Data_Protection.pdf",
+      "document_title": "قانون رقم 151 لسنة 2020 بإصدار قانون حماية البيانات الشخصية (Law No. 151 of 2020 Personal Data Protection Law)",
+      "document_relevance": "relevant",
+      "clause_id": "d633b9d7-227e-4f58-b900-8d5b8aa36d42",
+      "clause_number": "‎)١0(‏.2",
+      "original": "وفئاتها ومستوباتها . وإجراءات وشروط !| :\n‎Ws,‏ بمقابل رسوم لا تنجاوز مليونى جنيه با\nالإريية ‎Ee‏ = العيو ‎Bote NG F(a) (Sr VA‏ ع م\nثانب : إجراءات إصدار التراخيص والتصاريح والاعتمادات\nها مع تقديم ما ‎A‏\nالمتقدم المالية\nةلا تجاوز\n0\n-~—\nMy ‏تعديل‎ jill aa\nبعد أصداره ‎cls‏ من الحالات الآنية : ‎<١‏\n‎Na R03) — ١‏ لاتفاقيات الدولية ‎SY al‏ ية أووالقوانين ت الصا\neu - ‏؟‎\n1\nىه 0 © ©\n'\"' - اندماج المد او ‎Jel ote! ge‏ جا ررية مصر\n€ - إذا كان التعديل > ‎Sagres)»‏ أهداف هذا القانون .\nرابع : إلغاء ‎pill‏ والاعتمادات ,2\n«والتصاريج",
+      "translation": "及其类别和等级。程序与条件！| ：\nWs，以不超过两百万埃及镑的费用……\n埃及…… = …… ......\n第二：发放许可证、许可和认证的程序\n并同时提交……A\n申请人的财务……\n不超过\n0\n-~—\nMy 修改……\n在其颁发后……下列情形：<1\nNa R03) — 1 国际协定……或法律……\neu - ？\n1\n……0……\n'\"' - 合并……埃及……\n€ - 如果修改……本法目标。\n第四：取消……和认证，2\n“和许可",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    },
+    {
+      "country": "TN",
+      "source_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+      "document_relevance": "relevant",
+      "clause_id": "891b9258-47f4-4948-9d23-570ea9f0e7d1",
+      "clause_number": "7.1",
+      "original": "الشخصية باستعمال الحيلة أو العنف أو التهديد.\nالفصل 89 يعاقب بالسجن مدة عام وبخطية قدرها خمسة آلاف\nدينار كل من تعمد إحالة المعطيات الشخصية لغاية تحقيق منفعة لنفسه\nأو لغيره أو لإلحاق مضرة بالمعني بالأمر.\nالفصل 90 يعاقب بالسجن مدة عام وبخطية قدرها خمسة آلاف\nدينار كل من :\nالمنصوص عليه بالفصل 7 أو الحصول على الترخيص المنصوص عليه\nبالفصلين 15 و69 من هذا القانون أو يستمر في معالجة المعطيات بعد\nمنع المعالجة أى سحب الترخيصء.\n. ينشر المعطيات الشخصية المتعلقة بالصحة رغم تحجير الهيئة\nالمنصوص عليه بالفقرة الثانية من الفصل 65 من هذا القانون»\n. يقوم بنقل المعطيات الشخصية إلى الخارج دون ترخيص ‎Bag‏\nعدد 61\nالرائد الرسمي للجمهورية التونسية -- 30 جويلية 2004\n. يحيل المعطيات الشخصية دون موافقة المعني بالأمر أو موافقة\nالهيئتة في الصور المنصوص ‎Yale‏ بهذا القانون.\nدينار المسؤول عن المعالجة أو المناول الذي يواصل معالجة المعطيات\nالشخصية رغم اعتراض المعني بالأمر وفق أحكام الفصل 42 من هذا\nالقانون.\nالفصل 92 يعاقب بالسجن مدة ثمانية أشهر وبخطية قدرها ثلاثة\nآلاف دينار المسؤول عن المعالجة أو المناول الذي يعمد إلى الحد من\nحق النفاذ أو الحرمان منه في غير الصور المنصوص عليها بالفصل 35\nمن هذا القانون.\nالفصل 93 يعاقب بالسجن مدة ثلاثة أشهر وبخطية قدرها ثلاثة\nآلاف دينار كل من يتعمد بمناسبة معالجة المعطيات الشخصية نشرها\nبطريقة تسىء لصاحبها أو لحياته الخاصة.\nويكون العقاب بالسجن مدة شهر وبخطية قدرها ألف دينار إذا تم\nالنشر دون قصد الإضرار.\nويمكن للمعني بالأمر أن يطلب من المحكمة أن تأذن بنشر مضمون",
+      "translation": "通过诡计、暴力或威胁使用个人数据。\n\n第89条 处1年监禁和5,000第纳尔罚金，凡故意转交个人数据以为自己或他人谋取利益，或对数据主体造成损害的。\n\n第90条 处1年监禁和5,000第纳尔罚金，对下列人员：\n本法第7条规定的，或取得本法第15条和第69条规定的许可，或在禁止处理或撤销许可后继续处理数据的；\n尽管本法第65条第二款规定的机构禁止，仍发布与健康有关的个人数据的；\n未经许可将个人数据传输到国外的；\n在本法规定的情形下，未经数据主体同意或机构同意转交个人数据的；\n第纳尔。处理控制者或分包处理者，尽管数据主体依照本法第42条规定提出反对，仍继续处理个人数据的。\n\n第61号 突尼斯共和国官方公报 -- 2004年7月30日\n\n第92条 处8个月监禁和3,000第纳尔罚金，处理控制者或分包处理者在本法第35条规定情形之外，故意限制或剥夺查阅权的。\n\n第93条 处3个月监禁和3,000第纳尔罚金，凡在处理个人数据时故意以损害数据主体或其私生活的方式发布该数据的。\n如果发布无意造成损害，处1个月监禁和1,000第纳尔罚金。\n数据主体可请求法院准许发布其内容。",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    },
+    {
+      "country": "TN",
+      "source_url": "https://www.justice.gov.tn/fileadmin/medias/organisation_juridictionelle/Loi2004_63Arabe.pdf",
+      "document_title": "قانون أساسي عدد 63 لسنة 2004 مؤرخ في 27 جويلية 2004 يتعلق بحماية المعطيات الشخصية",
+      "document_relevance": "relevant",
+      "clause_id": "ad38ccf2-a3b1-46ce-9fa6-0aa11e101751",
+      "clause_number": "2.1",
+      "original": "‏الفصل 25 2 يمكن للهيئة أن تقرر إحالة المعطيات الشخصية فى\nحالة التوقف عن النشاط للأسباب المذكورة بالفصل المتقدم وذلك في\nالصورتين الآتيتين :\n‏أولا : إذا ‎ai,‏ أن تلك المعطيات صالحة ‎GY‏ تستخدم في أغراض\n‏ثانيا : إذا اقترح من تولى الإعلام إحالة كل المعطيات الشخصية أو\nبعضها إلى شخص طبيعي أو معنوي يحدد هويته بدقة. وفي هذه الحالة\nيمكن للهيئة أن تقرر الموافقة على إحالة المعطيات الشخصية إلى\nالشخص المقترح. ولا تتم الإحالة فعليا إلا بعد الحصول على موافقة\nالمعني ‎oi pols‏ وليه ‎of‏ ورثته المتلقاة بأي وسيلة تترك أثرا كتابيا.\n‏وفي صورة عدم حصول هذه الموافقة خلال ثلاثة أشهر من طلبهاء\nيجب إعدام المعطيات الشخصية.\n‏الفصل 26 في حالة توقف نشاط المسؤول عن المعالجة أو\nالمناول للأسباب المذكورة بالفصل 24 من هذا القانونء يمكن للمعني\nبالأمر ‎si‏ ورثته أو كل شخص له مصلحة أو النيابة العمومية أن يطلبوا\nفى كل وقت من ‎Gal diag‏ التدابير الملائمة ‎ast‏ المعطيات\nالشخصية وحمايتها أو إعدامها.\n‏صفحة 2086\n‏الرائد الرسمي للجمهورية التونسية -- 30 جويلية 2004\n‏وعلى الهيئة أن تصدر قرارها في أجل عشرة أيام بداية من تاريخ\n‏تعهدها.\n‏في حقوق المعني بالأمر\nالفرع الأول\nفى الموافقة\n‏الفصل 27 فيما عدا الصور المنصوص عليها بهذا القانون أو\nبالقوانين الجاري بها ‎heal‏ لا يمكن معالجة المعطيات الشخصية إلا\nبالموافقة الصريحة والكتابية للمعني بالأمر. وإذا كان قاصرا ‎ol‏ محجورا\nعليه أو غير قادر على الإمضاءء تخضع الموافقة إلى القواعد القانونية\nالعامة.\n‏وللمعني بالأمر أو وليه الرجوع في الموافقة في كل وقت.",
+      "translation": "第25条 2 委员会可以决定在前条所述原因导致停止活动的情况下，在以下两种情形中移交个人数据：\n第一：如果该等数据适合用于目的；\n第二：如果负责告知的人提议将全部或部分个人数据移交给其身份被准确确定的自然人或法人。在此情形下，委员会可以决定同意将个人数据移交给所提议的人。只有在获得数据主体、其监护人或其继承人以任何留下书面痕迹的方式作出的同意后，才实际进行移交。\n如果未在提出请求后三个月内获得该同意，必须销毁个人数据。\n第26条 如果处理负责人或分包处理者因本法第24条所述原因停止活动，数据主体或其继承人、任何有利害关系的人或检察机关可以随时要求委员会采取适当措施保护个人数据、保护或销毁之。\n第2086页\n突尼斯共和国官方公报——2004年7月30日\n委员会应自受理之日起十天之内作出决定。\n数据主体的权利\n第一目\n同意\n第27条 除本法或现行法律规定的情形外，未经数据主体明确书面同意，不得处理个人数据。如果数据主体是未成年人、被禁治产人或无能力签名者，同意适用一般法律规则。\n数据主体或其监护人可随时撤回同意。",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    },
+    {
+      "country": "MA",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+      "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+      "document_relevance": "relevant",
+      "clause_id": "980c45e7-61cd-4947-a9b0-7fe84b938821",
+      "clause_number": "4.2",
+      "original": "en main propre contre décharge, doit parvenir au moins sept\njours avant la date de P audition.\nLa convocation rappelle à la personne convoquée qu'elle\nest en droit de se faire assister d’un conseil de son choix.\nLe refus de répondre à une convocation des personnes\nchargées du contrôle doit être mentionné sur procès-verbal.\nBULLETIN OFFICIEL 1007\nChapitre EI\nDes avis, des autorisations et des déclarations",
+      "translation": "当面交付并取得收据，必须至少在P听证日期前七日送达。\n传唤通知应提醒被传唤人，其有权由自行选择的顾问协助。\n拒绝回应检查人员的传唤，必须在笔录中记载。\n官方公报 1007\n第EI章\n通知、授权和声明",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    },
+    {
+      "country": "MA",
+      "source_url": "https://www.cndp.ma/wp-content/uploads/2023/06/Decret-2-09-165-FR.pdf",
+      "document_title": "Décret n° 2-09-165 pris pour l'application de la loi n° 09-08",
+      "document_relevance": "relevant",
+      "clause_id": "aa6d215f-66ac-4190-95ef-7b104977270f",
+      "clause_number": "2",
+      "original": "Section 2. — Traitement ultérieur de données à caractère personnel\nà des fins historiques, statistiques ou scientifiques\nART, 31. ~ En application de l’article 12 alinéa 1-b de la loi\nn° 09-08 susvisée, lorsque le responsable d’un traitement des\ndonnées à caractère personnel communique ces dites données à\nun tiers, en vue d’un traitement ultérieur à des fins historiques,\nstatistiques ou scientifiques, lesdites données sont, préalablement\nà leur communication, rendues anonymes ou codées par ledit\nresponsable ou par tout organisme compétent.\nART. 32.— Les résultats du traitement des données à\ncaractère personnel à des fins historiques, statistiques ou\nscientifiques ne peuvent être rendus publics sous une forme qui\npermet l’identification de la personne concernée, sauf si :\n1)la personne concernée a donné expressément son\nconsentement ;\n2) la publication des données à caractère personnel non\nanonymes et non codées est limitée à des données manifestement\nrendues publiques par la personne concernée.\nART. 33.-— La CNDP est compétente pour se prononcer sur\nle caractère historique, statistique ou scientifique des données à\ncaractère personnel.\nChapitre IV\nDes droits des personnes\nSection |. — Dispositions communes\nART. 34. -1) Les informations 4 fournir par le responsable du\ntraitement, en application de l’article 5 de 1a loi n° 09-08 susvisée,",
+      "translation": "第2节——为历史、统计或科学目的对个人数据进行的后续处理\n第31条——根据上述第09-08号法律第12条第1-b款，当个人数据处理的责任人将这些个人数据传输给第三方，以便为历史、统计或科学目的进行后续处理时，在其传输之前，该等个人数据由该责任人或任何主管机构进行匿名化或编码。\n第32条——为历史、统计或科学目的处理个人数据的结果，不得以能够识别相关个人的形式公开，除非：\n1) 相关个人已明确表示同意；\n2) 对非匿名且非编码个人数据的公开，仅限于相关个人明显已公开的数据。\n第33条——CNDP有权就个人数据的历史、统计或科学性质作出裁定。\n第IV章\n人的权利\n第1节——共同规定\n第34条——1) 处理责任人根据上述第09-08号法律第5条应提供的信息 4，",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    },
+    {
+      "country": "LB",
+      "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "document_relevance": "relevant",
+      "clause_id": "4b797448-1ebc-4983-a6f5-75dd11a5c2eb",
+      "clause_number": "٣٣.1",
+      "original": "عنـدما يصـدر القبـول بالوسـيلة الإلكترونيـة فـي العقـود المدنيـة والتجاريـة، لا يعتبـر هـذا القبـول منشـئاً\nللعقـد إلا بعـد أن يؤكـد عليـه ة\nّ\nمـر ثانيـة مـن وجـه إليـه العـرض بعـد أن يكـون قـد تحقـق مـن مضـمون\nزاالت مات الفريقين .\nيعـد\nّ\nعندما تكون المساومات في العقود المدنية والتجارية قد جرت بالوسيلة الإلكترونية، فـإن العقـد لا\nمنشأً إلا في الوقت الذي يصل فيه القبول إلى العارض .\nتعتبر الرسالة الإلكترونية قد أرسلت عندما تدخل أول نظام معلوماتي خارج سيطرة المرسل .\nتعتبر الرسالة الإلكترونية قد استلمت من قبل المرسل إليه في الحالتين التاليتين :\n١ - عندما تدخل النظام المحدد للاستلام من قبله .\nّ ٢ - عنــدما يســتخرجها علــى عنــوان إلكترونــي خــاص بــه، إذا لــم\nيــتم تحديــد نظــام معلومــاتي معــين\nلاستلام الرسائل الإلكترونية .\nلـم ما يثبـت العكـس، تعتبـر الرسـالة الإلكترونيـة قـد أرسـلت مـن مقـر عمـل المرسـل وأنهـا اسـتلمت فـي\nمقر عمل المرسل إليه. إذا كان للمرسل أو للمرسل إليه أكثر م من قر عمل، يعـول علـى مقـر العمـل\nالــذي لــه أوثــق علاقــة بالمعاملــة المعنيــة، وفــي حــال عــدم وجــود هكــذا معاملــة، يؤخــذ بمقــر العمــل\nالرئيسي. لم إذا يكن للمرسل أو للمرسل إليه مقر عمل، يؤخذ بمحل إقامته القانوني أو الواقعي .\nيمكن الاتفاق بين رسل\nُ\nالم رسل\nُ\nوالم إليه على قواعد خاصة ت رعى إرسال الرسائل او ستلامها .",
+      "translation": "在民事和商事合同中，当承诺以电子方式作出时，该承诺只有在受要约人在核实双方义务内容后再次予以确认，才视为合同成立。\n\n在民事和商事合同中，当磋商已通过电子方式进行时，合同仅在承诺到达要约人时方成立。\n\n电子消息在进入发件人控制之外的第一个信息系统时，视为已发送。\n\n电子消息在下列两种情况下视为已由收件人收到：\n1 - 当其进入收件人指定的接收系统时。\n2 - 当其被提取至其专属电子地址时，如果未指定特定信息系统用于接收电子消息。\n\n除非证明相反，电子消息视为从发件人营业地发送，并在收件人营业地收到。如果发件人或收件人有一个以上营业地，以与相关交易有最密切联系之营业地为准；如无此种交易，则以主要营业地为准。如果发件人或收件人没有营业地，则以其法定或实际住所为准。\n\n发件人与收件人可约定管辖电子消息发送或接收的特别规则。",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    },
+    {
+      "country": "LB",
+      "source_url": "https://www.bdl.gov.lb/CB%20Com/Laws%20And%20Regulations/Laws/Law_81_AR%C2%A72572_1.pdf",
+      "document_title": "قانون رقم 81 تاريخ 10/10/2018 — المعاملات الإلكترونية والبيانات ذات الطابع الشخصي",
+      "document_relevance": "relevant",
+      "clause_id": "6c4c3538-17eb-4741-81ae-515c2933afc2",
+      "clause_number": "٣٣",
+      "original": "المادة ٣٣:\nّ على كل من يعرض بحكم مهنته سلع أواً خدمات بوسيلة إلكترونية أن ن\nُضم\nي العرض ما يأتي :\n١ - المرا حل الواجب اتباعها مرالإب العقد بالوسيلة الإلكترونية .\n٢ - شروط العقد بطريقة تسمح بالمحافظة عليها وبإعادة نسخها .\n٣ - الوسائل التقنية التي تسمح لمتلقي العرض بالتحقق من الأخطاء المرتكبة لدى استعمال الوسـائل\nالإلكترونية وب تصحيحها قبل الموافقة النهائية التي تؤدي إلى مراإب العقد .\n٤ - مدى مزاإلت مقدم العرض بالمحافظة على الآثار الإلكترونيـة للمفاوضـة وللعقـد المبـرم، وفـي حـال\nوجـود هكـذا التـ م،زا تحديـد مـدة هـذا الالتـ مزا وكيفيـة المحافظـة علـى الآثـار الإلكترونيـة، وشـروط\nالولوج إلى المستندات المحفوظة .\n٥ - لغة العقد المعتمدة .\nالمادة ٤ ٣:\nيبقى العرض ملزماً للعارض طالما يبقى في الإمكان الولوج إلى هذا العرض بالوسيلة الإلكترونية .\nالمادة ٥ ٣:\nعلـى مقـدم العـرض إبـلاغ الطـرف الآخـر بـورود القبـول وذلـك ضـمن مهلـة زمنيـة معقولـة أو ضـمن\nالمهلة الزمنية المحددة في العرض .\nيلزم مقدم العرض بالتعويض عن أي إخلال بهذا الموجب ينشأ عنه ضرر .\nالمادة ٦ ٣:\nلا تطبق أحكـام المـادتين و ٣٣ ٣٥ مـن هـذا القـانون علـى العقـود المبرمـة حصـرياً عـن طريـق تبـادل\nالرسائل بواسطة البريد الإلكتروني أو من خلال اتصالات شخصية مستقلة .\nالمادة ٧ ٣:\nفي العق ود المبرمة بين التجار أو في العقود المبرمة بين المحتـرفين فـي مجـال التجـارة الإلكترونيـة أو\nبين التجار وهؤلاء المحترفين، يمكن للفرقاء مخالفة القواعد المنصوص عليها في المـادتين و ٣٣ ٣٥\nمن هذا القانون .\nالمادة ٨ ٣:",
+      "translation": "第33条：凡因职业以电子方式提供货物或服务者，应在要约中载明下列事项：\n1. 通过电子方式订立合同应遵循的步骤。\n2. 合同条款，其方式应允许保存和复制该条款。\n3. 使要约接收人能够在导致订立合同的最终同意之前，核实并纠正使用电子手段时所犯错误的技术手段。\n4. 要约人保存谈判和已订立合同电子痕迹的义务范围；如存在此种义务，则应确定该义务的期限、保存电子痕迹的方式以及访问已保存文件的条件。\n5. 合同所采用的语言。\n第34条：只要仍可通过电子方式访问该要约，要约即对要约人具有约束力。\n第35条：要约人应在合理期限内或在要约中规定的期限内，将承诺的到达通知另一方。要约人应就违反该义务而造成的任何损害承担赔偿责任。\n第36条：本法第33条和第35条的规定不适用于完全通过电子邮件交换信件或通过独立个人通信订立的合同。\n第37条：在商人之间订立的合同，或在电子商务领域的专业人员之间订立的合同，或在商人与这些专业人员之间订立的合同，当事人可以背离本法第33条和第35条规定的规则。\n第38条：",
+      "review_status": "machine_translated",
+      "human_legal_review_performed_in_this_audit": false
+    }
+  ]
+}

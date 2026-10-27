@@ -1,0 +1,174 @@
+{
+  "summary": {
+    "started_at": "2026-10-23T14:45:20.408555+00:00",
+    "completed_at": "2026-10-23T14:47:21.477822+00:00",
+    "duration_seconds": 121.07,
+    "requested_countries": [
+      "MA"
+    ],
+    "all_countries_completed": false,
+    "no_sampling": true,
+    "new_edges": 0,
+    "new_nodes": 0,
+    "all_new_edges_pending": true,
+    "all_new_nodes_pending": true,
+    "human_approved": 0,
+    "latest_by_country": {
+      "MA": {
+        "country": "MA",
+        "attempt": 3,
+        "recorded_at": "2026-10-23T14:47:21.403361+00:00",
+        "status": "failed",
+        "reason": "extractor_or_judge_unavailable",
+        "failures": [
+          {
+            "clause_id": "fb6b36d3-34b9-4970-b5e3-40f63b3b10b4",
+            "step": "extraction",
+            "reason": "model_unavailable_or_invalid_schema"
+          }
+        ],
+        "cache_hits": 94,
+        "attempted_clauses": 96,
+        "failed_clauses": 1,
+        "previous_graph_preserved": true,
+        "semantic_edges_added": 0,
+        "duration_ms": 29550,
+        "extraction_thinking": "disabled",
+        "extractor_prompt_version": "kg-extract-v3",
+        "judge_prompt_version": "kg-judge-v2",
+        "model_usage": {
+          "requests": 9,
+          "responses_with_usage": 9,
+          "tokens_in": 7132,
+          "tokens_out": 8088,
+          "response_models": {
+            "deepseek-flash": 9
+          },
+          "calls_without_reported_usage": 0
+        },
+        "batch_id": "2a00c183-3493-480c-bc11-5aaabc45d845"
+      }
+    },
+    "tokens_in": 186501,
+    "tokens_out": 165754
+  },
+  "attempts": [
+    {
+      "country": "MA",
+      "attempt": 1,
+      "recorded_at": "2026-10-23T14:46:33.185324+00:00",
+      "status": "failed",
+      "reason": "extractor_or_judge_unavailable",
+      "failures": [
+        {
+          "clause_id": "f725bbbe-69aa-47f5-8053-e9c2d3cc047e",
+          "step": "extraction",
+          "reason": "model_unavailable_or_invalid_schema"
+        },
+        {
+          "clause_id": "e5533a5b-551e-4650-b8e0-809eeaf2d77b",
+          "step": "extraction",
+          "reason": "model_unavailable_or_invalid_schema"
+        },
+        {
+          "clause_id": "fb6b36d3-34b9-4970-b5e3-40f63b3b10b4",
+          "step": "extraction",
+          "reason": "model_unavailable_or_invalid_schema"
+        }
+      ],
+      "cache_hits": 0,
+      "attempted_clauses": 96,
+      "failed_clauses": 3,
+      "previous_graph_preserved": true,
+      "semantic_edges_added": 0,
+      "duration_ms": 72596,
+      "extraction_thinking": "disabled",
+      "extractor_prompt_version": "kg-extract-v3",
+      "judge_prompt_version": "kg-judge-v2",
+      "model_usage": {
+        "requests": 260,
+        "responses_with_usage": 260,
+        "tokens_in": 172568,
+        "tokens_out": 149762,
+        "response_models": {
+          "deepseek-flash": 260
+        },
+        "calls_without_reported_usage": 0
+      },
+      "batch_id": "7c34b7b9-3245-4ca8-af42-9da611fce867"
+    },
+    {
+      "country": "MA",
+      "attempt": 2,
+      "recorded_at": "2026-10-23T14:46:51.844360+00:00",
+      "status": "failed",
+      "reason": "extractor_or_judge_unavailable",
+      "failures": [
+        {
+          "clause_id": "fb6b36d3-34b9-4970-b5e3-40f63b3b10b4",
+          "step": "extraction",
+          "reason": "model_unavailable_or_invalid_schema"
+        },
+        {
+          "clause_id": "f725bbbe-69aa-47f5-8053-e9c2d3cc047e",
+          "step": "extraction",
+          "reason": "model_unavailable_or_invalid_schema"
+        }
+      ],
+      "cache_hits": 93,
+      "attempted_clauses": 96,
+      "failed_clauses": 2,
+      "previous_graph_preserved": true,
+      "semantic_edges_added": 0,
+      "duration_ms": 18648,
+      "extraction_thinking": "disabled",
+      "extractor_prompt_version": "kg-extract-v3",
+      "judge_prompt_version": "kg-judge-v2",
+      "model_usage": {
+        "requests": 6,
+        "responses_with_usage": 6,
+        "tokens_in": 6801,
+        "tokens_out": 7904,
+        "response_models": {
+          "deepseek-flash": 6
+        },
+        "calls_without_reported_usage": 0
+      },
+      "batch_id": "e67b5df2-2720-40e9-9aa6-fe3b23161d73"
+    },
+    {
+      "country": "MA",
+      "attempt": 3,
+      "recorded_at": "2026-10-23T14:47:21.403361+00:00",
+      "status": "failed",
+      "reason": "extractor_or_judge_unavailable",
+      "failures": [
+        {
+          "clause_id": "fb6b36d3-34b9-4970-b5e3-40f63b3b10b4",
+          "step": "extraction",
+          "reason": "model_unavailable_or_invalid_schema"
+        }
+      ],
+      "cache_hits": 94,
+      "attempted_clauses": 96,
+      "failed_clauses": 1,
+      "previous_graph_preserved": true,
+      "semantic_edges_added": 0,
+      "duration_ms": 29550,
+      "extraction_thinking": "disabled",
+      "extractor_prompt_version": "kg-extract-v3",
+      "judge_prompt_version": "kg-judge-v2",
+      "model_usage": {
+        "requests": 9,
+        "responses_with_usage": 9,
+        "tokens_in": 7132,
+        "tokens_out": 8088,
+        "response_models": {
+          "deepseek-flash": 9
+        },
+        "calls_without_reported_usage": 0
+      },
+      "batch_id": "2a00c183-3493-480c-bc11-5aaabc45d845"
+    }
+  ]
+}

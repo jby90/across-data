@@ -1,4 +1,5 @@
 export type Role = 'platform_admin' | 'reviewer' | 'org_admin' | 'member'
+export { startProgressStream, parseSseBlock, type ProgressEvent, type StreamState } from './liveEvents'
 
 export const ROLE_LABEL: Record<Role, string> = {
   platform_admin: '平台管理员',
@@ -20,6 +21,7 @@ export interface OrgOut {
   id: string
   name: string
   is_active: boolean
+  llm_redaction_terms: string[]
 }
 
 export interface TokenResponse {
@@ -42,6 +44,15 @@ export type Side = 'user' | 'admin'
 
 function detailToMessage(detail: unknown, fallback: string): string {
   if (typeof detail === 'string') return detail
+  if (detail && typeof detail === 'object' && 'message' in detail) {
+    const data = detail as { message?: unknown; issues?: unknown }
+    if (typeof data.message === 'string') {
+      const issues = Array.isArray(data.issues)
+        ? data.issues.filter((x): x is string => typeof x === 'string')
+        : []
+      return [data.message, ...issues.slice(0, 5)].join('；')
+    }
+  }
   if (Array.isArray(detail) && detail.length > 0) {
     // FastAPI 校验错误:取第一条的 msg
     const first = detail[0] as { msg?: string }
@@ -101,6 +112,7 @@ export function createClient(side: Side, onUnauthorized: () => void) {
 // ---------- 采集与文档库(管理端) ----------
 
 export interface SiteOut {
+  terms_approval_scope?: 'legacy' | 'development' | 'production'
   id: string
   country_code: string
   publisher: string
@@ -163,6 +175,8 @@ export interface VersionOut {
 }
 
 export interface DocumentOut {
+  safety_hold?: boolean
+  safety_note?: string | null
   id: string
   site_id: string
   country_code: string
@@ -175,8 +189,9 @@ export interface DocumentOut {
   last_error: string | null
   instrument_family: string | null
   instrument_kind: string | null
-  relevance: 'relevant' | 'irrelevant' | 'needs_review'
+  relevance: 'relevant' | 'related' | 'out_of_scope' | 'irrelevant' | 'needs_review'
   relevance_note: string | null
+  relevance_source?: 'rule' | 'llm' | 'manual'
   latest_version: VersionOut | null
 }
 
